@@ -1,5 +1,6 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import appConfig from '../config/appConfig';
+import { ROUTES } from '../constants/routes';
 
 const styles = {
   page: { minHeight: '100vh', display: 'grid', placeItems: 'center', padding: 'var(--space-5)' },
@@ -14,13 +15,19 @@ const styles = {
   },
 };
 
-export const AuthLayout = () => (
-  <main style={styles.page}>
-    <div style={styles.card}>
-      <h2 className="u-mb-4">{appConfig.name}</h2>
-      <Outlet />
-    </div>
-  </main>
-);
+export const AuthLayout = () => {
+  const location = useLocation();
+
+  if (location.pathname === ROUTES.LOGIN) return <Outlet />;
+
+  return (
+    <main style={styles.page}>
+      <div style={styles.card}>
+        <h2 className="u-mb-4">{appConfig.name}</h2>
+        <Outlet />
+      </div>
+    </main>
+  );
+};
 
 export default AuthLayout;
