@@ -37,9 +37,7 @@ export const LoginPage = () => {
       heroImageSrc="https://images.unsplash.com/photo-1642615835477-d303d7dc9ee9?w=2160&q=80"
       testimonials={testimonials}
       onSignIn={handleSignIn}
-      onGoogleSignIn={() => window.alert('Google sign-in is not configured yet.')}
       onResetPassword={() => navigate(ROUTES.FORGOT_PASSWORD)}
-      onCreateAccount={() => window.alert('Account creation is invitation-only.')}
       errorMessage={error?.message}
       isSubmitting={isSubmitting}
     />
