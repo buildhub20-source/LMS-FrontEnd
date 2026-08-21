@@ -18,6 +18,7 @@ export const ROUTES = Object.freeze({
   USER_EDIT: (id = ':userId') => `/admin/users/${id}/edit`,
   ROLES: '/admin/roles',
   ROLE_DETAILS: (id = ':roleId') => `/admin/roles/${id}`,
+  PERMISSIONS: '/admin/permissions',
   INVITATIONS: '/admin/invitations',
   ENROLLMENTS: '/admin/enrollments',
   ENROLLMENT_DETAILS: (id = ':enrollmentId') => `/admin/enrollments/${id}`,

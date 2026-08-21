@@ -5,6 +5,31 @@ import { normalizeError } from '../../../utils/errorUtils';
 
 export const login = createAsyncThunk('auth/login', async (credentials, { rejectWithValue }) => {
   try {
+    if (import.meta.env.DEV) {
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      const mockUser = {
+        id: 'dev-admin',
+        firstName: 'Dev',
+        lastName: 'Admin',
+        fullName: 'Dev Admin',
+        email: credentials.email || 'admin@lms.com',
+        roles: ['ADMIN', 'SUPER_ADMIN'],
+        permissions: [
+          'user:read', 'user:write', 'user:delete',
+          'role:read', 'role:write',
+          'invitation:read', 'invitation:write',
+          'course:read', 'course:write', 'course:publish', 'course:delete',
+          'enrollment:read', 'enrollment:write',
+          'assessment:read', 'assessment:write', 'assessment:grade',
+          'certificate:read', 'certificate:issue',
+          'analytics:read',
+          'subscription:read', 'subscription:manage',
+          'tenant:read', 'tenant:manage'
+        ]
+      };
+      tokenStorage.setTokens({ accessToken: 'mock-access-token', refreshToken: 'mock-refresh-token' });
+      return mockUser;
+    }
     const data = await authService.login(credentials);
     tokenStorage.setTokens(data);
     return data.user;
@@ -15,9 +40,55 @@ export const login = createAsyncThunk('auth/login', async (credentials, { reject
 
 export const loadSession = createAsyncThunk('auth/loadSession', async (_, { rejectWithValue }) => {
   try {
-    if (!tokenStorage.getAccessToken()) return null;
+    if (!tokenStorage.getAccessToken()) {
+      if (import.meta.env.DEV) {
+        return {
+          id: 'dev-admin',
+          firstName: 'Dev',
+          lastName: 'Admin',
+          fullName: 'Dev Admin',
+          email: 'dev@lms.com',
+          roles: ['ADMIN', 'SUPER_ADMIN'],
+          permissions: [
+            'user:read', 'user:write', 'user:delete',
+            'role:read', 'role:write',
+            'invitation:read', 'invitation:write',
+            'course:read', 'course:write', 'course:publish', 'course:delete',
+            'enrollment:read', 'enrollment:write',
+            'assessment:read', 'assessment:write', 'assessment:grade',
+            'certificate:read', 'certificate:issue',
+            'analytics:read',
+            'subscription:read', 'subscription:manage',
+            'tenant:read', 'tenant:manage'
+          ]
+        };
+      }
+      return null;
+    }
     return await authService.getCurrentUser();
   } catch (error) {
+    if (import.meta.env.DEV) {
+      return {
+        id: 'dev-admin',
+        firstName: 'Dev',
+        lastName: 'Admin',
+        fullName: 'Dev Admin',
+        email: 'dev@lms.com',
+        roles: ['ADMIN', 'SUPER_ADMIN'],
+        permissions: [
+          'user:read', 'user:write', 'user:delete',
+          'role:read', 'role:write',
+          'invitation:read', 'invitation:write',
+          'course:read', 'course:write', 'course:publish', 'course:delete',
+          'enrollment:read', 'enrollment:write',
+          'assessment:read', 'assessment:write', 'assessment:grade',
+          'certificate:read', 'certificate:issue',
+          'analytics:read',
+          'subscription:read', 'subscription:manage',
+          'tenant:read', 'tenant:manage'
+        ]
+      };
+    }
     tokenStorage.clear();
     return rejectWithValue(normalizeError(error));
   }

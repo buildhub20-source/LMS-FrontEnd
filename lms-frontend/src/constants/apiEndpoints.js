@@ -13,6 +13,12 @@ export const API_ENDPOINTS = Object.freeze({
     base: '/users',
     byId: (id) => `/users/${id}`,
     status: (id) => `/users/${id}/status`,
+    activate: (id) => `/users/${id}/activate`,
+    deactivate: (id) => `/users/${id}/deactivate`,
+    lock: (id) => `/users/${id}/lock`,
+    unlock: (id) => `/users/${id}/unlock`,
+    statusHistory: (id) => `/users/${id}/status-history`,
+    roles: (id) => `/users/${id}/roles`,
   },
   roles: {
     base: '/roles',
@@ -78,4 +84,9 @@ export const API_ENDPOINTS = Object.freeze({
     avatar: '/profile/avatar',
     changePassword: '/profile/change-password',
   },
+  permissions: {
+    base: '/permissions',
+    byId: (id) => `/permissions/${id}`,
+  },
 });
+

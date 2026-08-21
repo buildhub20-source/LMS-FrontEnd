@@ -29,6 +29,7 @@ const CreateUserPage = lazy(() => import('../features/users/pages/CreateUserPage
 const EditUserPage = lazy(() => import('../features/users/pages/EditUserPage'));
 const RoleListPage = lazy(() => import('../features/roles/pages/RoleListPage'));
 const RoleDetailsPage = lazy(() => import('../features/roles/pages/RoleDetailsPage'));
+const PermissionsPage = lazy(() => import('../features/roles/pages/PermissionsPage'));
 const InvitationListPage = lazy(() => import('../features/invitations/pages/InvitationListPage'));
 const AdminAnalyticsPage = lazy(() => import('../features/analytics/pages/AdminAnalyticsPage'));
 const InstructorAnalyticsPage = lazy(
@@ -114,6 +115,7 @@ export const router = createBrowserRouter([
               },
               { path: ROUTES.ROLES, element: suspend(<RoleListPage />) },
               { path: ROUTES.ROLE_DETAILS(), element: suspend(<RoleDetailsPage />) },
+              { path: ROUTES.PERMISSIONS, element: suspend(<PermissionsPage />) },
               { path: ROUTES.INVITATIONS, element: suspend(<InvitationListPage />) },
               { path: ROUTES.ENROLLMENTS, element: suspend(<EnrollmentListPage />) },
               { path: ROUTES.ENROLLMENT_DETAILS(), element: suspend(<EnrollmentDetailsPage />) },
