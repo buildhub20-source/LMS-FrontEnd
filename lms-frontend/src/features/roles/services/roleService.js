@@ -1,169 +1,51 @@
 import { http } from '../../../services/api/axiosInstance';
 import { API_ENDPOINTS } from '../../../constants/apiEndpoints';
 
-let mockRoles = [
-  {
-    id: 'role-1',
-    name: 'ADMIN',
-    description: 'Full administrative access to platform management tools and configurations.',
-    userCount: 2,
-    createdAt: '2026-01-01T00:00:00Z',
-    permissions: [
-      { id: 'p-1', name: 'User Read', authority: 'USER_READ' },
-      { id: 'p-2', name: 'User Write', authority: 'USER_WRITE' },
-      { id: 'p-3', name: 'Role Read', authority: 'ROLE_READ' },
-      { id: 'p-4', name: 'Role Write', authority: 'ROLE_WRITE' },
-    ],
-  },
-  {
-    id: 'role-2',
-    name: 'INSTRUCTOR',
-    description: 'Access to course creation, student grading, and instructor analytics dashboard.',
-    userCount: 5,
-    createdAt: '2026-01-05T00:00:00Z',
-    permissions: [
-      { id: 'p-5', name: 'Course Read', authority: 'COURSE_READ' },
-      { id: 'p-6', name: 'Course Write', authority: 'COURSE_WRITE' },
-    ],
-  },
-];
+/**
+ * RoleResponse from backend: { id, name, description, permissions: List<PermissionResponse> }
+ * PermissionResponse: { id, name, description, authority }
+ */
 
-let mockPermissions = [
-  { id: 'p-1', name: 'User Read', authority: 'USER_READ', description: 'Read user list and status history.' },
-  { id: 'p-2', name: 'User Write', authority: 'USER_WRITE', description: 'Create, update, lock, and activate users.' },
-  { id: 'p-3', name: 'Role Read', authority: 'ROLE_READ', description: 'View access roles.' },
-  { id: 'p-4', name: 'Role Write', authority: 'ROLE_WRITE', description: 'Create and modify user access roles.' },
-  { id: 'p-5', name: 'Course Read', authority: 'COURSE_READ', description: 'Read course details and structures.' },
-  { id: 'p-6', name: 'Course Write', authority: 'COURSE_WRITE', description: 'Create and edit learning courses.' },
-];
-
-async function devFallback(fn, fallbackData) {
-  if (import.meta.env.DEV) {
-    try {
-      return await fn();
-    } catch (err) {
-      if (!err.response || err.code === 'ERR_NETWORK') {
-        console.warn('Backend offline. Falling back to mock dev role data.');
-        return typeof fallbackData === 'function' ? fallbackData() : fallbackData;
-      }
-      throw err;
-    }
-  }
-  return fn();
-}
 
 export const roleService = {
-  list: (params) =>
-    devFallback(
-      () => http.get(API_ENDPOINTS.roles.base, { params }),
-      () => {
-        let list = [...mockRoles];
-        if (params?.search) {
-          const q = params.search.toLowerCase();
-          list = list.filter(r => r.name.toLowerCase().includes(q) || r.description.toLowerCase().includes(q));
-        }
-        return list;
-      }
-    ),
+  /** GET /roles → List<RoleResponse> (not paginated) */
+  /** GET /roles → List<RoleResponse> (not paginated) */
+  list: async (params) => http.get(API_ENDPOINTS.roles.base, { params }),
 
-  getById: (id) =>
-    devFallback(
-      () => http.get(API_ENDPOINTS.roles.byId(id)),
-      () => mockRoles.find((r) => r.id === id)
-    ),
+  /** GET /roles/{id} */
+  getById: async (id) => http.get(API_ENDPOINTS.roles.byId(id)),
 
-  create: (payload) =>
-    devFallback(
-      () => http.post(API_ENDPOINTS.roles.base, payload),
-      () => {
-        const newRole = {
-          id: `role-${Date.now()}`,
-          name: payload.name.toUpperCase(),
-          description: payload.description,
-          userCount: 0,
-          createdAt: new Date().toISOString(),
-          permissions: (payload.permissionIds || []).map(pId => mockPermissions.find(p => p.id === pId)).filter(Boolean),
-        };
-        mockRoles.push(newRole);
-        return newRole;
-      }
-    ),
+  /** POST /roles */
+  create: async (payload) => http.post(API_ENDPOINTS.roles.base, payload),
 
-  update: (id, payload) =>
-    devFallback(
-      () => http.put(API_ENDPOINTS.roles.byId(id), payload),
-      () => {
-        mockRoles = mockRoles.map((r) =>
-          r.id === id
-            ? {
-                ...r,
-                name: payload.name.toUpperCase(),
-                description: payload.description,
-                permissions: (payload.permissionIds || []).map(pId => mockPermissions.find(p => p.id === pId)).filter(Boolean),
-              }
-            : r
-        );
-        return mockRoles.find((r) => r.id === id);
-      }
-    ),
+  /**
+   * PATCH /roles/{id} — backend is PATCH not PUT.
+   * UpdateRoleRequest: { description, permissionIds }
+   */
+  update: async (id, payload) => http.patch(API_ENDPOINTS.roles.byId(id), payload),
 
-  delete: (id) =>
-    devFallback(
-      () => http.delete(API_ENDPOINTS.roles.byId(id)),
-      () => {
-        mockRoles = mockRoles.filter((r) => r.id !== id);
-        return { success: true };
-      }
-    ),
+  /** DELETE /roles/{id} */
+  delete: async (id) => http.delete(API_ENDPOINTS.roles.byId(id)),
 
-  listPermissions: () =>
-    devFallback(
-      () => http.get(API_ENDPOINTS.roles.permissions),
-      () => mockPermissions
-    ),
+  // ─── Permission CRUD ───────────────────────────────────────────────────────
 
-  // Permission CRUD
-  createPermission: (payload) =>
-    devFallback(
-      () => http.post(API_ENDPOINTS.permissions.base, payload),
-      () => {
-        const newPerm = {
-          id: `perm-${Date.now()}`,
-          name: payload.name,
-          description: payload.description,
-          authority: payload.authority.toUpperCase(),
-        };
-        mockPermissions.push(newPerm);
-        return newPerm;
-      }
-    ),
+  /**
+   * GET /permissions — NOT /roles/permissions (that endpoint doesn't exist).
+   * Returns List<PermissionResponse>: { id, name, description, authority }
+   */
+  listPermissions: async () => http.get(API_ENDPOINTS.permissions.base),
 
-  updatePermission: (id, payload) =>
-    devFallback(
-      () => http.put(API_ENDPOINTS.permissions.byId(id), payload),
-      () => {
-        mockPermissions = mockPermissions.map((p) =>
-          p.id === id
-            ? {
-                ...p,
-                name: payload.name,
-                description: payload.description,
-                authority: payload.authority.toUpperCase(),
-              }
-            : p
-        );
-        return mockPermissions.find((p) => p.id === id);
-      }
-    ),
+  /** POST /permissions */
+  createPermission: async (payload) => http.post(API_ENDPOINTS.permissions.base, payload),
 
-  deletePermission: (id) =>
-    devFallback(
-      () => http.delete(API_ENDPOINTS.permissions.byId(id)),
-      () => {
-        mockPermissions = mockPermissions.filter((p) => p.id !== id);
-        return { success: true };
-      }
-    ),
+  /**
+   * PATCH /permissions/{id} — backend is PATCH not PUT.
+   * UpdatePermissionRequest: { description }
+   */
+  updatePermission: async (id, payload) => http.patch(API_ENDPOINTS.permissions.byId(id), payload),
+
+  /** DELETE /permissions/{id} */
+  deletePermission: async (id) => http.delete(API_ENDPOINTS.permissions.byId(id)),
 };
 
 export default roleService;

@@ -20,6 +20,7 @@ import LoginPage from '../features/auth/pages/LoginPage';
 import ForgotPasswordPage from '../features/auth/pages/ForgotPasswordPage';
 import ResetPasswordPage from '../features/auth/pages/ResetPasswordPage';
 import AcceptInvitationPage from '../features/auth/pages/AcceptInvitationPage';
+import SetPasswordPage from '../features/auth/pages/SetPasswordPage';
 import UnauthorizedPage from '../features/auth/pages/UnauthorizedPage';
 
 // Everything else is code-split per route.
@@ -177,6 +178,13 @@ export const router = createBrowserRouter([
           { path: ROUTES.PROFILE, element: suspend(<ProfilePage />) },
           { path: ROUTES.SECURITY, element: suspend(<SecurityPage />) },
         ],
+      },
+
+      // First-time password change for invited users (mustChangePassword flow)
+      // Accessible while authenticated — ProtectedRoute redirects here when mustChangePassword=true
+      {
+        path: ROUTES.SET_PASSWORD,
+        element: <SetPasswordPage />,
       },
     ],
   },

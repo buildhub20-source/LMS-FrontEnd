@@ -19,25 +19,14 @@ export const loginSchema = z.object({
 
 export const forgotPasswordSchema = z.object({ email });
 
+/** Used by ResetPasswordForm — field name MUST match backend ResetPasswordRequest.newPassword */
 export const resetPasswordSchema = z
   .object({
     token: z.string().min(1),
-    password,
+    newPassword: password,
     confirmPassword: z.string(),
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  });
-
-export const acceptInvitationSchema = z
-  .object({
-    token: z.string().min(1),
-    fullName: z.string().trim().min(2, 'Enter your full name'),
-    password,
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data) => data.newPassword === data.confirmPassword, {
     message: 'Passwords do not match',
     path: ['confirmPassword'],
   });

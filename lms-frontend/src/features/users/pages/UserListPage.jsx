@@ -142,26 +142,20 @@ export const UserListPage = () => {
         search: search || undefined,
         status: statusFilter === 'ALL' ? undefined : statusFilter,
       });
-      // Support both paginated { items, total } and Spring { content, totalPages, totalElements }
-      if (Array.isArray(res?.content)) {
-        setUsers(res.content);
-        setTotalPages(res.totalPages ?? 0);
-        setTotalElements(res.totalElements ?? 0);
-      } else if (Array.isArray(res?.items)) {
-        setUsers(res.items);
-        setTotalPages(Math.ceil((res.total ?? 0) / pageSize));
-        setTotalElements(res.total ?? 0);
-      } else {
-        setUsers(Array.isArray(res) ? res : []);
-        setTotalPages(1);
-        setTotalElements(Array.isArray(res) ? res.length : 0);
-      }
+      // userService normalizes all responses to { content, totalPages, totalElements }
+      const content = Array.isArray(res?.content) ? res.content
+        : Array.isArray(res?.items) ? res.items
+        : Array.isArray(res) ? res : [];
+      setUsers(content);
+      setTotalPages(res?.totalPages ?? (content.length > 0 ? 1 : 0));
+      setTotalElements(res?.totalElements ?? content.length);
     } catch (err) {
       setLoadError(err?.message ?? 'Failed to load users.');
     } finally {
       setLoading(false);
     }
   }, [page, pageSize, search, statusFilter]);
+
 
   useEffect(() => { loadUsers(); }, [loadUsers]);
 
@@ -218,8 +212,8 @@ export const UserListPage = () => {
 
   const openEditUser = (u) => {
     setEditUser(u);
-    setEditFirstName(u.firstName ?? '');
-    setEditLastName(u.lastName ?? '');
+    setEditFirstName(u.name?.split(' ')[0] ?? u.firstName ?? '');
+    setEditLastName(u.name?.split(' ').slice(1).join(' ') ?? u.lastName ?? '');
     setEditEmail(u.email ?? '');
   };
 
@@ -227,11 +221,9 @@ export const UserListPage = () => {
     if (!editUser) return;
     setEditSaving(true);
     try {
-      await userService.update(editUser.id, {
-        firstName: editFirstName,
-        lastName: editLastName,
-        email: editEmail,
-      });
+      // Backend UpdateUserRequest accepts: name, phone, profileImageUrl
+      const name = [editFirstName, editLastName].filter(Boolean).join(' ').trim() || editFirstName;
+      await userService.update(editUser.id, { name });
       toastSuccess(`${editUser.fullName}'s profile has been updated.`);
       setEditUser(null);
       loadUsers();
@@ -246,11 +238,22 @@ export const UserListPage = () => {
 
   const openEditRoles = async (u) => {
     setRolesUser(u);
-    setSelectedRoleIds((u.roles ?? []).map((r) => r.id));
+    // roles is Set<String> from backend — no IDs, just names.
+    // We'll match by role name when saving.
+    setSelectedRoleIds([]); // will be set to IDs after roles are loaded
     setRolesLoading(true);
     try {
       const roles = await roleService.list();
-      setAllRoles(Array.isArray(roles?.items) ? roles.items : Array.isArray(roles?.content) ? roles.content : Array.isArray(roles) ? roles : []);
+      const roleList = Array.isArray(roles?.items) ? roles.items
+        : Array.isArray(roles?.content) ? roles.content
+        : Array.isArray(roles) ? roles : [];
+      setAllRoles(roleList);
+      // Pre-select roles by matching name to ID
+      const userRoleNames = Array.isArray(u.roles) ? u.roles : [];
+      const preSelected = roleList
+        .filter((r) => userRoleNames.includes(r.name))
+        .map((r) => r.id);
+      setSelectedRoleIds(preSelected);
     } catch (err) {
       toastError(err?.message ?? 'Failed to load roles.');
     } finally {
@@ -390,9 +393,10 @@ export const UserListPage = () => {
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1">
                           {(u.roles ?? []).length > 0 ? (
-                            u.roles.map((r) => (
-                              <span key={r.id} className="rounded-md bg-brand-50 border border-brand-200 px-2 py-0.5 text-xs font-medium text-brand-700">
-                                {r.name}
+                            // roles is Set<String> from backend
+                            (Array.isArray(u.roles) ? u.roles : [...(u.roles ?? [])]).map((roleName) => (
+                              <span key={roleName} className="rounded-md bg-brand-50 border border-brand-200 px-2 py-0.5 text-xs font-medium text-brand-700">
+                                {roleName}
                               </span>
                             ))
                           ) : (
@@ -456,9 +460,9 @@ export const UserListPage = () => {
                       <p className="text-xs text-slate-500 truncate">{u.email}</p>
                       <div className="mt-2 flex items-center gap-2 flex-wrap">
                         <StatusBadge user={u} />
-                        {(u.roles ?? []).map((r) => (
-                          <span key={r.id} className="rounded-md bg-brand-50 border border-brand-200 px-2 py-0.5 text-xs font-medium text-brand-700">
-                            {r.name}
+                        {(Array.isArray(u.roles) ? u.roles : [...(u.roles ?? [])]).map((roleName) => (
+                          <span key={roleName} className="rounded-md bg-brand-50 border border-brand-200 px-2 py-0.5 text-xs font-medium text-brand-700">
+                            {roleName}
                           </span>
                         ))}
                       </div>

@@ -3,8 +3,11 @@ export const API_ENDPOINTS = Object.freeze({
   auth: {
     login: '/auth/login',
     logout: '/auth/logout',
+    logoutAll: '/auth/logout-all',
     refresh: '/auth/refresh',
     me: '/auth/me',
+    sessions: '/auth/sessions',
+    revokeSession: (sessionId) => `/auth/sessions/${sessionId}`,
     forgotPassword: '/auth/forgot-password',
     resetPassword: '/auth/reset-password',
     acceptInvitation: '/auth/accept-invitation',
@@ -12,18 +15,21 @@ export const API_ENDPOINTS = Object.freeze({
   users: {
     base: '/users',
     byId: (id) => `/users/${id}`,
-    status: (id) => `/users/${id}/status`,
     activate: (id) => `/users/${id}/activate`,
     deactivate: (id) => `/users/${id}/deactivate`,
     lock: (id) => `/users/${id}/lock`,
     unlock: (id) => `/users/${id}/unlock`,
     statusHistory: (id) => `/users/${id}/status-history`,
     roles: (id) => `/users/${id}/roles`,
+    changePassword: '/users/me/password',
   },
   roles: {
     base: '/roles',
     byId: (id) => `/roles/${id}`,
-    permissions: '/roles/permissions',
+  },
+  permissions: {
+    base: '/permissions',
+    byId: (id) => `/permissions/${id}`,
   },
   invitations: {
     base: '/invitations',
@@ -84,9 +90,4 @@ export const API_ENDPOINTS = Object.freeze({
     avatar: '/profile/avatar',
     changePassword: '/profile/change-password',
   },
-  permissions: {
-    base: '/permissions',
-    byId: (id) => `/permissions/${id}`,
-  },
 });
-

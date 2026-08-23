@@ -1,219 +1,89 @@
 import { http } from '../../../services/api/axiosInstance';
 import { API_ENDPOINTS } from '../../../constants/apiEndpoints';
 
-// In-memory mock database for development offline fallback
-let mockUsers = [
-  {
-    id: 'user-1',
-    fullName: 'Jane Doe',
-    firstName: 'Jane',
-    lastName: 'Doe',
-    email: 'jane.doe@example.com',
-    active: true,
-    locked: false,
-    roles: [{ id: 'role-1', name: 'ADMIN', description: 'Administrator' }],
-    createdAt: '2026-01-15T08:30:00Z',
-  },
-  {
-    id: 'user-2',
-    fullName: 'John Smith',
-    firstName: 'John',
-    lastName: 'Smith',
-    email: 'john.smith@example.com',
-    active: true,
-    locked: false,
-    roles: [{ id: 'role-2', name: 'INSTRUCTOR', description: 'Instructor' }],
-    createdAt: '2026-02-10T11:45:00Z',
-  },
-  {
-    id: 'user-3',
-    fullName: 'Bob Johnson',
-    firstName: 'Bob',
-    lastName: 'Johnson',
-    email: 'bob.johnson@example.com',
-    active: false,
-    locked: false,
-    roles: [],
-    createdAt: '2026-03-01T09:15:00Z',
-  },
-  {
-    id: 'user-4',
-    fullName: 'Alice Williams',
-    firstName: 'Alice',
-    lastName: 'Williams',
-    email: 'alice.williams@example.com',
-    active: true,
-    locked: true,
-    roles: [],
-    createdAt: '2026-03-12T14:20:00Z',
-  },
-];
-
-let mockHistory = {
-  'user-1': [
-    { id: 'h-1', action: 'ACTIVATED', description: 'Account activated by Super Admin', performedBy: 'Super Admin', performedAt: '2026-01-15T08:31:00Z' }
-  ],
-  'user-4': [
-    { id: 'h-2', action: 'LOCKED', description: 'Account locked due to 3 failed login attempts', performedBy: 'System', performedAt: '2026-03-20T10:00:00Z' }
-  ]
-};
-
-async function devFallback(fn, fallbackData) {
-  if (import.meta.env.DEV) {
-    try {
-      return await fn();
-    } catch (err) {
-      // Check if it's a network/connection error
-      if (!err.response || err.code === 'ERR_NETWORK') {
-        console.warn('Backend offline. Falling back to mock dev data.');
-        return typeof fallbackData === 'function' ? fallbackData() : fallbackData;
-      }
-      throw err;
-    }
-  }
-  return fn();
+/**
+ * UserResponse from backend: { id, name, email, phone, profileImageUrl,
+ *   active, locked, activated, roles: Set<String>, createdAt }
+ *
+ * Note: backend uses `name` (not `fullName`). We normalize to add fullName.
+ */
+function normalizeUser(user) {
+  if (!user) return user;
+  return {
+    ...user,
+    fullName: user.fullName ?? user.name ?? '',
+    roles: Array.isArray(user.roles) ? user.roles : [...(user.roles ?? [])],
+  };
 }
 
+function normalizeList(res) {
+  if (!res) return { content: [], totalPages: 0, totalElements: 0 };
+  const content = (res.content ?? []).map(normalizeUser);
+  return { ...res, content };
+}
+
+
 export const userService = {
-  list: (params) =>
-    devFallback(
-      () => http.get(API_ENDPOINTS.users.base, { params }),
-      () => {
-        let list = [...mockUsers];
-        if (params?.search) {
-          const q = params.search.toLowerCase();
-          list = list.filter(u => u.fullName.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
-        }
-        if (params?.status && params.status !== 'ALL') {
-          if (params.status === 'ACTIVE') list = list.filter(u => u.active && !u.locked);
-          if (params.status === 'LOCKED') list = list.filter(u => u.locked);
-          if (params.status === 'INACTIVE') list = list.filter(u => !u.active);
-        }
-        return { content: list, totalPages: 1, totalElements: list.length };
-      }
-    ),
+  /**
+   * GET /users?search=&active=&page=&size=
+   * Backend accepts: search (String), active (Boolean).
+   * Locked filter is NOT a backend param — we handle it client-side.
+   */
+  list: async ({ search, status, page = 0, size = 10 } = {}) => {
+    const params = { page, size, sort: 'createdAt,desc' };
+    if (search) params.search = search;
+    // Map UI status filter to backend active param
+    if (status === 'ACTIVE') params.active = true;
+    if (status === 'INACTIVE') params.active = false;
+    // LOCKED has no backend param — fetch all then filter client-side
 
-  getById: (id) =>
-    devFallback(
-      () => http.get(API_ENDPOINTS.users.byId(id)),
-      () => mockUsers.find((u) => u.id === id)
-    ),
+    const res = await http.get(API_ENDPOINTS.users.base, { params });
+    const normalized = normalizeList(res);
 
-  create: (payload) =>
-    devFallback(
-      () => http.post(API_ENDPOINTS.users.base, payload),
-      () => {
-        const newUser = {
-          id: `user-${Date.now()}`,
-          fullName: `${payload.firstName} ${payload.lastName}`,
-          firstName: payload.firstName,
-          lastName: payload.lastName,
-          email: payload.email,
-          active: true,
-          locked: false,
-          roles: [],
-          createdAt: new Date().toISOString(),
-        };
-        mockUsers.push(newUser);
-        return newUser;
-      }
-    ),
+    // Client-side locked filter
+    if (status === 'LOCKED') {
+      normalized.content = normalized.content.filter((u) => u.locked);
+    }
+    return normalized;
+  },
 
-  update: (id, payload) =>
-    devFallback(
-      () => http.put(API_ENDPOINTS.users.byId(id), payload),
-      () => {
-        mockUsers = mockUsers.map((u) =>
-          u.id === id
-            ? {
-                ...u,
-                ...payload,
-                fullName: `${payload.firstName || u.firstName} ${payload.lastName || u.lastName}`,
-              }
-            : u
-        );
-        return mockUsers.find((u) => u.id === id);
-      }
-    ),
+  /** GET /users/{id} */
+  getById: async (id) => normalizeUser(await http.get(API_ENDPOINTS.users.byId(id))),
 
-  changeStatus: (id, status) =>
-    devFallback(
-      () => http.patch(API_ENDPOINTS.users.status(id), { status }),
-      () => {
-        mockUsers = mockUsers.map((u) => (u.id === id ? { ...u, active: status === 'ACTIVE' } : u));
-        return mockUsers.find((u) => u.id === id);
-      }
-    ),
+  /**
+   * PATCH /users/{id} — update profile fields.
+   * Backend UpdateUserRequest: { name, phone, profileImageUrl }
+   */
+  update: async (id, payload) => normalizeUser(await http.patch(API_ENDPOINTS.users.byId(id), payload)),
 
-  remove: (id) =>
-    devFallback(
-      () => http.delete(API_ENDPOINTS.users.byId(id)),
-      () => {
-        mockUsers = mockUsers.filter((u) => u.id !== id);
-        return { success: true };
-      }
-    ),
+  /** POST /users/{id}/activate */
+  activate: async (id, reason) => normalizeUser(await http.post(API_ENDPOINTS.users.activate(id), reason ? { reason } : {})),
 
-  activate: (id) =>
-    devFallback(
-      () => http.post(API_ENDPOINTS.users.activate(id)),
-      () => {
-        mockUsers = mockUsers.map((u) => (u.id === id ? { ...u, active: true } : u));
-        if (!mockHistory[id]) mockHistory[id] = [];
-        mockHistory[id].unshift({ id: `h-${Date.now()}`, action: 'ACTIVATED', description: 'Account activated manually', performedBy: 'Dev Admin', performedAt: new Date().toISOString() });
-        return mockUsers.find((u) => u.id === id);
-      }
-    ),
+  /** POST /users/{id}/deactivate */
+  deactivate: async (id, reason) => normalizeUser(await http.post(API_ENDPOINTS.users.deactivate(id), reason ? { reason } : {})),
 
-  deactivate: (id) =>
-    devFallback(
-      () => http.post(API_ENDPOINTS.users.deactivate(id)),
-      () => {
-        mockUsers = mockUsers.map((u) => (u.id === id ? { ...u, active: false } : u));
-        if (!mockHistory[id]) mockHistory[id] = [];
-        mockHistory[id].unshift({ id: `h-${Date.now()}`, action: 'DEACTIVATED', description: 'Account deactivated manually', performedBy: 'Dev Admin', performedAt: new Date().toISOString() });
-        return mockUsers.find((u) => u.id === id);
-      }
-    ),
+  /** POST /users/{id}/lock */
+  lock: async (id, reason) => normalizeUser(await http.post(API_ENDPOINTS.users.lock(id), reason ? { reason } : {})),
 
-  lock: (id) =>
-    devFallback(
-      () => http.post(API_ENDPOINTS.users.lock(id)),
-      () => {
-        mockUsers = mockUsers.map((u) => (u.id === id ? { ...u, locked: true } : u));
-        if (!mockHistory[id]) mockHistory[id] = [];
-        mockHistory[id].unshift({ id: `h-${Date.now()}`, action: 'LOCKED', description: 'Account locked manually', performedBy: 'Dev Admin', performedAt: new Date().toISOString() });
-        return mockUsers.find((u) => u.id === id);
-      }
-    ),
+  /** POST /users/{id}/unlock */
+  unlock: async (id, reason) => normalizeUser(await http.post(API_ENDPOINTS.users.unlock(id), reason ? { reason } : {})),
 
-  unlock: (id) =>
-    devFallback(
-      () => http.post(API_ENDPOINTS.users.unlock(id)),
-      () => {
-        mockUsers = mockUsers.map((u) => (u.id === id ? { ...u, locked: false } : u));
-        if (!mockHistory[id]) mockHistory[id] = [];
-        mockHistory[id].unshift({ id: `h-${Date.now()}`, action: 'UNLOCKED', description: 'Account unlocked manually', performedBy: 'Dev Admin', performedAt: new Date().toISOString() });
-        return mockUsers.find((u) => u.id === id);
-      }
-    ),
+  /** GET /users/{id}/status-history */
+  getStatusHistory: async (id) => http.get(API_ENDPOINTS.users.statusHistory(id)),
 
-  getStatusHistory: (id) =>
-    devFallback(
-      () => http.get(API_ENDPOINTS.users.statusHistory(id)),
-      () => mockHistory[id] || []
-    ),
+  /**
+   * PUT /users/{id}/roles
+   * Backend UpdateUserRolesRequest: { roleIds: [UUID] }
+   */
+  updateRoles: async (id, roleIds) => normalizeUser(await http.put(API_ENDPOINTS.users.roles(id), { roleIds })),
 
-  updateRoles: (id, roleIds) =>
-    devFallback(
-      () => http.put(API_ENDPOINTS.users.roles(id), { roleIds }),
-      () => {
-        // mock mapping
-        const assigned = roleIds.map((rId) => ({ id: rId, name: rId === 'role-1' ? 'ADMIN' : rId === 'role-2' ? 'INSTRUCTOR' : 'STUDENT' }));
-        mockUsers = mockUsers.map((u) => (u.id === id ? { ...u, roles: assigned } : u));
-        return mockUsers.find((u) => u.id === id);
-      }
-    ),
+  /**
+   * POST /users/me/password
+   * Backend ChangePasswordRequest: { currentPassword, newPassword }
+   * Used by SetPasswordPage for invited users and SecurityPage for regular changes.
+   */
+  changePassword: async ({ currentPassword, newPassword }) =>
+    http.post(API_ENDPOINTS.users.changePassword, { currentPassword, newPassword }),
 };
 
 export default userService;

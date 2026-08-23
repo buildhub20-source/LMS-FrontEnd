@@ -1,111 +1,62 @@
 import { http } from '../../../services/api/axiosInstance';
 import { API_ENDPOINTS } from '../../../constants/apiEndpoints';
 
-let mockInvitations = [
-  {
-    id: 'inv-1',
-    name: 'Alice Johnson',
-    email: 'alice.johnson@example.com',
-    status: 'PENDING',
-    roleName: 'INSTRUCTOR',
-    role: { id: 'role-2', name: 'INSTRUCTOR' },
-    expiresAt: '2026-09-01T00:00:00Z',
-    createdBy: 'Dev Admin',
-  },
-  {
-    id: 'inv-2',
-    name: 'Charlie Brown',
-    email: 'charlie.brown@example.com',
-    status: 'ACCEPTED',
-    roleName: 'STUDENT',
-    role: { id: 'role-3', name: 'STUDENT' },
-    expiresAt: '2026-08-15T00:00:00Z',
-    createdBy: 'Dev Admin',
-  },
-  {
-    id: 'inv-3',
-    name: 'David Miller',
-    email: 'david.miller@example.com',
-    status: 'EXPIRED',
-    roleName: 'STUDENT',
-    role: { id: 'role-3', name: 'STUDENT' },
-    expiresAt: '2026-08-01T00:00:00Z',
-    createdBy: 'Dev Admin',
-  },
-];
-
-async function devFallback(fn, fallbackData) {
-  if (import.meta.env.DEV) {
-    try {
-      return await fn();
-    } catch (err) {
-      if (!err.response || err.code === 'ERR_NETWORK') {
-        console.warn('Backend offline. Falling back to mock dev invitation data.');
-        return typeof fallbackData === 'function' ? fallbackData() : fallbackData;
-      }
-      throw err;
-    }
-  }
-  return fn();
+/**
+ * Normalizes an InvitationResponse from the backend.
+ *
+ * Backend shape: { id, userId, name, email, roles: Set<String>, status, expiresAt, acceptedAt, invitedBy, createdAt }
+ * The UI expects `roleName` for display — derived from roles[0].
+ */
+function normalizeInvitation(inv) {
+  if (!inv) return inv;
+  const roles = Array.isArray(inv.roles) ? inv.roles : [...(inv.roles ?? [])];
+  return {
+    ...inv,
+    // Convenience field: first role name for display
+    roleName: roles[0] ?? '—',
+  };
 }
 
+
 export const invitationService = {
-  list: (params) =>
-    devFallback(
-      () => http.get(API_ENDPOINTS.invitations.base, { params }),
-      () => {
-        let list = [...mockInvitations];
-        if (params?.search) {
-          const q = params.search.toLowerCase();
-          list = list.filter(i => i.name.toLowerCase().includes(q) || i.email.toLowerCase().includes(q));
-        }
-        if (params?.status && params.status !== 'ALL') {
-          list = list.filter(i => i.status === params.status);
-        }
-        return { content: list, totalPages: 1, totalElements: list.length };
-      }
-    ),
+  /**
+   * GET /invitations?page=&size=&sort=
+   * Backend returns PageResponse<InvitationResponse>.
+   * Note: backend does NOT support status/search query params — filter client-side.
+   */
+  list: async (params) => {
+    const res = await http.get(API_ENDPOINTS.invitations.base, {
+      params: {
+        page: params?.page ?? 0,
+        size: params?.size ?? 20,
+        sort: 'createdAt,desc',
+      },
+    });
+    // Normalize every invitation in the page
+    return {
+      ...res,
+      content: (res?.content ?? []).map(normalizeInvitation),
+    };
+  },
 
-  invite: (payload) =>
-    devFallback(
-      () => http.post(API_ENDPOINTS.invitations.base, payload),
-      () => {
-        const newInv = {
-          id: `inv-${Date.now()}`,
-          name: payload.name,
-          email: payload.email,
-          status: 'PENDING',
-          roleName: payload.roleId === 'role-1' ? 'ADMIN' : payload.roleId === 'role-2' ? 'INSTRUCTOR' : 'STUDENT',
-          role: { id: payload.roleId, name: payload.roleId === 'role-1' ? 'ADMIN' : 'INSTRUCTOR' },
-          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days
-          createdBy: 'Dev Admin',
-        };
-        mockInvitations.push(newInv);
-        return newInv;
-      }
-    ),
+  /**
+   * POST /invitations
+   * Backend CreateInvitationRequest: { name, email, role }
+   * `role` is the ROLE NAME (e.g. "INSTRUCTOR"), NOT a UUID.
+   */
+  invite: async ({ name, email, role }) => {
+    const inv = await http.post(API_ENDPOINTS.invitations.base, { name, email, role });
+    return normalizeInvitation(inv);
+  },
 
-  resend: (id) =>
-    devFallback(
-      () => http.post(API_ENDPOINTS.invitations.resend(id)),
-      () => {
-        mockInvitations = mockInvitations.map(inv =>
-          inv.id === id
-            ? { ...inv, status: 'PENDING', expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() }
-            : inv
-        );
-        return { success: true };
-      }
-    ),
+  /** GET /invitations/{id} */
+  getById: async (id) => normalizeInvitation(await http.get(API_ENDPOINTS.invitations.byId(id))),
 
-  revoke: (id) =>
-    devFallback(
-      () => http.delete(API_ENDPOINTS.invitations.byId(id)),
-      () => {
-        mockInvitations = mockInvitations.filter(inv => inv.id !== id);
-        return { success: true };
-      }
-    ),
+  /** POST /invitations/{id}/resend */
+  resend: async (id) => normalizeInvitation(await http.post(API_ENDPOINTS.invitations.resend(id))),
+
+  /** DELETE /invitations/{id} — withdraws invitation and removes the pending account */
+  revoke: async (id) => http.delete(API_ENDPOINTS.invitations.byId(id)),
 };
 
 export default invitationService;

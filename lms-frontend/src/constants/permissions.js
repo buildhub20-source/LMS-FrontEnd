@@ -1,11 +1,35 @@
+/**
+ * Frontend permission authority strings.
+ * Must match the authority values used in backend @PreAuthorize annotations.
+ *
+ * Backend authorities (from @PreAuthorize):
+ *   USER_VIEW, USER_UPDATE, USER_DELETE, USER_LOCK, USER_MANAGE_ROLES
+ *   ROLES_VIEW, ROLES_MANAGE
+ *   PERMISSIONS_VIEW, PERMISSIONS_MANAGE
+ *   INVITATION_VIEW, INVITATION_CREATE, INVITATION_MANAGE
+ */
 export const PERMISSIONS = Object.freeze({
-  USER_READ: 'user:read',
-  USER_WRITE: 'user:write',
-  USER_DELETE: 'user:delete',
-  ROLE_READ: 'role:read',
-  ROLE_WRITE: 'role:write',
-  INVITATION_READ: 'invitation:read',
-  INVITATION_WRITE: 'invitation:write',
+  // User management
+  USER_VIEW: 'USER_VIEW',
+  USER_UPDATE: 'USER_UPDATE',
+  USER_DELETE: 'USER_DELETE',
+  USER_LOCK: 'USER_LOCK',
+  USER_MANAGE_ROLES: 'USER_MANAGE_ROLES',
+
+  // Roles
+  ROLES_VIEW: 'ROLES_VIEW',
+  ROLES_MANAGE: 'ROLES_MANAGE',
+
+  // Permissions
+  PERMISSIONS_VIEW: 'PERMISSIONS_VIEW',
+  PERMISSIONS_MANAGE: 'PERMISSIONS_MANAGE',
+
+  // Invitations
+  INVITATION_VIEW: 'INVITATION_VIEW',
+  INVITATION_CREATE: 'INVITATION_CREATE',
+  INVITATION_MANAGE: 'INVITATION_MANAGE',
+
+  // Below: kept for other feature areas (not yet implemented in backend)
   COURSE_READ: 'course:read',
   COURSE_WRITE: 'course:write',
   COURSE_PUBLISH: 'course:publish',
@@ -22,4 +46,10 @@ export const PERMISSIONS = Object.freeze({
   SUBSCRIPTION_MANAGE: 'subscription:manage',
   TENANT_READ: 'tenant:read',
   TENANT_MANAGE: 'tenant:manage',
+
+  // Legacy aliases kept for guard compatibility during transition
+  USER_READ: 'USER_VIEW',
+  USER_WRITE: 'USER_UPDATE',
+  INVITATION_READ: 'INVITATION_VIEW',
+  INVITATION_WRITE: 'INVITATION_CREATE',
 });

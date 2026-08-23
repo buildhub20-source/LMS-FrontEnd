@@ -7,8 +7,10 @@ export const ROUTES = Object.freeze({
   ACCEPT_INVITATION: '/auth/accept-invitation',
   FORGOT_PASSWORD: '/auth/forgot-password',
   RESET_PASSWORD: '/auth/reset-password',
+  SET_PASSWORD: '/auth/set-password',
   UNAUTHORIZED: '/unauthorized',
   NOT_FOUND: '/404',
+
 
   // Admin
   ADMIN_ANALYTICS: '/admin/analytics',

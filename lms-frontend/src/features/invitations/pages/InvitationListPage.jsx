@@ -71,7 +71,7 @@ export const InvitationListPage = () => {
   const [createOpen, setCreateOpen] = useState(false);
   const [createName, setCreateName] = useState('');
   const [createEmail, setCreateEmail] = useState('');
-  const [createRoleId, setCreateRoleId] = useState('');
+  const [createRoleName, setCreateRoleName] = useState(''); // Role NAME (not ID) — backend expects role name string
   const [allRoles, setAllRoles] = useState([]);
   const [rolesDropdownOpen, setRolesDropdownOpen] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -88,25 +88,28 @@ export const InvitationListPage = () => {
     setLoading(true);
     setLoadError('');
     try {
-      const res = await invitationService.list({
-        page,
-        size: pageSize,
-        search: search || undefined,
-        status: statusFilter === 'ALL' ? undefined : statusFilter,
-      });
-      if (Array.isArray(res?.content)) {
-        setInvitations(res.content);
-        setTotalPages(res.totalPages ?? 0);
-        setTotalElements(res.totalElements ?? 0);
-      } else if (Array.isArray(res?.items)) {
-        setInvitations(res.items);
-        setTotalPages(Math.ceil((res.total ?? 0) / pageSize));
-        setTotalElements(res.total ?? 0);
-      } else {
-        setInvitations(Array.isArray(res) ? res : []);
-        setTotalPages(1);
-        setTotalElements(Array.isArray(res) ? res.length : 0);
+      // Backend does not support status/search query params — pass page/size only,
+      // then filter client-side.
+      const res = await invitationService.list({ page, size: pageSize, search });
+      let content = Array.isArray(res?.content) ? res.content
+        : Array.isArray(res?.items) ? res.items
+        : Array.isArray(res) ? res : [];
+
+      // Client-side search filter
+      if (search) {
+        const q = search.toLowerCase();
+        content = content.filter(
+          (i) => i.name?.toLowerCase().includes(q) || i.email?.toLowerCase().includes(q),
+        );
       }
+      // Client-side status filter
+      if (statusFilter !== 'ALL') {
+        content = content.filter((i) => i.status === statusFilter);
+      }
+
+      setInvitations(content);
+      setTotalPages(res?.totalPages ?? (content.length > 0 ? 1 : 0));
+      setTotalElements(res?.totalElements ?? content.length);
     } catch (err) {
       setLoadError(err?.message ?? 'Failed to load invitations.');
     } finally {
@@ -133,7 +136,7 @@ export const InvitationListPage = () => {
     setCreateOpen(true);
     setCreateName('');
     setCreateEmail('');
-    setCreateRoleId('');
+    setCreateRoleName('');
     setCreateError('');
     try {
       const roles = await roleService.list();
@@ -146,22 +149,23 @@ export const InvitationListPage = () => {
     }
   };
 
-  const selectedRole = allRoles.find((r) => r.id === createRoleId);
+  const selectedRole = allRoles.find((r) => r.name === createRoleName);
 
   const handleCreate = async () => {
     setCreateError('');
     if (!createName.trim()) { setCreateError('Please enter the recipient\'s name.'); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(createEmail)) { setCreateError('Please enter a valid email address.'); return; }
-    if (!createRoleId) { setCreateError('Please select a role for the invitation.'); return; }
+    if (!createRoleName) { setCreateError('Please select a role for the invitation.'); return; }
 
     setCreating(true);
     try {
+      // Backend CreateInvitationRequest expects { name, email, role } where role is the ROLE NAME string
       await invitationService.invite({
         name: createName.trim(),
         email: createEmail.trim(),
-        roleId: createRoleId,
+        role: createRoleName,
       });
-      toastSuccess(`Invitation sent to ${createEmail}.`);
+      toastSuccess(`Invitation sent to ${createEmail}. They will receive an email with a temporary password.`);
       setCreateOpen(false);
       loadInvitations();
     } catch (err) {
@@ -302,7 +306,7 @@ export const InvitationListPage = () => {
                       <td className="px-6 py-4"><StatusBadge status={inv.status} /></td>
                       <td className="px-6 py-4">
                         <span className="rounded-md bg-brand-50 border border-brand-200 px-2 py-0.5 text-xs font-medium text-brand-700">
-                          {inv.role?.name ?? inv.roleName ?? '—'}
+                          {inv.roleName ?? '—'}
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -313,7 +317,7 @@ export const InvitationListPage = () => {
                           <span className="text-sm text-slate-500">{formatDate(inv.expiresAt)}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-500">{inv.createdBy ?? '—'}</td>
+                      <td className="px-6 py-4 text-sm text-slate-500">{inv.invitedBy ?? '—'}</td>
                       <td className="px-6 py-4 text-right">
                         <PermissionGuard required={[PERMISSIONS.INVITATION_WRITE]} fallback={<span className="text-xs text-slate-400">—</span>}>
                           <div className="relative inline-block">
@@ -364,7 +368,7 @@ export const InvitationListPage = () => {
                       <div className="mt-2 flex items-center gap-2 flex-wrap">
                         <StatusBadge status={inv.status} />
                         <span className="rounded-md bg-brand-50 border border-brand-200 px-2 py-0.5 text-xs font-medium text-brand-700">
-                          {inv.role?.name ?? inv.roleName ?? '—'}
+                          {inv.roleName ?? '—'}
                         </span>
                       </div>
                       <p className="mt-1.5 text-xs text-slate-400">Expires {formatDate(inv.expiresAt)}</p>
@@ -440,7 +444,7 @@ export const InvitationListPage = () => {
                 <button
                   type="button"
                   onClick={() => setRolesDropdownOpen(!rolesDropdownOpen)}
-                  className={`input-base flex items-center justify-between text-left ${createRoleId ? '' : 'text-slate-400'}`}
+                  className={`input-base flex items-center justify-between text-left ${createRoleName ? '' : 'text-slate-400'}`}
                 >
                   <span className="flex items-center gap-2">
                     <ShieldCheck className="h-4 w-4 text-slate-400" />
@@ -454,12 +458,12 @@ export const InvitationListPage = () => {
                   <div className="absolute z-20 mt-1.5 w-full rounded-xl border border-slate-200 bg-white py-1.5 shadow-soft max-h-60 overflow-y-auto animate-scale-in">
                     {allRoles.map((role) => (
                       <button
-                        key={role.id}
+                        key={role.id ?? role.name}
                         type="button"
-                        onClick={() => { setCreateRoleId(role.id); setRolesDropdownOpen(false); }}
-                        className={`flex w-full items-start gap-3 px-3 py-2.5 text-left transition-colors hover:bg-slate-50 ${createRoleId === role.id ? 'bg-brand-50' : ''}`}
+                        onClick={() => { setCreateRoleName(role.name); setRolesDropdownOpen(false); }}
+                        className={`flex w-full items-start gap-3 px-3 py-2.5 text-left transition-colors hover:bg-slate-50 ${createRoleName === role.name ? 'bg-brand-50' : ''}`}
                       >
-                        <ShieldCheck className={`h-4 w-4 mt-0.5 ${createRoleId === role.id ? 'text-brand-600' : 'text-slate-400'}`} />
+                        <ShieldCheck className={`h-4 w-4 mt-0.5 ${createRoleName === role.name ? 'text-brand-600' : 'text-slate-400'}`} />
                         <div>
                           <p className="text-sm font-semibold text-slate-900">{role.name}</p>
                           <p className="text-xs text-slate-500">{role.description}</p>
