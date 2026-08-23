@@ -18,7 +18,9 @@ const styles = {
 export const AuthLayout = () => {
   const location = useLocation();
 
+  // These pages have their own full-screen layout
   if (location.pathname === ROUTES.LOGIN) return <Outlet />;
+  if (location.pathname.startsWith('/auth/accept-invitation')) return <Outlet />;
 
   return (
     <main style={styles.page}>

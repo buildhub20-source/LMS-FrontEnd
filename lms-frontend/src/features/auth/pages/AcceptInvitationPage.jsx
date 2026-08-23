@@ -105,141 +105,232 @@ export const AcceptInvitationPage = () => {
 
   return (
     <div style={styles.wrap}>
-      <div style={styles.card}>
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ ...styles.iconWrap('#ede9fe'), margin: '0 auto 16px' }}>
-            <ShieldCheck size={28} color="#7c3aed" />
+      {/* Left branding panel */}
+      <div className="accept-inv__left" style={styles.leftPanel}>
+        <div style={styles.leftContent}>
+          <div style={styles.logoArea}>
+            <div style={styles.logoIcon}><ShieldCheck size={28} color="#fff" /></div>
+            <span style={styles.logoText}>LMS Platform</span>
           </div>
-          <h1 style={styles.title}>Create your password</h1>
-          <p style={styles.body}>
-            Welcome! Choose a secure password to activate your LMS account.
+          <h2 style={styles.brandHeading}>You've been invited!</h2>
+          <p style={styles.brandBody}>
+            Set up your password to activate your account and get full access to the Learning Management System.
+          </p>
+          <div style={styles.featureList}>
+            {['Access your courses & learning materials', 'Track progress and certifications', 'Collaborate with your team'].map((f, i) => (
+              <div key={i} style={styles.featureItem}>
+                <CheckCircle2 size={16} style={{ color: '#a5f3c4', flexShrink: 0 }} />
+                <span>{f}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Right form panel */}
+      <div style={styles.rightPanel}>
+        <div style={styles.card}>
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: 32 }}>
+            <div style={{ ...styles.iconWrap('rgba(99,102,241,0.12)'), margin: '0 auto 16px' }}>
+              <ShieldCheck size={28} color="#6366f1" />
+            </div>
+            <h1 style={styles.title}>Create your password</h1>
+            <p style={styles.body}>
+              Welcome! Choose a secure password to activate your LMS account.
+            </p>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div style={styles.errorBox}>
+              <AlertCircle size={16} style={{ flexShrink: 0, marginTop: 2 }} />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} noValidate>
+            {/* New Password */}
+            <div style={styles.fieldGroup}>
+              <label style={styles.label}>New Password</label>
+              <div style={styles.inputWrap}>
+                <Lock size={16} style={styles.inputIcon} />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Choose a strong password"
+                  required
+                  autoFocus
+                  style={styles.input}
+                  onFocus={e => e.target.style.borderColor = '#6366f1'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border-color)'}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={styles.eyeBtn}
+                  aria-label="Toggle password visibility"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+
+              {/* Password strength rules */}
+              {newPassword && (
+                <div style={styles.rules}>
+                  {rules.map((r) => (
+                    <div key={r.label} style={styles.rule(r.passed)}>
+                      <CheckCircle2 size={13} />
+                      <span>{r.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Confirm Password */}
+            <div style={styles.fieldGroup}>
+              <label style={styles.label}>Confirm Password</label>
+              <div style={styles.inputWrap}>
+                <Lock size={16} style={styles.inputIcon} />
+                <input
+                  type={showConfirm ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Re-enter your password"
+                  required
+                  style={{
+                    ...styles.input,
+                    borderColor: confirmPassword
+                      ? passwordsMatch ? '#16a34a' : '#ef4444'
+                      : 'var(--border-color)',
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  style={styles.eyeBtn}
+                  aria-label="Toggle confirm password visibility"
+                >
+                  {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              {confirmPassword && !passwordsMatch && (
+                <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>Passwords do not match</p>
+              )}
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading || !passwordStrong || !passwordsMatch}
+              style={styles.submitBtn(loading || !passwordStrong || !passwordsMatch)}
+            >
+              {loading ? 'Activating…' : (
+                <>
+                  <span>Activate Account</span>
+                  <ArrowRight size={16} />
+                </>
+              )}
+            </button>
+          </form>
+
+          <p style={{ textAlign: 'center', marginTop: 24, fontSize: 13, color: 'var(--text-muted)' }}>
+            Already have an account?{' '}
+            <Link to={ROUTES.LOGIN} style={{ color: '#6366f1', fontWeight: 600, textDecoration: 'none' }}>
+              Sign in
+            </Link>
           </p>
         </div>
-
-        {/* Error */}
-        {error && (
-          <div style={styles.errorBox}>
-            <AlertCircle size={16} style={{ flexShrink: 0, marginTop: 2 }} />
-            <span>{error}</span>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} noValidate>
-          {/* New Password */}
-          <div style={styles.fieldGroup}>
-            <label style={styles.label}>New Password</label>
-            <div style={styles.inputWrap}>
-              <Lock size={16} style={styles.inputIcon} />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Choose a strong password"
-                required
-                autoFocus
-                style={styles.input}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                style={styles.eyeBtn}
-                aria-label="Toggle password visibility"
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-
-            {/* Password strength rules */}
-            {newPassword && (
-              <div style={styles.rules}>
-                {rules.map((r) => (
-                  <div key={r.label} style={styles.rule(r.passed)}>
-                    <CheckCircle2 size={13} />
-                    <span>{r.label}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Confirm Password */}
-          <div style={styles.fieldGroup}>
-            <label style={styles.label}>Confirm Password</label>
-            <div style={styles.inputWrap}>
-              <Lock size={16} style={styles.inputIcon} />
-              <input
-                type={showConfirm ? 'text' : 'password'}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Re-enter your password"
-                required
-                style={{
-                  ...styles.input,
-                  borderColor: confirmPassword
-                    ? passwordsMatch ? '#16a34a' : '#ef4444'
-                    : undefined,
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirm(!showConfirm)}
-                style={styles.eyeBtn}
-                aria-label="Toggle confirm password visibility"
-              >
-                {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-            {confirmPassword && !passwordsMatch && (
-              <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>Passwords do not match</p>
-            )}
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={loading || !passwordStrong || !passwordsMatch}
-            style={styles.submitBtn(loading || !passwordStrong || !passwordsMatch)}
-          >
-            {loading ? 'Activating…' : (
-              <>
-                <span>Activate Account</span>
-                <ArrowRight size={16} />
-              </>
-            )}
-          </button>
-        </form>
-
-        <p style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: '#94a3b8' }}>
-          Already have an account?{' '}
-          <Link to={ROUTES.LOGIN} style={{ color: '#6366f1', fontWeight: 600 }}>
-            Sign in
-          </Link>
-        </p>
       </div>
     </div>
   );
 };
 
-// ─── Inline styles (avoids CSS class conflicts) ──────────────────────────────
+// ─── Inline styles ──────────────────────────────────────────────────────────
 const styles = {
   wrap: {
     minHeight: '100vh',
     display: 'flex',
+  },
+  leftPanel: {
+    flex: 1,
+    background: 'linear-gradient(135deg, #312e81 0%, #4f46e5 50%, #7c3aed 100%)',
+    padding: '48px 56px',
+    display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)',
-    padding: 24,
+  },
+  leftContent: {
+    maxWidth: 400,
+    color: '#fff',
+  },
+  logoArea: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 48,
+  },
+  logoIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    background: 'rgba(255,255,255,0.2)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoText: {
+    fontSize: 20,
+    fontWeight: 700,
+    color: '#fff',
+    letterSpacing: '-0.02em',
+  },
+  brandHeading: {
+    fontSize: 36,
+    fontWeight: 800,
+    color: '#fff',
+    margin: '0 0 16px',
+    lineHeight: 1.2,
+    letterSpacing: '-0.03em',
+  },
+  brandBody: {
+    fontSize: 16,
+    color: 'rgba(255,255,255,0.75)',
+    lineHeight: 1.7,
+    margin: '0 0 32px',
+  },
+  featureList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 14,
+  },
+  featureItem: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 10,
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.85)',
+    lineHeight: 1.5,
+  },
+  rightPanel: {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'var(--bg)',
+    padding: '32px 24px',
+    minHeight: '100vh',
   },
   card: {
-    background: 'rgba(255,255,255,0.04)',
-    backdropFilter: 'blur(24px)',
-    border: '1px solid rgba(255,255,255,0.08)',
+    background: 'var(--surface-dark)',
+    border: '1px solid var(--border-color)',
     borderRadius: 20,
     padding: '40px 36px',
     width: '100%',
-    maxWidth: 480,
-    boxShadow: '0 25px 50px rgba(0,0,0,0.4)',
+    maxWidth: 460,
+    boxShadow: '0 8px 40px rgba(0,0,0,0.12)',
   },
   iconWrap: (bg) => ({
     width: 60,
@@ -253,13 +344,13 @@ const styles = {
   title: {
     fontSize: 24,
     fontWeight: 700,
-    color: '#f8fafc',
+    color: 'var(--text-primary)',
     margin: '0 0 8px',
     letterSpacing: '-0.02em',
   },
   body: {
     fontSize: 14,
-    color: '#94a3b8',
+    color: 'var(--text-muted)',
     lineHeight: 1.6,
     margin: 0,
   },
@@ -268,7 +359,7 @@ const styles = {
     border: '1px solid rgba(239,68,68,0.3)',
     borderRadius: 10,
     padding: '12px 14px',
-    color: '#fca5a5',
+    color: '#f87171',
     fontSize: 13,
     display: 'flex',
     alignItems: 'flex-start',
@@ -282,7 +373,7 @@ const styles = {
     display: 'block',
     fontSize: 13,
     fontWeight: 600,
-    color: '#cbd5e1',
+    color: 'var(--text-secondary)',
     marginBottom: 8,
   },
   inputWrap: {
@@ -293,27 +384,28 @@ const styles = {
   inputIcon: {
     position: 'absolute',
     left: 14,
-    color: '#64748b',
+    color: 'var(--text-muted)',
     pointerEvents: 'none',
   },
   input: {
     width: '100%',
     padding: '12px 44px',
-    background: 'rgba(255,255,255,0.06)',
-    border: '1px solid rgba(255,255,255,0.12)',
+    background: 'var(--input-bg)',
+    border: '1px solid var(--border-color)',
     borderRadius: 12,
-    color: '#f8fafc',
+    color: 'var(--text-primary)',
     fontSize: 14,
     outline: 'none',
     boxSizing: 'border-box',
     transition: 'border-color 0.2s',
+    fontFamily: 'Inter, sans-serif',
   },
   eyeBtn: {
     position: 'absolute',
     right: 14,
     background: 'none',
     border: 'none',
-    color: '#64748b',
+    color: 'var(--text-muted)',
     cursor: 'pointer',
     padding: 0,
     display: 'flex',
@@ -330,18 +422,16 @@ const styles = {
     alignItems: 'center',
     gap: 6,
     fontSize: 12,
-    color: passed ? '#4ade80' : '#64748b',
+    color: passed ? '#4ade80' : 'var(--text-muted)',
     transition: 'color 0.2s',
   }),
   submitBtn: (disabled) => ({
     width: '100%',
     padding: '14px 20px',
-    background: disabled
-      ? 'rgba(99,102,241,0.3)'
-      : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+    background: disabled ? 'var(--surface-medium)' : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
     border: 'none',
     borderRadius: 12,
-    color: disabled ? '#94a3b8' : '#fff',
+    color: disabled ? 'var(--text-muted)' : '#fff',
     fontSize: 15,
     fontWeight: 700,
     cursor: disabled ? 'not-allowed' : 'pointer',
