@@ -1,39 +1,80 @@
-import { Menu } from 'lucide-react';
+import { Menu, Sun, Moon } from 'lucide-react';
+import { useContext } from 'react';
+import { ThemeContext } from '../../../context/ThemeContext';
 
 /**
- * Admin Header / Topbar — redesigned with modern Tailwind styling.
- * API unchanged: title, onToggleSidebar, children
+ * Admin Header / Topbar — dark monochrome design.
  */
-export const Header = ({ title, onToggleSidebar, children }) => (
-  <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-slate-200 bg-white/80 px-4 backdrop-blur-md lg:px-6 shrink-0">
-    {/* Hamburger — mobile only */}
-    <button
-      type="button"
-      onClick={onToggleSidebar}
-      aria-label="Toggle navigation"
-      className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 transition-colors lg:hidden"
-    >
-      <Menu className="h-5 w-5" />
-    </button>
+export const Header = ({ title, onToggleSidebar, children }) => {
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
-    {/* Page title */}
-    {title && (
-      <span className="text-base font-semibold text-slate-700 hidden lg:block">
-        {title}
-      </span>
-    )}
+  return (
+    <header style={{
+      display: 'flex', alignItems: 'center', gap: 12,
+      height: 64, padding: '0 24px', flexShrink: 0,
+      background: 'var(--surface-dark)',
+      borderBottom: '1px solid var(--border-color)',
+      position: 'sticky', top: 0, zIndex: 20,
+    }}>
+      {/* Hamburger — mobile only */}
+      <button
+        type="button"
+        onClick={onToggleSidebar}
+        aria-label="Toggle navigation"
+        style={{
+          background: 'transparent', border: 'none', cursor: 'pointer',
+          color: 'var(--text-secondary)', padding: 6, borderRadius: 6,
+          display: 'flex', alignItems: 'center',
+        }}
+        className="lg:hidden"
+      >
+        <Menu size={20} />
+      </button>
 
-    {/* System online status badge */}
-    <div className="hidden sm:flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 ml-auto">
-      <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-      <span className="text-xs font-medium text-slate-600">System Online</span>
-    </div>
+      {/* Page title */}
+      {title && (
+        <span style={{
+          fontSize: 15, fontWeight: 600,
+          color: 'var(--text-primary)',
+          fontFamily: 'Inter, sans-serif',
+        }}>
+          {title}
+        </span>
+      )}
 
-    {/* Right-side slot (avatar, sign-out, etc.) */}
-    <div className={`flex items-center gap-3 ${title ? '' : 'ml-auto'}`}>
-      {children}
-    </div>
-  </header>
-);
+      {/* Spacer */}
+      <div style={{ flex: 1 }} />
+
+      {/* System online badge */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 6,
+        background: 'var(--surface-medium)', border: '1px solid var(--border-color)',
+        borderRadius: 20, padding: '4px 10px',
+      }}>
+        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e' }} />
+        <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 500 }}>System Online</span>
+      </div>
+
+      {/* Theme toggle */}
+      <button
+        onClick={toggleTheme}
+        aria-label="Toggle theme"
+        style={{
+          background: 'var(--surface-medium)', border: '1px solid var(--border-color)',
+          borderRadius: 8, padding: 7, cursor: 'pointer',
+          color: 'var(--text-primary)', display: 'flex', alignItems: 'center',
+          transition: 'background 0.15s ease',
+        }}
+      >
+        {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+      </button>
+
+      {/* Right slot (avatar, etc.) */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        {children}
+      </div>
+    </header>
+  );
+};
 
 export default Header;

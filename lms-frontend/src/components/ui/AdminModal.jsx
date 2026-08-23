@@ -19,33 +19,37 @@ export const AdminModal = ({ open, onClose, title, description, children, footer
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+        className="absolute inset-0 backdrop-blur-sm"
+        style={{ background: 'rgba(0,0,0,0.6)' }}
         onClick={onClose}
       />
       {/* Panel */}
       <div
-        className={`relative w-full ${sizeMap[size] ?? sizeMap.md} max-h-[90vh] overflow-hidden rounded-2xl bg-white shadow-2xl animate-scale-in flex flex-col`}
+        className={`relative w-full ${sizeMap[size] ?? sizeMap.md} max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl animate-scale-in flex flex-col`}
+        style={{ background: 'var(--surface-dark)', boxShadow: 'var(--shadow-dark)' }}
       >
         {/* Header */}
-        <div className="flex items-start justify-between gap-4 px-6 py-5 border-b border-slate-100">
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, padding: '20px 24px', borderBottom: '1px solid var(--border-color)' }}>
           <div>
-            <h2 className="text-lg font-bold text-slate-900">{title}</h2>
+            <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>{title}</h2>
             {description && (
-              <p className="mt-1 text-sm text-slate-500">{description}</p>
+              <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)' }}>{description}</p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="shrink-0 rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+            style={{ flexShrink: 0, borderRadius: 8, padding: 6, background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+            onMouseEnter={e => e.currentTarget.style.background = 'var(--hover-bg)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
           >
-            <X className="h-5 w-5" />
+            <X size={20} />
           </button>
         </div>
         {/* Body */}
         <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100 bg-slate-50/50">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 12, padding: '16px 24px', borderTop: '1px solid var(--border-color)', background: 'var(--surface-medium)' }}>
             {footer}
           </div>
         )}
@@ -84,7 +88,7 @@ export const AdminConfirmModal = ({
       </>
     }
   >
-    <p className="text-sm text-slate-600 leading-relaxed">{message}</p>
+    <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{message}</p>
   </AdminModal>
 );
 

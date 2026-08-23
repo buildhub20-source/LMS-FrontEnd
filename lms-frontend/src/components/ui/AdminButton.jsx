@@ -1,29 +1,53 @@
 import { Loader2 } from 'lucide-react';
 
 /**
- * Admin Dashboard Button — Tailwind-based.
+ * Admin Dashboard Button — dark monochrome design.
  * @param {'primary'|'secondary'|'outline'|'ghost'|'danger'|'success'} variant
  * @param {'sm'|'md'|'lg'} size
  */
 const variantStyles = {
-  primary:
-    'bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 shadow-sm',
-  secondary:
-    'bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-950',
-  outline:
-    'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 active:bg-slate-100',
-  ghost:
-    'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
-  danger:
-    'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-sm',
-  success:
-    'bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 shadow-sm',
+  // Primary: white bg, black text — high contrast CTA
+  primary: {
+    background: '#ffffff',
+    color: '#000000',
+    border: '1px solid #ffffff',
+  },
+  // Secondary: dark surface, white text, subtle border
+  secondary: {
+    background: 'var(--surface-medium)',
+    color: 'var(--text-primary)',
+    border: '1px solid var(--border-color)',
+  },
+  // Outline: transparent, white text, subtle border
+  outline: {
+    background: 'transparent',
+    color: 'var(--text-secondary)',
+    border: '1px solid var(--border-color)',
+  },
+  // Ghost: transparent, no border
+  ghost: {
+    background: 'transparent',
+    color: 'var(--text-secondary)',
+    border: '1px solid transparent',
+  },
+  // Danger: muted red
+  danger: {
+    background: 'rgba(239,68,68,0.12)',
+    color: '#f87171',
+    border: '1px solid rgba(239,68,68,0.3)',
+  },
+  // Success: muted green
+  success: {
+    background: 'rgba(34,197,94,0.12)',
+    color: '#4ade80',
+    border: '1px solid rgba(34,197,94,0.3)',
+  },
 };
 
 const sizeStyles = {
-  sm: 'h-8 px-3 text-xs gap-1.5',
-  md: 'h-10 px-4 text-sm gap-2',
-  lg: 'h-12 px-6 text-base gap-2.5',
+  sm: { height: 32, padding: '0 12px', fontSize: 12, gap: 6 },
+  md: { height: 38, padding: '0 16px', fontSize: 14, gap: 8 },
+  lg: { height: 44, padding: '0 22px', fontSize: 15, gap: 10 },
 };
 
 export const AdminButton = ({
@@ -32,22 +56,42 @@ export const AdminButton = ({
   loading = false,
   icon,
   children,
-  className = '',
+  style = {},
   disabled,
   type = 'button',
   ...props
 }) => {
-  const base =
-    'inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-brand-500/15 disabled:opacity-50 disabled:cursor-not-allowed';
+  const vs = variantStyles[variant] ?? variantStyles.primary;
+  const ss = sizeStyles[size] ?? sizeStyles.md;
 
   return (
     <button
       type={type}
-      className={`${base} ${variantStyles[variant] ?? variantStyles.primary} ${sizeStyles[size] ?? sizeStyles.md} ${className}`}
       disabled={disabled || loading}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 8,
+        fontWeight: 600,
+        fontFamily: 'Inter, sans-serif',
+        cursor: disabled || loading ? 'not-allowed' : 'pointer',
+        opacity: disabled || loading ? 0.5 : 1,
+        transition: 'opacity 0.15s ease, background 0.15s ease',
+        whiteSpace: 'nowrap',
+        ...vs,
+        ...ss,
+        ...style,
+      }}
+      onMouseEnter={(e) => {
+        if (!disabled && !loading) e.currentTarget.style.opacity = '0.85';
+      }}
+      onMouseLeave={(e) => {
+        if (!disabled && !loading) e.currentTarget.style.opacity = '1';
+      }}
       {...props}
     >
-      {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : icon}
+      {loading ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : icon}
       {children}
     </button>
   );

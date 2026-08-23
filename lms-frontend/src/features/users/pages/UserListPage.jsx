@@ -75,9 +75,14 @@ function MenuItem({ icon, label, onClick, danger = false }) {
   return (
     <button
       onClick={onClick}
-      className={`flex w-full items-center gap-2.5 px-3 py-2 text-sm font-medium transition-colors ${
-        danger ? 'text-red-600 hover:bg-red-50' : 'text-slate-700 hover:bg-slate-50'
-      }`}
+      style={{
+        display: 'flex', width: '100%', alignItems: 'center', gap: 10,
+        padding: '8px 12px', fontSize: 13, textAlign: 'left',
+        background: 'transparent', border: 'none', cursor: 'pointer',
+        color: danger ? '#f87171' : 'var(--text-secondary)',
+      }}
+      onMouseEnter={e => e.currentTarget.style.background = danger ? 'rgba(239,68,68,0.08)' : 'var(--hover-bg)'}
+      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
     >
       {icon}
       {label}
@@ -295,8 +300,8 @@ export const UserListPage = () => {
       {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Users</h1>
-          <p className="mt-1 text-slate-500">Manage user accounts, roles, and access status.</p>
+          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>Users</h1>
+          <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)' }}>Manage user accounts, roles, and access status.</p>
         </div>
         <PermissionGuard required={[PERMISSIONS.USER_WRITE]} fallback={null}>
           <AdminButton
@@ -320,16 +325,18 @@ export const UserListPage = () => {
               icon={<Search className="h-4 w-4" />}
             />
           </div>
-          <div className="flex gap-2 flex-wrap">
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {STATUS_FILTERS.map((s) => (
               <button
                 key={s}
                 onClick={() => handleStatusFilter(s)}
-                className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
-                  statusFilter === s
-                    ? 'bg-brand-600 text-white shadow-sm'
-                    : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
-                }`}
+                style={{
+                  borderRadius: 8, padding: '6px 14px', fontSize: 13, fontWeight: 600,
+                  cursor: 'pointer', transition: 'all 0.15s ease', fontFamily: 'Inter, sans-serif',
+                  background: statusFilter === s ? '#ffffff' : 'var(--surface-medium)',
+                  color: statusFilter === s ? '#000000' : 'var(--text-secondary)',
+                  border: statusFilter === s ? '1px solid #ffffff' : '1px solid var(--border-color)',
+                }}
               >
                 {s === 'ALL' ? 'All' : s.charAt(0) + s.slice(1).toLowerCase()}
               </button>
@@ -365,78 +372,78 @@ export const UserListPage = () => {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-slate-100 bg-slate-50/50">
-                    <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">User</th>
-                    <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
-                    <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Roles</th>
-                    <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Joined</th>
-                    <th className="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
+                  <tr style={{ borderBottom: '1px solid var(--border-color)', background: 'var(--surface-medium)' }}>
+                    {['User','Status','Roles','Joined','Actions'].map((h, i) => (
+                      <th key={h} style={{ padding: '12px 24px', textAlign: i === 4 ? 'right' : 'left', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px', color: 'var(--text-muted)' }}>{h}</th>
+                    ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody style={{ display: 'table-row-group' }}>
                   {users.map((u) => (
-                    <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold shrink-0 ${avatarColor(u.fullName ?? '')}`}>
+                    <tr key={u.id} style={{ borderBottom: '1px solid var(--border-subtle)', transition: 'background 0.1s ease' }}
+                      onMouseEnter={e => e.currentTarget.style.background='var(--hover-bg)'}
+                      onMouseLeave={e => e.currentTarget.style.background='transparent'}
+                    >
+                      <td style={{ padding: '14px 24px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--surface-medium)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)', flexShrink: 0 }}>
                             {getInitials(u.fullName ?? u.email ?? '?')}
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-slate-900">{u.fullName}</p>
-                            <p className="text-xs text-slate-500">{u.email}</p>
+                            <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{u.fullName}</p>
+                            <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>{u.email}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td style={{ padding: '14px 24px' }}>
                         <StatusBadge user={u} />
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex flex-wrap gap-1">
+                      <td style={{ padding: '14px 24px' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                           {(u.roles ?? []).length > 0 ? (
-                            // roles is Set<String> from backend
                             (Array.isArray(u.roles) ? u.roles : [...(u.roles ?? [])]).map((roleName) => (
-                              <span key={roleName} className="rounded-md bg-brand-50 border border-brand-200 px-2 py-0.5 text-xs font-medium text-brand-700">
+                              <span key={roleName} style={{ borderRadius: 6, background: 'var(--surface-medium)', border: '1px solid var(--border-color)', padding: '2px 8px', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>
                                 {roleName}
                               </span>
                             ))
                           ) : (
-                            <span className="text-xs text-slate-400">No roles</span>
+                            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>No roles</span>
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-500">{formatDate(u.createdAt)}</td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="relative inline-block">
+                      <td style={{ padding: '14px 24px', fontSize: 13, color: 'var(--text-muted)' }}>{formatDate(u.createdAt)}</td>
+                      <td style={{ padding: '14px 24px', textAlign: 'right' }}>
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               setOpenMenuId(openMenuId === u.id ? null : u.id);
                             }}
-                            className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+                            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 6, borderRadius: 6, display: 'flex', alignItems: 'center' }}
                           >
-                            <MoreVertical className="h-4 w-4" />
+                            <MoreVertical size={16} />
                           </button>
                           {openMenuId === u.id && (
-                            <div className="absolute right-0 top-10 z-20 w-52 rounded-xl border border-slate-200 bg-white py-1.5 shadow-soft animate-scale-in">
+                            <div style={{ position: 'absolute', right: 0, top: 36, zIndex: 20, width: 160, borderRadius: 8, border: '1px solid var(--border-color)', background: 'var(--surface-dark)', padding: '4px 0', boxShadow: 'var(--shadow-dark)' }}>
                               <PermissionGuard required={[PERMISSIONS.USER_WRITE]} fallback={null}>
                                 <>
                                   {u.locked ? (
-                                    <MenuItem icon={<Unlock className="h-4 w-4" />} label="Unlock" onClick={() => { setConfirmAction({ user: u, type: 'unlock', loading: false }); setOpenMenuId(null); }} />
+                                    <MenuItem icon={<Unlock size={14} />} label="Unlock" onClick={() => { setConfirmAction({ user: u, type: 'unlock', loading: false }); setOpenMenuId(null); }} />
                                   ) : (
-                                    <MenuItem icon={<Lock className="h-4 w-4" />} label="Lock" danger onClick={() => { setConfirmAction({ user: u, type: 'lock', loading: false }); setOpenMenuId(null); }} />
+                                    <MenuItem icon={<Lock size={14} />} label="Lock" danger onClick={() => { setConfirmAction({ user: u, type: 'lock', loading: false }); setOpenMenuId(null); }} />
                                   )}
                                   {u.active ? (
-                                    <MenuItem icon={<UserX className="h-4 w-4" />} label="Deactivate" danger onClick={() => { setConfirmAction({ user: u, type: 'deactivate', loading: false }); setOpenMenuId(null); }} />
+                                    <MenuItem icon={<UserX size={14} />} label="Deactivate" danger onClick={() => { setConfirmAction({ user: u, type: 'deactivate', loading: false }); setOpenMenuId(null); }} />
                                   ) : (
-                                    <MenuItem icon={<UserCheck className="h-4 w-4" />} label="Activate" onClick={() => { setConfirmAction({ user: u, type: 'activate', loading: false }); setOpenMenuId(null); }} />
+                                    <MenuItem icon={<UserCheck size={14} />} label="Activate" onClick={() => { setConfirmAction({ user: u, type: 'activate', loading: false }); setOpenMenuId(null); }} />
                                   )}
-                                  <div className="my-1 border-t border-slate-100" />
-                                  <MenuItem icon={<ShieldCheck className="h-4 w-4" />} label="Edit Roles" onClick={() => { openEditRoles(u); setOpenMenuId(null); }} />
-                                  <MenuItem icon={<Pencil className="h-4 w-4" />} label="Edit Profile" onClick={() => { openEditUser(u); setOpenMenuId(null); }} />
-                                  <div className="my-1 border-t border-slate-100" />
+                                  <div style={{ margin: '4px 0', borderTop: '1px solid var(--border-color)' }} />
+                                  <MenuItem icon={<ShieldCheck size={14} />} label="Edit Roles" onClick={() => { openEditRoles(u); setOpenMenuId(null); }} />
+                                  <MenuItem icon={<Pencil size={14} />} label="Edit Profile" onClick={() => { openEditUser(u); setOpenMenuId(null); }} />
+                                  <div style={{ margin: '4px 0', borderTop: '1px solid var(--border-color)' }} />
                                 </>
                               </PermissionGuard>
-                              <MenuItem icon={<History className="h-4 w-4" />} label="Status History" onClick={() => { openStatusHistory(u); setOpenMenuId(null); }} />
+                              <MenuItem icon={<History size={14} />} label="Status History" onClick={() => { openStatusHistory(u); setOpenMenuId(null); }} />
                             </div>
                           )}
                         </div>
@@ -450,18 +457,18 @@ export const UserListPage = () => {
             {/* Mobile cards */}
             <div className="md:hidden divide-y divide-slate-100">
               {users.map((u) => (
-                <div key={u.id} className="p-4">
-                  <div className="flex items-start gap-3">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold shrink-0 ${avatarColor(u.fullName ?? '')}`}>
+                <div key={u.id} style={{ padding: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--surface-medium)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, color: 'var(--text-secondary)', flexShrink: 0 }}>
                       {getInitials(u.fullName ?? u.email ?? '?')}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-slate-900">{u.fullName}</p>
-                      <p className="text-xs text-slate-500 truncate">{u.email}</p>
-                      <div className="mt-2 flex items-center gap-2 flex-wrap">
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{u.fullName}</p>
+                      <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.email}</p>
+                      <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                         <StatusBadge user={u} />
                         {(Array.isArray(u.roles) ? u.roles : [...(u.roles ?? [])]).map((roleName) => (
-                          <span key={roleName} className="rounded-md bg-brand-50 border border-brand-200 px-2 py-0.5 text-xs font-medium text-brand-700">
+                          <span key={roleName} style={{ borderRadius: 6, background: 'var(--surface-medium)', border: '1px solid var(--border-color)', padding: '2px 8px', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>
                             {roleName}
                           </span>
                         ))}
@@ -490,7 +497,7 @@ export const UserListPage = () => {
             </div>
 
             {/* Pagination */}
-            <div className="border-t border-slate-100 px-6 py-4">
+            <div style={{ borderTop: '1px solid var(--border-color)', padding: '16px 24px' }}>
               <AdminPagination
                 page={page}
                 totalPages={totalPages}
@@ -541,25 +548,28 @@ export const UserListPage = () => {
               {statusHistory.history.map((item, i) => (
                 <div key={item.id ?? i} className="relative flex gap-4 pb-6 last:pb-0">
                   {i < statusHistory.history.length - 1 && (
-                    <div className="absolute left-4 top-9 bottom-0 w-px bg-slate-200" />
+                    <div style={{ position: 'absolute', left: 16, top: 36, bottom: 0, width: 1, background: 'var(--border-color)' }} />
                   )}
-                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-                    item.action === 'LOCKED'      ? 'bg-red-100 text-red-600' :
-                    item.action === 'DEACTIVATED' ? 'bg-slate-100 text-slate-600' :
-                    item.action === 'UNLOCKED'    ? 'bg-emerald-100 text-emerald-600' :
-                    'bg-brand-100 text-brand-600'
-                  }`}>
-                    {item.action === 'LOCKED'    ? <Lock className="h-4 w-4" /> :
-                     item.action === 'UNLOCKED'  ? <Unlock className="h-4 w-4" /> :
-                     item.action === 'ACTIVATED' ? <UserCheck className="h-4 w-4" /> :
-                     <UserX className="h-4 w-4" />}
+                  <div style={{
+                    display: 'flex', width: 32, height: 32, flexShrink: 0, alignItems: 'center', justifyContent: 'center', borderRadius: '50%',
+                    background: item.action === 'LOCKED' ? 'rgba(239,68,68,0.1)' :
+                                item.action === 'DEACTIVATED' ? 'var(--surface-medium)' :
+                                item.action === 'UNLOCKED' ? 'rgba(16,185,129,0.1)' : 'rgba(59,130,246,0.1)',
+                    color: item.action === 'LOCKED' ? '#f87171' :
+                           item.action === 'DEACTIVATED' ? 'var(--text-secondary)' :
+                           item.action === 'UNLOCKED' ? '#34d399' : '#60a5fa',
+                  }}>
+                    {item.action === 'LOCKED'    ? <Lock size={16} /> :
+                     item.action === 'UNLOCKED'  ? <Unlock size={16} /> :
+                     item.action === 'ACTIVATED' ? <UserCheck size={16} /> :
+                     <UserX size={16} />}
                   </div>
-                  <div className="flex-1 pt-0.5">
-                    <p className="text-sm font-semibold text-slate-900">
+                  <div style={{ flex: 1, paddingTop: 2 }}>
+                    <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
                       {(item.action ?? '').replace(/_/g, ' ')}
                     </p>
-                    <p className="text-sm text-slate-500">{item.description}</p>
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)' }}>{item.description}</p>
+                    <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--text-secondary)' }}>
                       {item.performedBy} · {formatDateTime(item.performedAt)}
                     </p>
                   </div>
@@ -620,24 +630,31 @@ export const UserListPage = () => {
                   <button
                     key={role.id}
                     onClick={() => toggleRole(role.id)}
-                    className={`flex w-full items-start gap-3 rounded-xl border p-4 text-left transition-all duration-200 ${
-                      selected
-                        ? 'border-brand-500 bg-brand-50 ring-2 ring-brand-500/15'
-                        : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
-                    }`}
+                    style={{
+                      display: 'flex', width: '100%', alignItems: 'flex-start', gap: 12,
+                      borderRadius: 12, padding: 16, textAlign: 'left', cursor: 'pointer',
+                      border: selected ? '1px solid var(--text-primary)' : '1px solid var(--border-color)',
+                      background: selected ? 'var(--hover-bg)' : 'var(--surface-dark)',
+                      transition: 'all 0.15s ease',
+                    }}
+                    onMouseEnter={e => { if (!selected) e.currentTarget.style.background = 'var(--hover-bg)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = selected ? 'var(--hover-bg)' : 'var(--surface-dark)'; }}
                   >
-                    <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors mt-0.5 ${
-                      selected ? 'border-brand-600 bg-brand-600' : 'border-slate-300'
-                    }`}>
+                    <div style={{
+                      display: 'flex', width: 20, height: 20, flexShrink: 0, alignItems: 'center', justifyContent: 'center',
+                      borderRadius: 6, marginTop: 2,
+                      border: selected ? '2px solid var(--text-primary)' : '2px solid var(--border-color)',
+                      background: selected ? 'var(--text-primary)' : 'transparent',
+                    }}>
                       {selected && (
-                        <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <svg style={{ width: 12, height: 12, color: 'var(--surface-dark)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                       )}
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-slate-900">{role.name}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{role.description}</p>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{role.name}</p>
+                      <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>{role.description}</p>
                     </div>
                   </button>
                 );

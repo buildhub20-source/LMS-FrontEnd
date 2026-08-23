@@ -1,62 +1,235 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
-  Search,
-  ShieldCheck,
-  Plus,
-  Pencil,
-  Trash2,
-  Calendar,
-  Users,
-  KeyRound,
+  Search, ShieldCheck, Plus, Pencil, Trash2,
+  Copy, Eye, ChevronDown, MoreVertical, KeyRound,
 } from 'lucide-react';
 import AdminButton from '../../../components/ui/AdminButton';
-import AdminBadge from '../../../components/ui/AdminBadge';
 import AdminInput from '../../../components/ui/AdminInput';
 import { AdminModal, AdminConfirmModal } from '../../../components/ui/AdminModal';
-import {
-  AdminEmptyState,
-  AdminErrorState,
-} from '../../../components/ui/AdminPagination';
 import { AdminCardSkeleton } from '../../../components/ui/AdminSkeleton';
+import { AdminErrorState } from '../../../components/ui/AdminPagination';
 import PermissionGuard from '../../../guards/PermissionGuard';
 import { PERMISSIONS } from '../../../constants/permissions';
 import roleService from '../services/roleService';
+import userService from '../../users/services/userService';
 import { useToast } from '../../../components/feedback/Toast';
 
-function formatDate(str) {
-  if (!str) return '—';
-  return new Date(str).toLocaleDateString('en-US', {
-    year: 'numeric', month: 'short', day: 'numeric',
-  });
-}
+const M = {
+  primary: 'var(--color-primary-500, #7367f0)',
+  primarySoft: 'var(--surface-medium)',
+  card: 'var(--surface-dark)',
+  textMain: 'var(--text-primary)',
+  textMuted: 'var(--text-muted)',
+  border: 'var(--border-color)',
+  shadow: 'var(--shadow-dark)',
+  cardShadow: '0 2px 10px 0 rgba(0,0,0,0.1)',
+  radius: 8,
+};
 
-const ROLE_COLORS = [
-  { bg: 'bg-brand-50',   text: 'text-brand-600',   ring: 'ring-brand-100' },
-  { bg: 'bg-emerald-50', text: 'text-emerald-600', ring: 'ring-emerald-100' },
-  { bg: 'bg-amber-50',   text: 'text-amber-600',   ring: 'ring-amber-100' },
-  { bg: 'bg-sky-50',     text: 'text-sky-600',     ring: 'ring-sky-100' },
-  { bg: 'bg-rose-50',    text: 'text-rose-600',    ring: 'ring-rose-100' },
-  { bg: 'bg-violet-50',  text: 'text-violet-600',  ring: 'ring-violet-100' },
+const AVATAR_PALETTE = [
+  { bg: '#7367f0', text: '#fff' },
+  { bg: '#ea5455', text: '#fff' },
+  { bg: '#28c76f', text: '#fff' },
+  { bg: '#ff9f43', text: '#fff' },
+  { bg: '#00cfe8', text: '#fff' },
+  { bg: '#a8aaae', text: '#fff' },
 ];
 
-function roleColor(name = '') {
-  const hash = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  return ROLE_COLORS[hash % ROLE_COLORS.length];
+const ROLE_BADGE_COLORS = {
+  admin: { bg: 'rgba(115, 103, 240, 0.15)', color: '#7367f0' },
+  superadmin: { bg: 'rgba(115, 103, 240, 0.15)', color: '#7367f0' },
+  manager: { bg: 'rgba(255, 159, 67, 0.15)', color: '#ff9f43' },
+  editor: { bg: 'rgba(40, 199, 111, 0.15)', color: '#28c76f' },
+  support: { bg: 'rgba(0, 207, 232, 0.15)', color: '#00cfe8' },
+  user: { bg: 'rgba(40, 199, 111, 0.15)', color: '#28c76f' },
+  instructor: { bg: 'rgba(33, 150, 243, 0.15)', color: '#2196f3' },
+  student: { bg: 'rgba(156, 39, 176, 0.15)', color: '#d05ce3' },
+};
+
+function avatarColor(str = '') {
+  const h = str.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  return AVATAR_PALETTE[h % AVATAR_PALETTE.length];
 }
 
+function initials(name = '') {
+  return name.split(' ').slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('') || '?';
+}
+
+function roleBadge(name = '') {
+  return ROLE_BADGE_COLORS[name.toLowerCase().replace(/[^a-z]/g, '')] ?? { bg: M.primarySoft, color: M.primary };
+}
+
+/* ─── 3D avatar image pool (cycles deterministically per user) ─────── */
+const AVATAR_IMAGES = [
+  '/avatars/avatar-1.jpg',
+  '/avatars/avatar-2.jpg',
+  '/avatars/avatar-3.jpg',
+  '/avatars/avatar-4.jpg',
+  '/avatars/avatar-5.jpg',
+  '/avatars/avatar-6.jpg',
+];
+
+function getAvatarImg(str = '') {
+  const h = str.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  return AVATAR_IMAGES[h % AVATAR_IMAGES.length];
+}
+
+/* ─── Avatar stack component ───────────────────────────────────────── */
+function AvatarStack({ users = [], max = 3 }) {
+  const visible = users.slice(0, max);
+  const extra = users.length - max;
+  return (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      {visible.map((u, i) => {
+        const src = u.profileImageUrl || getAvatarImg(u.fullName ?? u.name ?? String(i));
+        return (
+          <div
+            key={u.id ?? i}
+            title={u.fullName ?? u.name}
+            style={{
+              width: 34, height: 34, borderRadius: '50%',
+              border: '2px solid var(--surface-dark)',
+              marginLeft: i === 0 ? 0 : -10,
+              zIndex: max - i,
+              position: 'relative',
+              flexShrink: 0,
+              overflow: 'hidden',
+              background: 'var(--surface-medium)',
+            }}
+          >
+            <img
+              src={src}
+              alt={u.fullName ?? u.name ?? ''}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              onError={e => {
+                // Fallback: hide img and show initials div
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.nextSibling.style.display = 'flex';
+              }}
+            />
+            <div style={{
+              display: 'none', position: 'absolute', inset: 0,
+              alignItems: 'center', justifyContent: 'center',
+              background: avatarColor(u.fullName ?? u.name ?? '').bg,
+              color: avatarColor(u.fullName ?? u.name ?? '').text,
+              fontSize: 11, fontWeight: 700,
+            }}>
+              {initials(u.fullName ?? u.name ?? '')}
+            </div>
+          </div>
+        );
+      })}
+      {extra > 0 && (
+        <div style={{
+          width: 34, height: 34, borderRadius: '50%',
+          background: M.primarySoft, color: M.primary,
+          border: '2px solid var(--surface-dark)', marginLeft: -10,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 10, fontWeight: 700, flexShrink: 0,
+        }}>
+          +{extra}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+/* ─── Status badge ─────────────────────────────────────────────────── */
+function StatusBadge({ user }) {
+  const s = user.locked
+    ? { bg: 'rgba(234, 84, 85, 0.15)', color: '#ea5455', label: 'Locked' }
+    : !user.active
+      ? { bg: 'var(--surface-medium)', color: 'var(--text-muted)', label: 'Inactive' }
+      : !user.activated
+        ? { bg: 'rgba(255, 159, 67, 0.15)', color: '#ff9f43', label: 'Pending' }
+        : { bg: 'rgba(40, 199, 111, 0.15)', color: '#28c76f', label: 'Active' };
+  return (
+    <span style={{
+      background: s.bg, color: s.color,
+      padding: '3px 10px', borderRadius: 999, fontSize: 12, fontWeight: 600,
+    }}>
+      {s.label}
+    </span>
+  );
+}
+
+/* ─── Role card ────────────────────────────────────────────────────── */
+function RoleCard({ role, usersWithRole, onEdit, onDelete }) {
+  return (
+    <div
+      style={{
+        background: M.card, borderRadius: M.radius, boxShadow: M.cardShadow,
+        padding: '20px 20px 16px', display: 'flex', flexDirection: 'column',
+        gap: 14, transition: 'transform 0.2s, box-shadow 0.2s',
+      }}
+      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = M.shadow; }}
+      onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = M.cardShadow; }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontSize: 13, color: M.textMuted }}>
+          Total {usersWithRole.length} user{usersWithRole.length !== 1 ? 's' : ''}
+        </span>
+        <AvatarStack users={usersWithRole} max={3} />
+      </div>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+        <div>
+          <p style={{ fontSize: 16, fontWeight: 700, color: M.textMain, margin: 0 }}>{role.name}</p>
+          <PermissionGuard required={[PERMISSIONS.ROLE_WRITE]} fallback={null}>
+            <button
+              onClick={() => onEdit(role)}
+              style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', color: M.primary, fontSize: 13, fontWeight: 500, padding: '2px 0', marginTop: 2 }}
+            >
+              <Pencil size={12} /> Edit Role
+            </button>
+          </PermissionGuard>
+        </div>
+        <div style={{ display: 'flex', gap: 4 }}>
+          <button
+            onClick={() => navigator.clipboard?.writeText(role.name ?? '')}
+            title="Copy role name"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6, borderRadius: 6, color: M.textMuted }}
+            onMouseEnter={e => e.currentTarget.style.background = 'var(--hover-bg)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'none'}
+          >
+            <Copy size={15} />
+          </button>
+          <PermissionGuard required={[PERMISSIONS.ROLE_WRITE]} fallback={null}>
+            <button
+              onClick={onDelete}
+              title="Delete role"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6, borderRadius: 6, color: M.textMuted }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(234, 84, 85, 0.1)'; e.currentTarget.style.color = '#ea5455'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = M.textMuted; }}
+            >
+              <Trash2 size={15} />
+            </button>
+          </PermissionGuard>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Main page ────────────────────────────────────────────────────── */
 export const RoleListPage = () => {
   const { success: toastSuccess, error: toastError } = useToast();
 
-  // List state
   const [roles, setRoles] = useState([]);
   const [allPermissions, setAllPermissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
-  const [search, setSearch] = useState('');
-  const [searchInput, setSearchInput] = useState('');
 
-  // Create / Edit modal
-  const [editRole, setEditRole] = useState(null); // null = create
+  const [users, setUsers] = useState([]);
+  const [usersLoading, setUsersLoading] = useState(true);
+  const [userSearchInput, setUserSearchInput] = useState('');
+  const [userSearch, setUserSearch] = useState('');
+  const [roleFilter, setRoleFilter] = useState('');
+  const [userPage, setUserPage] = useState(0);
+  const [userTotal, setUserTotal] = useState(0);
+  const PAGE_SIZE = 10;
+
+  const [editRole, setEditRole] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [roleName, setRoleName] = useState('');
   const [roleDescription, setRoleDescription] = useState('');
@@ -64,351 +237,361 @@ export const RoleListPage = () => {
   const [permSearch, setPermSearch] = useState('');
   const [saving, setSaving] = useState(false);
   const [modalError, setModalError] = useState('');
-
-  // Delete
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  /* ─── data fetching ─── */
+  const toArr = r => Array.isArray(r?.items) ? r.items : Array.isArray(r?.content) ? r.content : Array.isArray(r) ? r : [];
 
   const loadRoles = useCallback(async () => {
-    setLoading(true);
-    setLoadError('');
+    setLoading(true); setLoadError('');
     try {
-      const [rolesRes, permsRes] = await Promise.all([
-        roleService.list({ search: search || undefined }),
-        roleService.listPermissions(),
-      ]);
-      const roleList = Array.isArray(rolesRes?.items) ? rolesRes.items
-        : Array.isArray(rolesRes?.content) ? rolesRes.content
-        : Array.isArray(rolesRes) ? rolesRes : [];
-      const permList = Array.isArray(permsRes?.items) ? permsRes.items
-        : Array.isArray(permsRes?.content) ? permsRes.content
-        : Array.isArray(permsRes) ? permsRes : [];
-      setRoles(roleList);
-      setAllPermissions(permList);
-    } catch (err) {
-      setLoadError(err?.message ?? 'Failed to load roles.');
-    } finally {
-      setLoading(false);
-    }
-  }, [search]);
+      const [rolesRes, permsRes] = await Promise.all([roleService.list(), roleService.listPermissions()]);
+      setRoles(toArr(rolesRes));
+      setAllPermissions(toArr(permsRes));
+    } catch (err) { setLoadError(err?.message ?? 'Failed to load roles.'); }
+    finally { setLoading(false); }
+  }, []);
+
+  const loadUsers = useCallback(async () => {
+    setUsersLoading(true);
+    try {
+      const res = await userService.list({ search: userSearch || undefined, page: userPage, size: PAGE_SIZE });
+      let content = res?.content ?? [];
+      if (roleFilter) {
+        content = content.filter(u =>
+          (u.roles ?? []).some(r => (typeof r === 'string' ? r : r.name ?? '').toLowerCase() === roleFilter.toLowerCase())
+        );
+      }
+      setUsers(content);
+      setUserTotal(res?.totalElements ?? content.length);
+    } catch { setUsers([]); }
+    finally { setUsersLoading(false); }
+  }, [userSearch, userPage, roleFilter]);
 
   useEffect(() => { loadRoles(); }, [loadRoles]);
+  useEffect(() => { loadUsers(); }, [loadUsers]);
 
-  const handleSearch = () => setSearch(searchInput);
-  const handleKeyDown = (e) => { if (e.key === 'Enter') handleSearch(); };
-
-  /* ─── create / edit ─── */
-
-  const openCreate = () => {
-    setEditRole(null);
-    setRoleName('');
-    setRoleDescription('');
-    setSelectedPermissions([]);
-    setPermSearch('');
-    setModalError('');
-    setModalOpen(true);
-  };
-
-  const openEdit = (role) => {
-    setEditRole(role);
-    setRoleName(role.name ?? '');
-    setRoleDescription(role.description ?? '');
-    setSelectedPermissions((role.permissions ?? []).map((p) => p.id));
-    setPermSearch('');
-    setModalError('');
-    setModalOpen(true);
-  };
-
-  const togglePermission = (permId) => {
-    setSelectedPermissions((prev) =>
-      prev.includes(permId) ? prev.filter((id) => id !== permId) : [...prev, permId]
-    );
-  };
+  const openCreate = () => { setEditRole(null); setRoleName(''); setRoleDescription(''); setSelectedPermissions([]); setPermSearch(''); setModalError(''); setModalOpen(true); };
+  const openEdit = (role) => { setEditRole(role); setRoleName(role.name ?? ''); setRoleDescription(role.description ?? ''); setSelectedPermissions((role.permissions ?? []).map(p => p.id)); setPermSearch(''); setModalError(''); setModalOpen(true); };
+  const togglePerm = (id) => setSelectedPermissions(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
 
   const handleSave = async () => {
     setModalError('');
     if (!roleName.trim()) { setModalError('Role name is required.'); return; }
-
     setSaving(true);
     try {
-      const payload = {
-        name: roleName.trim(),
-        description: roleDescription.trim(),
-        permissionIds: selectedPermissions,
-      };
-      if (editRole) {
-        await roleService.update(editRole.id, payload);
-        toastSuccess(`Role "${roleName}" has been updated.`);
-      } else {
-        await roleService.create(payload);
-        toastSuccess(`Role "${roleName}" has been created.`);
-      }
-      setModalOpen(false);
-      loadRoles();
-    } catch (err) {
-      setModalError(err?.message ?? 'Failed to save role.');
-    } finally {
-      setSaving(false);
-    }
+      const payload = { name: roleName.trim(), description: roleDescription.trim(), permissionIds: selectedPermissions };
+      if (editRole) { await roleService.update(editRole.id, payload); toastSuccess(`Role "${roleName}" updated.`); }
+      else { await roleService.create(payload); toastSuccess(`Role "${roleName}" created.`); }
+      setModalOpen(false); loadRoles();
+    } catch (err) { setModalError(err?.message ?? 'Failed to save.'); }
+    finally { setSaving(false); }
   };
-
-  /* ─── delete ─── */
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
     setDeleting(true);
-    try {
-      await roleService.delete(deleteTarget.id);
-      toastSuccess(`Role "${deleteTarget.name}" has been deleted.`);
-      setDeleteTarget(null);
-      loadRoles();
-    } catch (err) {
-      toastError(err?.message ?? 'Failed to delete role.');
-      setDeleting(false);
-    }
+    try { await roleService.delete(deleteTarget.id); toastSuccess(`Role "${deleteTarget.name}" deleted.`); setDeleteTarget(null); loadRoles(); }
+    catch (err) { toastError(err?.message ?? 'Failed to delete.'); setDeleting(false); }
   };
 
-  /* ─── filtered permissions in modal ─── */
-  const filteredPermissions = permSearch
-    ? allPermissions.filter((p) =>
-        p.name?.toLowerCase().includes(permSearch.toLowerCase()) ||
-        p.authority?.toLowerCase().includes(permSearch.toLowerCase())
-      )
+  const filteredPerms = permSearch
+    ? allPermissions.filter(p => p.name?.toLowerCase().includes(permSearch.toLowerCase()) || p.authority?.toLowerCase().includes(permSearch.toLowerCase()))
     : allPermissions;
 
-  const filteredRoles = search
-    ? roles.filter((r) =>
-        r.name?.toLowerCase().includes(search.toLowerCase()) ||
-        r.description?.toLowerCase().includes(search.toLowerCase())
-      )
-    : roles;
+  const totalPages = Math.max(1, Math.ceil(userTotal / PAGE_SIZE));
+
+  const inputStyle = {
+    paddingLeft: 32, paddingRight: 12, paddingTop: 7, paddingBottom: 7,
+    fontSize: 13, border: `1px solid ${M.border}`, borderRadius: 6,
+    outline: 'none', color: M.textMain, background: 'var(--input-bg)',
+  };
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+
       {/* Page header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Roles</h1>
-          <p className="mt-1 text-slate-500">Define what each role can do within the platform.</p>
-        </div>
-        <PermissionGuard required={[PERMISSIONS.ROLE_WRITE]} fallback={null}>
-          <AdminButton icon={<Plus className="h-4 w-4" />} onClick={openCreate}>
-            Create Role
-          </AdminButton>
-        </PermissionGuard>
+      <div>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: M.textMain, margin: 0 }}>Roles List</h1>
+        <p style={{ fontSize: 14, color: M.textMuted, margin: '6px 0 0' }}>
+          A role provided access to predefined menus and features so that depending on assigned role an administrator can have access to what he need
+        </p>
       </div>
 
-      {/* Search */}
-      <div className="card-base p-4">
-        <div className="flex gap-3">
-          <div className="flex-1">
-            <AdminInput
-              placeholder="Search roles by name or description…"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              icon={<Search className="h-4 w-4" />}
-            />
-          </div>
-          <AdminButton size="sm" onClick={handleSearch}>Search</AdminButton>
-        </div>
-      </div>
-
-      {/* Role cards */}
+      {/* Role cards grid */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => <AdminCardSkeleton key={i} />)}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20 }}>
+          {Array.from({ length: 5 }).map((_, i) => <AdminCardSkeleton key={i} />)}
         </div>
       ) : loadError ? (
         <AdminErrorState message={loadError} onRetry={loadRoles} />
-      ) : filteredRoles.length === 0 ? (
-        <AdminEmptyState
-          icon={<ShieldCheck className="h-7 w-7" />}
-          title="No roles found"
-          message={search ? 'Try adjusting your search.' : 'Create roles to define access levels for your users.'}
-          action={
-            <PermissionGuard required={[PERMISSIONS.ROLE_WRITE]} fallback={null}>
-              <AdminButton icon={<Plus className="h-4 w-4" />} onClick={openCreate}>Create Role</AdminButton>
-            </PermissionGuard>
-          }
-        />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredRoles.map((role) => {
-            const c = roleColor(role.name ?? '');
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20 }}>
+          {roles.map(role => {
+            const usersWithRole = users.filter(u =>
+              (u.roles ?? []).some(r => (typeof r === 'string' ? r : r.name ?? '').toLowerCase() === (role.name ?? '').toLowerCase())
+            );
             return (
-              <div
+              <RoleCard
                 key={role.id}
-                className="card-base p-5 flex flex-col transition-all duration-300 hover:shadow-soft hover:-translate-y-0.5 animate-slide-up"
-              >
-                {/* Card header */}
-                <div className="flex items-start justify-between">
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${c.bg} ${c.text} ring-4 ${c.ring}`}>
-                    <ShieldCheck className="h-6 w-6" />
-                  </div>
-                  <PermissionGuard required={[PERMISSIONS.ROLE_WRITE]} fallback={null}>
-                    <div className="flex gap-1">
-                      <button
-                        onClick={() => openEdit(role)}
-                        className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
-                        title="Edit role"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => setDeleteTarget(role)}
-                        className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors"
-                        title="Delete role"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </PermissionGuard>
-                </div>
-
-                {/* Name & description */}
-                <h3 className="mt-3 text-sm font-bold text-slate-900">{role.name}</h3>
-                <p className="mt-1 text-xs text-slate-500 leading-relaxed flex-1">
-                  {role.description || 'No description.'}
-                </p>
-
-                {/* Meta */}
-                <div className="mt-4 pt-3 border-t border-slate-100">
-                  <div className="flex items-center gap-4 text-xs text-slate-400 mb-2">
-                    <span className="flex items-center gap-1">
-                      <Users className="h-3.5 w-3.5" />
-                      {role.userCount ?? 0} users
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3.5 w-3.5" />
-                      {formatDate(role.createdAt)}
-                    </span>
-                  </div>
-                  {/* Permission badges (first 4 + overflow) */}
-                  {(role.permissions ?? []).length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {role.permissions.slice(0, 4).map((p) => (
-                        <AdminBadge key={p.id} variant="neutral" className="font-mono text-[10px]">
-                          {p.authority ?? p.name}
-                        </AdminBadge>
-                      ))}
-                      {role.permissions.length > 4 && (
-                        <AdminBadge variant="neutral" className="text-[10px]">
-                          +{role.permissions.length - 4} more
-                        </AdminBadge>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
+                role={role}
+                usersWithRole={usersWithRole}
+                onEdit={openEdit}
+                onDelete={() => setDeleteTarget(role)}
+              />
             );
           })}
+          {/* Add Role card */}
+          <div style={{
+            background: M.card, borderRadius: M.radius, boxShadow: M.cardShadow,
+            padding: '20px 20px 16px', display: 'flex', flexDirection: 'column',
+            alignItems: 'flex-end', justifyContent: 'space-between', minHeight: 130,
+            position: 'relative', overflow: 'hidden',
+          }}>
+            {/* 3D character illustration */}
+            <img
+              src="/add-role-character.jpg"
+              alt="Add role"
+              style={{
+                position: 'absolute', bottom: 0, left: 12,
+                height: 120, width: 'auto', objectFit: 'contain',
+                pointerEvents: 'none',
+              }}
+            />
+            <PermissionGuard required={[PERMISSIONS.ROLE_WRITE]} fallback={null}>
+              <button
+                onClick={openCreate}
+                style={{ background: M.primary, color: 'var(--lms-primary-foreground, #fff)', border: 'none', borderRadius: 6, padding: '8px 18px', fontSize: 14, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transition: 'opacity 0.15s', position: 'relative', zIndex: 1 }}
+                onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
+                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+              >
+                <Plus size={15} /> Add Role
+              </button>
+            </PermissionGuard>
+            <p style={{ fontSize: 13, color: M.textMuted, textAlign: 'right', margin: 0, lineHeight: 1.6, position: 'relative', zIndex: 1 }}>
+              Add new role,<br />if it doesn't exist.
+            </p>
+          </div>
+
         </div>
       )}
 
-      {/* ── Create / Edit Role Modal ── */}
+      {/* Users with their roles table */}
+      <div style={{ background: M.card, borderRadius: M.radius, boxShadow: M.cardShadow, overflow: 'hidden' }}>
+
+        {/* Table section header */}
+        <div style={{ padding: '20px 24px 16px', borderBottom: `1px solid ${M.border}` }}>
+          <h2 style={{ fontSize: 18, fontWeight: 700, color: M.textMain, margin: 0 }}>Total users with their roles</h2>
+          <p style={{ fontSize: 13, color: M.textMuted, margin: '4px 0 0' }}>
+            Find all of your platform's user accounts and their associated roles.
+          </p>
+        </div>
+
+        {/* Toolbar */}
+        <div style={{ padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 12, borderBottom: `1px solid ${M.border}` }}>
+          <div style={{ position: 'relative' }}>
+            <Search size={15} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: M.textMuted }} />
+            <input
+              type="text" placeholder="Search User" value={userSearchInput}
+              onChange={e => setUserSearchInput(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') { setUserSearch(userSearchInput); setUserPage(0); } }}
+              style={{ ...inputStyle, width: 180 }}
+            />
+          </div>
+          <div style={{ position: 'relative' }}>
+            <select
+              value={roleFilter}
+              onChange={e => { setRoleFilter(e.target.value); setUserPage(0); }}
+              style={{ appearance: 'none', paddingLeft: 12, paddingRight: 28, paddingTop: 7, paddingBottom: 7, fontSize: 13, border: `1px solid ${M.border}`, borderRadius: 6, outline: 'none', cursor: 'pointer', color: roleFilter ? M.textMain : M.textMuted, background: 'var(--input-bg)', width: 150 }}
+            >
+              <option value="">Select Role</option>
+              {roles.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
+            </select>
+            <ChevronDown size={14} style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', color: M.textMuted, pointerEvents: 'none' }} />
+          </div>
+        </div>
+
+        {/* Table */}
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ background: 'var(--surface-medium)' }}>
+                {['', 'USER', 'EMAIL', 'ROLE', 'STATUS', 'ACTIONS'].map((h, i) => (
+                  <th key={i} style={{ padding: '10px 16px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: M.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
+                    {h === '' ? <input type="checkbox" /> : h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {usersLoading ? (
+                <tr><td colSpan={6} style={{ padding: '32px 16px', textAlign: 'center', color: M.textMuted, fontSize: 13 }}>Loading users…</td></tr>
+              ) : users.length === 0 ? (
+                <tr><td colSpan={6} style={{ padding: '32px 16px', textAlign: 'center', color: M.textMuted, fontSize: 13 }}>No users found.</td></tr>
+              ) : users.map(user => {
+                const userRoles = Array.isArray(user.roles) ? user.roles : [];
+                return (
+                  <tr
+                    key={user.id}
+                    style={{ borderTop: `1px solid ${M.border}`, transition: 'background 0.15s ease' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--hover-bg)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <td style={{ padding: '10px 16px' }}><input type="checkbox" /></td>
+                    <td style={{ padding: '10px 16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0, overflow: 'hidden', background: 'var(--surface-medium)', border: `1px solid ${M.border}`, position: 'relative' }}>
+                          <img
+                            src={user.profileImageUrl || getAvatarImg(user.fullName ?? user.name ?? '')}
+                            alt={user.fullName ?? user.name ?? ''}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                            onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex'; }}
+                          />
+                          <div style={{ display: 'none', position: 'absolute', inset: 0, alignItems: 'center', justifyContent: 'center', background: avatarColor(user.fullName ?? user.name ?? '').bg, color: avatarColor(user.fullName ?? user.name ?? '').text, fontSize: 12, fontWeight: 700 }}>
+                            {initials(user.fullName ?? user.name ?? '?')}
+                          </div>
+                        </div>
+                        <div>
+                          <p style={{ fontSize: 14, fontWeight: 600, color: M.textMain, margin: 0 }}>{user.fullName ?? user.name}</p>
+                          <p style={{ fontSize: 12, color: M.textMuted, margin: 0 }}>{user.email?.split('@')[0]}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td style={{ padding: '10px 16px', fontSize: 13, color: 'var(--text-secondary)' }}>{user.email}</td>
+                    <td style={{ padding: '10px 16px' }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                        {userRoles.length === 0
+                          ? <span style={{ fontSize: 12, color: M.textMuted }}>—</span>
+                          : userRoles.slice(0, 2).map((r, i) => {
+                            const rName = typeof r === 'string' ? r : r.name ?? '';
+                            const c = roleBadge(rName);
+                            return (
+                              <span key={i} style={{ background: c.bg, color: c.color, padding: '2px 8px', borderRadius: 4, fontSize: 12, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                                <ShieldCheck size={11} />{rName}
+                              </span>
+                            );
+                          })
+                        }
+                        {userRoles.length > 2 && (
+                          <span style={{ background: M.primarySoft, color: M.primary, padding: '2px 8px', borderRadius: 4, fontSize: 12, fontWeight: 600 }}>
+                            +{userRoles.length - 2}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td style={{ padding: '10px 16px' }}><StatusBadge user={user} /></td>
+                    <td style={{ padding: '10px 16px' }}>
+                      <div style={{ display: 'flex', gap: 2 }}>
+                        {[<Trash2 size={16} />, <Eye size={16} />, <MoreVertical size={16} />].map((icon, i) => (
+                          <button key={i} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6, borderRadius: 6, color: M.textMuted, display: 'flex' }}
+                            onMouseEnter={e => e.currentTarget.style.background = 'var(--hover-bg)'}
+                            onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                          >{icon}</button>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        <div style={{ padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: `1px solid ${M.border}` }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: M.textMuted }}>
+            Rows per page: <strong style={{ color: M.textMain }}>{PAGE_SIZE}</strong>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: M.textMuted }}>
+            <span>{userPage * PAGE_SIZE + 1}–{Math.min((userPage + 1) * PAGE_SIZE, userTotal)} of {userTotal}</span>
+            {['‹', '›'].map((ch, i) => (
+              <button
+                key={i}
+                disabled={i === 0 ? userPage === 0 : userPage >= totalPages - 1}
+                onClick={() => setUserPage(p => i === 0 ? Math.max(0, p - 1) : Math.min(totalPages - 1, p + 1))}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 8px', borderRadius: 4, fontSize: 18, color: M.textMain, opacity: (i === 0 ? userPage === 0 : userPage >= totalPages - 1) ? 0.3 : 1 }}
+              >{ch}</button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Create / Edit Modal */}
       {modalOpen && (
         <AdminModal
           open
           onClose={() => setModalOpen(false)}
-          title={editRole ? 'Edit Role' : 'Create Role'}
+          title={editRole ? 'Edit Role' : 'Add New Role'}
           description={editRole ? `Editing "${editRole.name}"` : 'Define a new access level'}
           size="lg"
           footer={
             <>
               <AdminButton variant="outline" onClick={() => setModalOpen(false)} disabled={saving}>Cancel</AdminButton>
-              <AdminButton onClick={handleSave} loading={saving}>
-                {editRole ? 'Save changes' : 'Create role'}
-              </AdminButton>
+              <AdminButton onClick={handleSave} loading={saving}>{editRole ? 'Save changes' : 'Create role'}</AdminButton>
             </>
           }
         >
           {modalError && (
-            <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
-              <p className="text-sm font-medium text-red-700">{modalError}</p>
+            <div style={{ marginBottom: 20, borderRadius: 12, border: '1px solid rgba(239,68,68,0.3)', background: 'rgba(239,68,68,0.1)', padding: '12px 16px' }}>
+              <p style={{ margin: 0, fontSize: 14, fontWeight: 500, color: '#f87171' }}>{modalError}</p>
             </div>
           )}
           <div className="space-y-5">
-            <AdminInput
-              label="Role name"
-              value={roleName}
-              onChange={(e) => setRoleName(e.target.value)}
-              placeholder="e.g. Content Manager"
-              icon={<ShieldCheck className="h-4 w-4" />}
-              autoFocus
-            />
+            <AdminInput label="Role name" value={roleName} onChange={e => setRoleName(e.target.value)} placeholder="e.g. Content Manager" icon={<ShieldCheck size={16} />} autoFocus />
             <div>
-              <label className="label-base">Description</label>
-              <textarea
-                value={roleDescription}
-                onChange={(e) => setRoleDescription(e.target.value)}
-                placeholder="What access does this role grant?"
-                rows={2}
-                className="input-base resize-none"
-              />
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>Description</label>
+              <textarea value={roleDescription} onChange={e => setRoleDescription(e.target.value)} placeholder="What access does this role grant?" rows={2} style={{ width: '100%', padding: '10px 12px', fontSize: 14, border: '1px solid var(--border-color)', borderRadius: 8, outline: 'none', resize: 'none', background: 'var(--input-bg)', color: 'var(--text-primary)' }} />
             </div>
-            {/* Permissions checklist */}
             <div>
-              <label className="label-base flex items-center gap-2">
-                <KeyRound className="h-4 w-4 text-slate-400" />
-                Permissions ({selectedPermissions.length} selected)
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
+                <KeyRound size={16} style={{ color: 'var(--text-muted)' }} /> Permissions ({selectedPermissions.length} selected)
               </label>
-              <div className="mt-1.5 mb-3">
-                <AdminInput
-                  placeholder="Search permissions…"
-                  value={permSearch}
-                  onChange={(e) => setPermSearch(e.target.value)}
-                  icon={<Search className="h-4 w-4" />}
-                />
+              <div style={{ marginTop: 6, marginBottom: 12 }}>
+                <AdminInput placeholder="Search permissions…" value={permSearch} onChange={e => setPermSearch(e.target.value)} icon={<Search size={16} />} />
               </div>
-              <div className="max-h-64 overflow-y-auto space-y-1.5 rounded-xl border border-slate-200 p-3">
-                {filteredPermissions.length === 0 ? (
-                  <p className="py-4 text-center text-sm text-slate-400">No permissions match your search.</p>
-                ) : (
-                  filteredPermissions.map((perm) => {
-                    const selected = selectedPermissions.includes(perm.id);
-                    return (
-                      <button
-                        key={perm.id}
-                        type="button"
-                        onClick={() => togglePermission(perm.id)}
-                        className={`flex w-full items-center gap-3 rounded-lg p-2.5 text-left transition-colors ${
-                          selected ? 'bg-brand-50' : 'hover:bg-slate-50'
-                        }`}
-                      >
-                        <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors ${
-                          selected ? 'border-brand-600 bg-brand-600' : 'border-slate-300'
-                        }`}>
-                          {selected && (
-                            <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-slate-900">{perm.name}</p>
-                          <p className="text-xs font-mono text-slate-500 truncate">{perm.authority}</p>
-                        </div>
-                      </button>
-                    );
-                  })
-                )}
+              <div style={{ maxHeight: 256, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 6, borderRadius: 12, border: '1px solid var(--border-color)', padding: 12 }}>
+                {filteredPerms.length === 0 ? (
+                  <p style={{ padding: '16px 0', textAlign: 'center', fontSize: 14, color: 'var(--text-muted)', margin: 0 }}>No permissions match.</p>
+                ) : filteredPerms.map(perm => {
+                  const sel = selectedPermissions.includes(perm.id);
+                  return (
+                    <button
+                      key={perm.id} type="button" onClick={() => togglePerm(perm.id)}
+                      style={{
+                        display: 'flex', width: '100%', alignItems: 'center', gap: 12, borderRadius: 8, padding: 10, textAlign: 'left', transition: 'background 0.15s', cursor: 'pointer', border: 'none',
+                        background: sel ? 'var(--surface-medium)' : 'transparent',
+                      }}
+                      onMouseEnter={e => { if (!sel) e.currentTarget.style.background = 'var(--hover-bg)'; }}
+                      onMouseLeave={e => { if (!sel) e.currentTarget.style.background = 'transparent'; }}
+                    >
+                      <div style={{
+                        display: 'flex', width: 20, height: 20, flexShrink: 0, alignItems: 'center', justifyContent: 'center', borderRadius: 6, transition: 'all 0.15s',
+                        border: sel ? '2px solid var(--text-primary)' : '2px solid var(--border-color)',
+                        background: sel ? 'var(--text-primary)' : 'transparent',
+                      }}>
+                        {sel && <svg style={{ width: 12, height: 12, color: 'var(--surface-dark)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ margin: 0, fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>{perm.name}</p>
+                        <p style={{ margin: 0, fontSize: 12, fontFamily: 'monospace', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{perm.authority}</p>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
         </AdminModal>
       )}
 
-      {/* ── Delete Role Confirm ── */}
+      {/* Delete confirm */}
       {deleteTarget && (
         <AdminConfirmModal
           open
           onClose={() => setDeleteTarget(null)}
           onConfirm={handleDelete}
           title="Delete Role"
-          message={`Are you sure you want to delete "${deleteTarget.name}"? This action cannot be undone and may affect users who have this role.`}
+          message={`Are you sure you want to delete "${deleteTarget.name}"? This cannot be undone.`}
           confirmLabel="Delete"
           variant="danger"
           loading={deleting}

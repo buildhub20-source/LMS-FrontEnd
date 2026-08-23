@@ -1,35 +1,58 @@
 /**
- * Admin Dashboard Badge — Tailwind-based.
+ * Admin Dashboard Badge — dark monochrome design.
  * @param {'default'|'success'|'warning'|'danger'|'info'|'neutral'} variant
  * @param {boolean} dot  — show a colored dot before the label
+ *
+ * Semantic colors are muted (low saturation) so they don't break the dark aesthetic.
  */
 const variantStyles = {
-  default: 'bg-brand-50 text-brand-700 border-brand-200',
-  success:  'bg-emerald-50 text-emerald-700 border-emerald-200',
-  warning:  'bg-amber-50 text-amber-700 border-amber-200',
-  danger:   'bg-red-50 text-red-700 border-red-200',
-  info:     'bg-sky-50 text-sky-700 border-sky-200',
-  neutral:  'bg-slate-100 text-slate-600 border-slate-200',
+  default: { background: 'rgba(255,255,255,0.08)', color: '#c8c8c8', border: '1px solid rgba(255,255,255,0.12)' },
+  success:  { background: 'rgba(34,197,94,0.12)',  color: '#4ade80', border: '1px solid rgba(34,197,94,0.25)' },
+  warning:  { background: 'rgba(234,179,8,0.12)',  color: '#facc15', border: '1px solid rgba(234,179,8,0.25)' },
+  danger:   { background: 'rgba(239,68,68,0.12)',  color: '#f87171', border: '1px solid rgba(239,68,68,0.25)' },
+  info:     { background: 'rgba(56,189,248,0.12)', color: '#67e8f9', border: '1px solid rgba(56,189,248,0.25)' },
+  neutral:  { background: 'var(--surface-medium)', color: 'var(--text-muted)', border: '1px solid var(--border-color)' },
 };
 
 const dotColors = {
-  default: 'bg-brand-500',
-  success:  'bg-emerald-500',
-  warning:  'bg-amber-500',
-  danger:   'bg-red-500',
-  info:     'bg-sky-500',
-  neutral:  'bg-slate-400',
+  default: '#a8a8a8',
+  success:  '#4ade80',
+  warning:  '#facc15',
+  danger:   '#f87171',
+  info:     '#67e8f9',
+  neutral:  '#6b6b6b',
 };
 
-export const AdminBadge = ({ variant = 'default', children, className = '', dot = false }) => (
-  <span
-    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${variantStyles[variant] ?? variantStyles.default} ${className}`}
-  >
-    {dot && (
-      <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${dotColors[variant] ?? dotColors.default}`} />
-    )}
-    {children}
-  </span>
-);
+export const AdminBadge = ({ variant = 'default', children, style = {}, className = '', dot = false }) => {
+  const vs = variantStyles[variant] ?? variantStyles.default;
+
+  return (
+    <span
+      className={className}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 5,
+        borderRadius: 20,
+        padding: '2px 10px',
+        fontSize: 11,
+        fontWeight: 600,
+        fontFamily: 'Inter, sans-serif',
+        whiteSpace: 'nowrap',
+        letterSpacing: '0.2px',
+        ...vs,
+        ...style,
+      }}
+    >
+      {dot && (
+        <span style={{
+          width: 6, height: 6, borderRadius: '50%', flexShrink: 0,
+          background: dotColors[variant] ?? dotColors.default,
+        }} />
+      )}
+      {children}
+    </span>
+  );
+};
 
 export default AdminBadge;

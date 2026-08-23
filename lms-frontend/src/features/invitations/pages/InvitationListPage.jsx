@@ -212,8 +212,8 @@ export const InvitationListPage = () => {
       {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Invitations</h1>
-          <p className="mt-1 text-slate-500">Send and manage user invitations to the platform.</p>
+          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>Invitations</h1>
+          <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)' }}>Send and manage user invitations to the platform.</p>
         </div>
         <PermissionGuard required={[PERMISSIONS.INVITATION_WRITE]} fallback={null}>
           <AdminButton icon={<Plus className="h-4 w-4" />} onClick={openCreate}>
@@ -234,16 +234,18 @@ export const InvitationListPage = () => {
               icon={<Search className="h-4 w-4" />}
             />
           </div>
-          <div className="flex gap-2 flex-wrap">
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {STATUS_FILTERS.map((s) => (
               <button
                 key={s}
                 onClick={() => handleStatusFilter(s)}
-                className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
-                  statusFilter === s
-                    ? 'bg-brand-600 text-white shadow-sm'
-                    : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
-                }`}
+                style={{
+                  borderRadius: 8, padding: '6px 14px', fontSize: 13, fontWeight: 600,
+                  cursor: 'pointer', transition: 'all 0.15s ease', fontFamily: 'Inter, sans-serif',
+                  background: statusFilter === s ? '#ffffff' : 'var(--surface-medium)',
+                  color: statusFilter === s ? '#000000' : 'var(--text-secondary)',
+                  border: statusFilter === s ? '1px solid #ffffff' : '1px solid var(--border-color)',
+                }}
               >
                 {s === 'ALL' ? 'All' : s.charAt(0) + s.slice(1).toLowerCase()}
               </button>
@@ -280,68 +282,72 @@ export const InvitationListPage = () => {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-slate-100 bg-slate-50/50">
-                    <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Recipient</th>
-                    <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
-                    <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Role</th>
-                    <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Expires</th>
-                    <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Sent By</th>
-                    <th className="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
+                  <tr style={{ borderBottom: '1px solid var(--border-color)', background: 'var(--surface-medium)' }}>
+                    {['Recipient','Status','Role','Expires','Sent By','Actions'].map((h, i) => (
+                      <th key={h} style={{ padding: '12px 24px', textAlign: i === 5 ? 'right' : 'left', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px', color: 'var(--text-muted)' }}>{h}</th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {invitations.map((inv) => (
-                    <tr key={inv.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-500 text-sm font-bold">
+                    <tr key={inv.id} style={{ borderBottom: '1px solid var(--border-subtle)', transition: 'background 0.1s ease' }}
+                      onMouseEnter={e => e.currentTarget.style.background='var(--hover-bg)'}
+                      onMouseLeave={e => e.currentTarget.style.background='transparent'}
+                    >
+                      <td style={{ padding: '14px 24px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--surface-medium)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)', flexShrink: 0 }}>
                             {getInitials(inv.name ?? '')}
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-slate-900">{inv.name}</p>
-                            <p className="text-xs text-slate-500">{inv.email}</p>
+                            <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{inv.name}</p>
+                            <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>{inv.email}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4"><StatusBadge status={inv.status} /></td>
-                      <td className="px-6 py-4">
-                        <span className="rounded-md bg-brand-50 border border-brand-200 px-2 py-0.5 text-xs font-medium text-brand-700">
+                      <td style={{ padding: '14px 24px' }}><StatusBadge status={inv.status} /></td>
+                      <td style={{ padding: '14px 24px' }}>
+                        <span style={{ borderRadius: 6, background: 'var(--surface-medium)', border: '1px solid var(--border-color)', padding: '2px 8px', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>
                           {inv.roleName ?? '—'}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-1.5">
+                      <td style={{ padding: '14px 24px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                           {isExpired(inv)
-                            ? <Clock className="h-3.5 w-3.5 text-slate-400" />
-                            : <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />}
-                          <span className="text-sm text-slate-500">{formatDate(inv.expiresAt)}</span>
+                            ? <Clock size={14} color="var(--text-muted)" />
+                            : <CheckCircle2 size={14} color="#4ade80" />}
+                          <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{formatDate(inv.expiresAt)}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-500">{inv.invitedBy ?? '—'}</td>
-                      <td className="px-6 py-4 text-right">
-                        <PermissionGuard required={[PERMISSIONS.INVITATION_WRITE]} fallback={<span className="text-xs text-slate-400">—</span>}>
-                          <div className="relative inline-block">
+                      <td style={{ padding: '14px 24px', fontSize: 13, color: 'var(--text-muted)' }}>{inv.invitedBy ?? '—'}</td>
+                      <td style={{ padding: '14px 24px', textAlign: 'right' }}>
+                        <PermissionGuard required={[PERMISSIONS.INVITATION_WRITE]} fallback={<span style={{ color: 'var(--text-muted)', fontSize: 12 }}>—</span>}>
+                          <div style={{ position: 'relative', display: 'inline-block' }}>
                             <button
                               onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === inv.id ? null : inv.id); }}
-                              className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+                              style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 6, borderRadius: 6, display: 'flex', alignItems: 'center' }}
                             >
-                              <MoreVertical className="h-4 w-4" />
+                              <MoreVertical size={16} />
                             </button>
                             {openMenuId === inv.id && (
-                              <div className="absolute right-0 top-10 z-20 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-soft animate-scale-in">
+                              <div style={{ position: 'absolute', right: 0, top: 36, zIndex: 20, width: 160, borderRadius: 8, border: '1px solid var(--border-color)', background: 'var(--surface-dark)', padding: '4px 0', boxShadow: 'var(--shadow-dark)' }}>
                                 {inv.status === 'PENDING' && (
                                   <button
                                     onClick={() => { setResendTarget(inv); setOpenMenuId(null); }}
-                                    className="flex w-full items-center gap-2.5 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                                    style={{ display: 'flex', width: '100%', alignItems: 'center', gap: 10, padding: '8px 12px', fontSize: 13, color: 'var(--text-secondary)', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}
+                                    onMouseEnter={e => e.currentTarget.style.background='var(--hover-bg)'}
+                                    onMouseLeave={e => e.currentTarget.style.background='transparent'}
                                   >
-                                    <Send className="h-4 w-4" /> Resend
+                                    <Send size={14} /> Resend
                                   </button>
                                 )}
                                 <button
                                   onClick={() => { setRevokeTarget(inv); setOpenMenuId(null); }}
-                                  className="flex w-full items-center gap-2.5 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+                                  style={{ display: 'flex', width: '100%', alignItems: 'center', gap: 10, padding: '8px 12px', fontSize: 13, color: '#f87171', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}
+                                  onMouseEnter={e => e.currentTarget.style.background='rgba(239,68,68,0.08)'}
+                                  onMouseLeave={e => e.currentTarget.style.background='transparent'}
                                 >
-                                  <Trash2 className="h-4 w-4" /> Revoke
+                                  <Trash2 size={14} /> Revoke
                                 </button>
                               </div>
                             )}
@@ -387,7 +393,7 @@ export const InvitationListPage = () => {
             </div>
 
             {/* Pagination */}
-            <div className="border-t border-slate-100 px-6 py-4">
+            <div style={{ borderTop: '1px solid var(--border-color)', padding: '16px 24px' }}>
               <AdminPagination
                 page={page}
                 totalPages={totalPages}
@@ -417,8 +423,8 @@ export const InvitationListPage = () => {
           }
         >
           {createError && (
-            <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
-              <p className="text-sm font-medium text-red-700">{createError}</p>
+            <div style={{ marginBottom: 16, borderRadius: 8, border: '1px solid rgba(239,68,68,0.3)', background: 'rgba(239,68,68,0.08)', padding: '10px 14px' }}>
+              <p style={{ margin: 0, fontSize: 13, color: '#f87171' }}>{createError}</p>
             </div>
           )}
           <div className="space-y-4">
@@ -439,34 +445,45 @@ export const InvitationListPage = () => {
               icon={<Mail className="h-4 w-4" />}
             />
             <div>
-              <label className="label-base">Role</label>
-              <div className="relative">
+              <label style={{ display: 'block', marginBottom: 6, fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)' }}>Role</label>
+              <div style={{ position: 'relative' }}>
                 <button
                   type="button"
                   onClick={() => setRolesDropdownOpen(!rolesDropdownOpen)}
-                  className={`input-base flex items-center justify-between text-left ${createRoleName ? '' : 'text-slate-400'}`}
+                  style={{
+                    width: '100%', height: 38, padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    background: 'var(--input-bg)', border: '1px solid var(--border-color)', borderRadius: 8,
+                    fontSize: 14, color: createRoleName ? 'var(--text-primary)' : 'var(--text-muted)',
+                    cursor: 'pointer', fontFamily: 'Inter, sans-serif',
+                  }}
                 >
-                  <span className="flex items-center gap-2">
-                    <ShieldCheck className="h-4 w-4 text-slate-400" />
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <ShieldCheck size={16} color="var(--text-muted)" />
                     {selectedRole ? selectedRole.name : 'Select a role…'}
                   </span>
-                  <svg className={`h-4 w-4 text-slate-400 transition-transform ${rolesDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg style={{ width: 16, height: 16, color: 'var(--text-muted)', transform: rolesDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
                 {rolesDropdownOpen && (
-                  <div className="absolute z-20 mt-1.5 w-full rounded-xl border border-slate-200 bg-white py-1.5 shadow-soft max-h-60 overflow-y-auto animate-scale-in">
+                  <div style={{ position: 'absolute', zIndex: 20, top: 42, width: '100%', borderRadius: 8, border: '1px solid var(--border-color)', background: 'var(--surface-dark)', boxShadow: 'var(--shadow-dark)', maxHeight: 240, overflowY: 'auto' }}>
                     {allRoles.map((role) => (
                       <button
                         key={role.id ?? role.name}
                         type="button"
                         onClick={() => { setCreateRoleName(role.name); setRolesDropdownOpen(false); }}
-                        className={`flex w-full items-start gap-3 px-3 py-2.5 text-left transition-colors hover:bg-slate-50 ${createRoleName === role.name ? 'bg-brand-50' : ''}`}
+                        style={{
+                          display: 'flex', width: '100%', alignItems: 'flex-start', gap: 10, padding: '10px 12px',
+                          background: createRoleName === role.name ? 'var(--active-bg)' : 'transparent',
+                          border: 'none', cursor: 'pointer', textAlign: 'left',
+                        }}
+                        onMouseEnter={e => { if (createRoleName !== role.name) e.currentTarget.style.background='var(--hover-bg)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = createRoleName === role.name ? 'var(--active-bg)' : 'transparent'; }}
                       >
-                        <ShieldCheck className={`h-4 w-4 mt-0.5 ${createRoleName === role.name ? 'text-brand-600' : 'text-slate-400'}`} />
+                        <ShieldCheck size={16} color={createRoleName === role.name ? 'var(--text-primary)' : 'var(--text-muted)'} style={{ marginTop: 2, flexShrink: 0 }} />
                         <div>
-                          <p className="text-sm font-semibold text-slate-900">{role.name}</p>
-                          <p className="text-xs text-slate-500">{role.description}</p>
+                          <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{role.name}</p>
+                          <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>{role.description}</p>
                         </div>
                       </button>
                     ))}
