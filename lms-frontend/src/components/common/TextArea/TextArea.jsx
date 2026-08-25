@@ -9,7 +9,7 @@ export const TextArea = forwardRef(
       error,
       rows = 4,
       maxLength,
-      value = '',
+      value,
       required = false,
       className = '',
       id,
@@ -47,7 +47,7 @@ export const TextArea = forwardRef(
           ) : (
             hint
           )}
-          {maxLength ? ` ${value.length}/${maxLength}` : ''}
+          {maxLength ? ` ${(value ?? '').length}/${maxLength}` : ''}
         </span>
       </div>
     );

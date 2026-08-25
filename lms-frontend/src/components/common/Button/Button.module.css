@@ -5,7 +5,7 @@
   gap: var(--space-2);
   border: 1px solid transparent;
   border-radius: var(--radius-md);
-  font-weight: var(--weight-medium);
+  font-weight: 500;
   cursor: pointer;
   transition:
     background-color var(--transition-fast),
@@ -32,19 +32,47 @@
 
 .primary {
   background: var(--color-primary-600);
-  color: var(--color-text-inverse);
+  color: #ffffff;
+  border: 1px solid var(--color-primary-700);
+  font-weight: 600;
 }
 .primary:hover:not(:disabled) {
   background: var(--color-primary-700);
+  border-color: var(--color-primary-700);
+}
+
+[data-theme='dark'] .primary,
+html.dark .primary {
+  background: var(--color-primary-500);
+  color: #ffffff;
+  border-color: var(--color-primary-600);
+}
+[data-theme='dark'] .primary:hover:not(:disabled),
+html.dark .primary:hover:not(:disabled) {
+  background: var(--color-primary-600);
+  border-color: var(--color-primary-700);
 }
 
 .secondary {
-  background: var(--color-surface);
-  color: var(--color-text);
-  border-color: var(--color-border);
+  background: #f4f4f5;
+  color: #111111;
+  border: 1px solid #d4d4d8;
 }
 .secondary:hover:not(:disabled) {
-  background: var(--color-surface-alt);
+  background: #e4e4e7;
+  border-color: #a1a1aa;
+}
+
+[data-theme='dark'] .secondary,
+html.dark .secondary {
+  background: #2a2a2a;
+  color: #e4e4e7;
+  border: 1px solid #444444;
+}
+[data-theme='dark'] .secondary:hover:not(:disabled),
+html.dark .secondary:hover:not(:disabled) {
+  background: #3a3a3a;
+  border-color: #555555;
 }
 
 .ghost {

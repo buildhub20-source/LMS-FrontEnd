@@ -129,16 +129,17 @@ html.dark {
   --lms-muted: #1e1e1e;
   --lms-muted-foreground: #6b6b6b;
   --lms-border: #2a2a2a;
-  --lms-primary: #e0e0e0;
-  --lms-primary-foreground: #000000;
+  --lms-primary: #3b6fe0;
+  --lms-primary-foreground: #ffffff;
   --color-bg: #0a0a0a;
   --color-surface: #141414;
   --color-surface-alt: #1e1e1e;
   --color-border: #2a2a2a;
   --color-text: #f0f0f0;
   --color-text-muted: #6b6b6b;
-  --color-primary-500: #e0e0e0;
-  --color-primary-600: #c8c8c8;
+  --color-primary-500: #3b6fe0;
+  --color-primary-600: #2f59b8;
+  --color-primary-700: #244690;
 
   /* Dark surface tokens */
   --bg: #0a0a0a;
