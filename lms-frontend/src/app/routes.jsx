@@ -33,6 +33,7 @@ const RoleDetailsPage = lazy(() => import('../features/roles/pages/RoleDetailsPa
 const PermissionsPage = lazy(() => import('../features/roles/pages/PermissionsPage'));
 const InvitationListPage = lazy(() => import('../features/invitations/pages/InvitationListPage'));
 const AdminAnalyticsPage = lazy(() => import('../features/analytics/pages/AdminAnalyticsPage'));
+const AdminCourseListPage = lazy(() => import('../features/courses/pages/AdminCourseListPage'));
 const InstructorAnalyticsPage = lazy(
   () => import('../features/analytics/pages/InstructorAnalyticsPage'),
 );
@@ -140,6 +141,9 @@ export const router = createBrowserRouter([
               { path: ROUTES.SUBSCRIPTION, element: suspend(<SubscriptionPage />) },
               { path: ROUTES.PLANS, element: suspend(<PlansPage />) },
               { path: ROUTES.BILLING, element: suspend(<BillingPage />) },
+              { path: ROUTES.ADMIN_COURSES, element: suspend(<AdminCourseListPage />) },
+              { path: ROUTES.ADMIN_COURSE_DETAILS(), element: suspend(<CoursePlayerPage />) },
+              { path: ROUTES.ADMIN_COURSE_EDIT(), element: suspend(<EditCoursePage />) },
               {
                 element: <PermissionGuard required={[PERMISSIONS.ASSESSMENT_VIEW]} />,
                 children: [
