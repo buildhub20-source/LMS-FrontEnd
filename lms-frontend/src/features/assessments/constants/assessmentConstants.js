@@ -1,17 +1,46 @@
-export const QUESTION_TYPES = Object.freeze({
-  SINGLE_CHOICE: 'SINGLE_CHOICE',
-  MULTIPLE_CHOICE: 'MULTIPLE_CHOICE',
-  FREE_TEXT: 'FREE_TEXT',
+export const ASSESSMENT_STATUS = Object.freeze({
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  CLOSED: 'CLOSED',
+  ARCHIVED: 'ARCHIVED',
 });
 
-export const QUESTION_TYPE_OPTIONS = Object.values(QUESTION_TYPES).map((type) => ({
-  value: type,
-  label: type.replace('_', ' ').toLowerCase(),
+export const ASSESSMENT_STATUS_TONE = Object.freeze({
+  [ASSESSMENT_STATUS.DRAFT]: 'neutral',
+  [ASSESSMENT_STATUS.PUBLISHED]: 'success',
+  [ASSESSMENT_STATUS.CLOSED]: 'warning',
+  [ASSESSMENT_STATUS.ARCHIVED]: 'danger',
+});
+
+export const ASSESSMENT_STATUS_OPTIONS = [
+  { value: '', label: 'All statuses' },
+  ...Object.values(ASSESSMENT_STATUS).map((s) => ({ value: s, label: s })),
+];
+
+export const DIFFICULTY = Object.freeze({
+  EASY: 'EASY',
+  MEDIUM: 'MEDIUM',
+  HARD: 'HARD',
+});
+
+export const DIFFICULTY_OPTIONS = Object.values(DIFFICULTY).map((d) => ({
+  value: d,
+  label: d.charAt(0) + d.slice(1).toLowerCase(),
 }));
+
+export const DIFFICULTY_TONE = Object.freeze({
+  [DIFFICULTY.EASY]: 'success',
+  [DIFFICULTY.MEDIUM]: 'warning',
+  [DIFFICULTY.HARD]: 'danger',
+});
+
+// Legacy — kept for student-side components
+export const QUESTION_TYPES = Object.freeze({
+  CODING: 'CODING',
+});
 
 export const ATTEMPT_STATUS = Object.freeze({
   IN_PROGRESS: 'IN_PROGRESS',
   SUBMITTED: 'SUBMITTED',
-  GRADED: 'GRADED',
-  EXPIRED: 'EXPIRED',
+  TIMED_OUT: 'TIMED_OUT',
 });
