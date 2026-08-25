@@ -29,11 +29,17 @@ export const PERMISSIONS = Object.freeze({
   INVITATION_CREATE: 'INVITATION_CREATE',
   INVITATION_MANAGE: 'INVITATION_MANAGE',
 
-  // Below: kept for other feature areas (not yet implemented in backend)
-  COURSE_READ: 'course:read',
-  COURSE_WRITE: 'course:write',
-  COURSE_PUBLISH: 'course:publish',
-  COURSE_DELETE: 'course:delete',
+  // Courses — match backend @PreAuthorize strings
+  COURSE_VIEW: 'COURSE_VIEW',
+  COURSE_CREATE: 'COURSE_CREATE',
+  COURSE_UPDATE: 'COURSE_UPDATE',
+  COURSE_DELETE: 'COURSE_DELETE',
+  COURSE_PUBLISH: 'COURSE_PUBLISH',
+  COURSE_UNPUBLISH: 'COURSE_UNPUBLISH',
+  COURSE_ARCHIVE: 'COURSE_ARCHIVE',
+  COURSE_SUBMIT: 'COURSE_SUBMIT',
+  COURSE_APPROVE: 'COURSE_APPROVE',
+  COURSE_REJECT: 'COURSE_REJECT',
   ENROLLMENT_READ: 'enrollment:read',
   ENROLLMENT_WRITE: 'enrollment:write',
   ASSESSMENT_READ: 'assessment:read',

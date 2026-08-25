@@ -7,6 +7,7 @@ import {
   Building2,
   CreditCard,
   KeyRound,
+  BookOpen,
 } from 'lucide-react';
 import MainNavigation from '../MainNavigation';
 import { ROUTES } from '../../../constants/routes';
@@ -46,6 +47,13 @@ const ITEMS = [
     permission: PERMISSIONS.INVITATION_READ,
     group: 'People',
     icon: <MailPlus className="h-5 w-5" />,
+  },
+  {
+    label: 'Courses',
+    to: ROUTES.ADMIN_COURSES,
+    permission: PERMISSIONS.COURSE_VIEW,
+    group: 'Learning',
+    icon: <BookOpen className="h-5 w-5" />,
   },
   {
     label: 'Enrollments',
