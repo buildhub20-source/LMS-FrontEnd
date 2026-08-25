@@ -1,18 +1,27 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Plus, Trash2, Video, FileText, ChevronDown, ChevronRight, Edit2 } from 'lucide-react';
+import {
+  GripVertical, Plus, Trash2, ChevronDown, ChevronRight, Edit2, FolderPlus, FileText, Layers, Check, X
+} from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import curriculumService from '../services/curriculumService';
 import { useToast } from '../../../components/feedback/Toast';
-import { useQueryClient } from '@tanstack/react-query';
 import Button from '../../../components/common/Button';
-import LessonEditorModal from './LessonEditorModal';
+import LessonEditorModal, { LESSON_TYPE_MAP } from './LessonEditorModal';
 
-// Sortable Module Item
-const SortableModule = ({ module, courseId, onAddLesson, onEditLesson, onDeleteLesson, onDeleteModule }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: module.id });
-  const [expanded, setExpanded] = useState(true);
+export function formatSectionTitle(title, index) {
+  if (!title) return `Section ${index}: Untitled Section`;
+  const cleanTitle = title.replace(/^section\s*\d*\s*:?\s*/i, '').trim();
+  return `Section ${index}: ${cleanTitle || title}`;
+}
+
+// Sortable Individual Lesson Row Component
+const SortableLessonRow = ({ lesson, idx, moduleId, onEditLesson, onDeleteLesson }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: lesson.id });
+  const typeConfig = LESSON_TYPE_MAP[lesson.lessonType] || LESSON_TYPE_MAP.VIDEO;
+  const IconComp = typeConfig.icon || FileText;
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -20,48 +29,173 @@ const SortableModule = ({ module, courseId, onAddLesson, onEditLesson, onDeleteL
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="bg-white border rounded-lg mb-4 overflow-hidden shadow-sm">
-      {/* Module Header */}
-      <div className="flex items-center justify-between p-4 bg-gray-50 border-b">
-        <div className="flex items-center gap-3">
-          <div {...attributes} {...listeners} className="cursor-grab text-gray-400 hover:text-gray-600">
-            <GripVertical size={20} />
-          </div>
-          <button onClick={() => setExpanded(!expanded)} className="text-gray-500">
-            {expanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
-          </button>
-          <h3 className="font-semibold text-gray-800 m-0">{module.title}</h3>
+    <div ref={setNodeRef} style={{ ...style, ...lessonRowStyle }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1 }}>
+        <div {...attributes} {...listeners} style={{ cursor: 'grab', color: 'var(--text-muted)', display: 'flex', alignItems: 'center' }} title="Drag to reorder lesson">
+          <GripVertical size={14} />
         </div>
-        <div className="flex gap-2">
-          <button onClick={() => onAddLesson(module.id)} className="text-sm text-blue-600 font-medium px-2 py-1 hover:bg-blue-50 rounded flex items-center gap-1">
-            <Plus size={16} /> Add Lesson
-          </button>
-          <button onClick={() => onDeleteModule(module.id)} className="text-red-500 p-1 hover:bg-red-50 rounded">
-            <Trash2 size={18} />
-          </button>
+        <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', width: 20 }}>
+          {idx + 1}.
+        </span>
+        {lesson.thumbnailUrl ? (
+          <img 
+            src={lesson.thumbnailUrl} 
+            alt={lesson.title} 
+            style={{ width: 44, height: 32, borderRadius: 6, objectFit: 'cover', border: '1px solid var(--border-color)', flexShrink: 0 }} 
+          />
+        ) : (
+          <div style={lessonIconBox(typeConfig.color)}>
+            <IconComp size={16} />
+          </div>
+        )}
+        <div>
+          <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
+            {lesson.title}
+          </p>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 2 }}>
+            <span style={{ fontSize: 11, color: typeConfig.color, fontWeight: 500 }}>
+              {typeConfig.label}
+            </span>
+            {lesson.durationMinutes > 0 && (
+              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                • {lesson.durationMinutes} min
+              </span>
+            )}
+            {lesson.freePreview && (
+              <span style={freeBadgeStyle}>Free Preview</span>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Module Content (Lessons) */}
-      {expanded && (
-        <div className="p-4 bg-white space-y-2">
-          {module.lessons?.length > 0 ? (
-            module.lessons.map((lesson) => (
-              <div key={lesson.id} className="flex items-center justify-between p-3 border rounded bg-gray-50 hover:bg-gray-100 group">
-                <div className="flex items-center gap-3">
-                  {lesson.lessonType === 'VIDEO' ? <Video size={18} className="text-gray-500" /> : <FileText size={18} className="text-gray-500" />}
-                  <span className="text-gray-700 font-medium">{lesson.title}</span>
-                  {lesson.freePreview && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Free Preview</span>}
-                </div>
-                <div className="flex items-center gap-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="text-xs">{lesson.durationMinutes || 0} min</span>
-                  <button onClick={() => onEditLesson(module.id, lesson)} className="hover:text-blue-600"><Edit2 size={16} /></button>
-                  <button onClick={() => onDeleteLesson(module.id, lesson.id)} className="hover:text-red-600"><Trash2 size={16} /></button>
-                </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <Button variant="ghost" size="sm" onClick={() => onEditLesson(moduleId, lesson)} title="Edit lesson">
+          <Edit2 size={13} />
+        </Button>
+        <Button variant="ghost" size="sm" onClick={() => onDeleteLesson(moduleId, lesson.id)} title="Delete lesson">
+          <Trash2 size={13} />
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+// Sortable Section / Module Component
+const SortableModule = ({ module, index, onAddLesson, onEditLesson, onDeleteLesson, onDeleteModule, onUpdateModuleTitle, onReorderLessons }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: module.id });
+  const [expanded, setExpanded] = useState(true);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(module.title.replace(/^section\s*\d*\s*:?\s*/i, '').trim() || module.title);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  const lessonsCount = module.lessons?.length || 0;
+
+  const handleSaveTitle = () => {
+    if (!editedTitle.trim()) return;
+    onUpdateModuleTitle(module.id, editedTitle.trim());
+    setIsEditingTitle(false);
+  };
+
+  const handleLessonDragEnd = (event) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id || !module.lessons) return;
+    const oldIndex = module.lessons.findIndex((l) => l.id === active.id);
+    const newIndex = module.lessons.findIndex((l) => l.id === over.id);
+    if (oldIndex < 0 || newIndex < 0) return;
+    const updated = arrayMove(module.lessons, oldIndex, newIndex);
+    onReorderLessons(module.id, updated);
+  };
+
+  return (
+    <div ref={setNodeRef} style={{ ...style, ...sectionCardStyle }}>
+      {/* Module Header */}
+      <div style={sectionHeadStyle}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1 }}>
+          <div {...attributes} {...listeners} style={{ cursor: 'grab', color: 'var(--text-muted)', display: 'flex', alignItems: 'center' }} title="Drag to reorder section">
+            <GripVertical size={18} />
+          </div>
+          <button onClick={() => setExpanded(!expanded)} style={iconBtnStyle}>
+            {expanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+          </button>
+          
+          <div style={{ flex: 1 }}>
+            {isEditingTitle ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, maxWidth: 400 }}>
+                <input
+                  autoFocus
+                  style={inputInlineStyle}
+                  value={editedTitle}
+                  onChange={(e) => setEditedTitle(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSaveTitle()}
+                />
+                <Button size="xs" variant="primary" onClick={handleSaveTitle}>
+                  <Check size={12} />
+                </Button>
+                <Button size="xs" variant="ghost" onClick={() => setIsEditingTitle(false)}>
+                  <X size={12} />
+                </Button>
               </div>
-            ))
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
+                  {formatSectionTitle(module.title, index + 1)}
+                </h3>
+                <span style={badgeStyle}>{lessonsCount} {lessonsCount === 1 ? 'item' : 'items'}</span>
+                <button
+                  onClick={() => setIsEditingTitle(true)}
+                  style={{ ...iconBtnStyle, padding: 4 }}
+                  title="Edit section title"
+                >
+                  <Edit2 size={13} />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <Button variant="secondary" size="sm" onClick={() => onAddLesson(module.id)}>
+            <Plus size={13} style={{ marginRight: 4 }} /> Add Lesson / File
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => onDeleteModule(module.id)} title="Delete section">
+            <Trash2 size={13} style={{ color: '#ef4444' }} />
+          </Button>
+        </div>
+      </div>
+
+      {/* Module Lessons List */}
+      {expanded && (
+        <div style={{ padding: '12px 18px', background: 'var(--lms-card)' }}>
+          {module.lessons?.length > 0 ? (
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleLessonDragEnd}>
+              <SortableContext items={module.lessons.map((l) => l.id)} strategy={verticalListSortingStrategy}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {module.lessons.map((lesson, idx) => (
+                    <SortableLessonRow
+                      key={lesson.id}
+                      lesson={lesson}
+                      idx={idx}
+                      moduleId={module.id}
+                      onEditLesson={onEditLesson}
+                      onDeleteLesson={onDeleteLesson}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
           ) : (
-            <p className="text-gray-500 text-sm italic m-0">No lessons in this module. Click "Add Lesson" to get started.</p>
+            <p style={{ margin: 0, padding: '16px 0', fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', fontStyle: 'italic' }}>
+              {'No material or lessons added in this section yet. Click "+ Add Lesson / File" above.'}
+            </p>
           )}
         </div>
       )}
@@ -74,8 +208,6 @@ export const CurriculumBuilder = ({ course }) => {
   const [isAddingModule, setIsAddingModule] = useState(false);
   const [newModuleTitle, setNewModuleTitle] = useState('');
   
-  const [addingLessonTo, setAddingLessonTo] = useState(null); // moduleId
-  const [newLessonData, setNewLessonData] = useState({ title: '', lessonType: 'VIDEO' });
   const [editingLesson, setEditingLesson] = useState(null); // { moduleId, lesson }
 
   const toast = useToast();
@@ -93,89 +225,83 @@ export const CurriculumBuilder = ({ course }) => {
     setModules((items) => {
       const oldIndex = items.findIndex((i) => i.id === active.id);
       const newIndex = items.findIndex((i) => i.id === over.id);
-      
-      const newArray = arrayMove(items, oldIndex, newIndex);
-      // In a real app, send update to backend here to save sort_order
-      return newArray;
+      return arrayMove(items, oldIndex, newIndex);
     });
   };
 
   const handleAddModule = async () => {
     if (!newModuleTitle.trim()) return;
     try {
-      const res = await curriculumService.addModule(course.id, { title: newModuleTitle, sortOrder: modules.length });
+      const cleanTitle = newModuleTitle.replace(/^section\s*\d*\s*:?\s*/i, '').trim();
+      const res = await curriculumService.addModule(course.id, { title: cleanTitle, sortOrder: modules.length });
       setModules([...modules, { ...res, lessons: [] }]);
       setNewModuleTitle('');
       setIsAddingModule(false);
-      toast.success('Module added');
+      toast.success('Section added');
       queryClient.invalidateQueries(['courses', course.id]);
     } catch (e) {
-      toast.error('Failed to add module');
+      toast.error(e?.message || 'Failed to add section');
     }
+  };
+
+  const handleUpdateModuleTitle = async (moduleId, newTitle) => {
+    try {
+      const cleanTitle = newTitle.replace(/^section\s*\d*\s*:?\s*/i, '').trim();
+      await curriculumService.updateModule(course.id, moduleId, { title: cleanTitle });
+      setModules(modules.map(m => m.id === moduleId ? { ...m, title: cleanTitle } : m));
+      toast.success('Section title updated');
+    } catch (e) {
+      toast.error(e?.message || 'Failed to update section title');
+    }
+  };
+
+  const handleReorderLessons = (moduleId, reorderedLessons) => {
+    setModules(modules.map(m => m.id === moduleId ? { ...m, lessons: reorderedLessons } : m));
   };
 
   const handleDeleteModule = async (moduleId) => {
-    if (!confirm('Delete this module and all its lessons?')) return;
+    if (!window.confirm('Delete this section and all its contents?')) return;
     try {
       await curriculumService.deleteModule(course.id, moduleId);
       setModules(modules.filter(m => m.id !== moduleId));
-      toast.success('Module deleted');
+      toast.success('Section deleted');
     } catch (e) {
-      toast.error('Failed to delete module');
+      toast.error(e?.message || 'Failed to delete section');
     }
   };
 
-  const handleAddLesson = async () => {
-    if (!newLessonData.title.trim()) return;
-    const targetModule = modules.find(m => m.id === addingLessonTo);
-    try {
-      const res = await curriculumService.addLesson(course.id, addingLessonTo, {
-        title: newLessonData.title,
-        lessonType: newLessonData.lessonType,
-        sortOrder: targetModule.lessons?.length || 0
-      });
-      
-      setModules(modules.map(m => {
-        if (m.id === addingLessonTo) {
-          return { ...m, lessons: [...(m.lessons || []), res] };
-        }
-        return m;
-      }));
-      setAddingLessonTo(null);
-      setNewLessonData({ title: '', lessonType: 'VIDEO' });
-      toast.success('Lesson added');
-    } catch (e) {
-      toast.error('Failed to add lesson');
-    }
+  const handleStartAddLesson = (moduleId) => {
+    setEditingLesson({
+      moduleId,
+      lesson: {
+        title: '',
+        lessonType: 'VIDEO',
+        durationMinutes: 10,
+        freePreview: false
+      }
+    });
   };
 
-  const handleSaveLesson = async (updatedLesson) => {
-    try {
-      const res = await curriculumService.updateLesson(course.id, editingLesson.moduleId, updatedLesson.id, {
-        title: updatedLesson.title,
-        lessonType: updatedLesson.lessonType,
-        content: updatedLesson.content,
-        recordingId: updatedLesson.recordingId,
-        sortOrder: updatedLesson.sortOrder,
-        durationMinutes: updatedLesson.durationMinutes,
-        freePreview: updatedLesson.freePreview
-      });
-      
-      setModules(modules.map(m => {
-        if (m.id === editingLesson.moduleId) {
-          return { ...m, lessons: m.lessons.map(l => l.id === res.id ? res : l) };
+  const handleSaveLesson = (savedLesson) => {
+    if (!editingLesson?.moduleId || !savedLesson) return;
+    setModules(modules.map(m => {
+      if (m.id === editingLesson.moduleId) {
+        const existingIdx = m.lessons?.findIndex(l => l.id === savedLesson.id);
+        let updatedLessons;
+        if (existingIdx >= 0) {
+          updatedLessons = m.lessons.map(l => l.id === savedLesson.id ? savedLesson : l);
+        } else {
+          updatedLessons = [...(m.lessons || []), savedLesson];
         }
-        return m;
-      }));
-      setEditingLesson(null);
-      toast.success('Lesson updated');
-    } catch (e) {
-      toast.error('Failed to update lesson');
-    }
+        return { ...m, lessons: updatedLessons };
+      }
+      return m;
+    }));
+    setEditingLesson(null);
   };
 
   const handleDeleteLesson = async (moduleId, lessonId) => {
-    if (!confirm('Delete this lesson?')) return;
+    if (!window.confirm('Delete this lesson?')) return;
     try {
       await curriculumService.deleteLesson(course.id, moduleId, lessonId);
       setModules(modules.map(m => {
@@ -186,91 +312,88 @@ export const CurriculumBuilder = ({ course }) => {
       }));
       toast.success('Lesson deleted');
     } catch (e) {
-      toast.error('Failed to delete lesson');
+      toast.error(e?.message || 'Failed to delete lesson');
     }
   };
 
   return (
-    <div className="max-w-4xl">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-gray-900 m-0">Course Curriculum</h2>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {/* Section Header Bar */}
+      <div style={curriculumHeaderStyle}>
+        <div>
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
+            Course Curriculum & Materials
+          </h2>
+          <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
+            Organize course content into multiple sections containing videos, slides (PPT), PDFs, and docs. Drag items to reorder.
+          </p>
+        </div>
         <Button onClick={() => setIsAddingModule(true)} variant="primary" size="sm">
-          <Plus size={16} className="mr-2" /> Add Module
+          <Plus size={14} style={{ marginRight: 6 }} /> Add Section
         </Button>
       </div>
 
+      {/* Inline Form to Add New Section */}
       {isAddingModule && (
-        <div className="bg-gray-50 border rounded-lg p-4 mb-6 flex gap-3 items-end">
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Module Title</label>
+        <div style={inlineAddModuleStyle}>
+          <div style={{ flex: 1 }}>
+            <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: 4 }}>
+              Section Title *
+            </label>
             <input 
               autoFocus
-              className="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500" 
+              style={inputStyle}
               value={newModuleTitle} 
               onChange={(e) => setNewModuleTitle(e.target.value)} 
-              placeholder="e.g. Introduction to Illustrator"
+              placeholder="e.g. Introduction to Angular Framework"
             />
           </div>
-          <Button onClick={handleAddModule} disabled={!newModuleTitle.trim()}>Save Module</Button>
-          <Button onClick={() => setIsAddingModule(false)} variant="outline">Cancel</Button>
-        </div>
-      )}
-
-      {addingLessonTo && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-[500px] shadow-xl">
-            <h3 className="text-lg font-bold mb-4">Add New Lesson</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                <input 
-                  className="w-full border border-gray-300 rounded-md p-2" 
-                  value={newLessonData.title}
-                  onChange={(e) => setNewLessonData({...newLessonData, title: e.target.value})}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                <select 
-                  className="w-full border border-gray-300 rounded-md p-2"
-                  value={newLessonData.lessonType}
-                  onChange={(e) => setNewLessonData({...newLessonData, lessonType: e.target.value})}
-                >
-                  <option value="VIDEO">Video Lesson</option>
-                  <option value="TEXT">Text / Article</option>
-                </select>
-              </div>
-            </div>
-            <div className="mt-6 flex justify-end gap-3">
-              <Button onClick={() => setAddingLessonTo(null)} variant="outline">Cancel</Button>
-              <Button onClick={handleAddLesson} disabled={!newLessonData.title.trim()}>Add Lesson</Button>
-            </div>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
+            <Button onClick={handleAddModule} variant="primary" size="sm" disabled={!newModuleTitle.trim()}>
+              Save Section
+            </Button>
+            <Button onClick={() => setIsAddingModule(false)} variant="ghost" size="sm">
+              Cancel
+            </Button>
           </div>
         </div>
       )}
 
+      {/* Drag & Drop Section List */}
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={modules.map(m => m.id)} strategy={verticalListSortingStrategy}>
-          {modules.map((module) => (
+          {modules.map((module, idx) => (
             <SortableModule 
               key={module.id} 
               module={module} 
-              courseId={course.id} 
-              onAddLesson={setAddingLessonTo}
+              index={idx}
+              onAddLesson={handleStartAddLesson}
               onEditLesson={(moduleId, lesson) => setEditingLesson({ moduleId, lesson })}
               onDeleteLesson={handleDeleteLesson}
               onDeleteModule={handleDeleteModule}
+              onUpdateModuleTitle={handleUpdateModuleTitle}
+              onReorderLessons={handleReorderLessons}
             />
           ))}
+
           {modules.length === 0 && !isAddingModule && (
-            <div className="text-center py-12 bg-gray-50 border-2 border-dashed rounded-lg">
-              <p className="text-gray-500 mb-4">Your course currently has no curriculum.</p>
-              <Button onClick={() => setIsAddingModule(true)} variant="outline">Create First Module</Button>
+            <div style={emptyCurriculumStyle}>
+              <Layers size={36} style={{ color: 'var(--text-muted)', marginBottom: 12 }} />
+              <p style={{ margin: '0 0 6px', fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
+                No sections created yet
+              </p>
+              <p style={{ margin: '0 0 16px', fontSize: 13, color: 'var(--text-muted)' }}>
+                Organize your course into sections and add PPT, Word, PDF, or video files.
+              </p>
+              <Button onClick={() => setIsAddingModule(true)} variant="outline" size="sm">
+                <FolderPlus size={14} style={{ marginRight: 6 }} /> Create First Section
+              </Button>
             </div>
           )}
         </SortableContext>
       </DndContext>
 
+      {/* Add / Edit Lesson Modal */}
       {editingLesson && (
         <LessonEditorModal 
           courseId={course.id} 
@@ -282,6 +405,130 @@ export const CurriculumBuilder = ({ course }) => {
       )}
     </div>
   );
+};
+
+/* ── Inline Design System Token Styles ── */
+const curriculumHeaderStyle = {
+  background: 'var(--lms-card)',
+  border: '1px solid var(--border-color)',
+  borderRadius: 12,
+  padding: '18px 22px',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  flexWrap: 'wrap',
+  gap: 12
+};
+
+const sectionCardStyle = {
+  background: 'var(--lms-card)',
+  border: '1px solid var(--border-color)',
+  borderRadius: 12,
+  marginBottom: 16,
+  overflow: 'hidden',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+};
+
+const sectionHeadStyle = {
+  background: 'var(--surface-medium)',
+  padding: '14px 18px',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  borderBottom: '1px solid var(--border-color)'
+};
+
+const iconBtnStyle = {
+  background: 'transparent',
+  border: 'none',
+  color: 'var(--text-muted)',
+  cursor: 'pointer',
+  padding: 2,
+  display: 'flex',
+  alignItems: 'center'
+};
+
+const badgeStyle = {
+  fontSize: 11,
+  fontWeight: 600,
+  padding: '2px 8px',
+  borderRadius: 12,
+  background: 'var(--border-color)',
+  color: 'var(--text-secondary)'
+};
+
+const lessonRowStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  padding: '12px 14px',
+  borderRadius: 8,
+  border: '1px solid var(--border-color)',
+  background: 'var(--bg-primary)',
+  transition: 'background 0.15s ease'
+};
+
+const lessonIconBox = (color) => ({
+  width: 32,
+  height: 32,
+  borderRadius: 8,
+  background: 'var(--surface-medium)',
+  color: color,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexShrink: 0
+});
+
+const freeBadgeStyle = {
+  fontSize: 10,
+  fontWeight: 600,
+  padding: '1px 6px',
+  borderRadius: 4,
+  background: 'rgba(16, 185, 129, 0.1)',
+  color: '#10b981',
+  border: '1px solid rgba(16, 185, 129, 0.3)'
+};
+
+const inlineAddModuleStyle = {
+  background: 'var(--lms-card)',
+  border: '1px solid var(--text-primary)',
+  borderRadius: 12,
+  padding: 18,
+  display: 'flex',
+  gap: 12,
+  alignItems: 'flex-end'
+};
+
+const emptyCurriculumStyle = {
+  textAlign: 'center',
+  padding: '48px 24px',
+  background: 'var(--lms-card)',
+  border: '2px dashed var(--border-color)',
+  borderRadius: 12
+};
+
+const inputStyle = {
+  width: '100%',
+  padding: '10px 14px',
+  borderRadius: 8,
+  border: '1px solid var(--border-color)',
+  background: 'var(--bg-primary)',
+  color: 'var(--text-primary)',
+  fontSize: 14,
+  outline: 'none',
+  boxSizing: 'border-box'
+};
+
+const inputInlineStyle = {
+  padding: '4px 10px',
+  borderRadius: 6,
+  border: '1px solid var(--border-color)',
+  background: 'var(--bg-primary)',
+  color: 'var(--text-primary)',
+  fontSize: 14,
+  outline: 'none',
+  width: '100%'
 };
 
 export default CurriculumBuilder;

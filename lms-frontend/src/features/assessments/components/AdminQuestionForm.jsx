@@ -7,7 +7,7 @@ import Select from '../../../components/common/Select';
 import Button from '../../../components/common/Button';
 import Alert from '../../../components/feedback/Alert';
 import { questionSchema } from '../validation/assessmentSchemas';
-import { DIFFICULTY_OPTIONS } from '../constants/assessmentConstants';
+import { DIFFICULTY_OPTIONS, COMPILER_OPTIONS } from '../constants/assessmentConstants';
 
 const EMPTY_TC = { inputData: '', expectedOutput: '', sample: false, hidden: true, weight: 1 };
 
@@ -18,6 +18,7 @@ const EMPTY_Q = {
   outputFormat: '',
   constraints: '',
   difficulty: 'MEDIUM',
+  compiler: 'ALL',
   marks: 10,
   timeLimitMs: 2000,
   memoryLimitMb: 256,
@@ -242,6 +243,20 @@ export const AdminQuestionForm = ({
               error={errors.difficulty?.message}
               {...register('difficulty')}
             />
+            <Select
+              label="Compiler / Language Engine"
+              options={COMPILER_OPTIONS}
+              error={errors.compiler?.message}
+              {...register('compiler')}
+            />
+            <label className="flex items-center gap-2 text-xs font-semibold text-gray-700 dark:text-gray-300 cursor-pointer pt-1">
+              <input
+                type="checkbox"
+                defaultChecked
+                className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer"
+              />
+              <span>Enable Code Compiler & Execution</span>
+            </label>
             <Input
               label="Marks"
               type="number"

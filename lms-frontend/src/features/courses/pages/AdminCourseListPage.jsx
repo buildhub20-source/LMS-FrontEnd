@@ -10,6 +10,7 @@ import AdminPagination, { AdminEmptyState, AdminErrorState } from '../../../comp
 import PermissionGuard from '../../../guards/PermissionGuard';
 import { PERMISSIONS } from '../../../constants/permissions';
 import { COURSE_STATUS } from '../constants/courseConstants';
+import { ROUTES } from '../../../constants/routes';
 import courseService from '../services/courseService';
 import { useToast } from '../../../components/feedback/Toast';
 
@@ -341,7 +342,10 @@ export const AdminCourseListPage = () => {
     finally { setLoading(false); }
   }, [page, pageSize, search, statusFilter]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load();
+  }, [load]);
 
   const doAction = async (course, type, fn, msg) => {
     setConfirmAction(a => ({ ...a, loading: true }));
@@ -350,7 +354,7 @@ export const AdminCourseListPage = () => {
   };
 
   const handleAction = (type, course) => {
-    if (type === 'edit') { navigate(`/admin/courses/${course.id}/edit`); return; }
+    if (type === 'edit') { navigate(ROUTES.ADMIN_COURSE_EDIT(course.id)); return; }
     if (type === 'reject') { setRejectModal({ course, loading: false }); setRejectReason(''); return; }
     const MAP = {
       publish: { fn: courseService.publish, msg: 'Published!' },
@@ -441,14 +445,14 @@ export const AdminCourseListPage = () => {
       ) : view === 'grid' ? (
         <>
           <div style={{ display: 'grid', gap: 24, gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))' }}>
-            {courses.map(c => <CourseCard key={c.id} course={c} onAction={handleAction} onClick={() => navigate(`/admin/courses/${c.id}/edit`)} />)}
+            {courses.map(c => <CourseCard key={c.id} course={c} onAction={handleAction} onClick={() => navigate(ROUTES.ADMIN_COURSE_DETAILS(c.id))} />)}
           </div>
           {totalPages > 1 && <div style={{ marginTop: 24 }}><AdminPagination page={page} totalPages={totalPages} totalElements={totalElements} pageSize={pageSize} onPageChange={setPage} /></div>}
         </>
       ) : (
         <>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {courses.map(c => <CourseListRow key={c.id} course={c} onAction={handleAction} onClick={() => navigate(`/admin/courses/${c.id}/edit`)} />)}
+            {courses.map(c => <CourseListRow key={c.id} course={c} onAction={handleAction} onClick={() => navigate(ROUTES.ADMIN_COURSE_DETAILS(c.id))} />)}
           </div>
           {totalPages > 1 && <div style={{ marginTop: 24 }}><AdminPagination page={page} totalPages={totalPages} totalElements={totalElements} pageSize={pageSize} onPageChange={setPage} /></div>}
         </>

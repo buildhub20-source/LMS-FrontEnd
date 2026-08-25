@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   MoreVertical, Eye, Edit2, Rocket, Undo2, XCircle,
   ArchiveIcon, Trash2, FileQuestion,
@@ -207,8 +207,8 @@ export const AssessmentTable = ({ onAction, ...rest }) => {
     },
     {
       key: 'totalMarks',
-      header: 'Total Marks',
-      render: (a) => a.totalMarks ?? 0,
+      header: 'Total Score',
+      render: (a) => `${a.totalMarks ?? 0}%`,
     },
     {
       key: 'durationMinutes',

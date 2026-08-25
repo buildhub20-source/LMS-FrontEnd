@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Search, BookOpen, Plus, LayoutList, LayoutGrid, Code, CheckCircle
@@ -130,50 +130,42 @@ function AssessmentCard({ assessment, onAction, onClick }) {
       </div>
 
       {/* ── bottom section ── */}
-      <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12, flex: 1, background: 'var(--lms-card)' }}>
+      <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', flex: 1, background: 'var(--lms-card)' }}>
 
-        {/* title + questions */}
-        <div>
-          <h3 style={{ margin: '0 0 4px', fontSize: 17, fontWeight: 600, color: 'var(--text-primary)' }}>
+        {/* Content top: title, meta, description */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
+          <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>
             {assessment.title}
           </h3>
-          <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>
+          <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
             {assessment.questionCount || 0} Questions • {assessment.durationMinutes || 0} Mins
+          </p>
+          <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+            {assessment.description || "No description provided."}
           </p>
         </div>
 
-        {/* description */}
-        <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-          {assessment.description || "No description provided."}
-        </p>
-
-        {/* extra details */}
-        <div style={{ marginTop: 4 }}>
+        {/* Content bottom: extra details, creator, actions */}
+        <div style={{ marginTop: 12 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>
-            <span>Total Marks</span>
-            <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{assessment.totalMarks || 0} pts</span>
+            <span>Total Score</span>
+            <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{assessment.totalMarks || 0}%</span>
           </div>
           <div style={{ height: 6, borderRadius: 99, background: 'var(--border-color)', overflow: 'hidden' }}>
-             <div style={{ height: '100%', borderRadius: 99, width: '100%', background: 'var(--surface-medium)' }} />
+             <div style={{ height: '100%', borderRadius: 99, width: `${Math.min(100, assessment.totalMarks || 100)}%`, background: 'var(--surface-medium)' }} />
           </div>
-        </div>
 
-        {/* divider */}
-        <div style={{ height: 1, background: 'var(--border-color)' }} />
+          <div style={{ height: 1, background: 'var(--border-color)', margin: '16px 0' }} />
 
-        {/* creator + action */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Avatar name="Platform Admin" size={34} />
-            <div>
-              <p style={{ margin: 0, fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>
-                Platform
-              </p>
-              <p style={{ margin: '0', fontSize: 12, color: 'var(--text-muted)' }}>
-                Administrator
-              </p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Avatar name="Platform Admin" size={32} />
+              <div>
+                <p style={{ margin: 0, fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>
+                  Platform Admin
+                </p>
+              </div>
             </div>
-          </div>
 
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={(e) => { e.stopPropagation(); onAction('edit', assessment); }} style={{
@@ -206,6 +198,7 @@ function AssessmentCard({ assessment, onAction, onClick }) {
             )}
           </div>
         </div>
+      </div>
 
       </div>
     </div>
@@ -271,32 +264,27 @@ function SkeletonCard() {
         <div style={{ ...s, width: 48, height: 48, borderRadius: 12 }} />
         <div style={{ ...s, width: 70, height: 26, borderRadius: 99 }} />
       </div>
-      <div style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div>
-          <div style={{ ...s, height: 20, width: '60%', marginBottom: 8 }} />
-          <div style={{ ...s, height: 16, width: '40%' }} />
+      <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
+          <div style={{ ...s, height: 18, width: '60%' }} />
+          <div style={{ ...s, height: 14, width: '40%' }} />
+          <div style={{ ...s, height: 14, width: '100%', marginTop: 4 }} />
+          <div style={{ ...s, height: 14, width: '80%' }} />
         </div>
-        <div>
-          <div style={{ ...s, height: 16, width: '100%', marginBottom: 6 }} />
-          <div style={{ ...s, height: 16, width: '80%' }} />
-        </div>
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-            <div style={{ ...s, height: 14, width: 60 }} />
-            <div style={{ ...s, height: 14, width: 30 }} />
+        <div style={{ marginTop: 12 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+            <div style={{ ...s, height: 12, width: 60 }} />
+            <div style={{ ...s, height: 12, width: 30 }} />
           </div>
           <div style={{ ...s, height: 6, borderRadius: 99 }} />
-        </div>
-        <div style={{ height: 1, background: 'var(--border-color)' }} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-            <div style={{ ...s, width: 38, height: 38, borderRadius: '50%' }} />
-            <div>
-              <div style={{ ...s, height: 16, width: 100, marginBottom: 4 }} />
-              <div style={{ ...s, height: 14, width: 60 }} />
+          <div style={{ height: 1, background: 'var(--border-color)', margin: '16px 0' }} />
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <div style={{ ...s, width: 32, height: 32, borderRadius: '50%' }} />
+              <div style={{ ...s, height: 14, width: 100 }} />
             </div>
+            <div style={{ ...s, width: 70, height: 32, borderRadius: 8 }} />
           </div>
-          <div style={{ ...s, width: 80, height: 36, borderRadius: 8 }} />
         </div>
       </div>
     </div>
@@ -430,7 +418,7 @@ export const AdminAssessmentListPage = () => {
         </div>
       ) : view === 'grid' ? (
         <>
-          <div style={{ display: 'grid', gap: 24, gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))' }}>
+          <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
             {assessments.map(a => <AssessmentCard key={a.id} assessment={a} onAction={handleAction} onClick={() => navigate(ROUTES.ADMIN_ASSESSMENT_DETAILS(a.id))} />)}
           </div>
           {totalPages > 1 && <div style={{ marginTop: 24 }}><AdminPagination page={page} totalPages={totalPages} totalElements={totalElements} pageSize={pageSize} onPageChange={setPage} /></div>}
