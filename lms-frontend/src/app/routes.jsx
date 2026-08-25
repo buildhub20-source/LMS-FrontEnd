@@ -66,6 +66,18 @@ const CreateAssessmentPage = lazy(
 const AssessmentResultPage = lazy(
   () => import('../features/assessments/pages/AssessmentResultPage'),
 );
+const AdminAssessmentListPage = lazy(
+  () => import('../features/assessments/pages/AdminAssessmentListPage'),
+);
+const AdminCreateAssessmentPage = lazy(
+  () => import('../features/assessments/pages/AdminCreateAssessmentPage'),
+);
+const AdminAssessmentDetailsPage = lazy(
+  () => import('../features/assessments/pages/AdminAssessmentDetailsPage'),
+);
+const AdminEditAssessmentPage = lazy(
+  () => import('../features/assessments/pages/AdminEditAssessmentPage'),
+);
 const CertificateListPage = lazy(
   () => import('../features/certificates/pages/CertificateListPage'),
 );
@@ -132,6 +144,15 @@ export const router = createBrowserRouter([
               { path: ROUTES.ADMIN_COURSES, element: suspend(<AdminCourseListPage />) },
               { path: ROUTES.ADMIN_COURSE_DETAILS(), element: suspend(<CoursePlayerPage />) },
               { path: ROUTES.ADMIN_COURSE_EDIT(), element: suspend(<EditCoursePage />) },
+              {
+                element: <PermissionGuard required={[PERMISSIONS.ASSESSMENT_VIEW]} />,
+                children: [
+                  { path: ROUTES.ADMIN_ASSESSMENTS, element: suspend(<AdminAssessmentListPage />) },
+                  { path: ROUTES.ADMIN_ASSESSMENT_CREATE, element: suspend(<AdminCreateAssessmentPage />) },
+                  { path: ROUTES.ADMIN_ASSESSMENT_DETAILS(), element: suspend(<AdminAssessmentDetailsPage />) },
+                  { path: ROUTES.ADMIN_ASSESSMENT_EDIT(), element: suspend(<AdminEditAssessmentPage />) },
+                ],
+              },
             ],
           },
         ],

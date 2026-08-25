@@ -32,7 +32,7 @@ export const usePagination = ({
       changePageSize,
       next: () => goToPage(page + 1),
       previous: () => goToPage(page - 1),
-      queryParams: { page, size: pageSize },
+      queryParams: { page: page - 1, size: pageSize },
     }),
     [page, pageSize, totalItems, totalPages, goToPage, changePageSize],
   );

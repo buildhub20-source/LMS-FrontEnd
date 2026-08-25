@@ -33,6 +33,12 @@ export const ROUTES = Object.freeze({
   ADMIN_COURSE_DETAILS: (id = ':courseId') => `/admin/courses/${id}`,
   ADMIN_COURSE_EDIT: (id = ':courseId') => `/admin/courses/${id}/edit`,
 
+  // Admin Assessments
+  ADMIN_ASSESSMENTS: '/admin/assessments',
+  ADMIN_ASSESSMENT_CREATE: '/admin/assessments/new',
+  ADMIN_ASSESSMENT_DETAILS: (id = ':assessmentId') => `/admin/assessments/${id}`,
+  ADMIN_ASSESSMENT_EDIT: (id = ':assessmentId') => `/admin/assessments/${id}/edit`,
+
   // Instructor
   INSTRUCTOR_ANALYTICS: '/instructor/analytics',
   COURSES: '/instructor/courses',

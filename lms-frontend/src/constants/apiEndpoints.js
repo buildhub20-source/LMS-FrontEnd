@@ -66,6 +66,18 @@ export const API_ENDPOINTS = Object.freeze({
     submit: (attemptId) => `/assessments/attempts/${attemptId}/submit`,
     result: (attemptId) => `/assessments/attempts/${attemptId}/result`,
   },
+  adminAssessments: {
+    base: '/admin/assessments',
+    byId: (id) => `/admin/assessments/${id}`,
+    publish: (id) => `/admin/assessments/${id}/publish`,
+    unpublish: (id) => `/admin/assessments/${id}/unpublish`,
+    close: (id) => `/admin/assessments/${id}/close`,
+    archive: (id) => `/admin/assessments/${id}/archive`,
+    questions: (assessmentId) => `/admin/assessments/${assessmentId}/questions`,
+    questionById: (assessmentId, questionId) =>
+      `/admin/assessments/${assessmentId}/questions/${questionId}`,
+    updateQuestion: (questionId) => `/admin/assessments/questions/${questionId}`,
+  },
   certificates: {
     base: '/certificates',
     byId: (id) => `/certificates/${id}`,

@@ -8,6 +8,7 @@ import {
   CreditCard,
   KeyRound,
   BookOpen,
+  FileText,
 } from 'lucide-react';
 import MainNavigation from '../MainNavigation';
 import { ROUTES } from '../../../constants/routes';
@@ -61,6 +62,13 @@ const ITEMS = [
     permission: PERMISSIONS.ENROLLMENT_READ,
     group: 'Learning',
     icon: <ClipboardList className="h-5 w-5" />,
+  },
+  {
+    label: 'Assessments',
+    to: ROUTES.ADMIN_ASSESSMENTS,
+    permission: PERMISSIONS.ASSESSMENT_VIEW,
+    group: 'Learning',
+    icon: <FileText className="h-5 w-5" />,
   },
   {
     label: 'Organization',
