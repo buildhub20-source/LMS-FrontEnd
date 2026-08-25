@@ -24,6 +24,14 @@ import {
   useRemoveQuestion,
   useDeleteAdminAssessment,
 } from '../hooks/useAdminAssessments';
+import {
+  useAdminSections,
+  useCreateSection,
+  useUpdateSection,
+  useDeleteSection,
+  useMoveQuestionToSection,
+  useAddQuestionToSection,
+} from '../hooks/useAdminSections';
 import { useToast } from '../../../components/feedback/Toast';
 import { ROUTES } from '../../../constants/routes';
 import { formatDate } from '../../../utils/dateUtils';
@@ -34,18 +42,25 @@ export const AdminAssessmentDetailsPage = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const [showForm, setShowForm] = useState(false);
+  const [targetSectionId, setTargetSectionId] = useState(null); // which section to add a question to
   const [editingQuestion, setEditingQuestion] = useState(null); // question object being edited
+  const [showSectionForm, setShowSectionForm] = useState(false); // for adding a new section
 
   const { data: a, isLoading, error } = useAdminAssessment(assessmentId);
   const { data: questions = [] } = useAdminAssessmentQuestions(assessmentId);
+  const { data: sections = [] } = useAdminSections(assessmentId);
 
   const publish   = usePublishAssessment();
   const unpublish = useUnpublishAssessment();
   const closeA    = useCloseAssessment();
   const archive   = useArchiveAssessment();
   const addQ      = useAddQuestion(assessmentId);
+  const addSectionQ = useAddQuestionToSection(assessmentId);
   const removeQ   = useRemoveQuestion(assessmentId);
   const deleteA   = useDeleteAdminAssessment();
+
+  const createSection = useCreateSection(assessmentId);
+  const deleteSection = useDeleteSection(assessmentId);
 
   // useUpdateQuestion needs a questionId — we call mutateAsync directly
   const updateQ   = useUpdateQuestion(editingQuestion?.id);
@@ -71,12 +86,29 @@ export const AdminAssessmentDetailsPage = () => {
 
   const handleAddQuestion = async (values) => {
     try {
-      await addQ.mutateAsync(values);
+      if (targetSectionId) {
+        await addSectionQ.mutateAsync({ sectionId: targetSectionId, data: values });
+      } else {
+        await addQ.mutateAsync(values); // This adds unsectioned
+      }
       toast.success('Question added');
       setShowForm(false);
+      setTargetSectionId(null);
     } catch (e) {
       console.error('Question add failed:', e);
       toast.error(e.message || 'Failed to add question');
+    }
+  };
+
+  const handleAddSection = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    try {
+      await createSection.mutateAsync({ title: formData.get('title') });
+      toast.success('Section added');
+      setShowSectionForm(false);
+    } catch (err) {
+      toast.error('Failed to add section');
     }
   };
 
@@ -218,47 +250,125 @@ export const AdminAssessmentDetailsPage = () => {
               </div>
             )}
 
-            {/* Question rows */}
-            <div className={s.questionsList}>
-              {questions.map((q, i) => (
-                <div key={q.id} className={`${s.questionRow} ${editingQuestion?.id === q.id ? s.questionRowActive : ''}`}>
-                  <div className={s.questionNum}>Q{i + 1}</div>
-                  <div className={s.questionContent}>
-                    <p className={s.questionTitle}>{q.title}</p>
-                    {q.description && <p className={s.questionDesc}>{q.description}</p>}
-                    <div className={s.questionChips}>
-                      <Badge tone={DIFFICULTY_TONE[q.difficulty] ?? 'neutral'}>{q.difficulty}</Badge>
-                      <span className={s.chip}><BarChart2 size={10} /> {q.marks} marks</span>
-                      <span className={s.chip}><Timer size={10} /> {q.timeLimitMs} ms</span>
-                      <span className={s.chip}><Cpu size={10} /> {q.memoryLimitMb} MB</span>
-                      <span className={s.chip}><HelpCircle size={10} /> {q.testCases?.length ?? 0} tests</span>
+            {/* Questions/Sections List */}
+            <div className={s.sectionsWrap}>
+              {/* Add Section Button */}
+              {canEditQuestions && !showSectionForm && (
+                <div style={{ marginBottom: 16 }}>
+                  <Button variant="outline" size="sm" onClick={() => setShowSectionForm(true)}>
+                    <Plus size={13} style={{ marginRight: 4 }} /> Add Section
+                  </Button>
+                </div>
+              )}
+
+              {/* Add Section Form */}
+              {showSectionForm && (
+                <div className={s.inlineFormWrap}>
+                  <h4 className={s.inlineFormTitle}>New Section</h4>
+                  <form onSubmit={handleAddSection} className={s.sectionForm}>
+                    <input name="title" placeholder="Section Title" required className={s.input} style={{ width: '100%', marginBottom: 12 }} />
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <Button type="submit" variant="primary" size="sm">Save Section</Button>
+                      <Button type="button" variant="ghost" size="sm" onClick={() => setShowSectionForm(false)}>Cancel</Button>
                     </div>
+                  </form>
+                </div>
+              )}
+
+              {/* Render Sections */}
+              {sections.map(section => (
+                <div key={section.id} className={s.sectionCard} style={{ border: '1px solid var(--border-color)', borderRadius: 8, marginBottom: 16, overflow: 'hidden' }}>
+                  <div className={s.sectionHead} style={{ background: 'var(--lms-card-hover)', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <h4 style={{ margin: 0, fontSize: 15, fontWeight: 600 }}>{section.title}</h4>
+                      {section.description && <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>{section.description}</p>}
+                    </div>
+                    {canEditQuestions && (
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <Button variant="outline" size="sm" onClick={() => {
+                          setTargetSectionId(section.id);
+                          setShowForm(true);
+                        }}>
+                          <Plus size={13} style={{ marginRight: 4 }} /> Add Question
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => {
+                           if (window.confirm('Delete this section? Questions will be moved to unsectioned.')) {
+                             deleteSection.mutateAsync(section.id).catch(e => toast.error('Failed to delete section'));
+                           }
+                        }}>
+                          <Trash2 size={13} />
+                        </Button>
+                      </div>
+                    )}
                   </div>
-                  {canEditQuestions && (
-                    <div className={s.questionActions}>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setShowForm(false);
-                          setEditingQuestion(editingQuestion?.id === q.id ? null : q);
-                        }}
-                        title="Edit question"
-                      >
-                        <Edit2 size={13} />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeQ.mutateAsync(q.id).catch(e => toast.error(e.message))}
-                        title="Delete question"
-                      >
-                        <Trash2 size={13} />
-                      </Button>
-                    </div>
-                  )}
+                  <div className={s.questionsList} style={{ padding: '0 16px' }}>
+                    {section.questions.length === 0 ? (
+                      <p style={{ padding: '16px 0', margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>No questions in this section.</p>
+                    ) : (
+                      section.questions.map((q, i) => (
+                        <div key={q.id} className={`${s.questionRow} ${editingQuestion?.id === q.id ? s.questionRowActive : ''}`} style={{ borderBottom: '1px solid var(--border-color)', padding: '12px 0' }}>
+                          <div className={s.questionNum}>Q{i + 1}</div>
+                          <div className={s.questionContent}>
+                            <p className={s.questionTitle}>{q.title}</p>
+                            <div className={s.questionChips}>
+                              <Badge tone={DIFFICULTY_TONE[q.difficulty] ?? 'neutral'}>{q.difficulty}</Badge>
+                              <span className={s.chip}><BarChart2 size={10} /> {q.marks} marks</span>
+                            </div>
+                          </div>
+                          {canEditQuestions && (
+                            <div className={s.questionActions}>
+                              <Button variant="ghost" size="sm" onClick={() => { setShowForm(false); setEditingQuestion(editingQuestion?.id === q.id ? null : q); }} title="Edit question">
+                                <Edit2 size={13} />
+                              </Button>
+                              <Button variant="ghost" size="sm" onClick={() => removeQ.mutateAsync(q.id).catch(e => toast.error(e.message))} title="Delete question">
+                                <Trash2 size={13} />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
                 </div>
               ))}
+
+              {/* Unsectioned Questions */}
+              {questions.filter(q => !q.sectionId).length > 0 && (
+                <div className={s.sectionCard} style={{ border: '1px solid var(--border-color)', borderRadius: 8, marginBottom: 16, overflow: 'hidden' }}>
+                  <div className={s.sectionHead} style={{ background: 'var(--bg-primary)', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)' }}>
+                    <h4 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: 'var(--text-secondary)' }}>Unsectioned Questions</h4>
+                    {canEditQuestions && (
+                      <Button variant="outline" size="sm" onClick={() => { setTargetSectionId(null); setShowForm(true); }}>
+                        <Plus size={13} style={{ marginRight: 4 }} /> Add Question
+                      </Button>
+                    )}
+                  </div>
+                  <div className={s.questionsList} style={{ padding: '0 16px' }}>
+                    {questions.filter(q => !q.sectionId).map((q, i) => (
+                      <div key={q.id} className={`${s.questionRow} ${editingQuestion?.id === q.id ? s.questionRowActive : ''}`} style={{ borderBottom: '1px solid var(--border-color)', padding: '12px 0' }}>
+                        <div className={s.questionNum}>Q{i + 1}</div>
+                        <div className={s.questionContent}>
+                          <p className={s.questionTitle}>{q.title}</p>
+                          <div className={s.questionChips}>
+                            <Badge tone={DIFFICULTY_TONE[q.difficulty] ?? 'neutral'}>{q.difficulty}</Badge>
+                            <span className={s.chip}><BarChart2 size={10} /> {q.marks} marks</span>
+                          </div>
+                        </div>
+                        {canEditQuestions && (
+                          <div className={s.questionActions}>
+                            <Button variant="ghost" size="sm" onClick={() => { setShowForm(false); setEditingQuestion(editingQuestion?.id === q.id ? null : q); }} title="Edit question">
+                              <Edit2 size={13} />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => removeQ.mutateAsync(q.id).catch(e => toast.error(e.message))} title="Delete question">
+                              <Trash2 size={13} />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
