@@ -77,6 +77,7 @@ export const API_ENDPOINTS = Object.freeze({
     questionById: (assessmentId, questionId) =>
       `/admin/assessments/${assessmentId}/questions/${questionId}`,
     updateQuestion: (questionId) => `/admin/assessments/questions/${questionId}`,
+    analytics: (id) => `/admin/assessments/${id}/analytics`,
   },
   certificates: {
     base: '/certificates',

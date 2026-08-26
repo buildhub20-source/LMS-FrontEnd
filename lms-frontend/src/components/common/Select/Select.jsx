@@ -2,6 +2,11 @@ import { forwardRef, useId } from 'react';
 // Form controls deliberately share one stylesheet so they stay visually identical.
 import styles from '../Input/Input.module.css';
 
+const optionStyle = {
+  backgroundColor: 'var(--lms-card, #1a1a20)',
+  color: 'var(--text-primary, #ffffff)',
+};
+
 export const Select = forwardRef(
   (
     {
@@ -36,9 +41,18 @@ export const Select = forwardRef(
           required={required}
           {...rest}
         >
-          {placeholder && <option value="">{placeholder}</option>}
+          {placeholder && (
+            <option value="" style={optionStyle}>
+              {placeholder}
+            </option>
+          )}
           {options.map((option) => (
-            <option key={option.value} value={option.value} disabled={option.disabled}>
+            <option
+              key={option.value}
+              value={option.value}
+              disabled={option.disabled}
+              style={optionStyle}
+            >
               {option.label}
             </option>
           ))}

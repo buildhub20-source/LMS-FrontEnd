@@ -24,6 +24,13 @@ import {
   useRemoveQuestion,
   useDeleteAdminAssessment,
 } from '../hooks/useAdminAssessments';
+import {
+  useAdminSections,
+  useCreateSection,
+  useDeleteSection,
+  useAddQuestionToSection,
+} from '../hooks/useAdminSections';
+import AssessmentAnalyticsTab from '../components/AssessmentAnalyticsTab';
 import { useToast } from '../../../components/feedback/Toast';
 import { ROUTES } from '../../../constants/routes';
 import { formatDate } from '../../../utils/dateUtils';
@@ -33,19 +40,27 @@ export const AdminAssessmentDetailsPage = () => {
   const { assessmentId } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
+  const [activeTab, setActiveTab] = useState('questions'); // 'questions' | 'analytics'
   const [showForm, setShowForm] = useState(false);
+  const [targetSectionId, setTargetSectionId] = useState(null); // which section to add a question to
   const [editingQuestion, setEditingQuestion] = useState(null); // question object being edited
+  const [showSectionForm, setShowSectionForm] = useState(false); // for adding a new section
 
   const { data: a, isLoading, error } = useAdminAssessment(assessmentId);
   const { data: questions = [] } = useAdminAssessmentQuestions(assessmentId);
+  const { data: sections = [] } = useAdminSections(assessmentId);
 
   const publish   = usePublishAssessment();
   const unpublish = useUnpublishAssessment();
   const closeA    = useCloseAssessment();
   const archive   = useArchiveAssessment();
   const addQ      = useAddQuestion(assessmentId);
+  const addSectionQ = useAddQuestionToSection(assessmentId);
   const removeQ   = useRemoveQuestion(assessmentId);
   const deleteA   = useDeleteAdminAssessment();
+
+  const createSection = useCreateSection(assessmentId);
+  const deleteSection = useDeleteSection(assessmentId);
 
   // useUpdateQuestion needs a questionId — we call mutateAsync directly
   const updateQ   = useUpdateQuestion(editingQuestion?.id);
@@ -71,12 +86,29 @@ export const AdminAssessmentDetailsPage = () => {
 
   const handleAddQuestion = async (values) => {
     try {
-      await addQ.mutateAsync(values);
+      if (targetSectionId) {
+        await addSectionQ.mutateAsync({ sectionId: targetSectionId, data: values });
+      } else {
+        await addQ.mutateAsync(values); // This adds unsectioned
+      }
       toast.success('Question added');
       setShowForm(false);
+      setTargetSectionId(null);
     } catch (e) {
       console.error('Question add failed:', e);
       toast.error(e.message || 'Failed to add question');
+    }
+  };
+
+  const handleAddSection = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    try {
+      await createSection.mutateAsync({ title: formData.get('title') });
+      toast.success('Section added');
+      setShowSectionForm(false);
+    } catch (err) {
+      toast.error(err.message || 'Failed to add section');
     }
   };
 
@@ -139,128 +171,244 @@ export const AdminAssessmentDetailsPage = () => {
       {/* ── Two-column body ──────────────────────────────────── */}
       <div className={s.body}>
 
-        {/* ── LEFT: Questions ──────────────────────────────── */}
+        {/* ── LEFT: Content ──────────────────────────────── */}
         <div className={s.mainCol}>
 
-          {/* Description */}
-          {a.description && (
-            <div className={s.descCard}>
-              <p className={s.descCardTitle}>About this assessment</p>
-              <p className={s.descCardText}>{a.description}</p>
-            </div>
-          )}
+          {/* ── Tab Header ── */}
+          <div style={{ display: 'flex', gap: 16, borderBottom: '1px solid var(--border-color)', marginBottom: 20 }}>
+            <button
+              onClick={() => setActiveTab('questions')}
+              style={{
+                padding: '10px 16px',
+                border: 'none',
+                background: 'transparent',
+                borderBottom: activeTab === 'questions' ? '2px solid var(--text-primary)' : '2px solid transparent',
+                color: activeTab === 'questions' ? 'var(--text-primary)' : 'var(--text-muted)',
+                fontWeight: 600,
+                fontSize: 14,
+                cursor: 'pointer'
+              }}
+            >
+              Questions & Structure ({questions.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('analytics')}
+              style={{
+                padding: '10px 16px',
+                border: 'none',
+                background: 'transparent',
+                borderBottom: activeTab === 'analytics' ? '2px solid var(--text-primary)' : '2px solid transparent',
+                color: activeTab === 'analytics' ? 'var(--text-primary)' : 'var(--text-muted)',
+                fontWeight: 600,
+                fontSize: 14,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6
+              }}
+            >
+              <BarChart2 size={16} /> Statistics & Analytics
+            </button>
+          </div>
 
-          {/* Publish callout */}
-          {isDraft && questions.length === 0 && (
-            <div className={s.callout}>
-              <div className={s.calloutIcon}><Info size={18} /></div>
-              <div className={s.calloutText}>
-                <p className={s.calloutTitle}>Ready to build your assessment?</p>
-                <p className={s.calloutDesc}>Add at least one coding question with test cases, then publish.</p>
-              </div>
-              <Button variant="primary" size="sm" onClick={() => setShowForm(true)}>
-                <Plus size={13} style={{ marginRight: 4 }} /> Add question
-              </Button>
-            </div>
-          )}
-
-          {/* Questions panel */}
-          <div className={s.questionsPanel}>
-            <div className={s.questionsPanelHead}>
-              <h3 className={s.questionsPanelTitle}>
-                Questions <span className={s.qBadge}>{questions.length}</span>
-              </h3>
-              {canEditQuestions && !showForm && !editingQuestion && (
-                <Button variant="secondary" size="sm" onClick={() => setShowForm(true)}>
-                  <Plus size={13} style={{ marginRight: 4 }} /> Add question
-                </Button>
+          {activeTab === 'analytics' ? (
+            <AssessmentAnalyticsTab assessmentId={assessmentId} />
+          ) : (
+            <>
+              {/* Description */}
+              {a.description && (
+                <div className={s.descCard}>
+                  <p className={s.descCardTitle}>About this assessment</p>
+                  <p className={s.descCardText}>{a.description}</p>
+                </div>
               )}
-            </div>
 
-            {/* Add new question form */}
-            {showForm && (
-              <div className={s.inlineFormWrap}>
-                <h4 className={s.inlineFormTitle}>
-                  <Plus size={15} /> New Coding Question
-                </h4>
-                <AdminQuestionForm
-                  onSubmit={handleAddQuestion}
-                  onCancel={() => setShowForm(false)}
-                  error={addQ.error}
-                />
-              </div>
-            )}
-
-            {/* Edit question form */}
-            {editingQuestion && (
-              <div className={s.inlineFormWrap}>
-                <h4 className={s.inlineFormTitle}>
-                  <Edit2 size={15} /> Edit Question: {editingQuestion.title}
-                </h4>
-                <AdminQuestionForm
-                  defaultValues={editingQuestion}
-                  onSubmit={handleUpdateQuestion}
-                  onCancel={() => setEditingQuestion(null)}
-                  submitLabel="Update question"
-                  error={updateQ.error}
-                />
-              </div>
-            )}
-
-            {/* Empty state */}
-            {questions.length === 0 && !showForm && (
-              <div className={s.emptyQuestions}>
-                <FileQuestion className={s.emptyIcon} />
-                <p className={s.emptyTitle}>No questions yet</p>
-                <p className={s.emptyDesc}>
-                  {isDraft ? 'Add a coding question above to get started.' : 'No questions were added.'}
-                </p>
-              </div>
-            )}
-
-            {/* Question rows */}
-            <div className={s.questionsList}>
-              {questions.map((q, i) => (
-                <div key={q.id} className={`${s.questionRow} ${editingQuestion?.id === q.id ? s.questionRowActive : ''}`}>
-                  <div className={s.questionNum}>Q{i + 1}</div>
-                  <div className={s.questionContent}>
-                    <p className={s.questionTitle}>{q.title}</p>
-                    {q.description && <p className={s.questionDesc}>{q.description}</p>}
-                    <div className={s.questionChips}>
-                      <Badge tone={DIFFICULTY_TONE[q.difficulty] ?? 'neutral'}>{q.difficulty}</Badge>
-                      <span className={s.chip}><BarChart2 size={10} /> {q.marks} marks</span>
-                      <span className={s.chip}><Timer size={10} /> {q.timeLimitMs} ms</span>
-                      <span className={s.chip}><Cpu size={10} /> {q.memoryLimitMb} MB</span>
-                      <span className={s.chip}><HelpCircle size={10} /> {q.testCases?.length ?? 0} tests</span>
-                    </div>
+              {/* Publish/Build callout */}
+              {isDraft && sections.length === 0 && (
+                <div className={s.callout}>
+                  <div className={s.calloutIcon}><Info size={18} /></div>
+                  <div className={s.calloutText}>
+                    <p className={s.calloutTitle}>Start by creating a section</p>
+                    <p className={s.calloutDesc}>Assessments are organized into sections. Create your first section to begin adding coding questions.</p>
                   </div>
-                  {canEditQuestions && (
-                    <div className={s.questionActions}>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setShowForm(false);
-                          setEditingQuestion(editingQuestion?.id === q.id ? null : q);
-                        }}
-                        title="Edit question"
-                      >
-                        <Edit2 size={13} />
+                  <Button variant="primary" size="sm" onClick={() => setShowSectionForm(true)}>
+                    <Plus size={13} style={{ marginRight: 4 }} /> Create Section
+                  </Button>
+                </div>
+              )}
+
+              {/* Questions & Sections panel */}
+              <div className={s.questionsPanel}>
+                <div className={s.questionsPanelHead}>
+                  <h3 className={s.questionsPanelTitle}>
+                    Assessment Sections <span className={s.qBadge}>{sections.length}</span>
+                  </h3>
+                  {canEditQuestions && !showSectionForm && (
+                    <Button variant="primary" size="sm" onClick={() => setShowSectionForm(true)}>
+                      <Plus size={13} style={{ marginRight: 4 }} /> Add Section
+                    </Button>
+                  )}
+                </div>
+
+                {/* Edit question modal/form if global */}
+                {editingQuestion && (
+                  <div className={s.inlineFormWrap}>
+                    <h4 className={s.inlineFormTitle}>
+                      <Edit2 size={15} /> Edit Question: {editingQuestion.title}
+                    </h4>
+                    <AdminQuestionForm
+                      defaultValues={editingQuestion}
+                      onSubmit={handleUpdateQuestion}
+                      onCancel={() => setEditingQuestion(null)}
+                      submitLabel="Update question"
+                      error={updateQ.error}
+                    />
+                  </div>
+                )}
+
+                {/* Empty state if 0 sections */}
+                {sections.length === 0 && questions.filter(q => !q.sectionId).length === 0 && !showSectionForm && (
+                  <div className={s.emptyQuestions}>
+                    <FileQuestion className={s.emptyIcon} />
+                    <p className={s.emptyTitle}>No sections created yet</p>
+                    <p className={s.emptyDesc}>
+                      {isDraft ? 'Create a section above to start adding questions.' : 'No sections or questions were added.'}
+                    </p>
+                    {canEditQuestions && (
+                      <Button variant="outline" size="sm" onClick={() => setShowSectionForm(true)} style={{ marginTop: 12 }}>
+                        <Plus size={13} style={{ marginRight: 4 }} /> Create Section
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeQ.mutateAsync(q.id).catch(e => toast.error(e.message))}
-                        title="Delete question"
-                      >
-                        <Trash2 size={13} />
-                      </Button>
+                    )}
+                  </div>
+                )}
+
+                {/* Questions/Sections List */}
+                <div className={s.sectionsWrap}>
+                  {/* Add Section Form */}
+                  {showSectionForm && (
+                    <div className={s.inlineFormWrap} style={{ border: '1px solid var(--text-primary)', marginBottom: 20 }}>
+                      <h4 className={s.inlineFormTitle}>New Section</h4>
+                      <form onSubmit={handleAddSection} className={s.sectionForm}>
+                        <input name="title" placeholder="Section Title (e.g., General Coding, Data Structures)" required className={s.input} style={{ width: '100%', marginBottom: 12 }} />
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          <Button type="submit" variant="primary" size="sm">Save Section</Button>
+                          <Button type="button" variant="ghost" size="sm" onClick={() => setShowSectionForm(false)}>Cancel</Button>
+                        </div>
+                      </form>
+                    </div>
+                  )}
+
+                  {/* Render Sections */}
+                  {sections.map(section => (
+                    <div key={section.id} className={s.sectionCard} style={{ border: '1px solid var(--border-color)', borderRadius: 10, marginBottom: 20, overflow: 'hidden', background: 'var(--lms-card)' }}>
+                      <div className={s.sectionHead} style={{ background: 'var(--surface-medium)', padding: '14px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)' }}>
+                        <div>
+                          <h4 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>{section.title}</h4>
+                          {section.description && <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>{section.description}</p>}
+                        </div>
+                        {canEditQuestions && (
+                          <div style={{ display: 'flex', gap: 8 }}>
+                            <Button variant="secondary" size="sm" onClick={() => {
+                              setTargetSectionId(section.id);
+                              setShowForm(true);
+                            }}>
+                              <Plus size={13} style={{ marginRight: 4 }} /> Add Question
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => {
+                               if (window.confirm('Delete this section? Questions will be moved to unsectioned.')) {
+                                  deleteSection.mutateAsync(section.id).catch(e => toast.error(e.message || 'Failed to delete section'));
+                               }
+                            }}>
+                              <Trash2 size={13} />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Question Form inside target section */}
+                      {showForm && targetSectionId === section.id && (
+                        <div className={s.inlineFormWrap} style={{ margin: 16 }}>
+                          <h4 className={s.inlineFormTitle}>
+                            <Plus size={15} /> {`New Question in "${section.title}"`}
+                          </h4>
+                          <AdminQuestionForm
+                            onSubmit={handleAddQuestion}
+                            onCancel={() => { setShowForm(false); setTargetSectionId(null); }}
+                            error={addQ.error}
+                          />
+                        </div>
+                      )}
+
+                      {/* Questions List for this Section */}
+                      <div className={s.questionsList} style={{ padding: '0 18px' }}>
+                        {section.questions.length === 0 ? (
+                          <p style={{ padding: '18px 0', margin: 0, fontSize: 13, color: 'var(--text-muted)', textAlign: 'center' }}>
+                            {'No questions in this section yet. Click "+ Add Question" to add one.'}
+                          </p>
+                        ) : (
+                          section.questions.map((q, i) => (
+                            <div key={q.id} className={`${s.questionRow} ${editingQuestion?.id === q.id ? s.questionRowActive : ''}`} style={{ borderBottom: i === section.questions.length - 1 ? 'none' : '1px solid var(--border-color)', padding: '14px 0', display: 'flex', alignItems: 'center' }}>
+                              <div className={s.questionNum}>Q{i + 1}</div>
+                              <div className={s.questionContent} style={{ flex: 1 }}>
+                                <p className={s.questionTitle} style={{ margin: '0 0 4px', fontSize: 15, fontWeight: 600 }}>{q.title}</p>
+                                <div className={s.questionChips} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                                  <Badge tone={DIFFICULTY_TONE[q.difficulty] ?? 'neutral'}>{q.difficulty}</Badge>
+                                  <span className={s.chip} style={{ fontSize: 12, color: 'var(--text-muted)' }}><BarChart2 size={10} /> {q.marks} marks</span>
+                                </div>
+                              </div>
+                              {canEditQuestions && (
+                                <div className={s.questionActions}>
+                                  <Button variant="ghost" size="sm" onClick={() => { setShowForm(false); setEditingQuestion(editingQuestion?.id === q.id ? null : q); }} title="Edit question">
+                                    <Edit2 size={13} />
+                                  </Button>
+                                  <Button variant="ghost" size="sm" onClick={() => removeQ.mutateAsync(q.id).catch(e => toast.error(e.message))} title="Delete question">
+                                    <Trash2 size={13} />
+                                  </Button>
+                                </div>
+                              )}
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Unsectioned Questions (ONLY shown if any unsectioned questions exist) */}
+                  {questions.filter(q => !q.sectionId).length > 0 && (
+                    <div className={s.sectionCard} style={{ border: '1px dashed var(--border-color)', borderRadius: 10, marginBottom: 20, overflow: 'hidden' }}>
+                      <div className={s.sectionHead} style={{ background: 'var(--bg-primary)', padding: '12px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)' }}>
+                        <h4 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: 'var(--text-secondary)' }}>Unsectioned Questions</h4>
+                      </div>
+                      <div className={s.questionsList} style={{ padding: '0 18px' }}>
+                        {questions.filter(q => !q.sectionId).map((q, i) => (
+                          <div key={q.id} className={`${s.questionRow} ${editingQuestion?.id === q.id ? s.questionRowActive : ''}`} style={{ borderBottom: '1px solid var(--border-color)', padding: '12px 0' }}>
+                            <div className={s.questionNum}>Q{i + 1}</div>
+                            <div className={s.questionContent}>
+                              <p className={s.questionTitle}>{q.title}</p>
+                              <div className={s.questionChips}>
+                                <Badge tone={DIFFICULTY_TONE[q.difficulty] ?? 'neutral'}>{q.difficulty}</Badge>
+                                <span className={s.chip}><BarChart2 size={10} /> {q.marks} marks</span>
+                              </div>
+                            </div>
+                            {canEditQuestions && (
+                              <div className={s.questionActions}>
+                                <Button variant="ghost" size="sm" onClick={() => { setShowForm(false); setEditingQuestion(editingQuestion?.id === q.id ? null : q); }} title="Edit question">
+                                  <Edit2 size={13} />
+                                </Button>
+                                <Button variant="ghost" size="sm" onClick={() => removeQ.mutateAsync(q.id).catch(e => toast.error(e.message))} title="Delete question">
+                                  <Trash2 size={13} />
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* ── RIGHT: Sidebar ───────────────────────────────── */}
@@ -282,7 +430,7 @@ export const AdminAssessmentDetailsPage = () => {
                   <div className={s.statRowIcon}><BarChart2 size={13} /></div>
                   Total Marks
                 </div>
-                <span className={s.statRowValue}>{a.totalMarks}</span>
+                <span className={s.statRowValue}>{a.totalMarks}%</span>
               </div>
               <div className={s.statRow}>
                 <div className={s.statRowLabel}>
