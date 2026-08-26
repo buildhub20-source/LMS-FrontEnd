@@ -9,6 +9,7 @@ export const Button = ({
   size = 'md',
   type = 'button',
   isLoading = false,
+  loading = false,
   fullWidth = false,
   disabled = false,
   leftIcon = null,
@@ -16,6 +17,7 @@ export const Button = ({
   children,
   ...rest
 }) => {
+  const loadingState = isLoading || loading;
   const classes = [
     styles.button,
     styles[variant],
@@ -30,11 +32,11 @@ export const Button = ({
     <button
       type={type}
       className={classes}
-      disabled={disabled || isLoading}
-      aria-busy={isLoading}
+      disabled={disabled || loadingState}
+      aria-busy={loadingState}
       {...rest}
     >
-      {isLoading ? <span className={styles.spinner} aria-hidden="true" /> : leftIcon}
+      {loadingState ? <span className={styles.spinner} aria-hidden="true" /> : leftIcon}
       {children}
     </button>
   );
