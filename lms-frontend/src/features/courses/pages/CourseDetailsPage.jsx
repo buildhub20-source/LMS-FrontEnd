@@ -78,7 +78,8 @@ export const CourseDetailsPage = () => {
     }
   };
 
-  const mediaUrl = currentLesson?.videoUrl || (currentLesson?.recordingId ? `https://pub-2e6f4369a0be4f309ff44b62db4150df.r2.dev/${currentLesson.recordingId}` : null);
+  const rawMedia = currentLesson?.content || currentLesson?.videoUrl || (currentLesson?.recordingId ? `/api/v1/recordings/${currentLesson.recordingId}/stream` : null);
+  const mediaUrl = rawMedia;
 
   const isAdmin = window.location.pathname.startsWith('/admin');
   const backRoute = isAdmin ? ROUTES.ADMIN_COURSES : ROUTES.COURSES;

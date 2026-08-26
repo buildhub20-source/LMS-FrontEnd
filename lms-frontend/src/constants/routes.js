@@ -47,6 +47,7 @@ export const ROUTES = Object.freeze({
   COURSE_EDIT: (id = ':courseId') => `/instructor/courses/${id}/edit`,
   ASSESSMENTS: '/instructor/assessments',
   ASSESSMENT_CREATE: '/instructor/assessments/new',
+  INSTRUCTOR_ENROLLMENTS: '/instructor/enrollments',
 
   // Student
   MY_COURSES: '/learn/my-courses',

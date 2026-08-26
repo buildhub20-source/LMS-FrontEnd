@@ -50,7 +50,7 @@ export const DataTable = ({
                 style={{ width: column.width }}
                 scope="col"
                 aria-sort={
-                  sort?.key === column.key
+                  sort && sort.key === column.key
                     ? sort.direction === 'asc'
                       ? 'ascending'
                       : 'descending'
