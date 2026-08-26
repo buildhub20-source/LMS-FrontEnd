@@ -8,7 +8,7 @@
  *   PERMISSIONS_VIEW, PERMISSIONS_MANAGE
  *   INVITATION_VIEW, INVITATION_CREATE, INVITATION_MANAGE
  */
-export const PERMISSIONS = Object.freeze({
+const PERMISSION_VALUES = Object.freeze({
   // User management
   USER_VIEW: 'USER_VIEW',
   USER_UPDATE: 'USER_UPDATE',
@@ -40,7 +40,24 @@ export const PERMISSIONS = Object.freeze({
   COURSE_SUBMIT: 'COURSE_SUBMIT',
   COURSE_APPROVE: 'COURSE_APPROVE',
   COURSE_REJECT: 'COURSE_REJECT',
-  COURSE_ANALYTICS_VIEW: 'COURSE_ANALYTICS_VIEW',
+
+  // Instructors — match backend @PreAuthorize strings
+  INSTRUCTOR_VIEW: 'INSTRUCTOR_VIEW',
+  INSTRUCTOR_CREATE: 'INSTRUCTOR_CREATE',
+  INSTRUCTOR_UPDATE: 'INSTRUCTOR_UPDATE',
+  INSTRUCTOR_DELETE: 'INSTRUCTOR_DELETE',
+
+  // Batches — match backend @PreAuthorize strings
+  BATCH_VIEW: 'BATCH_VIEW',
+  BATCH_CREATE: 'BATCH_CREATE',
+  BATCH_UPDATE: 'BATCH_UPDATE',
+  BATCH_DELETE: 'BATCH_DELETE',
+
+  // Students — match backend @PreAuthorize strings
+  STUDENT_VIEW: 'STUDENT_VIEW',
+  STUDENT_CREATE: 'STUDENT_CREATE',
+  STUDENT_UPDATE: 'STUDENT_UPDATE',
+  STUDENT_DELETE: 'STUDENT_DELETE',
 
   // Assessments
   ASSESSMENT_VIEW: 'ASSESSMENT_VIEW',
@@ -48,12 +65,8 @@ export const PERMISSIONS = Object.freeze({
   ASSESSMENT_UPDATE: 'ASSESSMENT_UPDATE',
   ASSESSMENT_DELETE: 'ASSESSMENT_DELETE',
   ASSESSMENT_PUBLISH: 'ASSESSMENT_PUBLISH',
-  ASSESSMENT_ANALYTICS_VIEW: 'ASSESSMENT_ANALYTICS_VIEW',
-  // Enrollments
-  ENROLLMENT_VIEW: 'ENROLLMENT_VIEW',
-  ENROLLMENT_CREATE: 'ENROLLMENT_CREATE',
-  ENROLLMENT_UPDATE: 'ENROLLMENT_UPDATE',
-  ENROLLMENT_DELETE: 'ENROLLMENT_DELETE',
+  ENROLLMENT_READ: 'enrollment:read',
+  ENROLLMENT_WRITE: 'enrollment:write',
   ASSESSMENT_READ: 'assessment:read',
   ASSESSMENT_WRITE: 'assessment:write',
   ASSESSMENT_GRADE: 'assessment:grade',
@@ -71,3 +84,22 @@ export const PERMISSIONS = Object.freeze({
   INVITATION_READ: 'INVITATION_VIEW',
   INVITATION_WRITE: 'INVITATION_CREATE',
 });
+
+/**
+ * Reading a key that does not exist used to yield `undefined`, and both the nav
+ * and the route guards treat "no permission" as "no restriction" — so a typo
+ * like PERMISSIONS.ROLE_READ silently made Roles and Permissions public to
+ * everyone. In development an unknown key now throws instead of failing open.
+ */
+export const PERMISSIONS = import.meta.env.DEV
+  ? new Proxy(PERMISSION_VALUES, {
+      get(target, key) {
+        if (typeof key === 'string' && !(key in target)) {
+          throw new Error(
+            `Unknown permission: PERMISSIONS.${key}. Check src/constants/permissions.js.`,
+          );
+        }
+        return target[key];
+      },
+    })
+  : PERMISSION_VALUES;

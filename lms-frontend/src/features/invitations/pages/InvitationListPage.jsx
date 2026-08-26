@@ -30,12 +30,19 @@ import { useToast } from '../../../components/feedback/Toast';
 function formatDate(str) {
   if (!str) return '—';
   return new Date(str).toLocaleDateString('en-US', {
-    year: 'numeric', month: 'short', day: 'numeric',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
   });
 }
 
 function getInitials(name = '') {
-  return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
 }
 
 function isExpired(inv) {
@@ -43,9 +50,24 @@ function isExpired(inv) {
 }
 
 function StatusBadge({ status }) {
-  if (status === 'PENDING')  return <AdminBadge variant="warning" dot>Pending</AdminBadge>;
-  if (status === 'ACCEPTED') return <AdminBadge variant="success" dot>Accepted</AdminBadge>;
-  if (status === 'EXPIRED')  return <AdminBadge variant="neutral" dot>Expired</AdminBadge>;
+  if (status === 'PENDING')
+    return (
+      <AdminBadge variant="warning" dot>
+        Pending
+      </AdminBadge>
+    );
+  if (status === 'ACCEPTED')
+    return (
+      <AdminBadge variant="success" dot>
+        Accepted
+      </AdminBadge>
+    );
+  if (status === 'EXPIRED')
+    return (
+      <AdminBadge variant="neutral" dot>
+        Expired
+      </AdminBadge>
+    );
   return <AdminBadge variant="neutral">{status}</AdminBadge>;
 }
 
@@ -91,9 +113,13 @@ export const InvitationListPage = () => {
       // Backend does not support status/search query params — pass page/size only,
       // then filter client-side.
       const res = await invitationService.list({ page, size: pageSize, search });
-      let content = Array.isArray(res?.content) ? res.content
-        : Array.isArray(res?.items) ? res.items
-        : Array.isArray(res) ? res : [];
+      let content = Array.isArray(res?.content)
+        ? res.content
+        : Array.isArray(res?.items)
+          ? res.items
+          : Array.isArray(res)
+            ? res
+            : [];
 
       // Client-side search filter
       if (search) {
@@ -117,7 +143,9 @@ export const InvitationListPage = () => {
     }
   }, [page, pageSize, search, statusFilter]);
 
-  useEffect(() => { loadInvitations(); }, [loadInvitations]);
+  useEffect(() => {
+    loadInvitations();
+  }, [loadInvitations]);
 
   useEffect(() => {
     if (!openMenuId) return;
@@ -126,9 +154,17 @@ export const InvitationListPage = () => {
     return () => window.removeEventListener('click', handler);
   }, [openMenuId]);
 
-  const handleSearch = () => { setPage(0); setSearch(searchInput); };
-  const handleKeyDown = (e) => { if (e.key === 'Enter') handleSearch(); };
-  const handleStatusFilter = (s) => { setPage(0); setStatusFilter(s); };
+  const handleSearch = () => {
+    setPage(0);
+    setSearch(searchInput);
+  };
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') handleSearch();
+  };
+  const handleStatusFilter = (s) => {
+    setPage(0);
+    setStatusFilter(s);
+  };
 
   /* ─── create invitation ─── */
 
@@ -140,9 +176,13 @@ export const InvitationListPage = () => {
     setCreateError('');
     try {
       const roles = await roleService.list();
-      const roleList = Array.isArray(roles?.items) ? roles.items
-        : Array.isArray(roles?.content) ? roles.content
-        : Array.isArray(roles) ? roles : [];
+      const roleList = Array.isArray(roles?.items)
+        ? roles.items
+        : Array.isArray(roles?.content)
+          ? roles.content
+          : Array.isArray(roles)
+            ? roles
+            : [];
       setAllRoles(roleList);
     } catch (err) {
       toastError(err?.message ?? 'Failed to load roles.');
@@ -153,9 +193,18 @@ export const InvitationListPage = () => {
 
   const handleCreate = async () => {
     setCreateError('');
-    if (!createName.trim()) { setCreateError('Please enter the recipient\'s name.'); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(createEmail)) { setCreateError('Please enter a valid email address.'); return; }
-    if (!createRoleName) { setCreateError('Please select a role for the invitation.'); return; }
+    if (!createName.trim()) {
+      setCreateError("Please enter the recipient's name.");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(createEmail)) {
+      setCreateError('Please enter a valid email address.');
+      return;
+    }
+    if (!createRoleName) {
+      setCreateError('Please select a role for the invitation.');
+      return;
+    }
 
     setCreating(true);
     try {
@@ -165,7 +214,9 @@ export const InvitationListPage = () => {
         email: createEmail.trim(),
         role: createRoleName,
       });
-      toastSuccess(`Invitation sent to ${createEmail}. They will receive an email with a temporary password.`);
+      toastSuccess(
+        `Invitation sent to ${createEmail}. They will receive an email with a temporary password.`,
+      );
       setCreateOpen(false);
       loadInvitations();
     } catch (err) {
@@ -212,8 +263,20 @@ export const InvitationListPage = () => {
       {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>Invitations</h1>
-          <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)' }}>Send and manage user invitations to the platform.</p>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: 24,
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+              letterSpacing: '-0.5px',
+            }}
+          >
+            Invitations
+          </h1>
+          <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)' }}>
+            Send and manage user invitations to the platform.
+          </p>
         </div>
         <PermissionGuard required={[PERMISSIONS.INVITATION_WRITE]} fallback={null}>
           <AdminButton icon={<Plus className="h-4 w-4" />} onClick={openCreate}>
@@ -240,17 +303,25 @@ export const InvitationListPage = () => {
                 key={s}
                 onClick={() => handleStatusFilter(s)}
                 style={{
-                  borderRadius: 8, padding: '6px 14px', fontSize: 13, fontWeight: 600,
-                  cursor: 'pointer', transition: 'all 0.15s ease', fontFamily: 'Inter, sans-serif',
+                  borderRadius: 8,
+                  padding: '6px 14px',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  fontFamily: 'Inter, sans-serif',
                   background: statusFilter === s ? '#ffffff' : 'var(--surface-medium)',
                   color: statusFilter === s ? '#000000' : 'var(--text-secondary)',
-                  border: statusFilter === s ? '1px solid #ffffff' : '1px solid var(--border-color)',
+                  border:
+                    statusFilter === s ? '1px solid #ffffff' : '1px solid var(--border-color)',
                 }}
               >
                 {s === 'ALL' ? 'All' : s.charAt(0) + s.slice(1).toLowerCase()}
               </button>
             ))}
-            <AdminButton size="sm" onClick={handleSearch}>Search</AdminButton>
+            <AdminButton size="sm" onClick={handleSearch}>
+              Search
+            </AdminButton>
           </div>
         </div>
       </div>
@@ -258,7 +329,9 @@ export const InvitationListPage = () => {
       {/* Table */}
       <div className="card-base overflow-hidden">
         {loading ? (
-          <div className="p-6"><AdminTableSkeleton rows={5} cols={5} /></div>
+          <div className="p-6">
+            <AdminTableSkeleton rows={5} cols={5} />
+          </div>
         ) : loadError ? (
           <AdminErrorState message={loadError} onRetry={loadInvitations} />
         ) : invitations.length === 0 ? (
@@ -272,7 +345,9 @@ export const InvitationListPage = () => {
             }
             action={
               <PermissionGuard required={[PERMISSIONS.INVITATION_WRITE]} fallback={null}>
-                <AdminButton icon={<Plus className="h-4 w-4" />} onClick={openCreate}>New Invitation</AdminButton>
+                <AdminButton icon={<Plus className="h-4 w-4" />} onClick={openCreate}>
+                  New Invitation
+                </AdminButton>
               </PermissionGuard>
             }
           />
@@ -282,70 +357,209 @@ export const InvitationListPage = () => {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr style={{ borderBottom: '1px solid var(--border-color)', background: 'var(--surface-medium)' }}>
-                    {['Recipient','Status','Role','Expires','Sent By','Actions'].map((h, i) => (
-                      <th key={h} style={{ padding: '12px 24px', textAlign: i === 5 ? 'right' : 'left', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px', color: 'var(--text-muted)' }}>{h}</th>
-                    ))}
+                  <tr
+                    style={{
+                      borderBottom: '1px solid var(--border-color)',
+                      background: 'var(--surface-medium)',
+                    }}
+                  >
+                    {['Recipient', 'Status', 'Role', 'Expires', 'Sent By', 'Actions'].map(
+                      (h, i) => (
+                        <th
+                          key={h}
+                          style={{
+                            padding: '12px 24px',
+                            textAlign: i === 5 ? 'right' : 'left',
+                            fontSize: 11,
+                            fontWeight: 600,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.8px',
+                            color: 'var(--text-muted)',
+                          }}
+                        >
+                          {h}
+                        </th>
+                      ),
+                    )}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {invitations.map((inv) => (
-                    <tr key={inv.id} style={{ borderBottom: '1px solid var(--border-subtle)', transition: 'background 0.1s ease' }}
-                      onMouseEnter={e => e.currentTarget.style.background='var(--hover-bg)'}
-                      onMouseLeave={e => e.currentTarget.style.background='transparent'}
+                    <tr
+                      key={inv.id}
+                      style={{
+                        borderBottom: '1px solid var(--border-subtle)',
+                        transition: 'background 0.1s ease',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                     >
                       <td style={{ padding: '14px 24px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--surface-medium)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)', flexShrink: 0 }}>
+                          <div
+                            style={{
+                              width: 36,
+                              height: 36,
+                              borderRadius: '50%',
+                              background: 'var(--surface-medium)',
+                              border: '1px solid var(--border-color)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: 13,
+                              fontWeight: 700,
+                              color: 'var(--text-secondary)',
+                              flexShrink: 0,
+                            }}
+                          >
                             {getInitials(inv.name ?? '')}
                           </div>
                           <div>
-                            <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{inv.name}</p>
-                            <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>{inv.email}</p>
+                            <p
+                              style={{
+                                margin: 0,
+                                fontSize: 14,
+                                fontWeight: 600,
+                                color: 'var(--text-primary)',
+                              }}
+                            >
+                              {inv.name}
+                            </p>
+                            <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
+                              {inv.email}
+                            </p>
                           </div>
                         </div>
                       </td>
-                      <td style={{ padding: '14px 24px' }}><StatusBadge status={inv.status} /></td>
                       <td style={{ padding: '14px 24px' }}>
-                        <span style={{ borderRadius: 6, background: 'var(--surface-medium)', border: '1px solid var(--border-color)', padding: '2px 8px', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>
+                        <StatusBadge status={inv.status} />
+                      </td>
+                      <td style={{ padding: '14px 24px' }}>
+                        <span
+                          style={{
+                            borderRadius: 6,
+                            background: 'var(--surface-medium)',
+                            border: '1px solid var(--border-color)',
+                            padding: '2px 8px',
+                            fontSize: 12,
+                            fontWeight: 600,
+                            color: 'var(--text-secondary)',
+                          }}
+                        >
                           {inv.roleName ?? '—'}
                         </span>
                       </td>
                       <td style={{ padding: '14px 24px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          {isExpired(inv)
-                            ? <Clock size={14} color="var(--text-muted)" />
-                            : <CheckCircle2 size={14} color="#4ade80" />}
-                          <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{formatDate(inv.expiresAt)}</span>
+                          {isExpired(inv) ? (
+                            <Clock size={14} color="var(--text-muted)" />
+                          ) : (
+                            <CheckCircle2 size={14} color="#4ade80" />
+                          )}
+                          <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+                            {formatDate(inv.expiresAt)}
+                          </span>
                         </div>
                       </td>
-                      <td style={{ padding: '14px 24px', fontSize: 13, color: 'var(--text-muted)' }}>{inv.invitedBy ?? '—'}</td>
+                      <td
+                        style={{ padding: '14px 24px', fontSize: 13, color: 'var(--text-muted)' }}
+                      >
+                        {inv.invitedBy ?? '—'}
+                      </td>
                       <td style={{ padding: '14px 24px', textAlign: 'right' }}>
-                        <PermissionGuard required={[PERMISSIONS.INVITATION_WRITE]} fallback={<span style={{ color: 'var(--text-muted)', fontSize: 12 }}>—</span>}>
+                        <PermissionGuard
+                          required={[PERMISSIONS.INVITATION_WRITE]}
+                          fallback={
+                            <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>—</span>
+                          }
+                        >
                           <div style={{ position: 'relative', display: 'inline-block' }}>
                             <button
-                              onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === inv.id ? null : inv.id); }}
-                              style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 6, borderRadius: 6, display: 'flex', alignItems: 'center' }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenMenuId(openMenuId === inv.id ? null : inv.id);
+                              }}
+                              style={{
+                                background: 'transparent',
+                                border: 'none',
+                                cursor: 'pointer',
+                                color: 'var(--text-muted)',
+                                padding: 6,
+                                borderRadius: 6,
+                                display: 'flex',
+                                alignItems: 'center',
+                              }}
                             >
                               <MoreVertical size={16} />
                             </button>
                             {openMenuId === inv.id && (
-                              <div style={{ position: 'absolute', right: 0, top: 36, zIndex: 20, width: 160, borderRadius: 8, border: '1px solid var(--border-color)', background: 'var(--surface-dark)', padding: '4px 0', boxShadow: 'var(--shadow-dark)' }}>
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  right: 0,
+                                  top: 36,
+                                  zIndex: 20,
+                                  width: 160,
+                                  borderRadius: 8,
+                                  border: '1px solid var(--border-color)',
+                                  background: 'var(--surface-dark)',
+                                  padding: '4px 0',
+                                  boxShadow: 'var(--shadow-dark)',
+                                }}
+                              >
                                 {inv.status === 'PENDING' && (
                                   <button
-                                    onClick={() => { setResendTarget(inv); setOpenMenuId(null); }}
-                                    style={{ display: 'flex', width: '100%', alignItems: 'center', gap: 10, padding: '8px 12px', fontSize: 13, color: 'var(--text-secondary)', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}
-                                    onMouseEnter={e => e.currentTarget.style.background='var(--hover-bg)'}
-                                    onMouseLeave={e => e.currentTarget.style.background='transparent'}
+                                    onClick={() => {
+                                      setResendTarget(inv);
+                                      setOpenMenuId(null);
+                                    }}
+                                    style={{
+                                      display: 'flex',
+                                      width: '100%',
+                                      alignItems: 'center',
+                                      gap: 10,
+                                      padding: '8px 12px',
+                                      fontSize: 13,
+                                      color: 'var(--text-secondary)',
+                                      background: 'transparent',
+                                      border: 'none',
+                                      cursor: 'pointer',
+                                      textAlign: 'left',
+                                    }}
+                                    onMouseEnter={(e) =>
+                                      (e.currentTarget.style.background = 'var(--hover-bg)')
+                                    }
+                                    onMouseLeave={(e) =>
+                                      (e.currentTarget.style.background = 'transparent')
+                                    }
                                   >
                                     <Send size={14} /> Resend
                                   </button>
                                 )}
                                 <button
-                                  onClick={() => { setRevokeTarget(inv); setOpenMenuId(null); }}
-                                  style={{ display: 'flex', width: '100%', alignItems: 'center', gap: 10, padding: '8px 12px', fontSize: 13, color: '#f87171', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}
-                                  onMouseEnter={e => e.currentTarget.style.background='rgba(239,68,68,0.08)'}
-                                  onMouseLeave={e => e.currentTarget.style.background='transparent'}
+                                  onClick={() => {
+                                    setRevokeTarget(inv);
+                                    setOpenMenuId(null);
+                                  }}
+                                  style={{
+                                    display: 'flex',
+                                    width: '100%',
+                                    alignItems: 'center',
+                                    gap: 10,
+                                    padding: '8px 12px',
+                                    fontSize: 13,
+                                    color: '#f87171',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    textAlign: 'left',
+                                  }}
+                                  onMouseEnter={(e) =>
+                                    (e.currentTarget.style.background = 'rgba(239,68,68,0.08)')
+                                  }
+                                  onMouseLeave={(e) =>
+                                    (e.currentTarget.style.background = 'transparent')
+                                  }
                                 >
                                   <Trash2 size={14} /> Revoke
                                 </button>
@@ -377,15 +591,31 @@ export const InvitationListPage = () => {
                           {inv.roleName ?? '—'}
                         </span>
                       </div>
-                      <p className="mt-1.5 text-xs text-slate-400">Expires {formatDate(inv.expiresAt)}</p>
+                      <p className="mt-1.5 text-xs text-slate-400">
+                        Expires {formatDate(inv.expiresAt)}
+                      </p>
                     </div>
                   </div>
                   <PermissionGuard required={[PERMISSIONS.INVITATION_WRITE]} fallback={null}>
                     <div className="mt-3 flex gap-2">
                       {inv.status === 'PENDING' && (
-                        <AdminButton size="sm" variant="outline" icon={<Send className="h-3.5 w-3.5" />} onClick={() => setResendTarget(inv)}>Resend</AdminButton>
+                        <AdminButton
+                          size="sm"
+                          variant="outline"
+                          icon={<Send className="h-3.5 w-3.5" />}
+                          onClick={() => setResendTarget(inv)}
+                        >
+                          Resend
+                        </AdminButton>
                       )}
-                      <AdminButton size="sm" variant="outline" icon={<Trash2 className="h-3.5 w-3.5" />} onClick={() => setRevokeTarget(inv)}>Revoke</AdminButton>
+                      <AdminButton
+                        size="sm"
+                        variant="outline"
+                        icon={<Trash2 className="h-3.5 w-3.5" />}
+                        onClick={() => setRevokeTarget(inv)}
+                      >
+                        Revoke
+                      </AdminButton>
                     </div>
                   </PermissionGuard>
                 </div>
@@ -415,15 +645,33 @@ export const InvitationListPage = () => {
           description="Invite a new user to join the platform"
           footer={
             <>
-              <AdminButton variant="outline" onClick={() => setCreateOpen(false)} disabled={creating}>Cancel</AdminButton>
-              <AdminButton onClick={handleCreate} loading={creating} icon={!creating ? <Send className="h-4 w-4" /> : undefined}>
+              <AdminButton
+                variant="outline"
+                onClick={() => setCreateOpen(false)}
+                disabled={creating}
+              >
+                Cancel
+              </AdminButton>
+              <AdminButton
+                onClick={handleCreate}
+                loading={creating}
+                icon={!creating ? <Send className="h-4 w-4" /> : undefined}
+              >
                 Send Invitation
               </AdminButton>
             </>
           }
         >
           {createError && (
-            <div style={{ marginBottom: 16, borderRadius: 8, border: '1px solid rgba(239,68,68,0.3)', background: 'rgba(239,68,68,0.08)', padding: '10px 14px' }}>
+            <div
+              style={{
+                marginBottom: 16,
+                borderRadius: 8,
+                border: '1px solid rgba(239,68,68,0.3)',
+                background: 'rgba(239,68,68,0.08)',
+                padding: '10px 14px',
+              }}
+            >
               <p style={{ margin: 0, fontSize: 13, color: '#f87171' }}>{createError}</p>
             </div>
           )}
@@ -445,45 +693,124 @@ export const InvitationListPage = () => {
               icon={<Mail className="h-4 w-4" />}
             />
             <div>
-              <label style={{ display: 'block', marginBottom: 6, fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)' }}>Role</label>
+              <label
+                style={{
+                  display: 'block',
+                  marginBottom: 6,
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: 'var(--text-secondary)',
+                }}
+              >
+                Role
+              </label>
               <div style={{ position: 'relative' }}>
                 <button
                   type="button"
                   onClick={() => setRolesDropdownOpen(!rolesDropdownOpen)}
                   style={{
-                    width: '100%', height: 38, padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    background: 'var(--input-bg)', border: '1px solid var(--border-color)', borderRadius: 8,
-                    fontSize: 14, color: createRoleName ? 'var(--text-primary)' : 'var(--text-muted)',
-                    cursor: 'pointer', fontFamily: 'Inter, sans-serif',
+                    width: '100%',
+                    height: 38,
+                    padding: '0 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    background: 'var(--input-bg)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: 8,
+                    fontSize: 14,
+                    color: createRoleName ? 'var(--text-primary)' : 'var(--text-muted)',
+                    cursor: 'pointer',
+                    fontFamily: 'Inter, sans-serif',
                   }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <ShieldCheck size={16} color="var(--text-muted)" />
                     {selectedRole ? selectedRole.name : 'Select a role…'}
                   </span>
-                  <svg style={{ width: 16, height: 16, color: 'var(--text-muted)', transform: rolesDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg
+                    style={{
+                      width: 16,
+                      height: 16,
+                      color: 'var(--text-muted)',
+                      transform: rolesDropdownOpen ? 'rotate(180deg)' : 'none',
+                      transition: 'transform 0.15s',
+                    }}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
                 {rolesDropdownOpen && (
-                  <div style={{ position: 'absolute', zIndex: 20, top: 42, width: '100%', borderRadius: 8, border: '1px solid var(--border-color)', background: 'var(--surface-dark)', boxShadow: 'var(--shadow-dark)', maxHeight: 240, overflowY: 'auto' }}>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      zIndex: 20,
+                      top: 42,
+                      width: '100%',
+                      borderRadius: 8,
+                      border: '1px solid var(--border-color)',
+                      background: 'var(--surface-dark)',
+                      boxShadow: 'var(--shadow-dark)',
+                      maxHeight: 240,
+                      overflowY: 'auto',
+                    }}
+                  >
                     {allRoles.map((role) => (
                       <button
                         key={role.id ?? role.name}
                         type="button"
-                        onClick={() => { setCreateRoleName(role.name); setRolesDropdownOpen(false); }}
-                        style={{
-                          display: 'flex', width: '100%', alignItems: 'flex-start', gap: 10, padding: '10px 12px',
-                          background: createRoleName === role.name ? 'var(--active-bg)' : 'transparent',
-                          border: 'none', cursor: 'pointer', textAlign: 'left',
+                        onClick={() => {
+                          setCreateRoleName(role.name);
+                          setRolesDropdownOpen(false);
                         }}
-                        onMouseEnter={e => { if (createRoleName !== role.name) e.currentTarget.style.background='var(--hover-bg)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = createRoleName === role.name ? 'var(--active-bg)' : 'transparent'; }}
+                        style={{
+                          display: 'flex',
+                          width: '100%',
+                          alignItems: 'flex-start',
+                          gap: 10,
+                          padding: '10px 12px',
+                          background:
+                            createRoleName === role.name ? 'var(--active-bg)' : 'transparent',
+                          border: 'none',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                        }}
+                        onMouseEnter={(e) => {
+                          if (createRoleName !== role.name)
+                            e.currentTarget.style.background = 'var(--hover-bg)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background =
+                            createRoleName === role.name ? 'var(--active-bg)' : 'transparent';
+                        }}
                       >
-                        <ShieldCheck size={16} color={createRoleName === role.name ? 'var(--text-primary)' : 'var(--text-muted)'} style={{ marginTop: 2, flexShrink: 0 }} />
+                        <ShieldCheck
+                          size={16}
+                          color={
+                            createRoleName === role.name
+                              ? 'var(--text-primary)'
+                              : 'var(--text-muted)'
+                          }
+                          style={{ marginTop: 2, flexShrink: 0 }}
+                        />
                         <div>
-                          <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{role.name}</p>
-                          <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>{role.description}</p>
+                          <p
+                            style={{
+                              margin: 0,
+                              fontSize: 14,
+                              fontWeight: 600,
+                              color: 'var(--text-primary)',
+                            }}
+                          >
+                            {role.name}
+                          </p>
+                          <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
+                            {role.description}
+                          </p>
                         </div>
                       </button>
                     ))}

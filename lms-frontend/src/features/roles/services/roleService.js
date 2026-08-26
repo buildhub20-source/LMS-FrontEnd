@@ -6,7 +6,6 @@ import { API_ENDPOINTS } from '../../../constants/apiEndpoints';
  * PermissionResponse: { id, name, description, authority }
  */
 
-
 export const roleService = {
   /** GET /roles → List<RoleResponse> (not paginated) */
   /** GET /roles → List<RoleResponse> (not paginated) */

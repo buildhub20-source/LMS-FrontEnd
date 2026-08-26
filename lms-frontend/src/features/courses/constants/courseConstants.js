@@ -29,14 +29,3 @@ export const COURSE_STATUS_OPTIONS = Object.values(COURSE_STATUS).map((status) =
   value: status,
   label: status.replace(/_/g, ' ').toLowerCase(),
 }));
-
-export const DEFAULT_CATEGORIES = [
-  { id: 'web-dev', name: 'Web Development' },
-  { id: 'frontend', name: 'Frontend Engineering' },
-  { id: 'backend', name: 'Backend Engineering' },
-  { id: 'mobile-dev', name: 'Mobile Development' },
-  { id: 'data-science', name: 'Data Science & AI' },
-  { id: 'devops', name: 'DevOps & Cloud' },
-  { id: 'design', name: 'UI/UX Design' },
-  { id: 'cs', name: 'Computer Science' },
-];

@@ -45,7 +45,6 @@ export const questionSchema = z.object({
   outputFormat: z.string().trim().optional().nullable(),
   constraints: z.string().trim().optional().nullable(),
   difficulty: z.nativeEnum(DIFFICULTY, { message: 'Select a difficulty level' }),
-  compiler: z.string().optional().default('ALL'),
   marks: z.coerce.number().int().min(1).max(100).default(10),
   timeLimitMs: z.coerce.number().int().min(100).max(10000).default(2000),
   memoryLimitMb: z.coerce.number().int().min(16).max(1024).default(256),

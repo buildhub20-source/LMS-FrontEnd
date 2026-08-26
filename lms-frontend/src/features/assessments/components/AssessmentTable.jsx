@@ -1,8 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
-  MoreVertical, Eye, Edit2, Rocket, Undo2, XCircle,
-  ArchiveIcon, Trash2, FileQuestion,
+  MoreVertical,
+  Eye,
+  Edit2,
+  Rocket,
+  Undo2,
+  XCircle,
+  ArchiveIcon,
+  Trash2,
+  FileQuestion,
 } from 'lucide-react';
 import DataTable from '../../../components/common/DataTable';
 import { ROUTES } from '../../../constants/routes';
@@ -13,16 +20,30 @@ import { ASSESSMENT_STATUS } from '../constants/assessmentConstants';
 /* ── Dropdown menu item ───────────────────────────────── */
 const MenuItem = ({ icon, label, onClick, danger = false }) => (
   <button
-    onClick={(e) => { e.stopPropagation(); onClick(); }}
+    onClick={(e) => {
+      e.stopPropagation();
+      onClick();
+    }}
     style={{
-      display: 'flex', width: '100%', alignItems: 'center', gap: 10,
-      padding: '8px 14px', fontSize: 13, textAlign: 'left',
-      background: 'transparent', border: 'none', cursor: 'pointer',
+      display: 'flex',
+      width: '100%',
+      alignItems: 'center',
+      gap: 10,
+      padding: '8px 14px',
+      fontSize: 13,
+      textAlign: 'left',
+      background: 'transparent',
+      border: 'none',
+      cursor: 'pointer',
       color: danger ? '#ef4444' : 'var(--color-text)',
       fontWeight: 500,
     }}
-    onMouseEnter={e => e.currentTarget.style.background = danger ? 'rgba(239,68,68,0.08)' : 'var(--color-surface-alt)'}
-    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+    onMouseEnter={(e) =>
+      (e.currentTarget.style.background = danger
+        ? 'rgba(239,68,68,0.08)'
+        : 'var(--color-surface-alt)')
+    }
+    onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
   >
     {icon}
     {label}
@@ -40,53 +61,74 @@ const ActionsCell = ({ assessment, openId, setOpenId, onAction }) => {
   const isOpen = openId === assessment.id;
 
   const status = assessment.status;
-  const isDraft     = status === ASSESSMENT_STATUS.DRAFT;
+  const isDraft = status === ASSESSMENT_STATUS.DRAFT;
   const isPublished = status === ASSESSMENT_STATUS.PUBLISHED;
-  const isClosed    = status === ASSESSMENT_STATUS.CLOSED;
-  const isArchived  = status === ASSESSMENT_STATUS.ARCHIVED;
+  const isClosed = status === ASSESSMENT_STATUS.CLOSED;
+  const isArchived = status === ASSESSMENT_STATUS.ARCHIVED;
 
   // Close on outside click
   useEffect(() => {
     if (!isOpen) return;
-    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpenId(null); };
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpenId(null);
+    };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [isOpen, setOpenId]);
 
-  const act = (type) => { setOpenId(null); onAction(type, assessment); };
+  const act = (type) => {
+    setOpenId(null);
+    onAction(type, assessment);
+  };
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'inline-block' }}>
       <button
-        onClick={(e) => { e.stopPropagation(); setOpenId(isOpen ? null : assessment.id); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpenId(isOpen ? null : assessment.id);
+        }}
         style={{
-          background: 'transparent', border: '1px solid transparent',
-          borderRadius: 6, cursor: 'pointer', color: 'var(--color-text-muted)',
-          padding: 6, display: 'flex', alignItems: 'center',
+          background: 'transparent',
+          border: '1px solid transparent',
+          borderRadius: 6,
+          cursor: 'pointer',
+          color: 'var(--color-text-muted)',
+          padding: 6,
+          display: 'flex',
+          alignItems: 'center',
           transition: 'background 0.15s ease',
         }}
-        onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-surface-alt)'; e.currentTarget.style.borderColor = 'var(--color-border)'; }}
-        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'transparent'; }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = 'var(--color-surface-alt)';
+          e.currentTarget.style.borderColor = 'var(--color-border)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'transparent';
+          e.currentTarget.style.borderColor = 'transparent';
+        }}
         aria-label="Assessment actions"
       >
         <MoreVertical size={16} />
       </button>
 
       {isOpen && (
-        <div style={{
-          position: 'absolute', right: 0, top: 36, zIndex: 50,
-          width: 200, borderRadius: 10,
-          border: '1px solid var(--color-border)',
-          background: 'var(--color-surface)',
-          padding: '4px 0',
-          boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
-        }}>
+        <div
+          style={{
+            position: 'absolute',
+            right: 0,
+            top: 36,
+            zIndex: 50,
+            width: 200,
+            borderRadius: 10,
+            border: '1px solid var(--color-border)',
+            background: 'var(--color-surface)',
+            padding: '4px 0',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+          }}
+        >
           {/* Always: View details */}
-          <MenuItem
-            icon={<Eye size={14} />}
-            label="View Details"
-            onClick={() => act('view')}
-          />
+          <MenuItem icon={<Eye size={14} />} label="View Details" onClick={() => act('view')} />
 
           {/* Draft: Edit, Publish, Delete */}
           {isDraft && (
@@ -188,8 +230,8 @@ export const AssessmentTable = ({ onAction, ...rest }) => {
         <Link
           to={ROUTES.ADMIN_ASSESSMENT_DETAILS(a.id)}
           style={{ color: 'var(--color-primary-500)', fontWeight: 600, textDecoration: 'none' }}
-          onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
-          onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
+          onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+          onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
         >
           {a.title}
         </Link>
@@ -207,8 +249,8 @@ export const AssessmentTable = ({ onAction, ...rest }) => {
     },
     {
       key: 'totalMarks',
-      header: 'Total Score',
-      render: (a) => `${a.totalMarks ?? 0}%`,
+      header: 'Total Marks',
+      render: (a) => a.totalMarks ?? 0,
     },
     {
       key: 'durationMinutes',
@@ -226,12 +268,7 @@ export const AssessmentTable = ({ onAction, ...rest }) => {
       header: '',
       width: '48px',
       render: (a) => (
-        <ActionsCell
-          assessment={a}
-          openId={openId}
-          setOpenId={setOpenId}
-          onAction={onAction}
-        />
+        <ActionsCell assessment={a} openId={openId} setOpenId={setOpenId} onAction={onAction} />
       ),
     },
   ];

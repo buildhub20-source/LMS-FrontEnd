@@ -14,9 +14,11 @@ export const AdminTableSkeleton = ({ rows = 5, cols = 5 }) => (
             key={j}
             className="animate-pulse"
             style={{
-              height: 40, flex: 1, borderRadius: 8,
+              height: 40,
+              flex: 1,
+              borderRadius: 8,
               background: 'var(--surface-medium)',
-              animationDelay: `${i * 100 + j * 50}ms`
+              animationDelay: `${i * 100 + j * 50}ms`,
             }}
           />
         ))}
@@ -29,10 +31,28 @@ export const AdminTableSkeleton = ({ rows = 5, cols = 5 }) => (
  * Card skeleton — renders a single card placeholder.
  */
 export const AdminCardSkeleton = () => (
-  <div style={{ background: 'var(--surface-dark)', borderRadius: 8, padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-    <div className="animate-pulse" style={{ height: 16, width: 96, borderRadius: 4, background: 'var(--surface-medium)' }} />
-    <div className="animate-pulse" style={{ height: 32, width: 64, borderRadius: 4, background: 'var(--surface-medium)' }} />
-    <div className="animate-pulse" style={{ height: 12, width: 128, borderRadius: 4, background: 'var(--surface-medium)' }} />
+  <div
+    style={{
+      background: 'var(--surface-dark)',
+      borderRadius: 8,
+      padding: 24,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 16,
+    }}
+  >
+    <div
+      className="animate-pulse"
+      style={{ height: 16, width: 96, borderRadius: 4, background: 'var(--surface-medium)' }}
+    />
+    <div
+      className="animate-pulse"
+      style={{ height: 32, width: 64, borderRadius: 4, background: 'var(--surface-medium)' }}
+    />
+    <div
+      className="animate-pulse"
+      style={{ height: 12, width: 128, borderRadius: 4, background: 'var(--surface-medium)' }}
+    />
   </div>
 );
 

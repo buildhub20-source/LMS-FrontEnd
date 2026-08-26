@@ -39,16 +39,27 @@ export const Sidebar = ({ isOpen = false, onClose, children, footer = null }) =>
       }}
     >
       {/* Brand / Logo */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 10,
-        padding: '0 20px', height: 64, flexShrink: 0,
-        borderBottom: '1px solid var(--border-color)',
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          padding: '0 20px',
+          height: 64,
+          flexShrink: 0,
+          borderBottom: '1px solid var(--border-color)',
+        }}
+      >
         <Logo />
-        <span style={{
-          fontSize: 20, fontWeight: 700, color: 'var(--text-primary)',
-          letterSpacing: '-0.5px', fontFamily: 'Inter, sans-serif',
-        }}>
+        <span
+          style={{
+            fontSize: 20,
+            fontWeight: 700,
+            color: 'var(--text-primary)',
+            letterSpacing: '-0.5px',
+            fontFamily: 'Inter, sans-serif',
+          }}
+        >
           LMS
         </span>
 
@@ -56,8 +67,13 @@ export const Sidebar = ({ isOpen = false, onClose, children, footer = null }) =>
         <button
           onClick={onClose}
           style={{
-            marginLeft: 'auto', background: 'transparent', border: 'none',
-            color: 'var(--text-muted)', cursor: 'pointer', padding: 4, borderRadius: 6,
+            marginLeft: 'auto',
+            background: 'transparent',
+            border: 'none',
+            color: 'var(--text-muted)',
+            cursor: 'pointer',
+            padding: 4,
+            borderRadius: 6,
           }}
           aria-label="Close sidebar"
           className="lg:hidden"

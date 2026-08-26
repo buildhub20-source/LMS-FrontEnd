@@ -9,15 +9,24 @@ const headStyle = {
   marginBottom: 24,
 };
 const breadStyle = {
-  display: 'flex', alignItems: 'center', gap: 6,
-  fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: 10,
+  display: 'flex',
+  alignItems: 'center',
+  gap: 6,
+  fontSize: '0.8rem',
+  color: 'var(--color-text-muted)',
+  marginBottom: 10,
 };
 const titleStyle = {
-  fontSize: '1.5rem', fontWeight: 800, color: 'var(--color-text)',
-  margin: 0, letterSpacing: '-0.02em',
+  fontSize: '1.5rem',
+  fontWeight: 800,
+  color: 'var(--color-text)',
+  margin: 0,
+  letterSpacing: '-0.02em',
 };
 const subStyle = {
-  fontSize: '0.825rem', color: 'var(--color-text-muted)', margin: '4px 0 0',
+  fontSize: '0.825rem',
+  color: 'var(--color-text-muted)',
+  margin: '4px 0 0',
 };
 
 export const AdminCreateAssessmentPage = () => {
@@ -35,7 +44,10 @@ export const AdminCreateAssessmentPage = () => {
     <div>
       <div style={headStyle}>
         <div style={breadStyle}>
-          <Link to={ROUTES.ADMIN_ASSESSMENTS} style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}>
+          <Link
+            to={ROUTES.ADMIN_ASSESSMENTS}
+            style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}
+          >
             Assessments
           </Link>
           <ChevronRight size={12} />

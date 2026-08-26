@@ -22,7 +22,6 @@ function normalizeList(res) {
   return { ...res, content };
 }
 
-
 export const userService = {
   /**
    * GET /users?search=&active=&page=&size=
@@ -54,19 +53,24 @@ export const userService = {
    * PATCH /users/{id} — update profile fields.
    * Backend UpdateUserRequest: { name, phone, profileImageUrl }
    */
-  update: async (id, payload) => normalizeUser(await http.patch(API_ENDPOINTS.users.byId(id), payload)),
+  update: async (id, payload) =>
+    normalizeUser(await http.patch(API_ENDPOINTS.users.byId(id), payload)),
 
   /** POST /users/{id}/activate */
-  activate: async (id, reason) => normalizeUser(await http.post(API_ENDPOINTS.users.activate(id), reason ? { reason } : {})),
+  activate: async (id, reason) =>
+    normalizeUser(await http.post(API_ENDPOINTS.users.activate(id), reason ? { reason } : {})),
 
   /** POST /users/{id}/deactivate */
-  deactivate: async (id, reason) => normalizeUser(await http.post(API_ENDPOINTS.users.deactivate(id), reason ? { reason } : {})),
+  deactivate: async (id, reason) =>
+    normalizeUser(await http.post(API_ENDPOINTS.users.deactivate(id), reason ? { reason } : {})),
 
   /** POST /users/{id}/lock */
-  lock: async (id, reason) => normalizeUser(await http.post(API_ENDPOINTS.users.lock(id), reason ? { reason } : {})),
+  lock: async (id, reason) =>
+    normalizeUser(await http.post(API_ENDPOINTS.users.lock(id), reason ? { reason } : {})),
 
   /** POST /users/{id}/unlock */
-  unlock: async (id, reason) => normalizeUser(await http.post(API_ENDPOINTS.users.unlock(id), reason ? { reason } : {})),
+  unlock: async (id, reason) =>
+    normalizeUser(await http.post(API_ENDPOINTS.users.unlock(id), reason ? { reason } : {})),
 
   /** GET /users/{id}/status-history */
   getStatusHistory: async (id) => http.get(API_ENDPOINTS.users.statusHistory(id)),
@@ -75,7 +79,8 @@ export const userService = {
    * PUT /users/{id}/roles
    * Backend UpdateUserRolesRequest: { roleIds: [UUID] }
    */
-  updateRoles: async (id, roleIds) => normalizeUser(await http.put(API_ENDPOINTS.users.roles(id), { roleIds })),
+  updateRoles: async (id, roleIds) =>
+    normalizeUser(await http.put(API_ENDPOINTS.users.roles(id), { roleIds })),
 
   /**
    * POST /users/me/password

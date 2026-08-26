@@ -11,7 +11,6 @@ export const ROUTES = Object.freeze({
   UNAUTHORIZED: '/unauthorized',
   NOT_FOUND: '/404',
 
-
   // Admin
   ADMIN_ANALYTICS: '/admin/analytics',
   USERS: '/admin/users',
@@ -22,6 +21,16 @@ export const ROUTES = Object.freeze({
   ROLE_DETAILS: (id = ':roleId') => `/admin/roles/${id}`,
   PERMISSIONS: '/admin/permissions',
   INVITATIONS: '/admin/invitations',
+  INSTRUCTORS: '/admin/instructors',
+  INSTRUCTOR_CREATE: '/admin/instructors/new',
+  INSTRUCTOR_DETAILS: (id = ':instructorId') => `/admin/instructors/${id}`,
+  INSTRUCTOR_EDIT: (id = ':instructorId') => `/admin/instructors/${id}/edit`,
+  BATCHES: '/admin/batches',
+  STUDENTS: '/admin/students',
+  STUDENT_CREATE: '/admin/students/new',
+  STUDENT_CATEGORIES: '/admin/students/categories',
+  STUDENT_DETAILS: (id = ':studentId') => `/admin/students/${id}`,
+  STUDENT_EDIT: (id = ':studentId') => `/admin/students/${id}/edit`,
   ENROLLMENTS: '/admin/enrollments',
   ENROLLMENT_DETAILS: (id = ':enrollmentId') => `/admin/enrollments/${id}`,
   ORGANIZATION: '/admin/organization',
@@ -47,7 +56,6 @@ export const ROUTES = Object.freeze({
   COURSE_EDIT: (id = ':courseId') => `/instructor/courses/${id}/edit`,
   ASSESSMENTS: '/instructor/assessments',
   ASSESSMENT_CREATE: '/instructor/assessments/new',
-  INSTRUCTOR_ENROLLMENTS: '/instructor/enrollments',
 
   // Student
   MY_COURSES: '/learn/my-courses',

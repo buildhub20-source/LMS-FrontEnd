@@ -27,13 +27,6 @@ export const useAdminAssessmentQuestions = (assessmentId) =>
     enabled: Boolean(assessmentId),
   });
 
-export const useAdminAssessmentAnalytics = (assessmentId) =>
-  useQuery({
-    queryKey: [...ADMIN_ASSESSMENTS, assessmentId, 'analytics'],
-    queryFn: () => adminAssessmentService.getAnalytics(assessmentId),
-    enabled: Boolean(assessmentId),
-  });
-
 // ─── Mutations ────────────────────────────────────────────────────────────────
 
 const invalidateAll = (qc) => qc.invalidateQueries({ queryKey: ADMIN_ASSESSMENTS });

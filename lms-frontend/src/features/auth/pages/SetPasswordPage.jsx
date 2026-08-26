@@ -122,7 +122,8 @@ export const SetPasswordPage = () => {
           <div className="set-pw__hints">
             <ShieldCheck size={14} className="set-pw__hints-icon" />
             <span>
-              Must be {PASSWORD_POLICY.minLength}+ characters with uppercase, lowercase, number, and symbol.
+              Must be {PASSWORD_POLICY.minLength}+ characters with uppercase, lowercase, number, and
+              symbol.
             </span>
           </div>
 

@@ -12,7 +12,15 @@ const sizeMap = {
   xl: 'max-w-4xl',
 };
 
-export const AdminModal = ({ open, onClose, title, description, children, footer, size = 'md' }) => {
+export const AdminModal = ({
+  open,
+  onClose,
+  title,
+  description,
+  children,
+  footer,
+  size = 'md',
+}) => {
   if (!open) return null;
 
   return (
@@ -29,18 +37,39 @@ export const AdminModal = ({ open, onClose, title, description, children, footer
         style={{ background: 'var(--surface-dark)', boxShadow: 'var(--shadow-dark)' }}
       >
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, padding: '20px 24px', borderBottom: '1px solid var(--border-color)' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+            gap: 16,
+            padding: '20px 24px',
+            borderBottom: '1px solid var(--border-color)',
+          }}
+        >
           <div>
-            <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>{title}</h2>
+            <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
+              {title}
+            </h2>
             {description && (
-              <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)' }}>{description}</p>
+              <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)' }}>
+                {description}
+              </p>
             )}
           </div>
           <button
             onClick={onClose}
-            style={{ flexShrink: 0, borderRadius: 8, padding: 6, background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
-            onMouseEnter={e => e.currentTarget.style.background = 'var(--hover-bg)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            style={{
+              flexShrink: 0,
+              borderRadius: 8,
+              padding: 6,
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--text-muted)',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
           >
             <X size={20} />
           </button>
@@ -49,7 +78,17 @@ export const AdminModal = ({ open, onClose, title, description, children, footer
         <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
         {/* Footer */}
         {footer && (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 12, padding: '16px 24px', borderTop: '1px solid var(--border-color)', background: 'var(--surface-medium)' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              gap: 12,
+              padding: '16px 24px',
+              borderTop: '1px solid var(--border-color)',
+              background: 'var(--surface-medium)',
+            }}
+          >
             {footer}
           </div>
         )}
@@ -88,7 +127,9 @@ export const AdminConfirmModal = ({
       </>
     }
   >
-    <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{message}</p>
+    <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+      {message}
+    </p>
   </AdminModal>
 );
 

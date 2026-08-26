@@ -23,8 +23,6 @@ export const adminAssessmentService = {
   updateQuestion: (questionId, payload) => http.put(ep.updateQuestion(questionId), payload),
   removeQuestion: (assessmentId, questionId) =>
     http.delete(ep.questionById(assessmentId, questionId)),
-  // Analytics
-  getAnalytics: (id) => http.get(ep.analytics(id)),
 };
 
 export default adminAssessmentService;

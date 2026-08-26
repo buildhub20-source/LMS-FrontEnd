@@ -37,11 +37,7 @@ export const ResetPasswordForm = () => {
   };
 
   if (success) {
-    return (
-      <Alert tone="success">
-        Password updated! Redirecting you to sign in…
-      </Alert>
-    );
+    return <Alert tone="success">Password updated! Redirecting you to sign in…</Alert>;
   }
 
   return (

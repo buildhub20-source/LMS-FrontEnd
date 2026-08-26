@@ -36,6 +36,24 @@ export const API_ENDPOINTS = Object.freeze({
     byId: (id) => `/invitations/${id}`,
     resend: (id) => `/invitations/${id}/resend`,
   },
+  batches: {
+    base: '/batches',
+    byId: (id) => `/batches/${id}`,
+  },
+  instructors: {
+    base: '/instructors',
+    byId: (id) => `/instructors/${id}`,
+    referenceData: '/instructors/reference-data',
+    photoUploadUrl: '/instructors/photo/upload-url',
+  },
+  students: {
+    base: '/students',
+    byId: (id) => `/students/${id}`,
+    referenceData: '/students/reference-data',
+    categories: '/students/categories',
+    categoryById: (id) => `/students/categories/${id}`,
+    photoUploadUrl: '/students/photo/upload-url',
+  },
   courses: {
     base: '/courses',
     byId: (id) => `/courses/${id}`,
@@ -49,19 +67,10 @@ export const API_ENDPOINTS = Object.freeze({
     thumbnail: (id) => `/courses/${id}/thumbnail`,
     mine: '/courses/mine',
   },
-  adminEnrollments: {
-    base: '/admin/enrollments',
-    byId: (id) => `/admin/enrollments/${id}`,
-    status: (id) => `/admin/enrollments/${id}/status`,
-  },
-  instructorEnrollments: {
-    base: '/instructor/enrollments',
-    byId: (id) => `/instructor/enrollments/${id}`,
-    status: (id) => `/instructor/enrollments/${id}/status`,
-  },
-  studentEnrollments: {
-    base: '/student/enrollments',
-    byId: (id) => `/student/enrollments/${id}`,
+  enrollments: {
+    base: '/enrollments',
+    byId: (id) => `/enrollments/${id}`,
+    mine: '/enrollments/mine',
   },
   learning: {
     course: (courseId) => `/learning/courses/${courseId}`,
@@ -86,7 +95,6 @@ export const API_ENDPOINTS = Object.freeze({
     questionById: (assessmentId, questionId) =>
       `/admin/assessments/${assessmentId}/questions/${questionId}`,
     updateQuestion: (questionId) => `/admin/assessments/questions/${questionId}`,
-    analytics: (id) => `/admin/assessments/${id}/analytics`,
   },
   certificates: {
     base: '/certificates',

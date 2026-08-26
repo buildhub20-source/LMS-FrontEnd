@@ -4,7 +4,7 @@ import { PERMISSIONS } from '../../../constants/permissions';
 
 const ITEMS = [
   { label: 'Dashboard', to: ROUTES.INSTRUCTOR_ANALYTICS, permission: PERMISSIONS.ANALYTICS_READ },
-  { label: 'Courses', to: ROUTES.COURSES, permission: PERMISSIONS.COURSE_READ, group: 'Teaching' },
+  { label: 'Courses', to: ROUTES.COURSES, permission: PERMISSIONS.COURSE_VIEW, group: 'Teaching' },
   {
     label: 'Assessments',
     to: ROUTES.ASSESSMENTS,

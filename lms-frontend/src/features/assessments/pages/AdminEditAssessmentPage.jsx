@@ -27,16 +27,41 @@ export const AdminEditAssessmentPage = () => {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: 10 }}>
-          <Link to={ROUTES.ADMIN_ASSESSMENTS} style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}>Assessments</Link>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            fontSize: '0.8rem',
+            color: 'var(--color-text-muted)',
+            marginBottom: 10,
+          }}
+        >
+          <Link
+            to={ROUTES.ADMIN_ASSESSMENTS}
+            style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}
+          >
+            Assessments
+          </Link>
           <ChevronRight size={12} />
-          <Link to={ROUTES.ADMIN_ASSESSMENT_DETAILS(assessmentId)} style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}>
+          <Link
+            to={ROUTES.ADMIN_ASSESSMENT_DETAILS(assessmentId)}
+            style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}
+          >
             {assessment.title}
           </Link>
           <ChevronRight size={12} />
           <span>Edit</span>
         </div>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--color-text)', margin: 0, letterSpacing: '-0.02em' }}>
+        <h1
+          style={{
+            fontSize: '1.5rem',
+            fontWeight: 800,
+            color: 'var(--color-text)',
+            margin: 0,
+            letterSpacing: '-0.02em',
+          }}
+        >
           Edit Assessment
         </h1>
         <p style={{ fontSize: '0.825rem', color: 'var(--color-text-muted)', margin: '4px 0 0' }}>
