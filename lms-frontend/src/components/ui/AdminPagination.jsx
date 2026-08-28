@@ -9,7 +9,7 @@ export const AdminPagination = ({ page, totalPages, totalElements, size, onPageC
   if (totalPages <= 1) return null;
 
   const startItem = page * size + 1;
-  const endItem   = Math.min((page + 1) * size, totalElements);
+  const endItem = Math.min((page + 1) * size, totalElements);
 
   // Show up to 7 page buttons
   const maxVisible = 7;
@@ -19,16 +19,31 @@ export const AdminPagination = ({ page, totalPages, totalElements, size, onPageC
   } else if (page < 4) {
     pageNumbers = [0, 1, 2, 3, 4, '...', totalPages - 1];
   } else if (page >= totalPages - 4) {
-    pageNumbers = [0, '...', totalPages - 5, totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1];
+    pageNumbers = [
+      0,
+      '...',
+      totalPages - 5,
+      totalPages - 4,
+      totalPages - 3,
+      totalPages - 2,
+      totalPages - 1,
+    ];
   } else {
     pageNumbers = [0, '...', page - 1, page, page + 1, '...', totalPages - 1];
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: '0 4px' }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 16,
+        padding: '0 4px',
+      }}
+    >
       <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)' }}>
-        Showing{' '}
-        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{startItem}</span>–
+        Showing <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{startItem}</span>–
         <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{endItem}</span> of{' '}
         <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{totalElements}</span>
       </p>
@@ -45,7 +60,18 @@ export const AdminPagination = ({ page, totalPages, totalElements, size, onPageC
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           {pageNumbers.map((n, i) =>
             n === '...' ? (
-              <span key={`ellipsis-${i}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 24, height: 32, fontSize: 14, color: 'var(--text-muted)' }}>
+              <span
+                key={`ellipsis-${i}`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 24,
+                  height: 32,
+                  fontSize: 14,
+                  color: 'var(--text-muted)',
+                }}
+              >
                 …
               </span>
             ) : (
@@ -53,16 +79,28 @@ export const AdminPagination = ({ page, totalPages, totalElements, size, onPageC
                 key={n}
                 onClick={() => onPageChange(n)}
                 style={{
-                  height: 32, minWidth: 32, borderRadius: 8, padding: '0 8px', fontSize: 14, fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s ease', border: 'none',
+                  height: 32,
+                  minWidth: 32,
+                  borderRadius: 8,
+                  padding: '0 8px',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  border: 'none',
                   background: n === page ? 'var(--text-primary)' : 'transparent',
-                  color: n === page ? 'var(--surface-dark)' : 'var(--text-secondary)'
+                  color: n === page ? 'var(--surface-dark)' : 'var(--text-secondary)',
                 }}
-                onMouseEnter={e => { if (n !== page) e.currentTarget.style.background = 'var(--hover-bg)'; }}
-                onMouseLeave={e => { if (n !== page) e.currentTarget.style.background = 'transparent'; }}
+                onMouseEnter={(e) => {
+                  if (n !== page) e.currentTarget.style.background = 'var(--hover-bg)';
+                }}
+                onMouseLeave={(e) => {
+                  if (n !== page) e.currentTarget.style.background = 'transparent';
+                }}
               >
                 {n + 1}
               </button>
-            )
+            ),
           )}
         </div>
         <AdminButton
@@ -84,12 +122,37 @@ export const AdminPagination = ({ page, totalPages, totalElements, size, onPageC
  * Props: icon, title, message, action
  */
 export const AdminEmptyState = ({ icon, title, message, action }) => (
-  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 16px', textAlign: 'center' }}>
-    <div style={{ marginBottom: 16, display: 'flex', width: 56, height: 56, alignItems: 'center', justifyContent: 'center', borderRadius: 16, background: 'var(--surface-medium)', color: 'var(--text-muted)' }}>
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '64px 16px',
+      textAlign: 'center',
+    }}
+  >
+    <div
+      style={{
+        marginBottom: 16,
+        display: 'flex',
+        width: 56,
+        height: 56,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 16,
+        background: 'var(--surface-medium)',
+        color: 'var(--text-muted)',
+      }}
+    >
       {icon}
     </div>
-    <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>{title}</h3>
-    <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)', maxWidth: 320 }}>{message}</p>
+    <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>
+      {title}
+    </h3>
+    <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)', maxWidth: 320 }}>
+      {message}
+    </p>
     {action && <div style={{ marginTop: 24 }}>{action}</div>}
   </div>
 );
@@ -99,14 +162,49 @@ export const AdminEmptyState = ({ icon, title, message, action }) => (
  * Props: message, onRetry
  */
 export const AdminErrorState = ({ message, onRetry }) => (
-  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 16px', textAlign: 'center' }}>
-    <div style={{ marginBottom: 16, display: 'flex', width: 56, height: 56, alignItems: 'center', justifyContent: 'center', borderRadius: 16, background: 'rgba(239,68,68,0.1)', color: '#f87171' }}>
-      <svg style={{ width: 28, height: 28 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '64px 16px',
+      textAlign: 'center',
+    }}
+  >
+    <div
+      style={{
+        marginBottom: 16,
+        display: 'flex',
+        width: 56,
+        height: 56,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 16,
+        background: 'rgba(239,68,68,0.1)',
+        color: '#f87171',
+      }}
+    >
+      <svg
+        style={{ width: 28, height: 28 }}
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+        />
       </svg>
     </div>
-    <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>Something went wrong</h3>
-    <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)', maxWidth: 320 }}>{message}</p>
+    <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>
+      Something went wrong
+    </h3>
+    <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)', maxWidth: 320 }}>
+      {message}
+    </p>
     {onRetry && (
       <div style={{ marginTop: 24 }}>
         <AdminButton variant="outline" size="sm" onClick={onRetry}>

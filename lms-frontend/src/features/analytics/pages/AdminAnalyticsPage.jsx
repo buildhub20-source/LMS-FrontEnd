@@ -17,10 +17,10 @@ import useAuth from '../../auth/hooks/useAuth';
 import { QUERY_KEYS } from '../../../constants/appConstants';
 
 const colorMap = {
-  brand:   { bg: 'bg-brand-50',   text: 'text-brand-600',   ring: 'ring-brand-100' },
+  brand: { bg: 'bg-brand-50', text: 'text-brand-600', ring: 'ring-brand-100' },
   emerald: { bg: 'bg-emerald-50', text: 'text-emerald-600', ring: 'ring-emerald-100' },
-  amber:   { bg: 'bg-amber-50',   text: 'text-amber-600',   ring: 'ring-amber-100' },
-  sky:     { bg: 'bg-sky-50',     text: 'text-sky-600',     ring: 'ring-sky-100' },
+  amber: { bg: 'bg-amber-50', text: 'text-amber-600', ring: 'ring-amber-100' },
+  sky: { bg: 'bg-sky-50', text: 'text-sky-600', ring: 'ring-sky-100' },
 };
 
 export const AdminAnalyticsPage = () => {
@@ -74,9 +74,7 @@ export const AdminAnalyticsPage = () => {
         <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
           Welcome back, {user?.firstName ?? 'Admin'}
         </h1>
-        <p className="mt-1 text-slate-500">
-          Here's what's happening across your platform today.
-        </p>
+        <p className="mt-1 text-slate-500">Here's what's happening across your platform today.</p>
       </div>
 
       {/* Stat cards */}
@@ -99,9 +97,7 @@ export const AdminAnalyticsPage = () => {
                     </div>
                     <div className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5">
                       <TrendingUp className="h-3 w-3 text-emerald-600" />
-                      <span className="text-xs font-semibold text-emerald-700">
-                        {stat.trend}
-                      </span>
+                      <span className="text-xs font-semibold text-emerald-700">{stat.trend}</span>
                     </div>
                   </div>
                   <div className="mt-5">
@@ -132,11 +128,15 @@ export const AdminAnalyticsPage = () => {
               >
                 <div
                   className={`flex h-10 w-10 items-center justify-center rounded-xl text-xs font-bold ${
-                    item.type === 'invite'   ? 'bg-amber-50 text-amber-600'   :
-                    item.type === 'lock'     ? 'bg-red-50 text-red-600'       :
-                    item.type === 'role'     ? 'bg-brand-50 text-brand-600'   :
-                    item.type === 'accept'   ? 'bg-emerald-50 text-emerald-600' :
-                    'bg-slate-100 text-slate-600'
+                    item.type === 'invite'
+                      ? 'bg-amber-50 text-amber-600'
+                      : item.type === 'lock'
+                        ? 'bg-red-50 text-red-600'
+                        : item.type === 'role'
+                          ? 'bg-brand-50 text-brand-600'
+                          : item.type === 'accept'
+                            ? 'bg-emerald-50 text-emerald-600'
+                            : 'bg-slate-100 text-slate-600'
                   }`}
                 >
                   {item.type === 'accept' ? (
@@ -206,8 +206,18 @@ export const AdminAnalyticsPage = () => {
 };
 
 const PLACEHOLDER_ACTIVITY = [
-  { action: 'Platform analytics loaded', detail: 'Connect to API for live activity', time: 'now', type: 'role' },
-  { action: 'Admin Dashboard initialized', detail: 'All systems operational', time: 'just now', type: 'accept' },
+  {
+    action: 'Platform analytics loaded',
+    detail: 'Connect to API for live activity',
+    time: 'now',
+    type: 'role',
+  },
+  {
+    action: 'Admin Dashboard initialized',
+    detail: 'All systems operational',
+    time: 'just now',
+    type: 'accept',
+  },
 ];
 
 export default AdminAnalyticsPage;

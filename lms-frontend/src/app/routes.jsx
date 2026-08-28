@@ -32,6 +32,18 @@ const RoleListPage = lazy(() => import('../features/roles/pages/RoleListPage'));
 const RoleDetailsPage = lazy(() => import('../features/roles/pages/RoleDetailsPage'));
 const PermissionsPage = lazy(() => import('../features/roles/pages/PermissionsPage'));
 const InvitationListPage = lazy(() => import('../features/invitations/pages/InvitationListPage'));
+const StudentListPage = lazy(() => import('../features/students/pages/StudentListPage'));
+const StudentCategoryPage = lazy(() => import('../features/students/pages/StudentCategoryPage'));
+const EditStudentPage = lazy(() => import('../features/students/pages/EditStudentPage'));
+const StudentDetailsPage = lazy(() => import('../features/students/pages/StudentDetailsPage'));
+const InstructorListPage = lazy(() => import('../features/instructors/pages/InstructorListPage'));
+const AddInstructorPage = lazy(() => import('../features/instructors/pages/AddInstructorPage'));
+const EditInstructorPage = lazy(() => import('../features/instructors/pages/EditInstructorPage'));
+const InstructorDetailsPage = lazy(
+  () => import('../features/instructors/pages/InstructorDetailsPage'),
+);
+const BatchListPage = lazy(() => import('../features/batches/pages/BatchListPage'));
+const AddStudentPage = lazy(() => import('../features/students/pages/AddStudentPage'));
 const AdminAnalyticsPage = lazy(() => import('../features/analytics/pages/AdminAnalyticsPage'));
 const AdminCourseListPage = lazy(() => import('../features/courses/pages/AdminCourseListPage'));
 const InstructorAnalyticsPage = lazy(
@@ -54,9 +66,6 @@ const EnrollmentListPage = lazy(() => import('../features/enrollment/pages/Enrol
 const MyEnrollmentsPage = lazy(() => import('../features/enrollment/pages/MyEnrollmentsPage'));
 const EnrollmentDetailsPage = lazy(
   () => import('../features/enrollment/pages/EnrollmentDetailsPage'),
-);
-const InstructorEnrollmentListPage = lazy(
-  () => import('../features/enrollment/pages/InstructorEnrollmentListPage'),
 );
 const LearningPage = lazy(() => import('../features/learning/pages/LearningPage'));
 const LessonPage = lazy(() => import('../features/learning/pages/LessonPage'));
@@ -134,6 +143,16 @@ export const router = createBrowserRouter([
               { path: ROUTES.ROLE_DETAILS(), element: suspend(<RoleDetailsPage />) },
               { path: ROUTES.PERMISSIONS, element: suspend(<PermissionsPage />) },
               { path: ROUTES.INVITATIONS, element: suspend(<InvitationListPage />) },
+              { path: ROUTES.BATCHES, element: suspend(<BatchListPage />) },
+              { path: ROUTES.STUDENTS, element: suspend(<StudentListPage />) },
+              { path: ROUTES.STUDENT_CREATE, element: suspend(<AddStudentPage />) },
+              { path: ROUTES.STUDENT_CATEGORIES, element: suspend(<StudentCategoryPage />) },
+              { path: ROUTES.STUDENT_EDIT(), element: suspend(<EditStudentPage />) },
+              { path: ROUTES.STUDENT_DETAILS(), element: suspend(<StudentDetailsPage />) },
+              { path: ROUTES.INSTRUCTORS, element: suspend(<InstructorListPage />) },
+              { path: ROUTES.INSTRUCTOR_CREATE, element: suspend(<AddInstructorPage />) },
+              { path: ROUTES.INSTRUCTOR_EDIT(), element: suspend(<EditInstructorPage />) },
+              { path: ROUTES.INSTRUCTOR_DETAILS(), element: suspend(<InstructorDetailsPage />) },
               { path: ROUTES.ENROLLMENTS, element: suspend(<EnrollmentListPage />) },
               { path: ROUTES.ENROLLMENT_DETAILS(), element: suspend(<EnrollmentDetailsPage />) },
               { path: ROUTES.ORGANIZATION, element: suspend(<OrganizationPage />) },
@@ -145,15 +164,24 @@ export const router = createBrowserRouter([
               { path: ROUTES.PLANS, element: suspend(<PlansPage />) },
               { path: ROUTES.BILLING, element: suspend(<BillingPage />) },
               { path: ROUTES.ADMIN_COURSES, element: suspend(<AdminCourseListPage />) },
-              { path: ROUTES.ADMIN_COURSE_DETAILS(), element: suspend(<CourseDetailsPage />) },
+              { path: ROUTES.ADMIN_COURSE_DETAILS(), element: suspend(<CoursePlayerPage />) },
               { path: ROUTES.ADMIN_COURSE_EDIT(), element: suspend(<EditCoursePage />) },
               {
                 element: <PermissionGuard required={[PERMISSIONS.ASSESSMENT_VIEW]} />,
                 children: [
                   { path: ROUTES.ADMIN_ASSESSMENTS, element: suspend(<AdminAssessmentListPage />) },
-                  { path: ROUTES.ADMIN_ASSESSMENT_CREATE, element: suspend(<AdminCreateAssessmentPage />) },
-                  { path: ROUTES.ADMIN_ASSESSMENT_DETAILS(), element: suspend(<AdminAssessmentDetailsPage />) },
-                  { path: ROUTES.ADMIN_ASSESSMENT_EDIT(), element: suspend(<AdminEditAssessmentPage />) },
+                  {
+                    path: ROUTES.ADMIN_ASSESSMENT_CREATE,
+                    element: suspend(<AdminCreateAssessmentPage />),
+                  },
+                  {
+                    path: ROUTES.ADMIN_ASSESSMENT_DETAILS(),
+                    element: suspend(<AdminAssessmentDetailsPage />),
+                  },
+                  {
+                    path: ROUTES.ADMIN_ASSESSMENT_EDIT(),
+                    element: suspend(<AdminEditAssessmentPage />),
+                  },
                 ],
               },
             ],
@@ -176,7 +204,6 @@ export const router = createBrowserRouter([
               { path: ROUTES.COURSE_EDIT(), element: suspend(<EditCoursePage />) },
               { path: ROUTES.ASSESSMENTS, element: suspend(<AssessmentListPage />) },
               { path: ROUTES.ASSESSMENT_CREATE, element: suspend(<CreateAssessmentPage />) },
-              { path: ROUTES.INSTRUCTOR_ENROLLMENTS, element: suspend(<InstructorEnrollmentListPage />) },
             ],
           },
         ],

@@ -1,5 +1,4 @@
 import { useState, useMemo, useCallback } from 'react';
-import Badge from '../../../components/common/Badge/Badge';
 import { useAdminEnrollments, useCreateAdminEnrollment, useUpdateAdminEnrollmentStatus } from '../hooks/useEnrollments';
 import { useCourses } from '../../courses/hooks/useCourses';
 import { useAdminAssessments } from '../../assessments/hooks/useAdminAssessments';

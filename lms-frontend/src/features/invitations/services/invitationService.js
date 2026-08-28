@@ -17,7 +17,6 @@ function normalizeInvitation(inv) {
   };
 }
 
-
 export const invitationService = {
   /**
    * GET /invitations?page=&size=&sort=

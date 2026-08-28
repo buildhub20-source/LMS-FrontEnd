@@ -9,6 +9,9 @@ import {
   KeyRound,
   BookOpen,
   FileText,
+  GraduationCap,
+  CalendarRange,
+  Presentation,
 } from 'lucide-react';
 import MainNavigation from '../MainNavigation';
 import { ROUTES } from '../../../constants/routes';
@@ -29,16 +32,56 @@ const ITEMS = [
     icon: <Users className="h-5 w-5" />,
   },
   {
+    label: 'Batches',
+    to: ROUTES.BATCHES,
+    permission: PERMISSIONS.BATCH_VIEW,
+    group: 'Learning',
+    icon: <CalendarRange className="h-5 w-5" />,
+  },
+  {
+    label: 'Learners',
+    permission: PERMISSIONS.STUDENT_VIEW,
+    group: 'People',
+    icon: <GraduationCap className="h-5 w-5" />,
+    children: [
+      {
+        label: 'Add New Learner',
+        to: ROUTES.STUDENT_CREATE,
+        permission: PERMISSIONS.STUDENT_CREATE,
+      },
+      { label: 'Learner List', to: ROUTES.STUDENTS, end: true },
+      {
+        label: 'Categories',
+        to: ROUTES.STUDENT_CATEGORIES,
+        permission: PERMISSIONS.STUDENT_UPDATE,
+      },
+    ],
+  },
+  {
+    label: 'Instructors',
+    permission: PERMISSIONS.INSTRUCTOR_VIEW,
+    group: 'People',
+    icon: <Presentation className="h-5 w-5" />,
+    children: [
+      {
+        label: 'Add New Instructor',
+        to: ROUTES.INSTRUCTOR_CREATE,
+        permission: PERMISSIONS.INSTRUCTOR_CREATE,
+      },
+      { label: 'Instructor List', to: ROUTES.INSTRUCTORS, end: true },
+    ],
+  },
+  {
     label: 'Roles',
     to: ROUTES.ROLES,
-    permission: PERMISSIONS.ROLE_READ,
+    permission: PERMISSIONS.ROLES_VIEW,
     group: 'People',
     icon: <ShieldCheck className="h-5 w-5" />,
   },
   {
     label: 'Permissions',
     to: ROUTES.PERMISSIONS,
-    permission: PERMISSIONS.ROLE_READ,
+    permission: PERMISSIONS.ROLES_VIEW,
     group: 'People',
     icon: <KeyRound className="h-5 w-5" />,
   },

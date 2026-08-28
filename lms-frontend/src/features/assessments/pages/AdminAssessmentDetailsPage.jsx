@@ -32,9 +32,6 @@ import {
 } from '../hooks/useAdminSections';
 import AssessmentAnalyticsTab from '../components/AssessmentAnalyticsTab';
 import { useToast } from '../../../components/feedback/Toast';
-import { usePermission } from '../../../hooks/usePermission';
-import { PERMISSIONS } from '../../../constants/permissions';
-import { ROLES } from '../../../constants/roles';
 import { ROUTES } from '../../../constants/routes';
 import { formatDate } from '../../../utils/dateUtils';
 import s from './AssessmentDetails.module.css';
@@ -43,9 +40,6 @@ export const AdminAssessmentDetailsPage = () => {
   const { assessmentId } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
-  const { hasPermission, hasAnyRole } = usePermission();
-  const canViewAnalytics = hasPermission(PERMISSIONS.ASSESSMENT_ANALYTICS_VIEW) || hasAnyRole([ROLES.ADMIN, ROLES.SUPER_ADMIN, ROLES.INSTRUCTOR]);
-
   const [activeTab, setActiveTab] = useState('questions'); // 'questions' | 'analytics'
   const [showForm, setShowForm] = useState(false);
   const [targetSectionId, setTargetSectionId] = useState(null); // which section to add a question to
@@ -197,26 +191,24 @@ export const AdminAssessmentDetailsPage = () => {
             >
               Questions & Structure ({questions.length})
             </button>
-            {canViewAnalytics && (
-              <button
-                onClick={() => setActiveTab('analytics')}
-                style={{
-                  padding: '10px 16px',
-                  border: 'none',
-                  background: 'transparent',
-                  borderBottom: activeTab === 'analytics' ? '2px solid var(--text-primary)' : '2px solid transparent',
-                  color: activeTab === 'analytics' ? 'var(--text-primary)' : 'var(--text-muted)',
-                  fontWeight: 600,
-                  fontSize: 14,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6
-                }}
-              >
-                <BarChart2 size={16} /> Statistics & Analytics
-              </button>
-            )}
+            <button
+              onClick={() => setActiveTab('analytics')}
+              style={{
+                padding: '10px 16px',
+                border: 'none',
+                background: 'transparent',
+                borderBottom: activeTab === 'analytics' ? '2px solid var(--text-primary)' : '2px solid transparent',
+                color: activeTab === 'analytics' ? 'var(--text-primary)' : 'var(--text-muted)',
+                fontWeight: 600,
+                fontSize: 14,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6
+              }}
+            >
+              <BarChart2 size={16} /> Statistics & Analytics
+            </button>
           </div>
 
           {activeTab === 'analytics' ? (

@@ -1,74 +1,16 @@
-import { useState } from 'react';
 import PageContainer from '../../../components/layout/PageContainer';
-import DataTable from '../../../components/common/DataTable/DataTable';
-import Badge from '../../../components/common/Badge/Badge';
-import { useStudentEnrollments } from '../hooks/useEnrollments';
-import { format } from 'date-fns';
-import { Link } from 'react-router-dom';
+import EmptyState from '../../../components/common/EmptyState';
 
-export const MyEnrollmentsPage = () => {
-  const [page, setPage] = useState(0);
-  const [size, setSize] = useState(10);
-
-  const { data, isLoading } = useStudentEnrollments({ page, size });
-  const enrollments = data?.data?.content || [];
-  const totalElements = data?.data?.page?.totalElements || 0;
-
-  const columns = [
-    {
-      key: 'course',
-      header: 'Course',
-      accessor: (row) => row.course?.title,
-    },
-    {
-      key: 'instructor',
-      header: 'Instructor',
-      accessor: (row) => row.course?.instructor?.name || 'N/A',
-    },
-    {
-      key: 'status',
-      header: 'Status',
-      accessor: 'status',
-      render: (status) => (
-        <Badge variant={status === 'ACTIVE' ? 'success' : status === 'COMPLETED' ? 'info' : 'warning'}>
-          {status}
-        </Badge>
-      ),
-    },
-    {
-      key: 'enrolledAt',
-      header: 'Enrolled At',
-      accessor: 'enrolledAt',
-      render: (date) => (date ? format(new Date(date), 'MMM d, yyyy') : '-'),
-    },
-    {
-      key: 'actions',
-      header: 'Actions',
-      accessor: 'id',
-      render: (id, row) => (
-        <Link to={`/learn/courses/${row.course?.id}`} className="text-primary-600 hover:underline">
-          Go to Course
-        </Link>
-      ),
-    },
-  ];
-
-  return (
-    <PageContainer title="My Enrollments" subtitle="View your enrolled courses.">
-      <DataTable
-        columns={columns}
-        rows={enrollments}
-        isLoading={isLoading}
-        pagination={{
-          page,
-          size,
-          totalElements,
-          onPageChange: setPage,
-          onSizeChange: setSize,
-        }}
-      />
-    </PageContainer>
-  );
-};
+/**
+ * Scaffold page. Data wiring goes through ../hooks + ../services/enrollmentService.
+ */
+export const MyEnrollmentsPage = () => (
+  <PageContainer title="My enrollments" subtitle="Courses you have joined.">
+    <EmptyState
+      title="My enrollments"
+      description="Connect this page to the API to see live data."
+    />
+  </PageContainer>
+);
 
 export default MyEnrollmentsPage;

@@ -32,18 +32,17 @@ export const login = createAsyncThunk('auth/login', async (credentials, { reject
       ...data.user,
       fullName: data.user?.name,
       // The LoginResponse.user carries roles as Set<String> directly
-      roles: Array.isArray(data.user?.roles)
-        ? data.user.roles
-        : [...(data.user?.roles ?? [])],
+      roles: Array.isArray(data.user?.roles) ? data.user.roles : [...(data.user?.roles ?? [])],
       mustChangePassword: data.mustChangePassword ?? false,
     };
     return user;
   } catch (error) {
     if (import.meta.env.DEV) {
       // If backend is down, give a helpful message
-      const msg = error?.code === 'ERR_NETWORK'
-        ? 'Backend offline. In development, use email: admin@123 / password: admin'
-        : (error?.message ?? 'Invalid credentials');
+      const msg =
+        error?.code === 'ERR_NETWORK'
+          ? 'Backend offline. In development, use email: admin@123 / password: admin'
+          : (error?.message ?? 'Invalid credentials');
       return rejectWithValue({ message: msg });
     }
     return rejectWithValue(normalizeError(error));
@@ -60,7 +59,9 @@ export const loadSession = createAsyncThunk('auth/loadSession', async (_, { reje
       ...data.user,
       fullName: data.user?.name,
       roles: Array.isArray(data.roles) ? data.roles : [...(data.roles ?? [])],
-      permissions: Array.isArray(data.permissions) ? data.permissions : [...(data.permissions ?? [])],
+      permissions: Array.isArray(data.permissions)
+        ? data.permissions
+        : [...(data.permissions ?? [])],
       mustChangePassword: false, // If they can call /auth/me they've already set their password
     };
   } catch (error) {
@@ -112,7 +113,7 @@ export const acceptInvitation = createAsyncThunk(
 
 const initialState = {
   user: null,
-  status: 'idle',   // idle | loading | authenticated | unauthenticated
+  status: 'idle', // idle | loading | authenticated | unauthenticated
   error: null,
 };
 

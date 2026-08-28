@@ -1,7 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { Eye, EyeOff, ShieldCheck, CheckCircle2, AlertCircle, ArrowRight, Lock } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  ShieldCheck,
+  CheckCircle2,
+  AlertCircle,
+  ArrowRight,
+  Lock,
+} from 'lucide-react';
 import { acceptInvitation } from '../store/authSlice';
 import { ROUTES } from '../../../constants/routes';
 
@@ -109,15 +117,22 @@ export const AcceptInvitationPage = () => {
       <div className="accept-inv__left" style={styles.leftPanel}>
         <div style={styles.leftContent}>
           <div style={styles.logoArea}>
-            <div style={styles.logoIcon}><ShieldCheck size={28} color="#fff" /></div>
+            <div style={styles.logoIcon}>
+              <ShieldCheck size={28} color="#fff" />
+            </div>
             <span style={styles.logoText}>LMS Platform</span>
           </div>
           <h2 style={styles.brandHeading}>You've been invited!</h2>
           <p style={styles.brandBody}>
-            Set up your password to activate your account and get full access to the Learning Management System.
+            Set up your password to activate your account and get full access to the Learning
+            Management System.
           </p>
           <div style={styles.featureList}>
-            {['Access your courses & learning materials', 'Track progress and certifications', 'Collaborate with your team'].map((f, i) => (
+            {[
+              'Access your courses & learning materials',
+              'Track progress and certifications',
+              'Collaborate with your team',
+            ].map((f, i) => (
               <div key={i} style={styles.featureItem}>
                 <CheckCircle2 size={16} style={{ color: '#a5f3c4', flexShrink: 0 }} />
                 <span>{f}</span>
@@ -163,8 +178,8 @@ export const AcceptInvitationPage = () => {
                   required
                   autoFocus
                   style={styles.input}
-                  onFocus={e => e.target.style.borderColor = '#6366f1'}
-                  onBlur={e => e.target.style.borderColor = 'var(--border-color)'}
+                  onFocus={(e) => (e.target.style.borderColor = '#6366f1')}
+                  onBlur={(e) => (e.target.style.borderColor = 'var(--border-color)')}
                 />
                 <button
                   type="button"
@@ -203,7 +218,9 @@ export const AcceptInvitationPage = () => {
                   style={{
                     ...styles.input,
                     borderColor: confirmPassword
-                      ? passwordsMatch ? '#16a34a' : '#ef4444'
+                      ? passwordsMatch
+                        ? '#16a34a'
+                        : '#ef4444'
                       : 'var(--border-color)',
                   }}
                 />
@@ -217,7 +234,9 @@ export const AcceptInvitationPage = () => {
                 </button>
               </div>
               {confirmPassword && !passwordsMatch && (
-                <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>Passwords do not match</p>
+                <p style={{ color: '#ef4444', fontSize: 12, marginTop: 4 }}>
+                  Passwords do not match
+                </p>
               )}
             </div>
 
@@ -227,7 +246,9 @@ export const AcceptInvitationPage = () => {
               disabled={loading || !passwordStrong || !passwordsMatch}
               style={styles.submitBtn(loading || !passwordStrong || !passwordsMatch)}
             >
-              {loading ? 'Activating…' : (
+              {loading ? (
+                'Activating…'
+              ) : (
                 <>
                   <span>Activate Account</span>
                   <ArrowRight size={16} />
@@ -236,9 +257,14 @@ export const AcceptInvitationPage = () => {
             </button>
           </form>
 
-          <p style={{ textAlign: 'center', marginTop: 24, fontSize: 13, color: 'var(--text-muted)' }}>
+          <p
+            style={{ textAlign: 'center', marginTop: 24, fontSize: 13, color: 'var(--text-muted)' }}
+          >
             Already have an account?{' '}
-            <Link to={ROUTES.LOGIN} style={{ color: '#6366f1', fontWeight: 600, textDecoration: 'none' }}>
+            <Link
+              to={ROUTES.LOGIN}
+              style={{ color: '#6366f1', fontWeight: 600, textDecoration: 'none' }}
+            >
               Sign in
             </Link>
           </p>

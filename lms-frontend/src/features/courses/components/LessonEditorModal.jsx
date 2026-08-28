@@ -93,40 +93,23 @@ export default function LessonEditorModal({ courseId, moduleId, lesson, onClose,
         setCurrentLessonId(targetId);
       }
 
-      // 1. Get presigned upload URL & attempt direct client upload, with seamless fallback to backend upload
-      let newRecId;
-      try {
-        const { uploadUrl, recordingId } = await courseService.getLessonUploadUrl(courseId, moduleId, targetId, {
-          fileName: file.name,
-          fileSize: file.size,
-          mimeType: file.type || 'application/octet-stream'
-        });
-        newRecId = recordingId;
+      // 1. Get presigned upload URL
+      const { uploadUrl, recordingId: newRecId } = await courseService.getLessonUploadUrl(courseId, moduleId, targetId, {
+        fileName: file.name,
+        fileSize: file.size,
+        mimeType: file.type || 'application/octet-stream'
+      });
 
-        await axios.put(uploadUrl, file, {
-          headers: {
-            'Content-Type': file.type || 'application/octet-stream',
-          },
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
-            setProgress(percentCompleted);
-          }
-        });
-      } catch (r2Error) {
-        console.warn('Presigned client upload failed, falling back to direct server upload:', r2Error);
-        const uploadRes = await courseService.uploadLessonRecordingDirect(
-          courseId,
-          moduleId,
-          targetId,
-          file,
-          (progressEvent) => {
-            const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
-            setProgress(percentCompleted);
-          }
-        );
-        const resData = uploadRes?.data || uploadRes;
-        newRecId = resData?.recordingId || newRecId;
-      }
+      // 2. Upload file directly
+      await axios.put(uploadUrl, file, {
+        headers: {
+          'Content-Type': file.type || 'application/octet-stream',
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setProgress(percentCompleted);
+        }
+      });
 
       setRecordingId(newRecId);
       setUploadSuccess(true);
