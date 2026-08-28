@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Share2, Bookmark, CheckCircle2, PauseCircle, Play, ChevronDown, ChevronUp, Edit3, ArrowLeft,
   FileText, Presentation, FileCode, Music, HelpCircle, Download, ExternalLink, BarChart2
@@ -16,10 +16,12 @@ import { PERMISSIONS } from '../../../constants/permissions';
 import usePermission from '../../../hooks/usePermission';
 import { formatSectionTitle } from '../components/CurriculumBuilder';
 import CourseAnalyticsTab from '../components/CourseAnalyticsTab';
+import courseService from '../services/courseService';
 
 export const CourseDetailsPage = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { data: course, isLoading, error, refetch } = useCourse(courseId);
   const { hasPermission, hasAnyRole } = usePermission();
 
@@ -29,8 +31,8 @@ export const CourseDetailsPage = () => {
   const [collapsedModules, setCollapsedModules] = useState({});
 
   const isAdminOrInstructor = hasPermission(PERMISSIONS.COURSE_ANALYTICS_VIEW) ||
-    window.location.pathname.startsWith('/admin') ||
-    window.location.pathname.startsWith('/instructor') ||
+    location.pathname.startsWith('/admin') ||
+    location.pathname.startsWith('/instructor') ||
     hasAnyRole([ROLES.ADMIN, ROLES.SUPER_ADMIN, ROLES.INSTRUCTOR]);
 
   const modules = course?.modules || [];
@@ -53,11 +55,34 @@ export const CourseDetailsPage = () => {
   const [completedLessonIds, setCompletedLessonIds] = useState(() => {
     return allLessons.length > 0 ? [allLessons[0].id] : [];
   });
+  const [recordingPlaybackUrl, setRecordingPlaybackUrl] = useState(null);
+  const [startedLessonId, setStartedLessonId] = useState(null);
+  const currentLesson = allLessons[activeLessonIndex] || allLessons[0] || null;
+
+  useEffect(() => {
+    let cancelled = false;
+    const recordingId = currentLesson?.recordingId;
+
+    setRecordingPlaybackUrl(null);
+    if (!recordingId) return undefined;
+
+    courseService
+      .getRecordingPlaybackUrl(recordingId)
+      .then((response) => {
+        if (!cancelled) setRecordingPlaybackUrl(response?.playbackUrl ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setRecordingPlaybackUrl(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentLesson?.recordingId]);
 
   if (isLoading) return <Spinner fullPage />;
   if (error) return <ErrorState error={error} onRetry={refetch} />;
 
-  const currentLesson = allLessons[activeLessonIndex] || allLessons[0] || null;
   const completedCount = completedLessonIds.length;
   const progressPercent = allLessons.length > 0 ? Math.round((completedCount / allLessons.length) * 100) : 0;
 
@@ -78,9 +103,12 @@ export const CourseDetailsPage = () => {
     }
   };
 
-  const mediaUrl = currentLesson?.videoUrl || (currentLesson?.recordingId ? `https://pub-2e6f4369a0be4f309ff44b62db4150df.r2.dev/${currentLesson.recordingId}` : null);
+  const rawMedia = currentLesson?.content || currentLesson?.videoUrl || recordingPlaybackUrl;
+  const mediaUrl = rawMedia;
+  const lessonPosterUrl = currentLesson?.thumbnailUrl || course.thumbnailUrl || null;
+  const isCurrentLessonPlaying = startedLessonId === currentLesson?.id;
 
-  const isAdmin = window.location.pathname.startsWith('/admin');
+  const isAdmin = location.pathname.startsWith('/admin');
   const backRoute = isAdmin ? ROUTES.ADMIN_COURSES : ROUTES.COURSES;
   const editRoute = isAdmin ? ROUTES.ADMIN_COURSE_EDIT(courseId) : ROUTES.COURSE_EDIT(courseId);
 
@@ -257,16 +285,35 @@ export const CourseDetailsPage = () => {
                   <HelpCircle size={56} color="#ec4899" style={{ marginBottom: 12 }} />
                   <h3 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{currentLesson.title}</h3>
                   <p style={{ margin: '8px 0 20px', fontSize: 13, opacity: 0.8 }}>Practice Quiz & Knowledge Check</p>
-                  <Button variant="primary" size="md" onClick={() => navigate(ROUTES.ASSESSMENTS)}>
+                  <Button variant="primary" size="md" onClick={() => navigate(isAdmin ? ROUTES.ADMIN_ASSESSMENTS : ROUTES.ASSESSMENTS)}>
                     Start Assessment Test
                   </Button>
                 </div>
+              ) : mediaUrl && lessonPosterUrl && !isCurrentLessonPlaying ? (
+                <button
+                  type="button"
+                  onClick={() => setStartedLessonId(currentLesson?.id ?? null)}
+                  aria-label={`Play ${currentLesson?.title || 'lesson'}`}
+                  style={videoPosterButtonStyle}
+                >
+                  <img
+                    src={lessonPosterUrl}
+                    alt={`${currentLesson?.title || 'Lesson'} thumbnail`}
+                    style={videoPosterImageStyle}
+                  />
+                  <span style={videoPosterOverlayStyle} />
+                  <span style={videoPosterPlayButtonStyle} aria-hidden="true">
+                    <Play size={32} fill="currentColor" />
+                  </span>
+                  <span style={videoPosterLabelStyle}>Play lesson</span>
+                </button>
               ) : mediaUrl ? (
                 <video
+                  autoPlay
                   controls
                   key={currentLesson?.id}
                   style={{ width: '100%', height: '100%', maxHeight: 420, objectFit: 'contain' }}
-                  poster={currentLesson?.thumbnailUrl || course.thumbnailUrl || undefined}
+                  poster={lessonPosterUrl || undefined}
                 >
                   <source src={mediaUrl} />
                   Your browser does not support video playback.
@@ -614,6 +661,58 @@ const btnOutlineStyle = {
   fontWeight: 600,
   fontSize: 14,
   textDecoration: 'none'
+};
+
+const videoPosterButtonStyle = {
+  position: 'relative',
+  width: '100%',
+  height: '100%',
+  minHeight: 380,
+  padding: 0,
+  border: 'none',
+  background: '#090d16',
+  cursor: 'pointer',
+  overflow: 'hidden',
+  color: '#ffffff',
+};
+
+const videoPosterImageStyle = {
+  width: '100%',
+  height: '100%',
+  minHeight: 380,
+  objectFit: 'cover',
+  display: 'block',
+};
+
+const videoPosterOverlayStyle = {
+  position: 'absolute',
+  inset: 0,
+  background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.08) 20%, rgba(0, 0, 0, 0.55) 100%)',
+};
+
+const videoPosterPlayButtonStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 72,
+  height: 72,
+  borderRadius: '50%',
+  background: 'rgba(255, 255, 255, 0.94)',
+  color: '#111827',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  boxShadow: '0 10px 30px rgba(0, 0, 0, 0.35)',
+};
+
+const videoPosterLabelStyle = {
+  position: 'absolute',
+  left: 20,
+  bottom: 18,
+  fontSize: 14,
+  fontWeight: 700,
+  textShadow: '0 1px 3px rgba(0, 0, 0, 0.65)',
 };
 
 export default CourseDetailsPage;

@@ -5,7 +5,6 @@ import { useAdminAssessments } from '../../assessments/hooks/useAdminAssessments
 import { useUsers } from '../../users/hooks/useUsers';
 import { courseService } from '../../courses/services/courseService';
 import { useToast } from '../../../components/feedback/Toast';
-import { format } from 'date-fns';
 import {
   CheckSquare, Globe, Users, UserCheck, BookOpen, FileCheck2,
   ArrowRight, Filter, CheckCircle2, XCircle, UserPlus,
@@ -141,7 +140,16 @@ export const EnrollmentListPage = () => {
 
   const fmt = (d) => {
     if (!d) return '—';
-    try { const x = new Date(d); return isNaN(x.getTime()) ? '—' : format(x, 'MMM d, yyyy'); }
+    try {
+      const date = new Date(d);
+      return Number.isNaN(date.getTime())
+        ? '—'
+        : new Intl.DateTimeFormat('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          }).format(date);
+    }
     catch { return '—'; }
   };
 
