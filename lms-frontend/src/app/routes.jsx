@@ -145,6 +145,7 @@ export const router = createBrowserRouter([
               { path: ROUTES.PLANS, element: suspend(<PlansPage />) },
               { path: ROUTES.BILLING, element: suspend(<BillingPage />) },
               { path: ROUTES.ADMIN_COURSES, element: suspend(<AdminCourseListPage />) },
+              { path: ROUTES.ADMIN_COURSE_CREATE, element: suspend(<CreateCoursePage />) },
               { path: ROUTES.ADMIN_COURSE_DETAILS(), element: suspend(<CourseDetailsPage />) },
               { path: ROUTES.ADMIN_COURSE_EDIT(), element: suspend(<EditCoursePage />) },
               {

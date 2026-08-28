@@ -19,13 +19,13 @@ export const assessmentSectionService = {
 
     // Update section
     updateSection: async (sectionId, data) => {
-        const response = await http.put(`/admin/sections/${sectionId}`, data);
+        const response = await http.put(`/admin/assessments/sections/${sectionId}`, data);
         return response.data || response;
     },
 
     // Delete section
     deleteSection: async (sectionId) => {
-        const response = await http.delete(`/admin/sections/${sectionId}`);
+        const response = await http.delete(`/admin/assessments/sections/${sectionId}`);
         return response.data || response;
     },
 
@@ -38,13 +38,13 @@ export const assessmentSectionService = {
 
     // Move an existing question to a section
     moveQuestionToSection: async (sectionId, assessmentQuestionId) => {
-        const response = await http.put(`/admin/sections/${sectionId}/questions/${assessmentQuestionId}`);
+        const response = await http.put(`/admin/assessments/sections/${sectionId}/questions/${assessmentQuestionId}`);
         return response.data || response;
     },
     
     // Remove a question from any section (making it unsectioned)
     removeQuestionFromSection: async (assessmentQuestionId) => {
-        const response = await http.put(`/admin/questions/${assessmentQuestionId}/unsection`);
+        const response = await http.put(`/admin/assessments/questions/${assessmentQuestionId}/unsection`);
         return response.data || response;
     }
 };

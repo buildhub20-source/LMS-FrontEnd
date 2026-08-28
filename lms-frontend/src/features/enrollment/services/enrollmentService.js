@@ -48,3 +48,32 @@ export const enrollmentService = {
     return response.data || response;
   },
 };
+
+  // Instructor Operations
+  getInstructorEnrollments: async (params) => {
+    const response = await http.get(API_ENDPOINTS.instructorEnrollments.base, { params });
+    return response.data || response;
+  },
+  getInstructorEnrollmentById: async (id) => {
+    const response = await http.get(API_ENDPOINTS.instructorEnrollments.byId(id));
+    return response.data || response;
+  },
+  createInstructorEnrollment: async (data) => {
+    const response = await http.post(API_ENDPOINTS.instructorEnrollments.base, data);
+    return response.data || response;
+  },
+  updateInstructorEnrollmentStatus: async (id, status) => {
+    const response = await http.patch(API_ENDPOINTS.instructorEnrollments.status(id), { status });
+    return response.data || response;
+  },
+
+  // Student Operations
+  getStudentEnrollments: async (params) => {
+    const response = await http.get(API_ENDPOINTS.studentEnrollments.base, { params });
+    return response.data || response;
+  },
+  getStudentEnrollmentById: async (id) => {
+    const response = await http.get(API_ENDPOINTS.studentEnrollments.byId(id));
+    return response.data || response;
+  },
+};

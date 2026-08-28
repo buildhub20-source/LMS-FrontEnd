@@ -30,6 +30,7 @@ export const ROUTES = Object.freeze({
   PLANS: '/admin/subscription/plans',
   BILLING: '/admin/subscription/billing',
   ADMIN_COURSES: '/admin/courses',
+  ADMIN_COURSE_CREATE: '/admin/courses/new',
   ADMIN_COURSE_DETAILS: (id = ':courseId') => `/admin/courses/${id}`,
   ADMIN_COURSE_EDIT: (id = ':courseId') => `/admin/courses/${id}/edit`,
 

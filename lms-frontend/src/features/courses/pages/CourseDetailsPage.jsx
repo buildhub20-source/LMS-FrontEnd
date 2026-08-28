@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Share2, Bookmark, CheckCircle2, PauseCircle, Play, ChevronDown, ChevronUp, Edit3, ArrowLeft,
   FileText, Presentation, FileCode, Music, HelpCircle, Download, ExternalLink, BarChart2
@@ -20,6 +20,7 @@ import CourseAnalyticsTab from '../components/CourseAnalyticsTab';
 export const CourseDetailsPage = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { data: course, isLoading, error, refetch } = useCourse(courseId);
   const { hasPermission, hasAnyRole } = usePermission();
 
@@ -29,8 +30,8 @@ export const CourseDetailsPage = () => {
   const [collapsedModules, setCollapsedModules] = useState({});
 
   const isAdminOrInstructor = hasPermission(PERMISSIONS.COURSE_ANALYTICS_VIEW) ||
-    window.location.pathname.startsWith('/admin') ||
-    window.location.pathname.startsWith('/instructor') ||
+    location.pathname.startsWith('/admin') ||
+    location.pathname.startsWith('/instructor') ||
     hasAnyRole([ROLES.ADMIN, ROLES.SUPER_ADMIN, ROLES.INSTRUCTOR]);
 
   const modules = course?.modules || [];
@@ -81,7 +82,7 @@ export const CourseDetailsPage = () => {
   const rawMedia = currentLesson?.content || currentLesson?.videoUrl || (currentLesson?.recordingId ? `/api/v1/recordings/${currentLesson.recordingId}/stream` : null);
   const mediaUrl = rawMedia;
 
-  const isAdmin = window.location.pathname.startsWith('/admin');
+  const isAdmin = location.pathname.startsWith('/admin');
   const backRoute = isAdmin ? ROUTES.ADMIN_COURSES : ROUTES.COURSES;
   const editRoute = isAdmin ? ROUTES.ADMIN_COURSE_EDIT(courseId) : ROUTES.COURSE_EDIT(courseId);
 
@@ -258,7 +259,7 @@ export const CourseDetailsPage = () => {
                   <HelpCircle size={56} color="#ec4899" style={{ marginBottom: 12 }} />
                   <h3 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{currentLesson.title}</h3>
                   <p style={{ margin: '8px 0 20px', fontSize: 13, opacity: 0.8 }}>Practice Quiz & Knowledge Check</p>
-                  <Button variant="primary" size="md" onClick={() => navigate(ROUTES.ASSESSMENTS)}>
+                  <Button variant="primary" size="md" onClick={() => navigate(isAdmin ? ROUTES.ADMIN_ASSESSMENTS : ROUTES.ASSESSMENTS)}>
                     Start Assessment Test
                   </Button>
                 </div>

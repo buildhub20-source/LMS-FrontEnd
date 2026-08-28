@@ -96,24 +96,30 @@ export default function LessonEditorModal({ courseId, moduleId, lesson, onClose,
       // 1. Get presigned upload URL & attempt direct client upload, with seamless fallback to backend upload
       let newRecId;
       try {
-        const { uploadUrl, recordingId } = await courseService.getLessonUploadUrl(courseId, moduleId, targetId, {
+        const uploadResData = await courseService.getLessonUploadUrl(courseId, moduleId, targetId, {
           fileName: file.name,
           fileSize: file.size,
           mimeType: file.type || 'application/octet-stream'
         });
-        newRecId = recordingId;
+        
+        const uploadUrl = uploadResData?.uploadUrl;
+        newRecId = uploadResData?.recordingId;
 
-        await axios.put(uploadUrl, file, {
-          headers: {
-            'Content-Type': file.type || 'application/octet-stream',
-          },
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
-            setProgress(percentCompleted);
-          }
-        });
+        if (uploadUrl && typeof uploadUrl === 'string' && uploadUrl.startsWith('http') && !uploadUrl.includes('fallback-upload')) {
+          await axios.put(uploadUrl, file, {
+            headers: {
+              'Content-Type': file.type || 'application/octet-stream',
+            },
+            onUploadProgress: (progressEvent) => {
+              const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
+              setProgress(percentCompleted);
+            }
+          });
+        } else {
+          throw new Error('Presigned R2 URL unavailable, switching to backend direct upload');
+        }
       } catch (r2Error) {
-        console.warn('Presigned client upload failed, falling back to direct server upload:', r2Error);
+        console.warn('Presigned client upload failed or unavailable, falling back to direct server upload:', r2Error?.message || r2Error);
         const uploadRes = await courseService.uploadLessonRecordingDirect(
           courseId,
           moduleId,

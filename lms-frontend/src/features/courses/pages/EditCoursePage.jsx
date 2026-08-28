@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   BookOpen, Layers, ArrowLeft, Eye, CheckCircle2, AlertCircle
 } from 'lucide-react';
@@ -18,10 +18,15 @@ import { COURSE_STATUS_TONE } from '../constants/courseConstants';
 export const EditCoursePage = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const toast = useToast();
   const { data: course, isLoading, error, refetch } = useCourse(courseId);
   const { mutateAsync, error: saveError } = useUpdateCourse(courseId);
   const [activeTab, setActiveTab] = useState('basic');
+
+  const isAdmin = location.pathname.startsWith('/admin');
+  const coursesRoute = isAdmin ? ROUTES.ADMIN_COURSES : ROUTES.COURSES;
+  const detailsRoute = isAdmin ? ROUTES.ADMIN_COURSE_DETAILS(courseId) : ROUTES.COURSE_DETAILS(courseId);
 
   if (isLoading) return <Spinner fullPage />;
   if (error) return <ErrorState error={error} onRetry={refetch} />;
@@ -30,7 +35,7 @@ export const EditCoursePage = () => {
     try {
       await mutateAsync(values);
       toast.success('Course updated successfully!');
-      navigate(ROUTES.COURSE_DETAILS(courseId));
+      navigate(detailsRoute);
     } catch (e) {
       toast.error(e?.message || 'Failed to save course changes.');
     }
@@ -42,8 +47,8 @@ export const EditCoursePage = () => {
     <PageContainer
       title={`Edit: ${course?.title || 'Course'}`}
       breadcrumbs={[
-        { label: 'Courses', to: ROUTES.COURSES },
-        { label: course?.title || 'Details', to: ROUTES.COURSE_DETAILS(courseId) },
+        { label: 'Courses', to: coursesRoute },
+        { label: course?.title || 'Details', to: detailsRoute },
         { label: 'Edit' },
       ]}
     >
@@ -91,7 +96,7 @@ export const EditCoursePage = () => {
 
           <div style={{ display: 'flex', gap: 10 }}>
             <button
-              onClick={() => navigate(ROUTES.COURSE_DETAILS(courseId))}
+              onClick={() => navigate(detailsRoute)}
               style={{
                 padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600,
                 border: '1px solid var(--border-color)', background: 'transparent',
