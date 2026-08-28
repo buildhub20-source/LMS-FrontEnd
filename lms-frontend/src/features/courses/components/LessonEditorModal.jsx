@@ -33,6 +33,7 @@ export default function LessonEditorModal({ courseId, moduleId, lesson, onClose,
   const [progress, setProgress] = useState(0);
   const [uploadSuccess, setUploadSuccess] = useState(!!lesson?.recordingId);
   const [fileName, setFileName] = useState(lesson?.fileName || '');
+  const [thumbnailUploading, setThumbnailUploading] = useState(false);
   
   const fileInputRef = useRef(null);
   const thumbInputRef = useRef(null);
@@ -93,23 +94,48 @@ export default function LessonEditorModal({ courseId, moduleId, lesson, onClose,
         setCurrentLessonId(targetId);
       }
 
-      // 1. Get presigned upload URL
-      const { uploadUrl, recordingId: newRecId } = await courseService.getLessonUploadUrl(courseId, moduleId, targetId, {
-        fileName: file.name,
-        fileSize: file.size,
-        mimeType: file.type || 'application/octet-stream'
-      });
+      // 1. Get presigned upload URL & attempt direct client upload, with seamless fallback to backend upload
+      let newRecId;
+      try {
+        const uploadResData = await courseService.getLessonUploadUrl(courseId, moduleId, targetId, {
+          fileName: file.name,
+          fileSize: file.size,
+          mimeType: file.type || 'application/octet-stream'
+        });
 
-      // 2. Upload file directly
-      await axios.put(uploadUrl, file, {
-        headers: {
-          'Content-Type': file.type || 'application/octet-stream',
-        },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          setProgress(percentCompleted);
+        const uploadUrl = uploadResData?.uploadUrl;
+        newRecId = uploadResData?.recordingId;
+
+        if (uploadUrl && typeof uploadUrl === 'string' && uploadUrl.startsWith('http') && !uploadUrl.includes('fallback-upload')) {
+          await axios.put(uploadUrl, file, {
+            headers: {
+              'Content-Type': file.type || 'application/octet-stream',
+            },
+            onUploadProgress: (progressEvent) => {
+              const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
+              setProgress(percentCompleted);
+            }
+          });
+
+          await courseService.completeLessonRecordingUpload(courseId, moduleId, targetId, newRecId);
+        } else {
+          throw new Error('Presigned R2 URL unavailable, switching to backend direct upload');
         }
-      });
+      } catch (r2Error) {
+        console.warn('Presigned client upload failed or unavailable, falling back to direct server upload:', r2Error?.message || r2Error);
+        const uploadRes = await courseService.uploadLessonRecordingDirect(
+          courseId,
+          moduleId,
+          targetId,
+          file,
+          (progressEvent) => {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
+            setProgress(percentCompleted);
+          }
+        );
+        const resData = uploadRes?.data || uploadRes;
+        newRecId = resData?.recordingId || newRecId;
+      }
 
       setRecordingId(newRecId);
       setUploadSuccess(true);
@@ -123,21 +149,48 @@ export default function LessonEditorModal({ courseId, moduleId, lesson, onClose,
     }
   };
 
-  const handleThumbFileChange = (e) => {
+  const handleThumbFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!validateFile(file, 'THUMBNAIL')) return;
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      setThumbnailUrl(evt.target.result);
-      toast.success('Material thumbnail image selected!');
-    };
-    reader.readAsDataURL(file);
+    if (!validateFile(file, 'THUMBNAIL')) {
+      e.target.value = '';
+      return;
+    }
+
+    setThumbnailUploading(true);
+    try {
+      let targetId = currentLessonId;
+      const resolvedTitle = title.trim() || file.name.replace(/\.[^/.]+$/, '') || 'Untitled lesson';
+
+      if (!targetId) {
+        const created = await curriculumService.addLesson(courseId, moduleId, {
+          title: resolvedTitle,
+          lessonType,
+          sortOrder: 0,
+        });
+        targetId = created.id;
+        setCurrentLessonId(targetId);
+        setTitle(resolvedTitle);
+      }
+
+      const updatedLesson = await curriculumService.uploadLessonThumbnail(courseId, moduleId, targetId, file);
+      setThumbnailUrl(updatedLesson.thumbnailUrl);
+      toast.success('Material thumbnail uploaded successfully!');
+    } catch (error) {
+      toast.error(error?.message || 'Failed to upload thumbnail');
+    } finally {
+      setThumbnailUploading(false);
+      e.target.value = '';
+    }
   };
 
   const handleSave = async () => {
     if (!title.trim()) {
       toast.error('Please enter a lesson title');
+      return;
+    }
+    if (thumbnailUrl.trim().startsWith('data:') || thumbnailUrl.length > 1024) {
+      toast.error('Use a hosted thumbnail URL or upload an image using the cover image picker.');
       return;
     }
 
@@ -270,15 +323,15 @@ export default function LessonEditorModal({ courseId, moduleId, lesson, onClose,
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
               {/* Preview Box */}
               <div 
-                onClick={() => thumbInputRef.current?.click()}
+                onClick={() => !thumbnailUploading && thumbInputRef.current?.click()}
                 style={{
                   width: 90, height: 60, borderRadius: 8,
                   border: '1px dashed var(--border-color)',
                   background: 'var(--lms-card)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  overflow: 'hidden', cursor: 'pointer', flexShrink: 0
+                  overflow: 'hidden', cursor: thumbnailUploading ? 'wait' : 'pointer', flexShrink: 0
                 }}
-                title="Click to select thumbnail image"
+                title={thumbnailUploading ? 'Uploading thumbnail…' : 'Click to upload thumbnail image'}
               >
                 {thumbnailUrl ? (
                   <img src={thumbnailUrl} alt="Thumbnail preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -295,7 +348,8 @@ export default function LessonEditorModal({ courseId, moduleId, lesson, onClose,
                   style={inputStyle}
                   value={thumbnailUrl}
                   onChange={(e) => setThumbnailUrl(e.target.value)}
-                  placeholder="Paste thumbnail image URL or click box to upload..."
+                  placeholder="Paste a hosted image URL or click the image box to upload..."
+                  disabled={thumbnailUploading}
                 />
                 <input 
                   type="file" 
@@ -305,7 +359,7 @@ export default function LessonEditorModal({ courseId, moduleId, lesson, onClose,
                   onChange={handleThumbFileChange} 
                 />
                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                  Upload cover photo representation for this material (Video cover, PDF deck preview, PPT cover).
+                  {thumbnailUploading ? 'Uploading cover image…' : 'Upload a cover image or paste a hosted image URL.'}
                 </span>
               </div>
             </div>
@@ -392,7 +446,7 @@ export default function LessonEditorModal({ courseId, moduleId, lesson, onClose,
         {/* Modal Footer */}
         <div style={{ marginTop: 24, display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 16, borderTop: '1px solid var(--border-color)' }}>
           <Button onClick={onClose} variant="ghost" size="sm">Cancel</Button>
-          <Button onClick={handleSave} variant="primary" size="sm">
+          <Button onClick={handleSave} variant="primary" size="sm" disabled={uploading || thumbnailUploading}>
             {isNew ? 'Create Lesson' : 'Save Changes'}
           </Button>
         </div>

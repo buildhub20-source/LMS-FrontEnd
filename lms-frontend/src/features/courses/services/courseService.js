@@ -19,8 +19,25 @@ export const courseService = {
 
   // Recordings
   getRecordings: (id) => http.get(API_ENDPOINTS.courses.recordings(id)),
+  getRecordingPlaybackUrl: (recordingId) => http.get(`/recordings/${recordingId}/playback-url`),
   getLessonUploadUrl: (courseId, moduleId, lessonId, payload) => 
-    http.post(`/api/v1/courses/${courseId}/curriculum/modules/${moduleId}/lessons/${lessonId}/recording/upload-url`, payload),
+    http.post(`/courses/${courseId}/curriculum/modules/${moduleId}/lessons/${lessonId}/recording/upload-url`, payload),
+
+  completeLessonRecordingUpload: (courseId, moduleId, lessonId, recordingId) =>
+    http.post(`/courses/${courseId}/curriculum/modules/${moduleId}/lessons/${lessonId}/recording/${recordingId}/complete`),
+
+  uploadLessonRecordingDirect: (courseId, moduleId, lessonId, file, onUploadProgress) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return http.post(
+      `/courses/${courseId}/curriculum/modules/${moduleId}/lessons/${lessonId}/recording/upload`,
+      formData,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress,
+      }
+    );
+  },
 
   // Thumbnail
   uploadThumbnail: (id, file) => {
