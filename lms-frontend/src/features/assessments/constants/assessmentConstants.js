@@ -34,6 +34,16 @@ export const DIFFICULTY_TONE = Object.freeze({
   [DIFFICULTY.HARD]: 'danger',
 });
 
+export const COMPILER_OPTIONS = [
+  { value: 'ALL', label: 'All Compilers (Multi-Language)' },
+  { value: 'JAVA', label: 'Java (JDK 17)' },
+  { value: 'PYTHON', label: 'Python (3.11)' },
+  { value: 'CPP', label: 'C++ (GCC 13)' },
+  { value: 'C', label: 'C (GCC 13)' },
+  { value: 'JAVASCRIPT', label: 'JavaScript (Node.js 20)' },
+  { value: 'SQL', label: 'SQL (PostgreSQL 16)' },
+];
+
 // Legacy — kept for student-side components
 export const QUESTION_TYPES = Object.freeze({
   CODING: 'CODING',

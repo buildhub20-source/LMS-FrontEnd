@@ -19,11 +19,8 @@ export const courseService = {
 
   // Recordings
   getRecordings: (id) => http.get(API_ENDPOINTS.courses.recordings(id)),
-  getLessonUploadUrl: (courseId, moduleId, lessonId, payload) =>
-    http.post(
-      `/api/v1/courses/${courseId}/curriculum/modules/${moduleId}/lessons/${lessonId}/recording/upload-url`,
-      payload,
-    ),
+  getLessonUploadUrl: (courseId, moduleId, lessonId, payload) => 
+    http.post(`/api/v1/courses/${courseId}/curriculum/modules/${moduleId}/lessons/${lessonId}/recording/upload-url`, payload),
 
   // Thumbnail
   uploadThumbnail: (id, file) => {

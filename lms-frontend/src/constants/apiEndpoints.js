@@ -72,6 +72,20 @@ export const API_ENDPOINTS = Object.freeze({
     byId: (id) => `/enrollments/${id}`,
     mine: '/enrollments/mine',
   },
+  adminEnrollments: {
+    base: '/admin/enrollments',
+    byId: (id) => `/admin/enrollments/${id}`,
+    status: (id) => `/admin/enrollments/${id}/status`,
+  },
+  instructorEnrollments: {
+    base: '/instructor/enrollments',
+    byId: (id) => `/instructor/enrollments/${id}`,
+    status: (id) => `/instructor/enrollments/${id}/status`,
+  },
+  studentEnrollments: {
+    base: '/student/enrollments',
+    byId: (id) => `/student/enrollments/${id}`,
+  },
   learning: {
     course: (courseId) => `/learning/courses/${courseId}`,
     lesson: (courseId, lessonId) => `/learning/courses/${courseId}/lessons/${lessonId}`,
@@ -95,6 +109,7 @@ export const API_ENDPOINTS = Object.freeze({
     questionById: (assessmentId, questionId) =>
       `/admin/assessments/${assessmentId}/questions/${questionId}`,
     updateQuestion: (questionId) => `/admin/assessments/questions/${questionId}`,
+    analytics: (id) => `/admin/assessments/${id}/analytics`,
   },
   certificates: {
     base: '/certificates',

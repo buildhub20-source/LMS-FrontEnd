@@ -1,15 +1,19 @@
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import {
+  BookOpen, Layers, ArrowLeft, Eye, CheckCircle2, AlertCircle
+} from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
 import ErrorState from '../../../components/common/ErrorState';
+import Badge from '../../../components/common/Badge';
 import CourseForm from '../components/CourseForm';
+import CurriculumBuilder from '../components/CurriculumBuilder';
 import useCourse from '../hooks/useCourse';
 import { useUpdateCourse } from '../hooks/useCourses';
 import { useToast } from '../../../components/feedback/Toast';
 import { ROUTES } from '../../../constants/routes';
-
-import { useState } from 'react';
-import CurriculumBuilder from '../components/CurriculumBuilder';
+import { COURSE_STATUS_TONE } from '../constants/courseConstants';
 
 export const EditCoursePage = () => {
   const { courseId } = useParams();
@@ -23,55 +27,141 @@ export const EditCoursePage = () => {
   if (error) return <ErrorState error={error} onRetry={refetch} />;
 
   const handleSubmit = async (values) => {
-    await mutateAsync(values);
-    toast.success('Course updated');
-    navigate(ROUTES.COURSE_DETAILS(courseId));
+    try {
+      await mutateAsync(values);
+      toast.success('Course updated successfully!');
+      navigate(ROUTES.COURSE_DETAILS(courseId));
+    } catch (e) {
+      toast.error(e?.message || 'Failed to save course changes.');
+    }
   };
+
+  const statusTone = COURSE_STATUS_TONE[course?.status] || 'neutral';
 
   return (
     <PageContainer
-      title={`Edit: ${course.title}`}
+      title={`Edit: ${course?.title || 'Course'}`}
       breadcrumbs={[
         { label: 'Courses', to: ROUTES.COURSES },
-        { label: course.title, to: ROUTES.COURSE_DETAILS(courseId) },
+        { label: course?.title || 'Details', to: ROUTES.COURSE_DETAILS(courseId) },
         { label: 'Edit' },
       ]}
     >
-      <div className="mb-6 border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20, fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+
+        {/* ── Top Header Banner ── */}
+        <div style={{
+          background: 'var(--lms-card)',
+          border: '1px solid var(--border-color)',
+          borderRadius: 14,
+          padding: '20px 24px',
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: 16
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <button
+              onClick={() => navigate(-1)}
+              style={{
+                width: 36, height: 36, borderRadius: 10,
+                border: '1px solid var(--border-color)',
+                background: 'var(--bg-primary)',
+                color: 'var(--text-primary)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer'
+              }}
+              title="Back"
+            >
+              <ArrowLeft size={16} />
+            </button>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
+                  Edit: {course.title}
+                </h1>
+                <Badge tone={statusTone}>{course.status || 'DRAFT'}</Badge>
+              </div>
+              <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
+                {course.level} • {course.durationMinutes || 60} mins estimated duration
+              </p>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button
+              onClick={() => navigate(ROUTES.COURSE_DETAILS(courseId))}
+              style={{
+                padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600,
+                border: '1px solid var(--border-color)', background: 'transparent',
+                color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6
+              }}
+            >
+              <Eye size={14} /> Preview Course
+            </button>
+          </div>
+        </div>
+
+        {/* ── Glassmorphic Pill Tab Bar ── */}
+        <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--border-color)', paddingBottom: 12 }}>
           <button
             onClick={() => setActiveTab('basic')}
-            className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'basic'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
+            style={{
+              padding: '10px 20px',
+              borderRadius: 10,
+              fontSize: 14,
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              fontFamily: 'inherit',
+              border: activeTab === 'basic' ? '1px solid var(--text-primary)' : '1px solid var(--border-color)',
+              background: activeTab === 'basic' ? 'var(--text-primary)' : 'var(--lms-card)',
+              color: activeTab === 'basic' ? 'var(--lms-background)' : 'var(--text-secondary)',
+              transition: 'all 0.15s ease'
+            }}
           >
-            Basic Info
+            <BookOpen size={16} /> Basic Information
           </button>
+
           <button
             onClick={() => setActiveTab('curriculum')}
-            className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'curriculum'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
+            style={{
+              padding: '10px 20px',
+              borderRadius: 10,
+              fontSize: 14,
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              fontFamily: 'inherit',
+              border: activeTab === 'curriculum' ? '1px solid var(--text-primary)' : '1px solid var(--border-color)',
+              background: activeTab === 'curriculum' ? 'var(--text-primary)' : 'var(--lms-card)',
+              color: activeTab === 'curriculum' ? 'var(--lms-background)' : 'var(--text-secondary)',
+              transition: 'all 0.15s ease'
+            }}
           >
-            Curriculum
+            <Layers size={16} /> Curriculum Builder
           </button>
-        </nav>
-      </div>
+        </div>
 
-      {activeTab === 'basic' ? (
-        <CourseForm
-          defaultValues={course}
-          onSubmit={handleSubmit}
-          onCancel={() => navigate(-1)}
-          error={saveError}
-        />
-      ) : (
-        <CurriculumBuilder course={course} />
-      )}
+        {/* ── Active Tab Content ── */}
+        <div>
+          {activeTab === 'basic' ? (
+            <CourseForm
+              defaultValues={course}
+              onSubmit={handleSubmit}
+              onCancel={() => navigate(-1)}
+              error={saveError}
+            />
+          ) : (
+            <CurriculumBuilder course={course} />
+          )}
+        </div>
+      </div>
     </PageContainer>
   );
 };
