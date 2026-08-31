@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogOut } from 'lucide-react';
+import { LogOut, User } from 'lucide-react';
 import Sidebar from '../components/layout/Sidebar';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import Avatar from '../components/common/Avatar';
 import useAuth from '../features/auth/hooks/useAuth';
 import { ThemeProvider } from '../context/ThemeContext';
+import { ROUTES } from '../constants/routes';
 
 /**
  * Shared chrome for every authenticated area.
@@ -32,7 +33,7 @@ export const AppShell = ({ navigation, title }) => {
       <Avatar name={user?.fullName ?? user?.email ?? ''} src={user?.avatarUrl} size="sm" />
       <div style={{ minWidth: 0, flex: 1 }}>
         <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {user?.fullName ?? 'Administrator'}
+          {user?.fullName ?? user?.email}
         </p>
         <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
       </div>
@@ -65,7 +66,10 @@ export const AppShell = ({ navigation, title }) => {
             title={title}
             onToggleSidebar={() => setSidebarOpen((open) => !open)}
           >
-            <Avatar name={user?.fullName ?? user?.email ?? ''} src={user?.avatarUrl} size="sm" />
+            <Link to={ROUTES.PROFILE} style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', color: 'var(--text-primary)' }} title="Account & Profile">
+              <Avatar name={user?.fullName ?? user?.email ?? ''} src={user?.avatarUrl} size="sm" />
+              <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>Profile</span>
+            </Link>
           </Header>
 
           <main style={{ flex: 1, overflowY: 'auto', padding: '24px', position: 'relative', background: 'var(--bg)' }}>
@@ -76,7 +80,7 @@ export const AppShell = ({ navigation, title }) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -15 }}
                 transition={{ duration: 0.25, ease: 'easeOut' }}
-                style={{ minHeight: '100%' }}
+                style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
               >
                 <Outlet />
               </motion.div>

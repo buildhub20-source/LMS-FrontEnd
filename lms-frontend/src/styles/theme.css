@@ -1,31 +1,57 @@
 /* src/styles/theme.css */
 :root {
-  /* Light palette (optional) */
-  --background-light: #f5f5f5;
-  --surface-light: #ffffff;
-  --text-primary-light: #111111;
-  --text-secondary-light: #555555;
-  --border-light: #e0e0e0;
+  --background: #0a0a0a;
+  --surface-dark: #0a0a0a;
+  --surface-medium: #121212;
+  --text-primary: #ffffff;
+  --text-secondary: #d4d4d8;
+  --text-muted: #a1a1aa;
+  --border: #222222;
+  --hover-bg: #161616;
+  --active-bg: #222222;
+  --shadow: 0 2px 6px rgba(0,0,0,0.6);
 }
 
-:root.dark {
-  --background: #0a0a0a;               /* near‑black */
-  --surface-dark: #1a1a1a;            /* charcoal */
-  --surface-medium: #2a2a2a;          /* slightly lighter */
+:root.dark,
+html.dark,
+[data-theme='dark'] {
+  --background: #0a0a0a;               /* deep black */
+  --surface-dark: #0a0a0a;            /* main surface */
+  --surface-medium: #121212;          /* card / elevated surface */
   --text-primary: #ffffff;            /* white */
-  --text-secondary: #d3d3d3;          /* light gray */
-  --text-muted: #a0a0a0;              /* medium gray */
-  --border: #333333;                  /* subtle gray */
-  --hover-bg: #2e2e2e;                /* hover surface */
-  --active-bg: #3a3a3a;               /* active surface */
-  --shadow: 0 2px 6px rgba(0,0,0,0.4);
+  --text-secondary: #d4d4d8;          /* crisp light gray */
+  --text-muted: #a1a1aa;              /* bright clear gray */
+  --border: #222222;                  /* subtle gray */
+  --hover-bg: #161616;                /* hover surface */
+  --active-bg: #222222;               /* active surface */
+  --shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
+:root.light,
+html.light,
+[data-theme='light'] {
+  --background: #ffffff;
+  --surface-dark: #ffffff;
+  --surface-medium: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --hover-bg: #f1f5f9;
+  --active-bg: #e2e8f0;
+  --shadow: 0 2px 6px rgba(0,0,0,0.06);
 }
 
 /* Global resets */
 body {
   background: var(--background);
   color: var(--text-primary);
-  font-family: 'Inter', Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans, 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif);
+  font-size: var(--text-base, 14px);
+  line-height: var(--leading-normal, 1.45);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.011em;
   margin: 0;
   padding: 0;
 }

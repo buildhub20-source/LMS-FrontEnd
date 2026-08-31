@@ -72,6 +72,9 @@ export const userService = {
   unlock: async (id, reason) =>
     normalizeUser(await http.post(API_ENDPOINTS.users.unlock(id), reason ? { reason } : {})),
 
+  /** DELETE /users/{id} */
+  delete: async (id) => http.delete(API_ENDPOINTS.users.byId(id)),
+
   /** GET /users/{id}/status-history */
   getStatusHistory: async (id) => http.get(API_ENDPOINTS.users.statusHistory(id)),
 

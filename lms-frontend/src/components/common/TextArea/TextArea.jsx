@@ -33,7 +33,7 @@ export const TextArea = forwardRef(
           id={textAreaId}
           rows={rows}
           maxLength={maxLength}
-          value={value}
+          {...(value !== undefined ? { value } : {})}
           className={`${styles.control} ${error ? styles.invalid : ''}`}
           aria-invalid={Boolean(error)}
           required={required}

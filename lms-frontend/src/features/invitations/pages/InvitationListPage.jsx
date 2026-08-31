@@ -88,6 +88,8 @@ export const InvitationListPage = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [openMenuId, setOpenMenuId] = useState(null);
+  // Track whether the open dropdown should open upward (near bottom of viewport)
+  const [menuOpenUpward, setMenuOpenUpward] = useState(false);
 
   // Create modal
   const [createOpen, setCreateOpen] = useState(false);
@@ -259,7 +261,7 @@ export const InvitationListPage = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: 20 }}>
       {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -326,8 +328,17 @@ export const InvitationListPage = () => {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="card-base overflow-hidden">
+      {/* Table — fills remaining height */}
+      <div
+        className="card-base"
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          minHeight: 0,
+        }}
+      >
         {loading ? (
           <div className="p-6">
             <AdminTableSkeleton rows={5} cols={5} />
@@ -354,8 +365,11 @@ export const InvitationListPage = () => {
         ) : (
           <>
             {/* Desktop table */}
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full">
+            <div
+              className="hidden md:flex"
+              style={{ flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}
+            >
+              <table className="w-full" style={{ tableLayout: 'fixed' }}>
                 <thead>
                   <tr
                     style={{
@@ -375,6 +389,7 @@ export const InvitationListPage = () => {
                             textTransform: 'uppercase',
                             letterSpacing: '0.8px',
                             color: 'var(--text-muted)',
+                            width: i === 0 ? '22%' : i === 5 ? '10%' : 'auto',
                           }}
                         >
                           {h}
@@ -383,7 +398,19 @@ export const InvitationListPage = () => {
                     )}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+              </table>
+              {/* Scrollable body */}
+              <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                <table className="w-full" style={{ tableLayout: 'fixed' }}>
+                  <colgroup>
+                    <col style={{ width: '22%' }} />
+                    <col />
+                    <col />
+                    <col />
+                    <col />
+                    <col style={{ width: '10%' }} />
+                  </colgroup>
+                  <tbody className="divide-y divide-slate-100">
                   {invitations.map((inv) => (
                     <tr
                       key={inv.id}
@@ -477,7 +504,14 @@ export const InvitationListPage = () => {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setOpenMenuId(openMenuId === inv.id ? null : inv.id);
+                                if (openMenuId === inv.id) {
+                                  setOpenMenuId(null);
+                                } else {
+                                  // Detect if near bottom of viewport → open upward
+                                  const rect = e.currentTarget.getBoundingClientRect();
+                                  setMenuOpenUpward(window.innerHeight - rect.bottom < 180);
+                                  setOpenMenuId(inv.id);
+                                }
                               }}
                               style={{
                                 background: 'transparent',
@@ -497,14 +531,16 @@ export const InvitationListPage = () => {
                                 style={{
                                   position: 'absolute',
                                   right: 0,
-                                  top: 36,
-                                  zIndex: 20,
+                                  ...(menuOpenUpward
+                                    ? { bottom: 32, top: 'auto' }
+                                    : { top: 36, bottom: 'auto' }),
+                                  zIndex: 50,
                                   width: 160,
                                   borderRadius: 8,
                                   border: '1px solid var(--border-color)',
                                   background: 'var(--surface-dark)',
                                   padding: '4px 0',
-                                  boxShadow: 'var(--shadow-dark)',
+                                  boxShadow: '0 8px 30px rgba(0,0,0,0.35)',
                                 }}
                               >
                                 {inv.status === 'PENDING' && (
@@ -570,12 +606,13 @@ export const InvitationListPage = () => {
                       </td>
                     </tr>
                   ))}
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
             </div>
 
-            {/* Mobile cards */}
-            <div className="md:hidden divide-y divide-slate-100">
+            {/* Mobile cards — scrollable */}
+            <div className="md:hidden" style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
               {invitations.map((inv) => (
                 <div key={inv.id} className="p-4">
                   <div className="flex items-start gap-3">
@@ -622,8 +659,8 @@ export const InvitationListPage = () => {
               ))}
             </div>
 
-            {/* Pagination */}
-            <div style={{ borderTop: '1px solid var(--border-color)', padding: '16px 24px' }}>
+            {/* Pagination — always visible at bottom */}
+            <div style={{ borderTop: '1px solid var(--border-color)', padding: '12px 24px', flexShrink: 0 }}>
               <AdminPagination
                 page={page}
                 totalPages={totalPages}

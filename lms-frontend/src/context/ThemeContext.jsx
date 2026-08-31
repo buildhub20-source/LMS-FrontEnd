@@ -11,9 +11,10 @@ export const ThemeProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    // Apply theme class to <html> element
+    // Apply theme class and data-theme attribute to <html> element
     document.documentElement.classList.remove('light', 'dark');
     document.documentElement.classList.add(theme);
+    document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('lms-theme', theme);
   }, [theme]);
 
