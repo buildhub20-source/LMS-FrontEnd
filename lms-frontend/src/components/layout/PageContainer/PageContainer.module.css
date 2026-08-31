@@ -12,10 +12,19 @@
   flex-wrap: wrap;
   margin-bottom: var(--space-5);
 }
+.head h1 {
+  color: var(--color-text, var(--lms-foreground, #0f172a));
+  font-size: var(--text-3xl, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+  transition: color 200ms ease;
+}
 .subtitle {
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted, var(--lms-muted-foreground, #64748b));
+  font-size: var(--text-sm, 14px);
+  margin: var(--space-1, 4px) 0 0;
+  transition: color 200ms ease;
 }
 .actions {
   display: flex;

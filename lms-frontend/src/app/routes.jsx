@@ -12,8 +12,21 @@ import ProtectedRoute from '../guards/ProtectedRoute';
 import GuestRoute from '../guards/GuestRoute';
 import RoleGuard from '../guards/RoleGuard';
 import PermissionGuard from '../guards/PermissionGuard';
+import useAuth from '../features/auth/hooks/useAuth';
 import Spinner from '../components/common/Spinner';
 import EmptyState from '../components/common/EmptyState';
+
+const RoleBasedLayout = () => {
+  const { user } = useAuth();
+  const userRoles = user?.roles?.map((r) => (typeof r === 'string' ? r : r.name)) ?? [];
+  if (userRoles.includes(ROLES.ADMIN) || userRoles.includes(ROLES.SUPER_ADMIN)) {
+    return <AdminLayout />;
+  }
+  if (userRoles.includes(ROLES.INSTRUCTOR)) {
+    return <InstructorLayout />;
+  }
+  return <StudentLayout />;
+};
 
 // Auth screens load eagerly - they are the entry point for every unauthenticated visit.
 import LoginPage from '../features/auth/pages/LoginPage';
@@ -228,7 +241,7 @@ export const router = createBrowserRouter([
       },
 
       {
-        element: <StudentLayout />,
+        element: <RoleBasedLayout />,
         children: [
           { path: ROUTES.NOTIFICATIONS, element: suspend(<NotificationPage />) },
           { path: ROUTES.PROFILE, element: suspend(<ProfilePage />) },

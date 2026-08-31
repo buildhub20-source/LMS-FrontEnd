@@ -12,6 +12,7 @@ import {
   Pencil,
   Mail,
   Plus,
+  Trash2,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AdminButton from '../../../components/ui/AdminButton';
@@ -145,6 +146,7 @@ export const UserListPage = () => {
 
   // Action menu
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [menuOpenUpward, setMenuOpenUpward] = useState(false);
 
   // Confirm action modal
   const [confirmAction, setConfirmAction] = useState(null);
@@ -235,7 +237,8 @@ export const UserListPage = () => {
       if (type === 'deactivate') await userService.deactivate(u.id);
       if (type === 'lock') await userService.lock(u.id);
       if (type === 'unlock') await userService.unlock(u.id);
-      toastSuccess(`${u.fullName} has been ${type}d.`);
+      if (type === 'delete') await userService.delete(u.id);
+      toastSuccess(type === 'delete' ? `${u.fullName} has been removed.` : `${u.fullName} has been ${type}d.`);
       setConfirmAction(null);
       loadUsers();
     } catch (err) {
@@ -340,16 +343,18 @@ export const UserListPage = () => {
     deactivate: 'Deactivate',
     lock: 'Lock',
     unlock: 'Unlock',
+    delete: 'Remove User',
   };
   const confirmMessages = {
     activate: 'This user will regain access to the platform immediately.',
     deactivate: 'This user will lose access to the platform but their data is preserved.',
     lock: 'This user will be locked out and cannot sign in.',
     unlock: 'This user will be able to sign in again.',
+    delete: 'Are you sure you want to remove this user? This action will remove the user from the active platform user directory.',
   };
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: 20 }}>
       {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -419,8 +424,17 @@ export const UserListPage = () => {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="card-base overflow-hidden">
+      {/* Table — fills remaining height */}
+      <div
+        className="card-base"
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          minHeight: 0,
+        }}
+      >
         {loading ? (
           <div className="p-6">
             <AdminTableSkeleton rows={6} cols={5} />
@@ -440,8 +454,12 @@ export const UserListPage = () => {
         ) : (
           <>
             {/* Desktop table */}
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full">
+            <div
+              className="hidden md:flex"
+              style={{ flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}
+            >
+              {/* Fixed header */}
+              <table className="w-full" style={{ tableLayout: 'fixed' }}>
                 <thead>
                   <tr
                     style={{
@@ -460,6 +478,7 @@ export const UserListPage = () => {
                           textTransform: 'uppercase',
                           letterSpacing: '0.8px',
                           color: 'var(--text-muted)',
+                          width: i === 0 ? '30%' : i === 4 ? '10%' : 'auto',
                         }}
                       >
                         {h}
@@ -467,7 +486,18 @@ export const UserListPage = () => {
                     ))}
                   </tr>
                 </thead>
-                <tbody style={{ display: 'table-row-group' }}>
+              </table>
+              {/* Scrollable body */}
+              <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                <table className="w-full" style={{ tableLayout: 'fixed' }}>
+                  <colgroup>
+                    <col style={{ width: '30%' }} />
+                    <col />
+                    <col />
+                    <col />
+                    <col style={{ width: '10%' }} />
+                  </colgroup>
+                  <tbody style={{ display: 'table-row-group' }}>
                   {users.map((u) => (
                     <tr
                       key={u.id}
@@ -556,7 +586,13 @@ export const UserListPage = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              setOpenMenuId(openMenuId === u.id ? null : u.id);
+                              if (openMenuId === u.id) {
+                                setOpenMenuId(null);
+                              } else {
+                                const rect = e.currentTarget.getBoundingClientRect();
+                                setMenuOpenUpward(window.innerHeight - rect.bottom < 260);
+                                setOpenMenuId(u.id);
+                              }
                             }}
                             style={{
                               background: 'transparent',
@@ -576,14 +612,16 @@ export const UserListPage = () => {
                               style={{
                                 position: 'absolute',
                                 right: 0,
-                                top: 36,
-                                zIndex: 20,
+                                ...(menuOpenUpward
+                                  ? { bottom: 32, top: 'auto' }
+                                  : { top: 36, bottom: 'auto' }),
+                                zIndex: 50,
                                 width: 160,
                                 borderRadius: 8,
                                 border: '1px solid var(--border-color)',
                                 background: 'var(--surface-dark)',
                                 padding: '4px 0',
-                                boxShadow: 'var(--shadow-dark)',
+                                boxShadow: '0 8px 30px rgba(0,0,0,0.35)',
                               }}
                             >
                               <PermissionGuard required={[PERMISSIONS.USER_WRITE]} fallback={null}>
@@ -662,6 +700,19 @@ export const UserListPage = () => {
                                       setOpenMenuId(null);
                                     }}
                                   />
+                                  <MenuItem
+                                    icon={<Trash2 size={14} />}
+                                    label="Remove"
+                                    danger
+                                    onClick={() => {
+                                      setConfirmAction({
+                                        user: u,
+                                        type: 'delete',
+                                        loading: false,
+                                      });
+                                      setOpenMenuId(null);
+                                    }}
+                                  />
                                   <div
                                     style={{
                                       margin: '4px 0',
@@ -684,12 +735,13 @@ export const UserListPage = () => {
                       </td>
                     </tr>
                   ))}
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
             </div>
 
-            {/* Mobile cards */}
-            <div className="md:hidden divide-y divide-slate-100">
+            {/* Mobile cards — scrollable */}
+            <div className="md:hidden" style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
               {users.map((u) => (
                 <div key={u.id} style={{ padding: 16 }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
@@ -830,6 +882,16 @@ export const UserListPage = () => {
                         >
                           Edit
                         </AdminButton>
+                        <AdminButton
+                          size="sm"
+                          variant="outline"
+                          icon={<Trash2 className="h-3.5 w-3.5" />}
+                          onClick={() =>
+                            setConfirmAction({ user: u, type: 'delete', loading: false })
+                          }
+                        >
+                          Remove
+                        </AdminButton>
                       </>
                     </PermissionGuard>
                     <AdminButton
@@ -845,8 +907,8 @@ export const UserListPage = () => {
               ))}
             </div>
 
-            {/* Pagination */}
-            <div style={{ borderTop: '1px solid var(--border-color)', padding: '16px 24px' }}>
+            {/* Pagination — always visible at bottom */}
+            <div style={{ borderTop: '1px solid var(--border-color)', padding: '12px 24px', flexShrink: 0 }}>
               <AdminPagination
                 page={page}
                 totalPages={totalPages}
