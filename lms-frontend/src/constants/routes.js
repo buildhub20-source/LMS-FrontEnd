@@ -42,11 +42,15 @@ export const ROUTES = Object.freeze({
   ADMIN_COURSE_DETAILS: (id = ':courseId') => `/admin/courses/${id}`,
   ADMIN_COURSE_EDIT: (id = ':courseId') => `/admin/courses/${id}/edit`,
 
+  AUDIT_LOGS: '/admin/audit-logs',
+
   // Admin Assessments
   ADMIN_ASSESSMENTS: '/admin/assessments',
   ADMIN_ASSESSMENT_CREATE: '/admin/assessments/new',
   ADMIN_ASSESSMENT_DETAILS: (id = ':assessmentId') => `/admin/assessments/${id}`,
   ADMIN_ASSESSMENT_EDIT: (id = ':assessmentId') => `/admin/assessments/${id}/edit`,
+  ADMIN_GRADING: '/admin/assessments/grading',
+  ADMIN_RUBRICS: '/admin/assessments/rubrics',
 
   // Instructor
   INSTRUCTOR_ANALYTICS: '/instructor/analytics',
@@ -56,10 +60,15 @@ export const ROUTES = Object.freeze({
   COURSE_EDIT: (id = ':courseId') => `/instructor/courses/${id}/edit`,
   ASSESSMENTS: '/instructor/assessments',
   ASSESSMENT_CREATE: '/instructor/assessments/new',
+  INSTRUCTOR_ASSESSMENT_DETAILS: (id = ':assessmentId') => `/instructor/assessments/${id}`,
+  INSTRUCTOR_ASSESSMENT_EDIT: (id = ':assessmentId') => `/instructor/assessments/${id}/edit`,
+  INSTRUCTOR_GRADING: '/instructor/assessments/grading',
+  INSTRUCTOR_RUBRICS: '/instructor/assessments/rubrics',
 
   // Student
   MY_COURSES: '/learn/my-courses',
   MY_ENROLLMENTS: '/learn/enrollments',
+  STUDENT_ASSESSMENTS: '/learn/assessments',
   LEARNING: (id = ':courseId') => `/learn/${id}`,
   LESSON: (c = ':courseId', l = ':lessonId') => `/learn/${c}/lessons/${l}`,
   COURSE_PLAYER: (id = ':courseId') => `/learn/${id}/player`,
