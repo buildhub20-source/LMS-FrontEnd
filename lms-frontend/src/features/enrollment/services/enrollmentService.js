@@ -3,10 +3,13 @@ import { API_ENDPOINTS } from '../../../constants/apiEndpoints';
 
 export const enrollmentService = {
   list: (params) => http.get(API_ENDPOINTS.enrollments.base, { params }),
-  listMine: (params) => http.get(API_ENDPOINTS.enrollments.mine, { params }),
+  listMine: (params) => http.get(API_ENDPOINTS.studentEnrollments.base, { params }),
   getById: (id) => http.get(API_ENDPOINTS.enrollments.byId(id)),
   enroll: (payload) => http.post(API_ENDPOINTS.enrollments.base, payload),
   unenroll: (id) => http.delete(API_ENDPOINTS.enrollments.byId(id)),
+
+  // Student specific
+  getStudentEnrollmentById: (id) => http.get(API_ENDPOINTS.studentEnrollments.byId(id)),
 
   // Admin
   getAdminEnrollments: (params) => http.get(API_ENDPOINTS.adminEnrollments.base, { params }),

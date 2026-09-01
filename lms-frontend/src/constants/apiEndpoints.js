@@ -100,6 +100,10 @@ export const API_ENDPOINTS = Object.freeze({
     saveDraft: (attemptId) => `/student/assessments/attempts/${attemptId}/submissions`,
     result: (attemptId) => `/student/assessments/attempts/${attemptId}`,
     report: (attemptId) => `/student/assessments/attempts/${attemptId}/report`,
+    recordingUploadUrl: (attemptId) => `/student/assessments/attempts/${attemptId}/recording/upload-url`,
+    completeRecording: (attemptId) => `/student/assessments/attempts/${attemptId}/recording/complete`,
+    uploadRecordingDirect: (attemptId) => `/student/assessments/attempts/${attemptId}/recording/upload`,
+    recordingPlaybackUrl: (attemptId) => `/student/assessments/attempts/${attemptId}/recording/playback-url`,
   },
   adminAssessments: {
     base: '/admin/assessments',

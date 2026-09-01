@@ -84,7 +84,7 @@ const LearningPage = lazy(() => import('../features/learning/pages/LearningPage'
 const LessonPage = lazy(() => import('../features/learning/pages/LessonPage'));
 const CoursePlayerPage = lazy(() => import('../features/learning/pages/CoursePlayerPage'));
 const AssessmentListPage = lazy(() => import('../features/assessments/pages/AssessmentListPage'));
-const AssessmentPage = lazy(() => import('../features/assessments/pages/AssessmentPage'));
+const StudentAssessmentTakingPage = lazy(() => import('../features/assessments/pages/StudentAssessmentTakingPage'));
 const CreateAssessmentPage = lazy(
   () => import('../features/assessments/pages/CreateAssessmentPage'),
 );
@@ -254,9 +254,15 @@ export const router = createBrowserRouter([
         ],
       },
 
+      // Standalone Full-Window Lockdown Exam & Proctoring Environment
+      {
+        path: ROUTES.ASSESSMENT_ATTEMPT(),
+        element: suspend(<StudentAssessmentTakingPage />),
+      },
+
       {
         path: '/learn',
-        element: <StudentLayout />,
+        element: <RoleBasedLayout />,
         children: [
           { index: true, element: <Navigate to={ROUTES.MY_COURSES} replace /> },
           { path: ROUTES.MY_COURSES, element: suspend(<MyCoursesPage />) },
@@ -265,7 +271,6 @@ export const router = createBrowserRouter([
           { path: ROUTES.STUDENT_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
           { path: ROUTES.CERTIFICATES, element: suspend(<CertificateListPage />) },
           { path: ROUTES.CERTIFICATE_DETAILS(), element: suspend(<CertificateDetailsPage />) },
-          { path: ROUTES.ASSESSMENT_ATTEMPT(), element: suspend(<AssessmentPage />) },
           { path: ROUTES.ASSESSMENT_RESULT(), element: suspend(<AssessmentResultPage />) },
           { path: ROUTES.LEARNING(), element: suspend(<LearningPage />) },
           { path: ROUTES.LESSON(), element: suspend(<LessonPage />) },
