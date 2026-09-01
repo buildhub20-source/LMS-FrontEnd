@@ -13,6 +13,8 @@ export const assessmentSchema = z
       .min(1, 'Duration must be at least 1 minute')
       .max(1440, 'Duration cannot exceed 24 hours'),
     maxAttempts: z.coerce.number().int().min(1).max(10).default(1),
+    randomizeQuestions: z.boolean().default(false),
+    retakePolicy: z.enum(['BEST_SCORE', 'LATEST_SCORE', 'AVERAGE_SCORE']).default('BEST_SCORE'),
     startTime: z.string().optional().nullable(),
     endTime: z.string().optional().nullable(),
   })

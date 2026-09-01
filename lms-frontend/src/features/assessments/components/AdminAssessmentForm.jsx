@@ -104,6 +104,40 @@ export const AdminAssessmentForm = ({
                   {...register('maxAttempts')}
                 />
               </div>
+              <div className={s.row2} style={{ marginTop: 16 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, marginBottom: 6 }}>
+                    Retake Scoring Policy
+                  </label>
+                  <select
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      borderRadius: '6px',
+                      border: '1px solid var(--border-color, #ccc)',
+                      background: 'var(--bg-card, #fff)',
+                      color: 'inherit',
+                      fontSize: '0.9rem',
+                    }}
+                    {...register('retakePolicy')}
+                  >
+                    <option value="BEST_SCORE">Best Score (Highest score across attempts counts)</option>
+                    <option value="LATEST_SCORE">Latest Score (Most recent attempt score counts)</option>
+                    <option value="AVERAGE_SCORE">Average Score (Mean of all attempts counts)</option>
+                  </select>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', paddingTop: 24, gap: 10 }}>
+                  <input
+                    id="randomizeQuestions"
+                    type="checkbox"
+                    style={{ width: 18, height: 18, cursor: 'pointer' }}
+                    {...register('randomizeQuestions')}
+                  />
+                  <label htmlFor="randomizeQuestions" style={{ cursor: 'pointer', fontWeight: 500, fontSize: '0.9rem' }}>
+                    Randomize Question Order
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
 
