@@ -308,13 +308,7 @@ export const MyCoursesPage = () => {
 
   const { data, isLoading, error, refetch } = useMyCourses();
   const courses = useMemo(() => {
-    const raw =
-      data?.content ??
-      data?.data?.content ??
-      data?.items ??
-      data?.data ??
-      data ??
-      [];
+    const raw = data?.data?.content ?? data?.content ?? data?.items ?? data ?? [];
     return Array.isArray(raw) ? raw : [];
   }, [data]);
 

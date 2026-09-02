@@ -33,8 +33,35 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       strictPort: true,
+      // Supports tenant.localhost workspaces without accepting arbitrary hosts.
+      allowedHosts: ['.localhost'],
       proxy: env.VITE_DEV_PROXY_TARGET
-        ? { '/api': { target: env.VITE_DEV_PROXY_TARGET, changeOrigin: true, secure: false } }
+        ? {
+            '/api': {
+              target: env.VITE_DEV_PROXY_TARGET,
+              changeOrigin: true,
+              secure: false,
+              // This scoped local setting also covers the initial login
+              // before browser storage is available to the client.
+              headers: env.VITE_DEV_TENANT_SLUG
+                ? { 'X-Tenant-Slug': env.VITE_DEV_TENANT_SLUG }
+                : undefined,
+              // The proxy is the local equivalent of production host-based
+              // tenant resolution. It makes the first login request tenant-aware
+              // before browser storage has been populated.
+              configure(proxy) {
+                proxy.on('proxyReq', (proxyRequest, request) => {
+                  const host = String(request.headers.host ?? '').split(':')[0].toLowerCase();
+                  const suffix = '.localhost';
+                  if (!host.endsWith(suffix)) return;
+                  const slug = host.slice(0, -suffix.length);
+                  if (!env.VITE_DEV_TENANT_SLUG && slug && !slug.includes('.') && slug !== 'platform') {
+                    proxyRequest.setHeader('X-Tenant-Slug', slug);
+                  }
+                });
+              },
+            },
+          }
         : undefined,
     },
 

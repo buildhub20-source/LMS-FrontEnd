@@ -29,6 +29,8 @@ export const SignInPage = ({
   onResetPassword,
   errorMessage,
   isSubmitting = false,
+  showTenantSlug = false,
+  tenantSlugHint = 'Select the tenant workspace you want to access.',
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -93,7 +95,25 @@ export const SignInPage = ({
                   </div>
                 </GlassInputWrapper>
               </div>
-              <div className="animate-element animate-delay-500 flex items-center justify-between text-sm">
+              {showTenantSlug && (
+                <div className="animate-element animate-delay-500">
+                  <label htmlFor="tenantSlug" className="text-sm font-medium text-muted-foreground">
+                    Tenant slug <span className="font-normal">(optional)</span>
+                  </label>
+                  <GlassInputWrapper>
+                    <input
+                      id="tenantSlug"
+                      name="tenantSlug"
+                      type="text"
+                      autoComplete="organization"
+                      placeholder="for example: acme-learning"
+                      className="w-full rounded-2xl bg-transparent p-4 text-sm focus:outline-none"
+                    />
+                  </GlassInputWrapper>
+                  <p className="mt-2 text-xs leading-5 text-muted-foreground">{tenantSlugHint}</p>
+                </div>
+              )}
+              <div className="animate-element animate-delay-600 flex items-center justify-between text-sm">
                 <label className="flex cursor-pointer items-center gap-3">
                   <input type="checkbox" name="rememberMe" className="custom-checkbox" />
                   <span className="text-foreground/90">Keep me signed in</span>
@@ -109,7 +129,7 @@ export const SignInPage = ({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="animate-element animate-delay-600 w-full rounded-2xl bg-primary py-4 font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-70"
+                className="animate-element animate-delay-700 w-full rounded-2xl bg-primary py-4 font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {isSubmitting ? 'Signing in…' : 'Sign In'}
               </button>

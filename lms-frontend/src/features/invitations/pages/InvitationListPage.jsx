@@ -11,7 +11,6 @@ import {
   ShieldCheck,
   Clock,
   CheckCircle2,
-  Check,
 } from 'lucide-react';
 import AdminButton from '../../../components/ui/AdminButton';
 import AdminBadge from '../../../components/ui/AdminBadge';
@@ -27,12 +26,6 @@ import { PERMISSIONS } from '../../../constants/permissions';
 import invitationService from '../services/invitationService';
 import roleService from '../../roles/services/roleService';
 import { useToast } from '../../../components/feedback/Toast';
-
-const ROLE_DESCRIPTIONS = {
-  ADMIN: 'Full platform management and security settings',
-  INSTRUCTOR: 'Create, manage, and publish courses',
-  STUDENT: 'Access enrolled courses and learning features',
-};
 
 function formatDate(str) {
   if (!str) return '—';
@@ -163,13 +156,6 @@ export const InvitationListPage = () => {
     return () => window.removeEventListener('click', handler);
   }, [openMenuId]);
 
-  useEffect(() => {
-    if (!rolesDropdownOpen) return;
-    const handler = () => setRolesDropdownOpen(false);
-    window.addEventListener('click', handler);
-    return () => window.removeEventListener('click', handler);
-  }, [rolesDropdownOpen]);
-
   const handleSearch = () => {
     setPage(0);
     setSearch(searchInput);
@@ -190,7 +176,6 @@ export const InvitationListPage = () => {
     setCreateEmail('');
     setCreateRoleName('');
     setCreateError('');
-    setRolesDropdownOpen(false);
     try {
       const roles = await roleService.list();
       const roleList = Array.isArray(roles?.items)
@@ -200,11 +185,7 @@ export const InvitationListPage = () => {
           : Array.isArray(roles)
             ? roles
             : [];
-      // Filter out MANAGER role (case-insensitive) as requested
-      const validRoles = roleList.filter(
-        (r) => r.name && r.name.trim().toUpperCase() !== 'MANAGER',
-      );
-      setAllRoles(validRoles);
+      setAllRoles(roleList);
     } catch (err) {
       toastError(err?.message ?? 'Failed to load roles.');
     }
@@ -696,21 +677,14 @@ export const InvitationListPage = () => {
       {createOpen && (
         <AdminModal
           open
-          overflowVisible
-          onClose={() => {
-            setCreateOpen(false);
-            setRolesDropdownOpen(false);
-          }}
+          onClose={() => setCreateOpen(false)}
           title="New Invitation"
           description="Invite a new user to join the platform"
           footer={
             <>
               <AdminButton
                 variant="outline"
-                onClick={() => {
-                  setCreateOpen(false);
-                  setRolesDropdownOpen(false);
-                }}
+                onClick={() => setCreateOpen(false)}
                 disabled={creating}
               >
                 Cancel
@@ -770,40 +744,26 @@ export const InvitationListPage = () => {
               <div style={{ position: 'relative' }}>
                 <button
                   type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setRolesDropdownOpen(!rolesDropdownOpen);
-                  }}
+                  onClick={() => setRolesDropdownOpen(!rolesDropdownOpen)}
                   style={{
                     width: '100%',
-                    height: 42,
-                    padding: '0 14px',
+                    height: 38,
+                    padding: '0 12px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     background: 'var(--input-bg)',
-                    border: rolesDropdownOpen
-                      ? '1px solid var(--brand-primary, #6366f1)'
-                      : '1px solid var(--border-color)',
-                    boxShadow: rolesDropdownOpen
-                      ? '0 0 0 2px rgba(99,102,241,0.15)'
-                      : 'none',
+                    border: '1px solid var(--border-color)',
                     borderRadius: 8,
                     fontSize: 14,
                     color: createRoleName ? 'var(--text-primary)' : 'var(--text-muted)',
                     cursor: 'pointer',
                     fontFamily: 'Inter, sans-serif',
-                    transition: 'all 0.15s ease',
                   }}
                 >
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <ShieldCheck
-                      size={16}
-                      color={createRoleName ? 'var(--text-primary)' : 'var(--text-muted)'}
-                    />
-                    <span style={{ fontWeight: createRoleName ? 600 : 400 }}>
-                      {selectedRole ? selectedRole.name : 'Select a role…'}
-                    </span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <ShieldCheck size={16} color="var(--text-muted)" />
+                    {selectedRole ? selectedRole.name : 'Select a role…'}
                   </span>
                   <svg
                     style={{
@@ -811,7 +771,7 @@ export const InvitationListPage = () => {
                       height: 16,
                       color: 'var(--text-muted)',
                       transform: rolesDropdownOpen ? 'rotate(180deg)' : 'none',
-                      transition: 'transform 0.15s ease',
+                      transition: 'transform 0.15s',
                     }}
                     fill="none"
                     viewBox="0 0 24 24"
@@ -821,110 +781,76 @@ export const InvitationListPage = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-
                 {rolesDropdownOpen && (
                   <div
-                    onClick={(e) => e.stopPropagation()}
                     style={{
                       position: 'absolute',
-                      zIndex: 50,
-                      top: 'calc(100% + 6px)',
-                      left: 0,
-                      right: 0,
-                      borderRadius: 10,
+                      zIndex: 20,
+                      top: 42,
+                      width: '100%',
+                      borderRadius: 8,
                       border: '1px solid var(--border-color)',
                       background: 'var(--surface-dark)',
-                      boxShadow: '0 12px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06)',
-                      padding: 6,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 3,
+                      boxShadow: 'var(--shadow-dark)',
+                      maxHeight: 240,
+                      overflowY: 'auto',
                     }}
                   >
-                    {allRoles
-                      .filter((r) => r.name && r.name.trim().toUpperCase() !== 'MANAGER')
-                      .map((role) => {
-                        const isSelected = createRoleName === role.name;
-                        return (
-                          <button
-                            key={role.id ?? role.name}
-                            type="button"
-                            onClick={() => {
-                              setCreateRoleName(role.name);
-                              setRolesDropdownOpen(false);
-                            }}
+                    {allRoles.map((role) => (
+                      <button
+                        key={role.id ?? role.name}
+                        type="button"
+                        onClick={() => {
+                          setCreateRoleName(role.name);
+                          setRolesDropdownOpen(false);
+                        }}
+                        style={{
+                          display: 'flex',
+                          width: '100%',
+                          alignItems: 'flex-start',
+                          gap: 10,
+                          padding: '10px 12px',
+                          background:
+                            createRoleName === role.name ? 'var(--active-bg)' : 'transparent',
+                          border: 'none',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                        }}
+                        onMouseEnter={(e) => {
+                          if (createRoleName !== role.name)
+                            e.currentTarget.style.background = 'var(--hover-bg)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background =
+                            createRoleName === role.name ? 'var(--active-bg)' : 'transparent';
+                        }}
+                      >
+                        <ShieldCheck
+                          size={16}
+                          color={
+                            createRoleName === role.name
+                              ? 'var(--text-primary)'
+                              : 'var(--text-muted)'
+                          }
+                          style={{ marginTop: 2, flexShrink: 0 }}
+                        />
+                        <div>
+                          <p
                             style={{
-                              display: 'flex',
-                              width: '100%',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              gap: 12,
-                              padding: '8px 12px',
-                              borderRadius: 8,
-                              background: isSelected
-                                ? 'var(--hover-bg)'
-                                : 'transparent',
-                              border: 'none',
-                              cursor: 'pointer',
-                              textAlign: 'left',
-                              transition: 'background 0.12s ease',
-                            }}
-                            onMouseEnter={(e) => {
-                              if (!isSelected) e.currentTarget.style.background = 'var(--hover-bg)';
-                            }}
-                            onMouseLeave={(e) => {
-                              if (!isSelected) e.currentTarget.style.background = 'transparent';
+                              margin: 0,
+                              fontSize: 14,
+                              fontWeight: 600,
+                              color: 'var(--text-primary)',
                             }}
                           >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                              <div
-                                style={{
-                                  width: 28,
-                                  height: 28,
-                                  borderRadius: 6,
-                                  background: isSelected
-                                    ? 'rgba(99,102,241,0.15)'
-                                    : 'var(--surface-medium)',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  flexShrink: 0,
-                                }}
-                              >
-                                <ShieldCheck
-                                  size={15}
-                                  color={isSelected ? 'var(--text-primary)' : 'var(--text-muted)'}
-                                />
-                              </div>
-                              <div>
-                                <p
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 600,
-                                    color: 'var(--text-primary)',
-                                  }}
-                                >
-                                  {role.name}
-                                </p>
-                                <p
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 11.5,
-                                    color: 'var(--text-muted)',
-                                    lineHeight: 1.3,
-                                  }}
-                                >
-                                  {role.description || ROLE_DESCRIPTIONS[role.name] || 'Platform role'}
-                                </p>
-                              </div>
-                            </div>
-                            {isSelected && (
-                              <Check size={16} color="var(--text-primary)" style={{ flexShrink: 0 }} />
-                            )}
-                          </button>
-                        );
-                      })}
+                            {role.name}
+                          </p>
+                          <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
+                            {role.description}
+                          </p>
+                        </div>
+                      </button>
+                    ))}
                   </div>
                 )}
               </div>

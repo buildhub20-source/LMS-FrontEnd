@@ -12,7 +12,6 @@ import {
   GraduationCap,
   CalendarRange,
   Presentation,
-  ScrollText,
 } from 'lucide-react';
 import MainNavigation from '../MainNavigation';
 import { ROUTES } from '../../../constants/routes';
@@ -113,12 +112,6 @@ const ITEMS = [
     permission: PERMISSIONS.ASSESSMENT_VIEW,
     group: 'Learning',
     icon: <FileText className="h-5 w-5" />,
-  },
-  {
-    label: 'Audit Logs',
-    to: ROUTES.AUDIT_LOGS,
-    group: 'Settings',
-    icon: <ScrollText className="h-5 w-5" />,
   },
   {
     label: 'Organization',

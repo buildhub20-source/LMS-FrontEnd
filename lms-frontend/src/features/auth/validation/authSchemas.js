@@ -14,6 +14,7 @@ const password = z
 export const loginSchema = z.object({
   email,
   password: z.string().min(1, 'Password is required'),
+  tenantSlug: z.string().trim().optional(),
   rememberMe: z.boolean().optional().default(false),
 });
 
