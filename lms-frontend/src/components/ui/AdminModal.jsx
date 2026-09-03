@@ -20,7 +20,6 @@ export const AdminModal = ({
   children,
   footer,
   size = 'md',
-  overflowVisible = false,
 }) => {
   if (!open) return null;
 
@@ -34,7 +33,7 @@ export const AdminModal = ({
       />
       {/* Panel */}
       <div
-        className={`relative w-full ${sizeMap[size] ?? sizeMap.md} max-h-[90vh] ${overflowVisible ? 'overflow-visible' : 'overflow-hidden'} rounded-2xl shadow-2xl animate-scale-in flex flex-col`}
+        className={`relative w-full ${sizeMap[size] ?? sizeMap.md} max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl animate-scale-in flex flex-col`}
         style={{ background: 'var(--surface-dark)', boxShadow: 'var(--shadow-dark)' }}
       >
         {/* Header */}
@@ -76,7 +75,7 @@ export const AdminModal = ({
           </button>
         </div>
         {/* Body */}
-        <div className={`flex-1 ${overflowVisible ? 'overflow-visible' : 'overflow-y-auto'} px-6 py-5`}>{children}</div>
+        <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
         {/* Footer */}
         {footer && (
           <div

@@ -3,6 +3,7 @@ export const STORAGE_KEYS = Object.freeze({
   REFRESH_TOKEN: 'lms.refreshToken',
   THEME: 'lms.theme',
   TENANT: 'lms.tenant',
+  PLATFORM_ACCESS_TOKEN: 'lms.platform.accessToken',
 });
 
 export const QUERY_KEYS = Object.freeze({

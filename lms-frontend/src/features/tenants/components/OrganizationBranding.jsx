@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Card from '../../../components/common/Card';
 import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';
@@ -7,6 +7,11 @@ import Button from '../../../components/common/Button';
 export const OrganizationBranding = ({ defaultValues = {}, onSubmit }) => {
   const [primaryColor, setPrimaryColor] = useState(defaultValues.primaryColor ?? '#3b6fe0');
   const [logoUrl, setLogoUrl] = useState(defaultValues.logoUrl ?? '');
+
+  useEffect(() => {
+    setPrimaryColor(defaultValues.primaryColor ?? '#3b6fe0');
+    setLogoUrl(defaultValues.logoUrl ?? '');
+  }, [defaultValues.primaryColor, defaultValues.logoUrl]);
 
   const apply = () => {
     document.documentElement.style.setProperty('--color-primary-600', primaryColor);
