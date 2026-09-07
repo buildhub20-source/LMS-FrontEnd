@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Editor from '@monaco-editor/react';
 import {
   Copy, Clock, Database, ChevronDown, ChevronUp, Play,
@@ -27,10 +27,41 @@ const STARTER_CODE = {
   javascript: '// Write your solution here\nconst fs = require("fs");\n\nfunction main() {\n    const input = fs.readFileSync(0, "utf-8").trim();\n    // Your logic here\n    \n}\n\nmain();\n',
 };
 
+const JAVA_SCRIPT_RUN_TIMEOUT_MS = 3_000;
+
+const runJavaScriptInWorker = (sourceCode, input) => new Promise((resolve) => {
+  const worker = new Worker(
+    new URL('../workers/javascriptRunner.worker.js', import.meta.url),
+    { type: 'module' },
+  );
+  const runId = crypto.randomUUID();
+  let complete = false;
+
+  const finish = (result) => {
+    if (complete) return;
+    complete = true;
+    clearTimeout(timeout);
+    worker.terminate();
+    resolve(result);
+  };
+
+  const timeout = window.setTimeout(
+    () => finish({ success: false, error: 'Execution timed out after 3 seconds.' }),
+    JAVA_SCRIPT_RUN_TIMEOUT_MS,
+  );
+
+  worker.onmessage = ({ data }) => {
+    if (data?.runId !== runId) return;
+    finish(data);
+  };
+  worker.onerror = () => finish({ success: false, error: 'The sandboxed JavaScript runner failed to start.' });
+  worker.postMessage({ runId, sourceCode, input });
+});
+
 /**
  * Sandboxed code execution simulator for sample test cases
  */
-function executeCodeSandbox(language, sourceCode, testCases, customInput = '') {
+async function executeCodeSandbox(language, sourceCode, testCases, customInput = '') {
   const startTime = performance.now();
   const results = [];
 
@@ -76,31 +107,9 @@ function executeCodeSandbox(language, sourceCode, testCases, customInput = '') {
     let errorMsg = null;
 
     if (language === 'javascript') {
-      try {
-        const logs = [];
-        const customConsole = {
-          log: (...args) => logs.push(args.map((a) => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ')),
-          error: (...args) => logs.push('[ERROR] ' + args.join(' ')),
-          warn: (...args) => logs.push('[WARN] ' + args.join(' ')),
-        };
-
-        const runner = new Function(
-          'input',
-          'console',
-          `
-          try {
-            ${sourceCode}
-          } catch(e) {
-            throw e;
-          }
-        `,
-        );
-
-        runner(tc.input ?? '', customConsole);
-        actualOutput = logs.join('\n').trim();
-      } catch (err) {
-        errorMsg = err.message || String(err);
-      }
+      const run = await runJavaScriptInWorker(sourceCode, tc.input ?? '');
+      actualOutput = run.output ?? '';
+      errorMsg = run.success ? null : (run.error ?? 'The sandboxed JavaScript runner failed.');
     } else {
       // Robust output parser for Java, Python, C++, and C
       const collectedOutputs = [];
@@ -227,7 +236,6 @@ export const CodingQuestionPanel = ({
   onSubmitQuestion = null,
   isQuestionSubmitted = false,
 }) => {
-  const [activeTab, setActiveTab] = useState('description');
   const [showConstraints, setShowConstraints] = useState(true);
   const [activeConsoleTab, setActiveConsoleTab] = useState('testcases');
   const [selectedTestCaseIdx, setSelectedTestCaseIdx] = useState(0);
@@ -301,28 +309,29 @@ export const CodingQuestionPanel = ({
     setTimeout(() => setCopiedKey(null), 2000);
   };
 
-  const handleRunCode = () => {
+  const handleRunCode = async () => {
     setIsRunning(true);
     setActiveConsoleTab('results');
     setIsConsoleExpanded(true);
 
-    setTimeout(() => {
-      const outcome = executeCodeSandbox(
+    try {
+      const outcome = await executeCodeSandbox(
         draft.language || 'java',
         draft.sourceCode || '',
         sampleCases,
         customInput,
       );
       setRunResults(outcome);
+    } finally {
       setIsRunning(false);
-    }, 400);
+    }
   };
 
   /**
    * "Save & Submit Question" — executes against the actual sample test cases
    * configured for this question in the backend and persists the draft.
    */
-  const handleSubmitQuestion = () => {
+  const handleSubmitQuestion = async () => {
     if (!draft.sourceCode?.trim()) return;
     setIsSubmittingQuestion(true);
     setActiveConsoleTab('results');
@@ -331,22 +340,23 @@ export const CodingQuestionPanel = ({
     // Save draft to DB immediately
     onDraftChange?.(draft);
 
-    setTimeout(() => {
-      const outcome = executeCodeSandbox(
+    try {
+      const outcome = await executeCodeSandbox(
         draft.language || 'java',
         draft.sourceCode || '',
         sampleCases.length > 0 ? sampleCases : [],
         customInput,
       );
       setRunResults(outcome);
-      setIsSubmittingQuestion(false);
 
       onSubmitQuestion?.({
         questionId: question?.id,
         language: draft.language,
         sourceCode: draft.sourceCode,
       });
-    }, 400);
+    } finally {
+      setIsSubmittingQuestion(false);
+    }
   };
 
   const difficultyColors = {
@@ -1208,7 +1218,7 @@ export const CodingQuestionPanel = ({
                     <div style={{ textAlign: 'center', padding: '24px 0', color: '#64748b' }}>
                       <Play size={24} style={{ margin: '0 auto 8px', opacity: 0.4 }} />
                       <p style={{ margin: 0, fontSize: 13 }}>
-                        Click <strong>"Run Code"</strong> to test your solution against sample test cases.
+                        Click <strong>&quot;Run Code&quot;</strong> to test your solution against sample test cases.
                       </p>
                     </div>
                   ) : (

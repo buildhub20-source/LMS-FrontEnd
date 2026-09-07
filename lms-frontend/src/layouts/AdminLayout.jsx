@@ -1,8 +1,11 @@
 import AdminNavigation from '../components/navigation/AdminNavigation';
+import RouteErrorBoundary from '../components/common/RouteErrorBoundary';
 import AppShell from './AppShell';
 
 export const AdminLayout = () => (
-  <AppShell title="Administration" navigation={<AdminNavigation />} />
+  <RouteErrorBoundary>
+    <AppShell title="Administration" navigation={<AdminNavigation />} />
+  </RouteErrorBoundary>
 );
 
 export default AdminLayout;
