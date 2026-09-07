@@ -17,9 +17,11 @@ export const LearningPage = () => {
   if (isLoading) return <Spinner fullPage />;
   if (error) return <ErrorState error={error} onRetry={refetch} />;
 
+  const currentLesson = data?.currentLesson || data?.modules?.[0]?.lessons?.[0];
+
   return (
     <PageContainer title={data?.title}>
-      <CoursePlayer course={data} lesson={data?.currentLesson} />
+      <CoursePlayer course={data} lesson={currentLesson} />
     </PageContainer>
   );
 };

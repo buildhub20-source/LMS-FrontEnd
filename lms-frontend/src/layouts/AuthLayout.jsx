@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import appConfig from '../config/appConfig';
 import { ROUTES } from '../constants/routes';
+import ThemeSlider from '../components/common/ThemeSlider';
 
 const styles = {
   page: { minHeight: '100vh', display: 'grid', placeItems: 'center', padding: 'var(--space-5)' },
@@ -18,17 +19,31 @@ const styles = {
 export const AuthLayout = () => {
   const location = useLocation();
 
-  // These pages have their own full-screen layout
-  if (location.pathname === ROUTES.LOGIN) return <Outlet />;
-  if (location.pathname.startsWith('/auth/accept-invitation')) return <Outlet />;
-
   return (
-    <main style={styles.page}>
-      <div style={styles.card}>
-        <h2 className="u-mb-4">{appConfig.name}</h2>
-        <Outlet />
+    <>
+      {/* Universal Theme Switcher for all Auth Domain screens */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 20,
+          right: 24,
+          zIndex: 9999,
+        }}
+      >
+        <ThemeSlider size="md" />
       </div>
-    </main>
+
+      {location.pathname === ROUTES.LOGIN || location.pathname.startsWith('/auth/accept-invitation') ? (
+        <Outlet />
+      ) : (
+        <main style={styles.page}>
+          <div style={styles.card}>
+            <h2 className="u-mb-4">{appConfig.name}</h2>
+            <Outlet />
+          </div>
+        </main>
+      )}
+    </>
   );
 };
 

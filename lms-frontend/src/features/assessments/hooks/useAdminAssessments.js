@@ -97,3 +97,13 @@ export const useRemoveQuestion = (assessmentId) => {
     onSuccess: () => invalidateAll(qc),
   });
 };
+
+// Retest
+export const useRetestStudent = (assessmentId) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (studentId) => adminAssessmentService.retestStudent(assessmentId, studentId),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: [...ADMIN_ASSESSMENTS, assessmentId, 'analytics'] }),
+  });
+};
