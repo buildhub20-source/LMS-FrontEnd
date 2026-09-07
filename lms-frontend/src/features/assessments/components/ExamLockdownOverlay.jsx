@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Monitor, Lock, Eye, Clock, Award, FileText, CheckCircle2,
   ArrowRight, ArrowLeft, XCircle, Play, Loader2, Video,
-  Shield, AlertCircle, AlertTriangle, Check
+  Shield, AlertCircle, AlertTriangle, Check, RefreshCw
 } from 'lucide-react';
 import Button from '../../../components/common/Button';
 
@@ -19,6 +19,7 @@ export const ExamLockdownOverlay = ({
   onRequestScreen,
   onLaunchAssessment,
   onCountdownComplete,
+  onRetry = null,
   isScreenRecording = false,
   screenStream = null,
   loading = false,
@@ -537,23 +538,51 @@ export const ExamLockdownOverlay = ({
                       </span>
                     </div>
                   </div>
-                  <div
-                    style={{
-                      padding: '5px 12px',
-                      borderRadius: 6,
-                      background: error
-                        ? 'rgba(239, 68, 68, 0.15)'
-                        : loading
-                        ? 'rgba(99, 102, 241, 0.15)'
-                        : 'rgba(16, 185, 129, 0.15)',
-                      border: `1px solid ${error ? 'rgba(239, 68, 68, 0.3)' : loading ? 'rgba(99, 102, 241, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`,
-                      color: error ? '#f87171' : loading ? '#818cf8' : '#34d399',
-                      fontSize: 12,
-                      fontWeight: 700,
-                    }}
-                  >
-                    {error ? 'Failed' : loading ? 'Syncing…' : 'Loaded'}
-                  </div>
+                  {error && onRetry ? (
+                    <button
+                      type="button"
+                      onClick={onRetry}
+                      disabled={loading}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        padding: '6px 14px',
+                        borderRadius: 6,
+                        background: 'rgba(239, 68, 68, 0.15)',
+                        border: '1px solid rgba(239, 68, 68, 0.4)',
+                        color: '#f87171',
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.15s ease',
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.25)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)'; }}
+                      title="Retry fetching assessment questions & state"
+                    >
+                      <RefreshCw size={12} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
+                      {loading ? 'Retrying…' : 'Retry Check'}
+                    </button>
+                  ) : (
+                    <div
+                      style={{
+                        padding: '5px 12px',
+                        borderRadius: 6,
+                        background: error
+                          ? 'rgba(239, 68, 68, 0.15)'
+                          : loading
+                          ? 'rgba(99, 102, 241, 0.15)'
+                          : 'rgba(16, 185, 129, 0.15)',
+                        border: `1px solid ${error ? 'rgba(239, 68, 68, 0.3)' : loading ? 'rgba(99, 102, 241, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`,
+                        color: error ? '#f87171' : loading ? '#818cf8' : '#34d399',
+                        fontSize: 12,
+                        fontWeight: 700,
+                      }}
+                    >
+                      {error ? 'Failed' : loading ? 'Syncing…' : 'Loaded'}
+                    </div>
+                  )}
                 </div>
 
                 {/* 4. Cloudflare R2 Proctoring Storage */}

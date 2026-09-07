@@ -25,6 +25,9 @@ export const adminAssessmentService = {
     http.delete(ep.questionById(assessmentId, questionId)),
   // Analytics
   getAnalytics: (id) => http.get(ep.analytics(id)),
+
+  // Retest
+  retestStudent: (assessmentId, studentId) => http.post(ep.retest(assessmentId, studentId)),
 };
 
 export default adminAssessmentService;

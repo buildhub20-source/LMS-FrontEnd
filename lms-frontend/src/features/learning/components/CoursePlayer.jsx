@@ -3,16 +3,18 @@ import { Play, Pause, Check, Share2, Bookmark, ChevronDown } from 'lucide-react'
 import VideoPlayer from './VideoPlayer';
 
 /* ── Custom Progress Timeline ── */
-function StudyProgress({ percent = 55 }) {
+function StudyProgress({ percent = 0 }) {
+  const safePercent = Math.min(Math.max(percent, 0), 100);
+
   return (
     <div
       style={{
-        border: '1px solid var(--border-color)',
+        border: '1px solid var(--border, #222)',
         borderRadius: 12,
         padding: 24,
-        background: 'var(--lms-card)',
+        background: 'var(--lms-card, #121212)',
         marginBottom: 24,
-        fontFamily: 'system-ui, sans-serif',
+        fontFamily: 'inherit',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
@@ -23,13 +25,13 @@ function StudyProgress({ percent = 55 }) {
           style={{
             fontSize: 13,
             fontWeight: 600,
-            color: 'var(--text-primary)',
-            background: 'var(--surface-medium)',
-            padding: '4px 8px',
+            color: 'var(--lms-primary, #3b82f6)',
+            background: 'var(--hover-bg, rgba(255,255,255,0.06))',
+            padding: '4px 10px',
             borderRadius: 99,
           }}
         >
-          {percent}%
+          {safePercent}%
         </span>
       </div>
 
@@ -42,7 +44,7 @@ function StudyProgress({ percent = 55 }) {
             left: 12,
             right: 12,
             height: 6,
-            background: '#e5e7eb',
+            background: 'var(--border, #222)',
             borderRadius: 99,
             zIndex: 0,
           }}
@@ -54,11 +56,12 @@ function StudyProgress({ percent = 55 }) {
             top: 12,
             left: 12,
             right: 12,
-            width: `${percent}%`,
+            width: `${safePercent}%`,
             height: 6,
-            background: '#111827',
+            background: 'var(--lms-primary, #3b82f6)',
             borderRadius: 99,
             zIndex: 1,
+            transition: 'width 0.3s ease',
           }}
         />
 
@@ -83,10 +86,11 @@ function StudyProgress({ percent = 55 }) {
                 justifyContent: 'center',
                 fontSize: 12,
                 fontWeight: 600,
-                background: percent >= val ? '#111827' : '#f3f4f6',
-                color: percent >= val ? '#fff' : '#9ca3af',
-                border: `4px solid var(--lms-card)`,
+                background: safePercent >= val ? 'var(--lms-primary, #3b82f6)' : 'var(--surface-medium, #1a1a1a)',
+                color: safePercent >= val ? '#fff' : 'var(--text-muted, #a1a1aa)',
+                border: `3px solid var(--lms-card, #121212)`,
                 transform: 'translateY(-2px)',
+                boxShadow: safePercent >= val ? '0 0 10px rgba(59, 130, 246, 0.4)' : 'none',
               }}
             >
               {val}
@@ -97,11 +101,12 @@ function StudyProgress({ percent = 55 }) {
 
       <div
         style={{
-          background: '#f8fafc',
+          background: 'var(--hover-bg, rgba(255,255,255,0.03))',
+          border: '1px solid var(--border, #222)',
           borderRadius: 8,
           padding: 16,
           fontSize: 14,
-          color: '#64748b',
+          color: 'var(--text-secondary, #d4d4d8)',
           lineHeight: 1.6,
         }}
       >
@@ -111,16 +116,25 @@ function StudyProgress({ percent = 55 }) {
   );
 }
 
-function CourseCompletion({ modules = [] }) {
-  const items = modules.length > 0 ? modules : [];
+function CourseCompletion({ modules = [], onSelectLesson, currentLessonId }) {
+  const items = modules.flatMap((m) =>
+    m.lessons && m.lessons.length > 0
+      ? m.lessons.map((l) => ({
+          ...l,
+          duration: l.duration || (l.durationMinutes ? `${l.durationMinutes} min` : '5 min'),
+        }))
+      : [m]
+  );
+
+  const completedCount = items.filter((item) => item.status === 'completed').length;
 
   return (
     <div
       style={{
-        border: '1px solid var(--border-color)',
+        border: '1px solid var(--border, #222)',
         borderRadius: 12,
-        background: 'var(--lms-card)',
-        fontFamily: 'system-ui, sans-serif',
+        background: 'var(--lms-card, #121212)',
+        fontFamily: 'inherit',
       }}
     >
       <div
@@ -128,14 +142,16 @@ function CourseCompletion({ modules = [] }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: 24,
-          borderBottom: '1px solid var(--border-color)',
+          padding: 20,
+          borderBottom: '1px solid var(--border, #222)',
         }}
       >
         <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
           Course Completion
         </h3>
-        <span style={{ fontSize: 14, color: 'var(--text-muted)', fontWeight: 500 }}>1/25</span>
+        <span style={{ fontSize: 14, color: 'var(--text-muted)', fontWeight: 500 }}>
+          {items.length > 0 ? `${completedCount}/${items.length}` : '0/0'}
+        </span>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', padding: '16px' }}>
@@ -145,23 +161,24 @@ function CourseCompletion({ modules = [] }) {
           </p>
         ) : (
           items.map((item, i) => {
-            const isActive = item.status === 'active';
+            const isActive = currentLessonId ? item.id === currentLessonId : i === 0;
             const isCompleted = item.status === 'completed';
 
             return (
               <div
-                key={i}
+                key={item.id || i}
+                onClick={() => onSelectLesson?.(item)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: 16,
-                  padding: '16px 20px',
+                  padding: '14px 18px',
                   borderRadius: 12,
                   marginBottom: 8,
                   cursor: 'pointer',
-                  background: isActive ? '#f8fafc' : 'transparent',
-                  border: isActive ? '1px solid #cbd5e1' : '1px solid transparent',
-                  transition: 'background 0.2s',
+                  background: isActive ? 'var(--hover-bg, rgba(255,255,255,0.06))' : 'transparent',
+                  border: isActive ? '1px solid var(--lms-primary, #3b82f6)' : '1px solid transparent',
+                  transition: 'background 0.2s, border 0.2s',
                 }}
               >
                 {/* Icon */}
@@ -174,9 +191,13 @@ function CourseCompletion({ modules = [] }) {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    background: isCompleted ? '#22c55e' : isActive ? '#111827' : '#f8fafc',
-                    color: isCompleted ? '#fff' : isActive ? '#fff' : '#64748b',
-                    border: !isCompleted && !isActive ? '1px solid #cbd5e1' : 'none',
+                    background: isCompleted
+                      ? '#22c55e'
+                      : isActive
+                      ? 'var(--lms-primary, #3b82f6)'
+                      : 'var(--surface-medium, #1a1a1a)',
+                    color: '#fff',
+                    border: !isCompleted && !isActive ? '1px solid var(--border, #222)' : 'none',
                   }}
                 >
                   {isCompleted ? (
@@ -189,13 +210,16 @@ function CourseCompletion({ modules = [] }) {
                 </div>
 
                 {/* Text */}
-                <div>
+                <div style={{ minWidth: 0, flex: 1 }}>
                   <p
                     style={{
                       margin: 0,
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: isActive ? 600 : 500,
                       color: 'var(--text-primary)',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     {item.title}
@@ -214,8 +238,11 @@ function CourseCompletion({ modules = [] }) {
 }
 
 /* ── Main Player Layout ── */
-export const CoursePlayer = ({ course, lesson, onProgress }) => {
+export const CoursePlayer = ({ course, lesson: initialLesson, onProgress }) => {
   const [showMore, setShowMore] = useState(false);
+  const [selectedLesson, setSelectedLesson] = useState(null);
+
+  const activeLesson = selectedLesson || initialLesson || course?.modules?.[0]?.lessons?.[0];
 
   return (
     <div
@@ -232,7 +259,7 @@ export const CoursePlayer = ({ course, lesson, onProgress }) => {
       <div style={{ flex: '1 1 0%', minWidth: 0 }}>
         <h1
           style={{
-            margin: '0 0 24px',
+            margin: '0 0 8px',
             fontSize: 26,
             fontWeight: 700,
             color: 'var(--text-primary)',
@@ -241,6 +268,19 @@ export const CoursePlayer = ({ course, lesson, onProgress }) => {
           {course?.title || 'Loading...'}
         </h1>
 
+        {activeLesson?.title && (
+          <p
+            style={{
+              margin: '0 0 20px',
+              fontSize: 15,
+              fontWeight: 500,
+              color: 'var(--text-secondary)',
+            }}
+          >
+            Lesson: {activeLesson.title}
+          </p>
+        )}
+
         {/* Video Area */}
         <div
           style={{
@@ -248,16 +288,16 @@ export const CoursePlayer = ({ course, lesson, onProgress }) => {
             aspectRatio: '16/9',
             borderRadius: 16,
             overflow: 'hidden',
-            background: 'var(--surface-medium)',
+            background: 'var(--surface-medium, #1a1a1a)',
             marginBottom: 24,
             position: 'relative',
           }}
         >
-          {lesson?.videoUrl ? (
+          {activeLesson?.videoUrl ? (
             <VideoPlayer
-              src={lesson.videoUrl}
-              poster={lesson.posterUrl}
-              startAt={lesson.resumeAtSeconds ?? 0}
+              src={activeLesson.videoUrl}
+              poster={activeLesson.posterUrl}
+              startAt={activeLesson.resumeAtSeconds ?? 0}
               onProgress={onProgress}
             />
           ) : (
@@ -309,8 +349,9 @@ export const CoursePlayer = ({ course, lesson, onProgress }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            border: '1px solid var(--border-color)',
+            border: '1px solid var(--border, #222)',
             borderRadius: 12,
+            background: 'var(--lms-card, #121212)',
             padding: '16px 24px',
             marginBottom: 40,
           }}
@@ -329,10 +370,10 @@ export const CoursePlayer = ({ course, lesson, onProgress }) => {
             />
             <div>
               <p style={{ margin: 0, fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>
-                {course?.createdByName || 'Instructor'}
+                {course?.createdByName || course?.instructorName || 'Instructor'}
               </p>
               <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)' }}>
-                Mentor • Illustrator at Google
+                Course Instructor • Expert Mentor
               </p>
             </div>
           </div>
@@ -384,7 +425,7 @@ export const CoursePlayer = ({ course, lesson, onProgress }) => {
               gap: 4,
               background: 'none',
               border: 'none',
-              color: 'var(--text-primary)',
+              color: 'var(--lms-primary, #3b82f6)',
               fontSize: 14,
               fontWeight: 600,
               marginTop: 12,
@@ -417,9 +458,9 @@ export const CoursePlayer = ({ course, lesson, onProgress }) => {
               lineHeight: 1.6,
             }}
           >
-            <li>Beginners wanting to learn digital illustration.</li>
-            <li>Designers looking to master Adobe Illustrator tools.</li>
-            <li>Anyone interested in creating vector artwork.</li>
+            <li>Learners seeking to master key concepts through comprehensive curriculum.</li>
+            <li>Hands-on practitioners looking to enhance their practical skills.</li>
+            <li>Anyone interested in structured, self-paced learning and certification.</li>
           </ul>
         </div>
       </div>
@@ -427,7 +468,11 @@ export const CoursePlayer = ({ course, lesson, onProgress }) => {
       {/* ── Right Column: Progress & Modules ── */}
       <div style={{ width: 400, flexShrink: 0 }}>
         <StudyProgress percent={course?.progressPercent ?? 0} />
-        <CourseCompletion modules={course?.modules ?? []} />
+        <CourseCompletion
+          modules={course?.modules ?? []}
+          currentLessonId={activeLesson?.id}
+          onSelectLesson={setSelectedLesson}
+        />
       </div>
     </div>
   );

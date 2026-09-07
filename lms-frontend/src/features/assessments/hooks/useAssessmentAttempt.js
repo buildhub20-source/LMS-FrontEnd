@@ -130,6 +130,12 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
     }
   }, [attempt, navigate, submitting]);
 
+  // ── Refresh trigger for manual retries ──────────────────────────────────
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const retry = useCallback(() => {
+    setRefreshTrigger((c) => c + 1);
+  }, []);
+
   // ── Fetch / start / resume attempt on mount ──────────────────────────────
   useEffect(() => {
     if (!assessmentId) return;
@@ -217,7 +223,7 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
 
     startOrResume();
     return () => { cancelled = true; };
-  }, [assessmentId]);
+  }, [assessmentId, refreshTrigger]);
 
   // ── Server-authoritative countdown timer ─────────────────────────────────
   useEffect(() => {
@@ -258,6 +264,7 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
     totalQuestions,
     updateDraft,
     handleSubmit,
+    retry,
   };
 }
 

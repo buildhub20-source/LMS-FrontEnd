@@ -22,6 +22,21 @@ export const SubmitConfirmModal = ({
   const unanswered = questions.filter((q) => !drafts[q.id]?.sourceCode?.trim());
   const completionPct = questions.length > 0 ? Math.round((answered.length / questions.length) * 100) : 0;
 
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handleModalKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        onConfirm?.();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose?.();
+      }
+    };
+    window.addEventListener('keydown', handleModalKey);
+    return () => window.removeEventListener('keydown', handleModalKey);
+  }, [isOpen, onConfirm, onClose]);
+
   return createPortal(
     <div
       onMouseDown={(e) => e.target === e.currentTarget && onClose()}

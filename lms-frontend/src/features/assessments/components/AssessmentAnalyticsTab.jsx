@@ -2,19 +2,26 @@ import { useState } from 'react';
 import {
   Users, UserCheck, UserX, CheckCircle, Award, BarChart2,
   Search, Filter, Calendar, Clock, Percent, ArrowUpRight,
-  TrendingUp, AlertCircle, FileCheck, CheckCircle2, XCircle
+  TrendingUp, AlertCircle, FileCheck, CheckCircle2, XCircle, RefreshCw
 } from 'lucide-react';
-import { useAdminAssessmentAnalytics } from '../hooks/useAdminAssessments';
+import { useAdminAssessmentAnalytics, useRetestStudent } from '../hooks/useAdminAssessments';
 import Spinner from '../../../components/common/Spinner';
 import Alert from '../../../components/feedback/Alert';
 import Badge from '../../../components/common/Badge';
+import { useToast } from '../../../components/feedback/Toast';
 import { formatDate } from '../../../utils/dateUtils';
 
 export const AssessmentAnalyticsTab = ({ assessmentId }) => {
   const { data: analytics, isLoading, error } = useAdminAssessmentAnalytics(assessmentId);
+  const retest = useRetestStudent(assessmentId);
+  const toast = useToast();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [gradeFilter, setGradeFilter] = useState('ALL');
+  const [retestingId, setRetestingId] = useState(null);  // single-row retest
+  const [selectedIds, setSelectedIds] = useState(new Set()); // bulk-select
+  const [bulkRetesting, setBulkRetesting] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState({ done: 0, total: 0 });
 
   if (isLoading) return <Spinner fullPage={false} />;
   if (error) return <Alert tone="error">Failed to load assessment statistics: {error.message}</Alert>;
@@ -55,6 +62,91 @@ export const AssessmentAnalyticsTab = ({ assessmentId }) => {
 
     return matchesSearch && matchesStatus && matchesGrade;
   });
+
+  // ── Selection helpers ──────────────────────────────────────────
+  const allFilteredIds = filteredStudents.map((s) => s.studentId);
+  const allSelected = allFilteredIds.length > 0 && allFilteredIds.every((id) => selectedIds.has(id));
+  const someSelected = allFilteredIds.some((id) => selectedIds.has(id)) && !allSelected;
+
+  const toggleSelectAll = () => {
+    if (allSelected) {
+      // Deselect only the currently-visible students
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        allFilteredIds.forEach((id) => next.delete(id));
+        return next;
+      });
+    } else {
+      setSelectedIds((prev) => new Set([...prev, ...allFilteredIds]));
+    }
+  };
+
+  const toggleSelect = (studentId) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(studentId)) next.delete(studentId);
+      else next.add(studentId);
+      return next;
+    });
+  };
+
+  // ── Single-row retest ──────────────────────────────────────────
+  const handleRetest = async (student) => {
+    const confirmed = window.confirm(
+      `Grant retest to ${student.studentName || 'this student'}?\n\nTheir previous attempt history will be kept. They will receive 1 extra attempt slot to retake the assessment.`
+    );
+    if (!confirmed) return;
+
+    setRetestingId(student.studentId);
+    try {
+      await retest.mutateAsync(student.studentId);
+      setSelectedIds((prev) => { const n = new Set(prev); n.delete(student.studentId); return n; });
+      toast.success(`Retest granted to ${student.studentName || 'student'} — 1 extra attempt added.`);
+    } catch (e) {
+      toast.error(e?.response?.data?.message || e.message || 'Failed to grant retest');
+    } finally {
+      setRetestingId(null);
+    }
+  };
+
+  // ── Bulk retest ────────────────────────────────────────────────
+  const handleBulkRetest = async () => {
+    const selected = filteredStudents.filter((s) => selectedIds.has(s.studentId));
+    if (selected.length === 0) return;
+
+    const names = selected.slice(0, 3).map((s) => s.studentName || 'Unknown').join(', ');
+    const extra = selected.length > 3 ? ` and ${selected.length - 3} more` : '';
+    const confirmed = window.confirm(
+      `Grant retest to ${selected.length} student(s)?\n${names}${extra}\n\nPrevious attempt history will be preserved. Each student will receive 1 extra attempt slot.`
+    );
+    if (!confirmed) return;
+
+    setBulkRetesting(true);
+    setBulkProgress({ done: 0, total: selected.length });
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const student of selected) {
+      try {
+        await retest.mutateAsync(student.studentId);
+        successCount++;
+        setBulkProgress((p) => ({ ...p, done: p.done + 1 }));
+      } catch {
+        failCount++;
+        setBulkProgress((p) => ({ ...p, done: p.done + 1 }));
+      }
+    }
+
+    setBulkRetesting(false);
+    setBulkProgress({ done: 0, total: 0 });
+    setSelectedIds(new Set());
+
+    if (failCount === 0) {
+      toast.success(`Retest granted to ${successCount} student(s). Each has received 1 extra attempt.`);
+    } else {
+      toast.error(`Completed with issues: ${successCount} succeeded, ${failCount} failed.`);
+    }
+  };
 
   const maxBucketCount = Math.max(...scoreDistribution.map((b) => b.count), 1);
 
@@ -277,7 +369,7 @@ export const AssessmentAnalyticsTab = ({ assessmentId }) => {
             Student Performance &amp; Grades ({filteredStudents.length})
           </h3>
 
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
             {/* Search */}
             <div style={{ position: 'relative', width: 220 }}>
               <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
@@ -285,7 +377,7 @@ export const AssessmentAnalyticsTab = ({ assessmentId }) => {
                 type="text"
                 placeholder="Search student…"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => { setSearch(e.target.value); setSelectedIds(new Set()); }}
                 style={searchInputStyle}
               />
             </div>
@@ -295,7 +387,7 @@ export const AssessmentAnalyticsTab = ({ assessmentId }) => {
               {['ALL', 'SUBMITTED', 'PASSED', 'FAILED', 'IN_PROGRESS'].map((st) => (
                 <button
                   key={st}
-                  onClick={() => setStatusFilter(st)}
+                  onClick={() => { setStatusFilter(st); setSelectedIds(new Set()); }}
                   style={{
                     padding: '6px 12px',
                     borderRadius: 8,
@@ -316,11 +408,100 @@ export const AssessmentAnalyticsTab = ({ assessmentId }) => {
           </div>
         </div>
 
+        {/* ── Bulk-action bar (appears when rows are selected) ── */}
+        {selectedIds.size > 0 && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '10px 16px',
+            marginBottom: 12,
+            borderRadius: 10,
+            background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
+            border: '1px solid #f59e0b',
+            gap: 12,
+            flexWrap: 'wrap',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{
+                width: 28, height: 28, borderRadius: 8,
+                background: '#f59e0b', color: '#fff',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 13, fontWeight: 700,
+              }}>
+                {selectedIds.size}
+              </div>
+              <span style={{ fontSize: 14, fontWeight: 600, color: '#92400e' }}>
+                {selectedIds.size === 1 ? '1 student selected' : `${selectedIds.size} students selected`}
+              </span>
+              {!allSelected && filteredStudents.length > selectedIds.size && (
+                <button
+                  onClick={() => setSelectedIds(new Set(allFilteredIds))}
+                  style={{ fontSize: 12, color: '#b45309', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
+                >
+                  Select all {filteredStudents.length} visible
+                </button>
+              )}
+            </div>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              {bulkRetesting && (
+                <span style={{ fontSize: 12, color: '#92400e', fontWeight: 500 }}>
+                  Resetting {bulkProgress.done}/{bulkProgress.total}…
+                </span>
+              )}
+              <button
+                id="bulk-retest-btn"
+                onClick={handleBulkRetest}
+                disabled={bulkRetesting}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  padding: '7px 14px', borderRadius: 8, fontSize: 13, fontWeight: 600,
+                  fontFamily: 'inherit', cursor: bulkRetesting ? 'not-allowed' : 'pointer',
+                  background: bulkRetesting ? '#fef3c7' : '#f59e0b',
+                  color: bulkRetesting ? '#92400e' : '#fff',
+                  border: '1px solid #d97706',
+                  transition: 'all 0.15s ease',
+                  opacity: bulkRetesting ? 0.7 : 1,
+                }}
+              >
+                <RefreshCw size={13} style={{ animation: bulkRetesting ? 'spin 1s linear infinite' : 'none' }} />
+                {bulkRetesting ? `Granting ${bulkProgress.done}/${bulkProgress.total}…` : `Retest Selected (${selectedIds.size})`}
+              </button>
+              <button
+                onClick={() => setSelectedIds(new Set())}
+                disabled={bulkRetesting}
+                style={{
+                  padding: '7px 12px', borderRadius: 8, fontSize: 12, fontWeight: 500,
+                  fontFamily: 'inherit', cursor: 'pointer',
+                  background: 'transparent', color: '#92400e',
+                  border: '1px solid #f59e0b',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Table */}
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14, textAlign: 'left' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)', fontSize: 12 }}>
+                <th style={{ padding: '10px 12px', width: 40 }}>
+                  {/* Select-all checkbox */}
+                  <input
+                    id="select-all-checkbox"
+                    type="checkbox"
+                    checked={allSelected}
+                    ref={(el) => { if (el) el.indeterminate = someSelected; }}
+                    onChange={toggleSelectAll}
+                    disabled={filteredStudents.length === 0 || bulkRetesting}
+                    title={allSelected ? 'Deselect all' : 'Select all visible students'}
+                    style={{ cursor: 'pointer', width: 15, height: 15, accentColor: '#f59e0b' }}
+                  />
+                </th>
                 <th style={{ padding: '10px 12px' }}>Student</th>
                 <th style={{ padding: '10px 12px' }}>Status</th>
                 <th style={{ padding: '10px 12px' }}>Grade</th>
@@ -328,66 +509,122 @@ export const AssessmentAnalyticsTab = ({ assessmentId }) => {
                 <th style={{ padding: '10px 12px' }}>Completion %</th>
                 <th style={{ padding: '10px 12px' }}>Attempts</th>
                 <th style={{ padding: '10px 12px' }}>Last Activity</th>
+                <th style={{ padding: '10px 12px' }}>Action</th>
               </tr>
             </thead>
             <tbody>
               {filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan={7} style={{ padding: 24, textAlign: 'center', color: 'var(--text-muted)' }}>
+                  <td colSpan={9} style={{ padding: 24, textAlign: 'center', color: 'var(--text-muted)' }}>
                     No student performance records found matching your filters.
                   </td>
                 </tr>
               ) : (
-                filteredStudents.map((s) => (
-                  <tr key={s.studentId} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background 0.15s' }}>
-                    <td style={{ padding: '12px' }}>
-                      <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{s.studentName}</div>
-                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{s.studentEmail}</div>
-                    </td>
-                    <td style={{ padding: '12px' }}>
-                      <StatusBadge status={s.status} />
-                    </td>
-                    <td style={{ padding: '12px' }}>
-                      <span
-                        style={{
-                          padding: '4px 10px',
-                          borderRadius: 6,
-                          fontWeight: 700,
-                          fontSize: '0.85rem',
-                          background: s.passed ? '#ecfdf5' : '#fef2f2',
-                          color: s.passed ? '#047857' : '#b91c1c',
-                          border: `1px solid ${s.passed ? '#10b981' : '#ef4444'}`,
-                        }}
-                      >
-                        {s.gradeLetter} ({s.passed ? 'PASS' : 'FAIL'})
-                      </span>
-                    </td>
-                    <td style={{ padding: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                      {s.score ?? 0} <span style={{ fontWeight: 400, color: 'var(--text-muted)', fontSize: 12 }}>/ {s.totalMarks}</span>
-                    </td>
-                    <td style={{ padding: '12px', width: 160 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ flex: 1, height: 6, borderRadius: 99, background: 'var(--border-color)', overflow: 'hidden' }}>
-                          <div
-                            style={{
-                              height: '100%',
-                              width: `${Math.min(s.completionPercentage || 0, 100)}%`,
-                              background: s.completionPercentage >= 75 ? '#10b981' : s.completionPercentage >= 40 ? '#f59e0b' : '#3b82f6',
-                              borderRadius: 99
-                            }}
-                          />
-                        </div>
-                        <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)', width: 36, textAlign: 'right' }}>
-                          {s.completionPercentage}%
+                filteredStudents.map((s) => {
+                  const isSelected = selectedIds.has(s.studentId);
+                  const isSingleRetesting = retestingId === s.studentId;
+                  const isBusyInBulk = bulkRetesting && isSelected;
+                  return (
+                    <tr
+                      key={s.studentId}
+                      onClick={() => !bulkRetesting && toggleSelect(s.studentId)}
+                      style={{
+                        borderBottom: '1px solid var(--border-color)',
+                        transition: 'background 0.15s',
+                        background: isSelected ? 'rgba(245,158,11,0.06)' : 'transparent',
+                        cursor: bulkRetesting ? 'default' : 'pointer',
+                        outline: isSelected ? '1px solid rgba(245,158,11,0.25)' : 'none',
+                      }}
+                    >
+                      {/* Checkbox cell */}
+                      <td style={{ padding: '12px', width: 40 }} onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => !bulkRetesting && toggleSelect(s.studentId)}
+                          disabled={bulkRetesting}
+                          style={{ cursor: bulkRetesting ? 'not-allowed' : 'pointer', width: 15, height: 15, accentColor: '#f59e0b' }}
+                        />
+                      </td>
+                      <td style={{ padding: '12px' }}>
+                        <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{s.studentName}</div>
+                        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{s.studentEmail}</div>
+                      </td>
+                      <td style={{ padding: '12px' }}>
+                        <StatusBadge status={s.status} />
+                      </td>
+                      <td style={{ padding: '12px' }}>
+                        <span
+                          style={{
+                            padding: '4px 10px',
+                            borderRadius: 6,
+                            fontWeight: 700,
+                            fontSize: '0.85rem',
+                            background: s.passed ? '#ecfdf5' : '#fef2f2',
+                            color: s.passed ? '#047857' : '#b91c1c',
+                            border: `1px solid ${s.passed ? '#10b981' : '#ef4444'}`,
+                          }}
+                        >
+                          {s.gradeLetter} ({s.passed ? 'PASS' : 'FAIL'})
                         </span>
-                      </div>
-                    </td>
-                    <td style={{ padding: '12px', color: 'var(--text-secondary)' }}>{s.attemptsCount}</td>
-                    <td style={{ padding: '12px', fontSize: 12, color: 'var(--text-muted)' }}>
-                      {s.submittedAt ? formatDate(s.submittedAt) : '—'}
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                      <td style={{ padding: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                        {s.score ?? 0} <span style={{ fontWeight: 400, color: 'var(--text-muted)', fontSize: 12 }}>/ {s.totalMarks}</span>
+                      </td>
+                      <td style={{ padding: '12px', width: 160 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <div style={{ flex: 1, height: 6, borderRadius: 99, background: 'var(--border-color)', overflow: 'hidden' }}>
+                            <div
+                              style={{
+                                height: '100%',
+                                width: `${Math.min(s.completionPercentage || 0, 100)}%`,
+                                background: s.completionPercentage >= 75 ? '#10b981' : s.completionPercentage >= 40 ? '#f59e0b' : '#3b82f6',
+                                borderRadius: 99
+                              }}
+                            />
+                          </div>
+                          <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)', width: 36, textAlign: 'right' }}>
+                            {s.completionPercentage}%
+                          </span>
+                        </div>
+                      </td>
+                      <td style={{ padding: '12px', color: 'var(--text-secondary)' }}>{s.attemptsCount}</td>
+                      <td style={{ padding: '12px', fontSize: 12, color: 'var(--text-muted)' }}>
+                        {s.submittedAt ? formatDate(s.submittedAt) : '—'}
+                      </td>
+                      <td style={{ padding: '12px' }} onClick={(e) => e.stopPropagation()}>
+                        <button
+                          id={`retest-btn-${s.studentId}`}
+                          onClick={() => handleRetest(s)}
+                          disabled={isSingleRetesting || isBusyInBulk || bulkRetesting}
+                          title="Grant 1 extra attempt — previous history is kept"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 5,
+                            padding: '5px 10px',
+                            borderRadius: 6,
+                            fontSize: 12,
+                            fontWeight: 600,
+                            fontFamily: 'inherit',
+                            cursor: (isSingleRetesting || bulkRetesting) ? 'not-allowed' : 'pointer',
+                            border: '1px solid #f59e0b',
+                            background: (isSingleRetesting || isBusyInBulk) ? '#fef9e7' : '#fffbeb',
+                            color: '#b45309',
+                            transition: 'all 0.15s ease',
+                            opacity: (isSingleRetesting || bulkRetesting) ? 0.6 : 1,
+                            whiteSpace: 'nowrap',
+                          }}
+                          onMouseEnter={(e) => { if (!isSingleRetesting && !bulkRetesting) { e.currentTarget.style.background = '#fef3c7'; e.currentTarget.style.borderColor = '#d97706'; } }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = '#fffbeb'; e.currentTarget.style.borderColor = '#f59e0b'; }}
+                        >
+                          <RefreshCw size={12} style={{ animation: (isSingleRetesting || isBusyInBulk) ? 'spin 1s linear infinite' : 'none' }} />
+                          {isSingleRetesting ? 'Resetting…' : 'Retest'}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

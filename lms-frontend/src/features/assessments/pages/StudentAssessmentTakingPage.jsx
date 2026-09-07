@@ -67,6 +67,7 @@ export const StudentAssessmentTakingPage = () => {
     totalQuestions,
     updateDraft,
     handleSubmit,
+    retry,
   } = useAssessmentAttempt(assessmentId, {
     onTimeExpired: handleAutoSubmitOnExpiry,
   });
@@ -367,6 +368,7 @@ export const StudentAssessmentTakingPage = () => {
         onRequestScreen={handleRequestScreen}
         onLaunchAssessment={handleLaunchAssessment}
         onCountdownComplete={handleCountdownComplete}
+        onRetry={retry}
         isScreenRecording={isScreenRecording}
         screenStream={screenStream}
         loading={loading}

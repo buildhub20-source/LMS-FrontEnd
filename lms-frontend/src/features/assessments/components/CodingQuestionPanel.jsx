@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import {
   Copy, Clock, Database, ChevronDown, ChevronUp, Play,
@@ -302,6 +302,7 @@ export const CodingQuestionPanel = ({
   };
 
   const handleRunCode = () => {
+    if (isRunning || isSubmittingQuestion || isReadOnly) return;
     setIsRunning(true);
     setActiveConsoleTab('results');
     setIsConsoleExpanded(true);
@@ -323,7 +324,7 @@ export const CodingQuestionPanel = ({
    * configured for this question in the backend and persists the draft.
    */
   const handleSubmitQuestion = () => {
-    if (!draft.sourceCode?.trim()) return;
+    if (isRunning || isSubmittingQuestion || isReadOnly || !draft.sourceCode?.trim()) return;
     setIsSubmittingQuestion(true);
     setActiveConsoleTab('results');
     setIsConsoleExpanded(true);
@@ -347,6 +348,75 @@ export const CodingQuestionPanel = ({
         sourceCode: draft.sourceCode,
       });
     }, 400);
+  };
+
+  const handleRunCodeRef = useRef(handleRunCode);
+  handleRunCodeRef.current = handleRunCode;
+
+  const handleSubmitQuestionRef = useRef(handleSubmitQuestion);
+  handleSubmitQuestionRef.current = handleSubmitQuestion;
+
+  // Global window listener for shortcuts (works when clicking anywhere on page)
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      const isCtrlOrCmd = e.ctrlKey || e.metaKey;
+      if (!isCtrlOrCmd) return;
+
+      // Ctrl + ' (Run Code)
+      if (e.key === "'" || e.code === 'Quote' || e.keyCode === 222) {
+        e.preventDefault();
+        e.stopPropagation();
+        handleRunCodeRef.current?.();
+        return;
+      }
+
+      // Ctrl + Enter (Submit Code)
+      if (e.key === 'Enter' || e.code === 'Enter' || e.keyCode === 13) {
+        e.preventDefault();
+        e.stopPropagation();
+        handleSubmitQuestionRef.current?.();
+        return;
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKeyDown, { capture: true });
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown, { capture: true });
+  }, []);
+
+  // Monaco Editor mount handler to bind shortcuts inside the editor buffer
+  const handleEditorDidMount = (editor, monaco) => {
+    editor.onKeyDown((e) => {
+      const isCtrlOrCmd = e.ctrlKey || e.metaKey;
+      if (!isCtrlOrCmd) return;
+
+      // Ctrl + ' (Run Code)
+      if (e.browserEvent.key === "'" || e.code === 'Quote' || e.browserEvent.keyCode === 222) {
+        e.preventDefault();
+        e.stopPropagation();
+        handleRunCodeRef.current?.();
+        return;
+      }
+
+      // Ctrl + Enter (Submit Code)
+      if (e.browserEvent.key === 'Enter' || e.code === 'Enter' || e.browserEvent.keyCode === 13) {
+        e.preventDefault();
+        e.stopPropagation();
+        handleSubmitQuestionRef.current?.();
+        return;
+      }
+    });
+
+    if (monaco?.KeyMod && monaco?.KeyCode) {
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+        handleSubmitQuestionRef.current?.();
+      });
+      const quoteCode = monaco.KeyCode.US_QUOTE ?? monaco.KeyCode.Quote;
+      if (quoteCode) {
+        editor.addCommand(monaco.KeyMod.CtrlCmd | quoteCode, () => {
+          handleRunCodeRef.current?.();
+        });
+      }
+    }
   };
 
   const difficultyColors = {
@@ -867,7 +937,7 @@ export const CodingQuestionPanel = ({
                   type="button"
                   onClick={handleRunCode}
                   disabled={isRunning || isSubmittingQuestion}
-                  title="Run visible sample test cases"
+                  title="Run visible sample test cases (Ctrl + ')"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -876,7 +946,7 @@ export const CodingQuestionPanel = ({
                     color: '#ffffff',
                     border: 'none',
                     borderRadius: 6,
-                    padding: '6px 14px',
+                    padding: '6px 12px',
                     fontSize: 12,
                     fontWeight: 700,
                     cursor: isRunning ? 'not-allowed' : 'pointer',
@@ -894,6 +964,21 @@ export const CodingQuestionPanel = ({
                     <>
                       <Play size={12} fill="#ffffff" />
                       <span>Run Code</span>
+                      <kbd
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 600,
+                          background: 'rgba(0, 0, 0, 0.25)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: 4,
+                          padding: '1px 5px',
+                          color: '#e2e8f0',
+                          fontFamily: 'monospace',
+                          marginLeft: 2,
+                        }}
+                      >
+                        Ctrl+'
+                      </kbd>
                     </>
                   )}
                 </button>
@@ -903,7 +988,7 @@ export const CodingQuestionPanel = ({
                   type="button"
                   onClick={handleSubmitQuestion}
                   disabled={isRunning || isSubmittingQuestion || !draft.sourceCode?.trim()}
-                  title="Submit this question to check against hidden test cases"
+                  title="Submit code against test cases (Ctrl + Enter)"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -916,7 +1001,7 @@ export const CodingQuestionPanel = ({
                     color: '#ffffff',
                     border: 'none',
                     borderRadius: 6,
-                    padding: '6px 14px',
+                    padding: '6px 12px',
                     fontSize: 12,
                     fontWeight: 700,
                     cursor: (isRunning || isSubmittingQuestion || !draft.sourceCode?.trim()) ? 'not-allowed' : 'pointer',
@@ -933,11 +1018,41 @@ export const CodingQuestionPanel = ({
                     <>
                       <CheckCheck size={13} />
                       <span>Re-Submit</span>
+                      <kbd
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 600,
+                          background: 'rgba(0, 0, 0, 0.25)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: 4,
+                          padding: '1px 5px',
+                          color: '#e2e8f0',
+                          fontFamily: 'monospace',
+                          marginLeft: 2,
+                        }}
+                      >
+                        Ctrl+↵
+                      </kbd>
                     </>
                   ) : (
                     <>
                       <SendHorizonal size={12} />
                       <span>Submit Question</span>
+                      <kbd
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 600,
+                          background: 'rgba(0, 0, 0, 0.25)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          borderRadius: 4,
+                          padding: '1px 5px',
+                          color: '#e2e8f0',
+                          fontFamily: 'monospace',
+                          marginLeft: 2,
+                        }}
+                      >
+                        Ctrl+↵
+                      </kbd>
                     </>
                   )}
                 </button>
@@ -985,6 +1100,7 @@ export const CodingQuestionPanel = ({
               padding: { top: 12, bottom: 12 },
             }}
             theme="vs-dark"
+            onMount={handleEditorDidMount}
           />
         </div>
 
