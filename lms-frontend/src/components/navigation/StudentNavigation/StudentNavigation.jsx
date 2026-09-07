@@ -1,7 +1,6 @@
 import {
   LayoutDashboard,
   BookOpen,
-  ClipboardList,
   FileText,
   Award,
   Bell,
@@ -26,12 +25,6 @@ const ITEMS = [
     to: ROUTES.MY_COURSES,
     group: 'Learning',
     icon: <BookOpen className="h-5 w-5" />,
-  },
-  {
-    label: 'My Enrollments',
-    to: ROUTES.MY_ENROLLMENTS,
-    group: 'Learning',
-    icon: <ClipboardList className="h-5 w-5" />,
   },
   {
     label: 'Assessments',

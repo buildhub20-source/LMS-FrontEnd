@@ -76,7 +76,6 @@ const CreateCoursePage = lazy(() => import('../features/courses/pages/CreateCour
 const EditCoursePage = lazy(() => import('../features/courses/pages/EditCoursePage'));
 const MyCoursesPage = lazy(() => import('../features/courses/pages/MyCoursesPage'));
 const EnrollmentListPage = lazy(() => import('../features/enrollment/pages/EnrollmentListPage'));
-const MyEnrollmentsPage = lazy(() => import('../features/enrollment/pages/MyEnrollmentsPage'));
 const EnrollmentDetailsPage = lazy(
   () => import('../features/enrollment/pages/EnrollmentDetailsPage'),
 );
@@ -278,7 +277,6 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to={ROUTES.MY_COURSES} replace /> },
           { path: ROUTES.MY_COURSES, element: suspend(<MyCoursesPage />) },
-          { path: ROUTES.MY_ENROLLMENTS, element: suspend(<MyEnrollmentsPage />) },
           { path: ROUTES.STUDENT_PROGRESS, element: suspend(<StudentProgressPage />) },
           { path: ROUTES.STUDENT_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
           { path: ROUTES.MY_ASSESSMENTS, element: suspend(<AssessmentListPage />) },

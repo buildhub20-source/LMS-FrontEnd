@@ -70,7 +70,6 @@ export const API_ENDPOINTS = Object.freeze({
   enrollments: {
     base: '/enrollments',
     byId: (id) => `/enrollments/${id}`,
-    mine: '/enrollments/mine',
   },
   adminEnrollments: {
     base: '/admin/enrollments',
@@ -81,10 +80,6 @@ export const API_ENDPOINTS = Object.freeze({
     base: '/instructor/enrollments',
     byId: (id) => `/instructor/enrollments/${id}`,
     status: (id) => `/instructor/enrollments/${id}/status`,
-  },
-  studentEnrollments: {
-    base: '/student/enrollments',
-    byId: (id) => `/student/enrollments/${id}`,
   },
   learning: {
     course: (courseId) => `/courses/${courseId}`,

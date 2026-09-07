@@ -71,7 +71,6 @@ export const ROUTES = Object.freeze({
 
   // Student
   MY_COURSES: '/learn/my-courses',
-  MY_ENROLLMENTS: '/learn/enrollments',
   STUDENT_ASSESSMENTS: '/learn/assessments',
   MY_ASSESSMENTS: '/learn/assessments',
   LEARNING: (id = ':courseId') => `/learn/${id}`,
