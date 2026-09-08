@@ -77,7 +77,6 @@ const CreateCoursePage = lazy(() => import('../features/courses/pages/CreateCour
 const EditCoursePage = lazy(() => import('../features/courses/pages/EditCoursePage'));
 const MyCoursesPage = lazy(() => import('../features/courses/pages/MyCoursesPage'));
 const EnrollmentListPage = lazy(() => import('../features/enrollment/pages/EnrollmentListPage'));
-const MyEnrollmentsPage = lazy(() => import('../features/enrollment/pages/MyEnrollmentsPage'));
 const EnrollmentDetailsPage = lazy(
   () => import('../features/enrollment/pages/EnrollmentDetailsPage'),
 );
@@ -86,6 +85,9 @@ const LessonPage = lazy(() => import('../features/learning/pages/LessonPage'));
 const CoursePlayerPage = lazy(() => import('../features/learning/pages/CoursePlayerPage'));
 const AssessmentListPage = lazy(() => import('../features/assessments/pages/AssessmentListPage'));
 const AssessmentPage = lazy(() => import('../features/assessments/pages/AssessmentPage'));
+const StudentAssessmentTakingPage = lazy(
+  () => import('../features/assessments/pages/StudentAssessmentTakingPage'),
+);
 const CreateAssessmentPage = lazy(
   () => import('../features/assessments/pages/CreateAssessmentPage'),
 );
@@ -104,9 +106,16 @@ const AdminAssessmentDetailsPage = lazy(
 const AdminEditAssessmentPage = lazy(
   () => import('../features/assessments/pages/AdminEditAssessmentPage'),
 );
+const GradingWorkflowPage = lazy(
+  () => import('../features/assessments/pages/GradingWorkflowPage'),
+);
+const RubricManagerPage = lazy(
+  () => import('../features/assessments/pages/RubricManagerPage'),
+);
 const CertificateListPage = lazy(
   () => import('../features/certificates/pages/CertificateListPage'),
 );
+const AuditLogsPage = lazy(() => import('../features/audit/pages/AuditLogsPage'));
 const CertificateDetailsPage = lazy(
   () => import('../features/certificates/pages/CertificateDetailsPage'),
 );
@@ -190,6 +199,7 @@ export const router = createBrowserRouter([
               { path: ROUTES.SUBSCRIPTION, element: suspend(<SubscriptionPage />) },
               { path: ROUTES.PLANS, element: suspend(<PlansPage />) },
               { path: ROUTES.BILLING, element: suspend(<BillingPage />) },
+              { path: ROUTES.AUDIT_LOGS, element: suspend(<AuditLogsPage />) },
               { path: ROUTES.ADMIN_COURSES, element: suspend(<AdminCourseListPage />) },
               { path: ROUTES.ADMIN_COURSE_DETAILS(), element: suspend(<CourseDetailsPage />) },
               { path: ROUTES.ADMIN_COURSE_EDIT(), element: suspend(<EditCoursePage />) },
@@ -208,6 +218,14 @@ export const router = createBrowserRouter([
                   {
                     path: ROUTES.ADMIN_ASSESSMENT_EDIT(),
                     element: suspend(<AdminEditAssessmentPage />),
+                  },
+                  {
+                    path: ROUTES.ADMIN_GRADING,
+                    element: suspend(<GradingWorkflowPage />),
+                  },
+                  {
+                    path: ROUTES.ADMIN_RUBRICS,
+                    element: suspend(<RubricManagerPage />),
                   },
                 ],
               },
@@ -231,22 +249,44 @@ export const router = createBrowserRouter([
               { path: ROUTES.COURSE_EDIT(), element: suspend(<EditCoursePage />) },
               { path: ROUTES.ASSESSMENTS, element: suspend(<AssessmentListPage />) },
               { path: ROUTES.ASSESSMENT_CREATE, element: suspend(<CreateAssessmentPage />) },
+              {
+                path: ROUTES.INSTRUCTOR_ASSESSMENT_DETAILS(),
+                element: suspend(<AdminAssessmentDetailsPage />),
+              },
+              {
+                path: ROUTES.INSTRUCTOR_ASSESSMENT_EDIT(),
+                element: suspend(<AdminEditAssessmentPage />),
+              },
+              {
+                path: ROUTES.INSTRUCTOR_GRADING,
+                element: suspend(<GradingWorkflowPage />),
+              },
+              {
+                path: ROUTES.INSTRUCTOR_RUBRICS,
+                element: suspend(<RubricManagerPage />),
+              },
             ],
           },
         ],
       },
 
+      // Standalone Full-Window Lockdown Exam & Proctoring Environment
+      {
+        path: ROUTES.ASSESSMENT_ATTEMPT(),
+        element: suspend(<StudentAssessmentTakingPage />),
+      },
+
       {
         path: '/learn',
-        element: <StudentLayout />,
+        element: <RoleBasedLayout />,
         children: [
           { index: true, element: <Navigate to={ROUTES.MY_COURSES} replace /> },
           { path: ROUTES.MY_COURSES, element: suspend(<MyCoursesPage />) },
-          { path: ROUTES.MY_ENROLLMENTS, element: suspend(<MyEnrollmentsPage />) },
           { path: ROUTES.STUDENT_PROGRESS, element: suspend(<StudentProgressPage />) },
+          { path: ROUTES.STUDENT_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
+          { path: ROUTES.MY_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
           { path: ROUTES.CERTIFICATES, element: suspend(<CertificateListPage />) },
           { path: ROUTES.CERTIFICATE_DETAILS(), element: suspend(<CertificateDetailsPage />) },
-          { path: ROUTES.ASSESSMENT_ATTEMPT(), element: suspend(<AssessmentPage />) },
           { path: ROUTES.ASSESSMENT_RESULT(), element: suspend(<AssessmentResultPage />) },
           { path: ROUTES.LEARNING(), element: suspend(<LearningPage />) },
           { path: ROUTES.LESSON(), element: suspend(<LessonPage />) },

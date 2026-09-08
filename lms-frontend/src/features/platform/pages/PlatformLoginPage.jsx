@@ -4,6 +4,7 @@ import { KeyRound, LoaderCircle, ShieldCheck } from 'lucide-react';
 import { ROUTES } from '../../../constants/routes';
 import platformAuthStorage from '../services/platformAuthStorage';
 import platformService from '../services/platformService';
+import ThemeSlider from '../../../components/common/ThemeSlider';
 
 export const PlatformLoginPage = () => {
   const navigate = useNavigate();
@@ -41,7 +42,10 @@ export const PlatformLoginPage = () => {
   };
 
   return (
-    <main className="min-h-[100dvh] bg-slate-950 px-4 py-10 text-slate-100 sm:grid sm:place-items-center">
+    <main className="relative min-h-[100dvh] bg-slate-950 px-4 py-10 text-slate-100 sm:grid sm:place-items-center">
+      <div className="fixed top-5 right-6 z-50">
+        <ThemeSlider size="md" />
+      </div>
       <section className="mx-auto w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-2xl shadow-black/30 sm:p-8">
         <div className="mb-8 flex items-center gap-3">
           <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-500 text-white">

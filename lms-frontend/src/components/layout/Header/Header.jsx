@@ -1,13 +1,10 @@
-import { Menu, Sun, Moon } from 'lucide-react';
-import { useContext } from 'react';
-import { ThemeContext } from '../../../context/ThemeContext';
+import { Menu } from 'lucide-react';
+import ThemeSlider from '../../common/ThemeSlider';
 
 /**
  * Admin Header / Topbar — dark monochrome design.
  */
 export const Header = ({ title, onToggleSidebar, children }) => {
-  const { theme, toggleTheme } = useContext(ThemeContext);
-
   return (
     <header
       style={{
@@ -79,24 +76,8 @@ export const Header = ({ title, onToggleSidebar, children }) => {
         </span>
       </div>
 
-      {/* Theme toggle */}
-      <button
-        onClick={toggleTheme}
-        aria-label="Toggle theme"
-        style={{
-          background: 'var(--surface-medium)',
-          border: '1px solid var(--border-color)',
-          borderRadius: 8,
-          padding: 7,
-          cursor: 'pointer',
-          color: 'var(--text-primary)',
-          display: 'flex',
-          alignItems: 'center',
-          transition: 'background 0.15s ease',
-        }}
-      >
-        {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-      </button>
+      {/* Theme toggle slider */}
+      <ThemeSlider size="md" />
 
       {/* Right slot (avatar, etc.) */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>{children}</div>

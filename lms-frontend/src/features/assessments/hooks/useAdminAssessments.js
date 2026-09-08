@@ -135,3 +135,13 @@ export const useRemoveQuestion = (assessmentId) => {
     },
   });
 };
+
+// Retest
+export const useRetestStudent = (assessmentId) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (studentId) => adminAssessmentService.retestStudent(assessmentId, studentId),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: [...ADMIN_ASSESSMENTS, assessmentId, 'analytics'] }),
+  });
+};

@@ -6,6 +6,7 @@ import { ROUTES } from '../../../constants/routes';
 import platformAuthStorage from '../services/platformAuthStorage';
 import platformService from '../services/platformService';
 import { isPlatformHostname } from '../../../utils/tenantHostname';
+import ThemeSlider from '../../../components/common/ThemeSlider';
 
 const emptyTenant = { name: '', slug: '', ownerName: '', ownerEmail: '', initialAdminPassword: '' };
 
@@ -72,7 +73,10 @@ export const PlatformTenantPage = () => {
             <div className="grid h-10 w-10 place-items-center rounded-xl bg-brand-500 text-white"><Building2 className="h-5 w-5" aria-hidden="true" /></div>
             <div><p className="text-sm font-bold text-white">LMS Platform</p><p className="text-xs text-slate-400">Tenant control plane</p></div>
           </div>
-          <button onClick={signOut} className="inline-flex items-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-900"><LogOut className="h-4 w-4" aria-hidden="true" />Sign out</button>
+          <div className="flex items-center gap-3">
+            <ThemeSlider size="md" />
+            <button onClick={signOut} className="inline-flex items-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-900"><LogOut className="h-4 w-4" aria-hidden="true" />Sign out</button>
+          </div>
         </div>
       </header>
 

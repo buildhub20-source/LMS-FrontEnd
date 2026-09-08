@@ -25,27 +25,29 @@ export const AppShell = ({ navigation, title }) => {
   // Theme is handled globally by ThemeContext and main.jsx
 
   const userCard = (
-    <div style={{
-      display: 'flex', alignItems: 'center', gap: 10,
-      padding: '8px 10px', borderRadius: 8,
-      background: 'var(--surface-medium)',
-      border: '1px solid var(--border-color)',
-    }}>
-      <Avatar name={user?.fullName ?? user?.email ?? ''} src={user?.avatarUrl} size="sm" />
-      <div style={{ minWidth: 0, flex: 1 }}>
-        <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {user?.fullName ?? user?.email}
-        </p>
-        <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 10,
+        padding: '8px 10px', borderRadius: 8,
+        background: 'var(--surface-medium)',
+        border: '1px solid var(--border-color)',
+      }}>
+        <Avatar name={user?.fullName ?? user?.email ?? ''} src={user?.avatarUrl} size="sm" />
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {user?.fullName ?? user?.email}
+          </p>
+          <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
+        </div>
+        <button
+          onClick={logout}
+          style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 4, borderRadius: 6, display: 'flex', alignItems: 'center' }}
+          title="Sign out"
+          aria-label="Sign out"
+        >
+          <LogOut className="h-4 w-4" />
+        </button>
       </div>
-      <button
-        onClick={logout}
-        style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 4, borderRadius: 6, display: 'flex', alignItems: 'center' }}
-        title="Sign out"
-        aria-label="Sign out"
-      >
-        <LogOut className="h-4 w-4" />
-      </button>
     </div>
   );
 

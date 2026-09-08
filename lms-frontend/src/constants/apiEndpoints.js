@@ -70,7 +70,6 @@ export const API_ENDPOINTS = Object.freeze({
   enrollments: {
     base: '/enrollments',
     byId: (id) => `/enrollments/${id}`,
-    mine: '/enrollments/mine',
   },
   adminEnrollments: {
     base: '/admin/enrollments',
@@ -82,21 +81,24 @@ export const API_ENDPOINTS = Object.freeze({
     byId: (id) => `/instructor/enrollments/${id}`,
     status: (id) => `/instructor/enrollments/${id}/status`,
   },
-  studentEnrollments: {
-    base: '/student/enrollments',
-    byId: (id) => `/student/enrollments/${id}`,
-  },
   learning: {
-    course: (courseId) => `/learning/courses/${courseId}`,
+    course: (courseId) => `/courses/${courseId}`,
     lesson: (courseId, lessonId) => `/learning/courses/${courseId}/lessons/${lessonId}`,
     progress: (courseId) => `/learning/courses/${courseId}/progress`,
   },
   assessments: {
-    base: '/assessments',
-    byId: (id) => `/assessments/${id}`,
-    attempts: (id) => `/assessments/${id}/attempts`,
-    submit: (attemptId) => `/assessments/attempts/${attemptId}/submit`,
-    result: (attemptId) => `/assessments/attempts/${attemptId}/result`,
+    base: '/student/assessments',
+    byId: (id) => `/student/assessments/${id}`,
+    attempts: (id) => `/student/assessments/${id}/start`,
+    attemptsHistory: (id) => `/student/assessments/${id}/attempts`,
+    submit: (attemptId) => `/student/assessments/attempts/${attemptId}/submit`,
+    saveDraft: (attemptId) => `/student/assessments/attempts/${attemptId}/submissions`,
+    result: (attemptId) => `/student/assessments/attempts/${attemptId}`,
+    report: (attemptId) => `/student/assessments/attempts/${attemptId}/report`,
+    recordingUploadUrl: (attemptId) => `/student/assessments/attempts/${attemptId}/recording/upload-url`,
+    completeRecording: (attemptId) => `/student/assessments/attempts/${attemptId}/recording/complete`,
+    uploadRecordingDirect: (attemptId) => `/student/assessments/attempts/${attemptId}/recording/upload`,
+    recordingPlaybackUrl: (attemptId) => `/student/assessments/attempts/${attemptId}/recording/playback-url`,
   },
   adminAssessments: {
     base: '/admin/assessments',
@@ -110,6 +112,11 @@ export const API_ENDPOINTS = Object.freeze({
       `/admin/assessments/${assessmentId}/questions/${questionId}`,
     updateQuestion: (questionId) => `/admin/assessments/questions/${questionId}`,
     analytics: (id) => `/admin/assessments/${id}/analytics`,
+    retest: (assessmentId, studentId) => `/admin/assessments/${assessmentId}/students/${studentId}/retest`,
+    rubrics: '/admin/assessments/rubrics',
+    rubricById: (id) => `/admin/assessments/rubrics/${id}`,
+    pendingGrading: '/admin/assessments/grading/pending',
+    gradeAttempt: (attemptId) => `/admin/assessments/grading/attempts/${attemptId}/grade`,
   },
   certificates: {
     base: '/certificates',
@@ -125,6 +132,9 @@ export const API_ENDPOINTS = Object.freeze({
     admin: '/analytics/admin',
     instructor: '/analytics/instructor',
     studentProgress: '/analytics/progress',
+  },
+  auditLogs: {
+    base: '/admin/audit-logs',
   },
   subscriptions: {
     current: '/subscriptions/current',

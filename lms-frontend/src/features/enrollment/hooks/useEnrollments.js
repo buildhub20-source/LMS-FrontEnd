@@ -13,11 +13,6 @@ export const enrollmentKeys = {
   instructorList: (filters) => [...enrollmentKeys.instructorLists(), { filters }],
   instructorDetails: () => [...enrollmentKeys.all, 'instructor', 'detail'],
   instructorDetail: (id) => [...enrollmentKeys.instructorDetails(), id],
-
-  studentLists: () => [...enrollmentKeys.all, 'student', 'list'],
-  studentList: (filters) => [...enrollmentKeys.studentLists(), { filters }],
-  studentDetails: () => [...enrollmentKeys.all, 'student', 'detail'],
-  studentDetail: (id) => [...enrollmentKeys.studentDetails(), id],
 };
 
 // --- Admin Hooks ---
@@ -118,20 +113,3 @@ export const useUpdateInstructorEnrollmentStatus = () => {
   });
 };
 
-// --- Student Hooks ---
-
-export const useStudentEnrollments = (filters) => {
-  return useQuery({
-    queryKey: enrollmentKeys.studentList(filters),
-    queryFn: () => enrollmentService.getStudentEnrollments(filters),
-    keepPreviousData: true,
-  });
-};
-
-export const useStudentEnrollment = (id) => {
-  return useQuery({
-    queryKey: enrollmentKeys.studentDetail(id),
-    queryFn: () => enrollmentService.getStudentEnrollmentById(id),
-    enabled: !!id,
-  });
-};
