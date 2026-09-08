@@ -15,6 +15,7 @@ import PermissionGuard from '../guards/PermissionGuard';
 import useAuth from '../features/auth/hooks/useAuth';
 import Spinner from '../components/common/Spinner';
 import EmptyState from '../components/common/EmptyState';
+import RouteErrorBoundary from '../components/common/RouteErrorBoundary';
 
 const RoleBasedLayout = () => {
   const { user } = useAuth();
@@ -123,7 +124,11 @@ const ProfilePage = lazy(() => import('../features/profile/pages/ProfilePage'));
 const SecurityPage = lazy(() => import('../features/profile/pages/SecurityPage'));
 const PlatformTenantPage = lazy(() => import('../features/platform/pages/PlatformTenantPage'));
 
-const suspend = (element) => <Suspense fallback={<Spinner fullPage />}>{element}</Suspense>;
+const suspend = (element) => (
+  <RouteErrorBoundary>
+    <Suspense fallback={<Spinner fullPage />}>{element}</Suspense>
+  </RouteErrorBoundary>
+);
 
 export const router = createBrowserRouter([
   {

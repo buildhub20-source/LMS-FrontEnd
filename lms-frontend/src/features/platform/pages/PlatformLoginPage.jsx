@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { KeyRound, LoaderCircle, ShieldCheck } from 'lucide-react';
 import { ROUTES } from '../../../constants/routes';
@@ -8,11 +8,22 @@ import ThemeSlider from '../../../components/common/ThemeSlider';
 
 export const PlatformLoginPage = () => {
   const navigate = useNavigate();
+  const [hasToken, setHasToken] = useState(() => Boolean(platformAuthStorage.getToken()));
   const [values, setValues] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  if (platformAuthStorage.getToken()) return <Navigate to={ROUTES.PLATFORM_TENANTS} replace />;
+  useEffect(() => {
+    const syncPlatformSession = (event) => {
+      if (platformAuthStorage.isPlatformTokenChange(event)) {
+        setHasToken(Boolean(event.newValue));
+      }
+    };
+    window.addEventListener('storage', syncPlatformSession);
+    return () => window.removeEventListener('storage', syncPlatformSession);
+  }, []);
+
+  if (hasToken) return <Navigate to={ROUTES.PLATFORM_TENANTS} replace />;
 
   const submit = async (event) => {
     event.preventDefault();
@@ -21,6 +32,7 @@ export const PlatformLoginPage = () => {
     try {
       const response = await platformService.login(values);
       platformAuthStorage.setToken(response.accessToken);
+      setHasToken(true);
       navigate(ROUTES.PLATFORM_TENANTS, { replace: true });
     } catch (requestError) {
       setError(requestError?.response?.data?.message ?? 'Unable to sign in to the platform control plane.');

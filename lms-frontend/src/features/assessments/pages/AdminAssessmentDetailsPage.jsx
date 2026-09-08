@@ -63,7 +63,7 @@ export const AdminAssessmentDetailsPage = () => {
   const deleteSection = useDeleteSection(assessmentId);
 
   // useUpdateQuestion needs a questionId — we call mutateAsync directly
-  const updateQ   = useUpdateQuestion(editingQuestion?.id);
+  const updateQ   = useUpdateQuestion(editingQuestion?.id, assessmentId);
 
   if (isLoading) return <Spinner fullPage />;
   if (error)     return <Alert tone="error">Failed to load assessment.</Alert>;

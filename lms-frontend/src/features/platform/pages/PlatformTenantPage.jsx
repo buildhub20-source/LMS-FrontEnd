@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Building2, LoaderCircle, LogOut, PauseCircle, PlayCircle, Plus, RefreshCw, ServerCog, ShieldAlert } from 'lucide-react';
 import { ROUTES } from '../../../constants/routes';
@@ -29,7 +29,7 @@ export const PlatformTenantPage = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [values, setValues] = useState(emptyTenant);
   const [actionError, setActionError] = useState('');
-  const hasToken = Boolean(platformAuthStorage.getToken());
+  const [hasToken, setHasToken] = useState(() => Boolean(platformAuthStorage.getToken()));
   const tenants = useQuery({ queryKey: ['platform-tenants'], queryFn: platformService.listTenants, enabled: hasToken });
   const refresh = () => queryClient.invalidateQueries({ queryKey: ['platform-tenants'] });
   const create = useMutation({
@@ -42,6 +42,19 @@ export const PlatformTenantPage = () => {
     onSuccess: () => { setActionError(''); refresh(); },
     onError: (error) => setActionError(error?.response?.data?.message ?? 'Tenant lifecycle action failed.'),
   });
+
+  // The storage event is emitted in every *other* browser tab. This keeps a
+  // global administrator from retaining access after they explicitly sign out
+  // in another tab.
+  useEffect(() => {
+    const syncPlatformSession = (event) => {
+      if (platformAuthStorage.isPlatformTokenChange(event)) {
+        setHasToken(Boolean(event.newValue));
+      }
+    };
+    window.addEventListener('storage', syncPlatformSession);
+    return () => window.removeEventListener('storage', syncPlatformSession);
+  }, []);
 
   if (!hasToken || !isPlatformHostname()) return <Navigate to={ROUTES.LOGIN} replace />;
 

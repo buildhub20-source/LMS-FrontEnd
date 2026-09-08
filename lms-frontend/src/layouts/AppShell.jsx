@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Outlet, useLocation, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, User } from 'lucide-react';
@@ -9,6 +9,7 @@ import Avatar from '../components/common/Avatar';
 import useAuth from '../features/auth/hooks/useAuth';
 import { ThemeProvider } from '../context/ThemeContext';
 import { ROUTES } from '../constants/routes';
+import RouteErrorBoundary from '../components/common/RouteErrorBoundary';
 
 /**
  * Shared chrome for every authenticated area.
@@ -84,7 +85,9 @@ export const AppShell = ({ navigation, title }) => {
                 transition={{ duration: 0.25, ease: 'easeOut' }}
                 style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
               >
-                <Outlet />
+                <RouteErrorBoundary>
+                  <Outlet />
+                </RouteErrorBoundary>
               </motion.div>
             </AnimatePresence>
           </main>
