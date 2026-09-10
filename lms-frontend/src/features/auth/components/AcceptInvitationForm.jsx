@@ -29,9 +29,9 @@ export const AcceptInvitationForm = () => {
     },
   });
 
-  const onSubmit = async (values) => {
+  const onSubmit = async ({ token, password }) => {
     try {
-      await authService.acceptInvitation(values);
+      await authService.acceptInvitation({ token, newPassword: password });
       navigate(ROUTES.LOGIN, { replace: true });
     } catch (submitError) {
       setError(normalizeError(submitError));

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import appConfig from '../config/appConfig';
 
 export const usePagination = ({
@@ -11,15 +11,31 @@ export const usePagination = ({
 
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
 
-  const goToPage = useCallback(
-    (next) => setPage(Math.min(Math.max(1, next), totalPages)),
+  const clampPage = useCallback(
+    (next) => Math.min(Math.max(1, next), totalPages),
     [totalPages],
   );
+
+  const goToPage = useCallback((next) => setPage(clampPage(next)), [clampPage]);
+
+  // A filtered result or deletion can reduce the page count while the user is
+  // on a later page. Keep the selected page valid for the next query.
+  useEffect(() => {
+    setPage((current) => clampPage(current));
+  }, [clampPage]);
 
   const changePageSize = useCallback((size) => {
     setPageSize(size);
     setPage(1);
   }, []);
+
+  const next = useCallback(() => {
+    setPage((current) => clampPage(current + 1));
+  }, [clampPage]);
+
+  const previous = useCallback(() => {
+    setPage((current) => clampPage(current - 1));
+  }, [clampPage]);
 
   return useMemo(
     () => ({
@@ -30,11 +46,11 @@ export const usePagination = ({
       setTotalItems,
       goToPage,
       changePageSize,
-      next: () => goToPage(page + 1),
-      previous: () => goToPage(page - 1),
+      next,
+      previous,
       queryParams: { page: page - 1, size: pageSize },
     }),
-    [page, pageSize, totalItems, totalPages, goToPage, changePageSize],
+    [page, pageSize, totalItems, totalPages, goToPage, changePageSize, next, previous],
   );
 };
 

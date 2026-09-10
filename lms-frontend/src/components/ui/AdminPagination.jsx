@@ -5,11 +5,14 @@ import AdminButton from './AdminButton';
  * Admin Dashboard Pagination.
  * Props: page (0-based), totalPages, totalElements, size, onPageChange
  */
-export const AdminPagination = ({ page, totalPages, totalElements, size, onPageChange }) => {
+export const AdminPagination = ({ page, totalPages, totalElements, size, pageSize, onPageChange }) => {
   if (totalPages <= 1) return null;
 
-  const startItem = page * size + 1;
-  const endItem = Math.min((page + 1) * size, totalElements);
+  // Older callers use pageSize while the original component API used size.
+  // Accept both so the item range is always calculated from the active page size.
+  const resolvedPageSize = size ?? pageSize ?? 10;
+  const startItem = page * resolvedPageSize + 1;
+  const endItem = Math.min((page + 1) * resolvedPageSize, totalElements);
 
   // Show up to 7 page buttons
   const maxVisible = 7;

@@ -31,3 +31,15 @@ export const resetPasswordSchema = z
     message: 'Passwords do not match',
     path: ['confirmPassword'],
   });
+
+export const acceptInvitationSchema = z
+  .object({
+    token: z.string().min(1),
+    fullName: z.string().trim().min(2, 'Enter your full name'),
+    password,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });

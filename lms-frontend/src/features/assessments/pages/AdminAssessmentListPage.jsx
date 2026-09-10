@@ -149,10 +149,10 @@ function AssessmentCard({ assessment, onAction, onClick }) {
         <div style={{ marginTop: 12 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>
             <span>Total Score</span>
-            <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{assessment.totalMarks || 0}%</span>
+            <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{assessment.totalMarks || 0} pts</span>
           </div>
           <div style={{ height: 6, borderRadius: 99, background: 'var(--border-color)', overflow: 'hidden' }}>
-             <div style={{ height: '100%', borderRadius: 99, width: `${Math.min(100, assessment.totalMarks || 100)}%`, background: 'var(--surface-medium)' }} />
+             <div style={{ height: '100%', borderRadius: 99, width: '100%', background: 'var(--surface-medium)' }} />
           </div>
 
           <div style={{ height: 1, background: 'var(--border-color)', margin: '16px 0' }} />

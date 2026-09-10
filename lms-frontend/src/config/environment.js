@@ -13,6 +13,7 @@ if (missing.length > 0 && raw.PROD) {
 
 export const environment = Object.freeze({
   apiBaseUrl: raw.VITE_API_BASE_URL ?? 'http://localhost:8080/api/v1',
+  certificateServiceBaseUrl: raw.VITE_CERTIFICATE_SERVICE_BASE_URL ?? '/certificate-api',
   wsBaseUrl: raw.VITE_WS_BASE_URL ?? 'ws://localhost:8080/ws',
   appName: raw.VITE_APP_NAME ?? 'LMS',
   appEnv: raw.VITE_APP_ENV ?? raw.MODE,

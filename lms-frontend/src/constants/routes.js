@@ -39,6 +39,7 @@ export const ROUTES = Object.freeze({
   ENROLLMENT_DETAILS: (id = ':enrollmentId') => `/admin/enrollments/${id}`,
   ORGANIZATION: '/admin/organization',
   ORGANIZATION_SETTINGS: '/admin/organization/settings',
+  ADMIN_CERTIFICATE_TEMPLATES: '/admin/certificates/templates',
   SUBSCRIPTION: '/admin/subscription',
   PLANS: '/admin/subscription/plans',
   BILLING: '/admin/subscription/billing',
@@ -68,11 +69,11 @@ export const ROUTES = Object.freeze({
   INSTRUCTOR_ASSESSMENT_EDIT: (id = ':assessmentId') => `/instructor/assessments/${id}/edit`,
   INSTRUCTOR_GRADING: '/instructor/assessments/grading',
   INSTRUCTOR_RUBRICS: '/instructor/assessments/rubrics',
+  INSTRUCTOR_CERTIFICATE_TEMPLATES: '/instructor/certificates/templates',
 
   // Student
   MY_COURSES: '/learn/my-courses',
   STUDENT_ASSESSMENTS: '/learn/assessments',
-  MY_ASSESSMENTS: '/learn/assessments',
   LEARNING: (id = ':courseId') => `/learn/${id}`,
   LESSON: (c = ':courseId', l = ':lessonId') => `/learn/${c}/lessons/${l}`,
   COURSE_PLAYER: (id = ':courseId') => `/learn/${id}/player`,

@@ -13,11 +13,18 @@ class WebsocketClient {
   connect() {
     if (this.socket && this.socket.readyState <= WebSocket.OPEN) return;
 
+    // Browsers do not allow an Authorization header during a WebSocket
+    // handshake. Never put a bearer token in the URL, as URLs are routinely
+    // retained in proxy/access logs. The server can validate this first frame
+    // (or replace it with a short-lived WebSocket ticket in production).
     const token = tokenStorage.getAccessToken();
-    this.socket = new WebSocket(`${environment.wsBaseUrl}?token=${token ?? ''}`);
+    this.socket = new WebSocket(environment.wsBaseUrl);
 
     this.socket.onopen = () => {
       this.reconnectAttempts = 0;
+      if (token) {
+        this.socket.send(JSON.stringify({ type: 'AUTHENTICATE', payload: { token } }));
+      }
     };
 
     this.socket.onmessage = (event) => {

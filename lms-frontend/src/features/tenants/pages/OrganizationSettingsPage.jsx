@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Building2, Palette, Shield, Bell, Globe, Save,
@@ -41,7 +41,7 @@ export const OrganizationSettingsPage = () => {
   });
 
   const [branding, setBranding] = useState({
-    primaryColor: '#6366f1',
+    primaryColor: '#10b981',
     themeMode: 'system',
     logoUrl: '',
     portalTitle: 'Acme Learning Portal',
@@ -61,17 +61,37 @@ export const OrganizationSettingsPage = () => {
     weeklyDigest: true,
   });
 
+  useEffect(() => {
+    tenantService.getCurrent().then((data) => {
+      if (!data) return;
+      if (data.name || data.portalTitle) {
+        setGeneral((prev) => ({
+          ...prev,
+          name: data.name || prev.name,
+          supportEmail: data.supportEmail || prev.supportEmail,
+          customDomain: data.domain || prev.customDomain,
+        }));
+        setBranding((prev) => ({
+          ...prev,
+          portalTitle: data.portalTitle || data.name || prev.portalTitle,
+          primaryColor: data.primaryColor || prev.primaryColor,
+          logoUrl: data.logoUrl || prev.logoUrl,
+        }));
+      }
+    }).catch(() => null);
+  }, []);
+
   const handleSave = async () => {
     setIsSaving(true);
     try {
       if (activeTab === 'branding') {
-        await tenantService.updateBranding(branding).catch(() => null);
+        await tenantService.updateBranding(branding);
       } else {
         await tenantService.updateSettings({
           general,
           security,
           notifications,
-        }).catch(() => null);
+        });
       }
       toast.success('Organization settings saved successfully!');
     } catch (err) {
@@ -315,6 +335,33 @@ export const OrganizationSettingsPage = () => {
                   value={branding.portalTitle}
                   onChange={(e) => setBranding({ ...branding, portalTitle: e.target.value })}
                 />
+                <span style={helpTextStyle}>Rendered as the certifying institution title on student certificates.</span>
+              </div>
+
+              <div>
+                <label style={labelStyle}>Organization Logo URL</label>
+                <input
+                  style={inputStyle}
+                  placeholder="https://example.com/logo.png"
+                  value={branding.logoUrl || ''}
+                  onChange={(e) => setBranding({ ...branding, logoUrl: e.target.value })}
+                />
+                <span style={helpTextStyle}>Printed at the top of course completion certificates and student portal headers.</span>
+                {branding.logoUrl && (
+                  <div style={{ marginTop: 8, padding: 8, background: 'var(--surface-medium)', borderRadius: 8, display: 'inline-block' }}>
+                    <img src={branding.logoUrl} alt="Logo preview" style={{ maxHeight: 36, maxWidth: 160, objectFit: 'contain' }} onError={(e) => e.target.style.display = 'none'} />
+                  </div>
+                )}
+              </div>
+
+              <div style={{ padding: 14, background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.25)', borderRadius: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 700, color: '#3b82f6', marginBottom: 6 }}>
+                  <Sparkles size={16} /> Where these settings get reflected:
+                </div>
+                <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.65 }}>
+                  <li><strong style={{ color: 'var(--text-primary)' }}>Completion Certificates:</strong> The brand color frames the ornate certificate borders, stamps the verified credential badge, and accents the recipient name. The Portal Title and Logo are printed prominently at the header.</li>
+                  <li><strong style={{ color: 'var(--text-primary)' }}>Learner & Admin Portals:</strong> Primary buttons, active tabs, progress badges, and navigation tokens automatically reflect the brand color.</li>
+                </ul>
               </div>
 
               <div>

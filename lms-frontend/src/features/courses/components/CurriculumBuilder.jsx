@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -218,15 +218,56 @@ export const CurriculumBuilder = ({ course }) => {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  const handleDragEnd = (event) => {
+  // The course query is refreshed after curriculum mutations and when an
+  // instructor returns to this page. Keep the local drag-and-drop view in
+  // sync with that authoritative server response.
+  useEffect(() => {
+    setModules(course?.modules || []);
+  }, [course?.id, course?.modules]);
+
+  const invalidateCourse = () => {
+    queryClient.invalidateQueries({ queryKey: ['courses'] });
+  };
+
+  const modulePayload = (module, sortOrder) => ({
+    title: module.title,
+    sortOrder,
+  });
+
+  const lessonPayload = (lesson, sortOrder) => ({
+    title: lesson.title,
+    lessonType: lesson.lessonType,
+    content: lesson.content ?? '',
+    recordingId: lesson.recordingId ?? null,
+    durationMinutes: lesson.durationMinutes ?? null,
+    freePreview: Boolean(lesson.freePreview),
+    thumbnailUrl: lesson.thumbnailUrl ?? '',
+    sortOrder,
+  });
+
+  const handleDragEnd = async (event) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    setModules((items) => {
-      const oldIndex = items.findIndex((i) => i.id === active.id);
-      const newIndex = items.findIndex((i) => i.id === over.id);
-      return arrayMove(items, oldIndex, newIndex);
-    });
+    const oldIndex = modules.findIndex((item) => item.id === active.id);
+    const newIndex = modules.findIndex((item) => item.id === over.id);
+    if (oldIndex < 0 || newIndex < 0) return;
+
+    const previousModules = modules;
+    const reorderedModules = arrayMove(modules, oldIndex, newIndex);
+    setModules(reorderedModules);
+
+    try {
+      await Promise.all(
+        reorderedModules.map((module, index) =>
+          curriculumService.updateModule(course.id, module.id, modulePayload(module, index))
+        )
+      );
+      invalidateCourse();
+    } catch (error) {
+      setModules(previousModules);
+      toast.error(error?.message || 'Failed to save section order');
+    }
   };
 
   const handleAddModule = async () => {
@@ -238,7 +279,7 @@ export const CurriculumBuilder = ({ course }) => {
       setNewModuleTitle('');
       setIsAddingModule(false);
       toast.success('Section added');
-      queryClient.invalidateQueries(['courses', course.id]);
+      invalidateCourse();
     } catch (e) {
       toast.error(e?.message || 'Failed to add section');
     }
@@ -247,24 +288,56 @@ export const CurriculumBuilder = ({ course }) => {
   const handleUpdateModuleTitle = async (moduleId, newTitle) => {
     try {
       const cleanTitle = newTitle.replace(/^section\s*\d*\s*:?\s*/i, '').trim();
-      await curriculumService.updateModule(course.id, moduleId, { title: cleanTitle });
-      setModules(modules.map(m => m.id === moduleId ? { ...m, title: cleanTitle } : m));
+      const module = modules.find((item) => item.id === moduleId);
+      if (!module) return;
+      // PUT is a replacement request in the API. Preserve the existing order
+      // while changing only the title so a title edit cannot move this section.
+      await curriculumService.updateModule(
+        course.id,
+        moduleId,
+        modulePayload(module, module.sortOrder ?? modules.indexOf(module))
+      );
+      setModules((current) => current.map((module) =>
+        module.id === moduleId ? { ...module, title: cleanTitle } : module
+      ));
       toast.success('Section title updated');
+      invalidateCourse();
     } catch (e) {
       toast.error(e?.message || 'Failed to update section title');
     }
   };
 
-  const handleReorderLessons = (moduleId, reorderedLessons) => {
-    setModules(modules.map(m => m.id === moduleId ? { ...m, lessons: reorderedLessons } : m));
+  const handleReorderLessons = async (moduleId, reorderedLessons) => {
+    const previousModules = modules;
+    setModules((current) => current.map((module) =>
+      module.id === moduleId ? { ...module, lessons: reorderedLessons } : module
+    ));
+
+    try {
+      await Promise.all(
+        reorderedLessons.map((lesson, index) =>
+          curriculumService.updateLesson(
+            course.id,
+            moduleId,
+            lesson.id,
+            lessonPayload(lesson, index)
+          )
+        )
+      );
+      invalidateCourse();
+    } catch (error) {
+      setModules(previousModules);
+      toast.error(error?.message || 'Failed to save lesson order');
+    }
   };
 
   const handleDeleteModule = async (moduleId) => {
     if (!window.confirm('Delete this section and all its contents?')) return;
     try {
       await curriculumService.deleteModule(course.id, moduleId);
-      setModules(modules.filter(m => m.id !== moduleId));
+      setModules((current) => current.filter((module) => module.id !== moduleId));
       toast.success('Section deleted');
+      invalidateCourse();
     } catch (e) {
       toast.error(e?.message || 'Failed to delete section');
     }
@@ -284,33 +357,35 @@ export const CurriculumBuilder = ({ course }) => {
 
   const handleSaveLesson = (savedLesson) => {
     if (!editingLesson?.moduleId || !savedLesson) return;
-    setModules(modules.map(m => {
-      if (m.id === editingLesson.moduleId) {
-        const existingIdx = m.lessons?.findIndex(l => l.id === savedLesson.id);
+    setModules((current) => current.map((module) => {
+      if (module.id === editingLesson.moduleId) {
+        const existingIdx = module.lessons?.findIndex((lesson) => lesson.id === savedLesson.id);
         let updatedLessons;
         if (existingIdx >= 0) {
-          updatedLessons = m.lessons.map(l => l.id === savedLesson.id ? savedLesson : l);
+          updatedLessons = module.lessons.map((lesson) => lesson.id === savedLesson.id ? savedLesson : lesson);
         } else {
-          updatedLessons = [...(m.lessons || []), savedLesson];
+          updatedLessons = [...(module.lessons || []), savedLesson];
         }
-        return { ...m, lessons: updatedLessons };
+        return { ...module, lessons: updatedLessons };
       }
-      return m;
+      return module;
     }));
     setEditingLesson(null);
+    invalidateCourse();
   };
 
   const handleDeleteLesson = async (moduleId, lessonId) => {
     if (!window.confirm('Delete this lesson?')) return;
     try {
       await curriculumService.deleteLesson(course.id, moduleId, lessonId);
-      setModules(modules.map(m => {
-        if (m.id === moduleId) {
-          return { ...m, lessons: m.lessons.filter(l => l.id !== lessonId) };
+      setModules((current) => current.map((module) => {
+        if (module.id === moduleId) {
+          return { ...module, lessons: module.lessons.filter((lesson) => lesson.id !== lessonId) };
         }
-        return m;
+        return module;
       }));
       toast.success('Lesson deleted');
+      invalidateCourse();
     } catch (e) {
       toast.error(e?.message || 'Failed to delete lesson');
     }

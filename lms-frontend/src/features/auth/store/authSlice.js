@@ -70,11 +70,11 @@ export const loadSession = createAsyncThunk('auth/loadSession', async (_, { reje
   }
 });
 
-export const logout = createAsyncThunk('auth/logout', async (_, { getState }) => {
+export const logout = createAsyncThunk('auth/logout', async () => {
   try {
     const refreshToken = tokenStorage.getRefreshToken();
     await authService.logout(refreshToken ? { refreshToken } : undefined);
-  } catch (error) {
+  } catch {
     if (import.meta.env.DEV) {
       console.warn('Backend offline during logout. Cleared session client-side.');
     }
@@ -162,6 +162,13 @@ const authSlice = createSlice({
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
         state.status = 'unauthenticated';
+        state.error = null;
+      })
+      // A network failure must never leave a signed-out browser appearing authenticated.
+      .addCase(logout.rejected, (state) => {
+        state.user = null;
+        state.status = 'unauthenticated';
+        state.error = null;
       })
       .addCase(acceptInvitation.pending, (state) => {
         state.status = 'loading';

@@ -204,7 +204,10 @@ export default function LessonEditorModal({ courseId, moduleId, lesson, onClose,
         durationMinutes,
         freePreview,
         thumbnailUrl,
-        fileName
+        fileName,
+        // The update endpoint replaces the complete lesson. Retain its
+        // position when editing metadata so a save does not reset it to zero.
+        sortOrder: lesson?.sortOrder ?? 0,
       };
 
       if (currentLessonId) {

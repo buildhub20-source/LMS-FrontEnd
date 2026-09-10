@@ -81,11 +81,12 @@ export const useDeleteAdminAssessment = () => {
   });
 };
 
-// Lifecycle
-const lifecycleMutation = (fn) => () => {
+// Lifecycle. Keeping the hook itself named makes hook ordering visible to the
+// rules-of-hooks linter and prevents accidental conditional hook calls.
+const useAssessmentLifecycleMutation = (mutationFn) => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: fn,
+    mutationFn,
     onSuccess: (assessment, id) => {
       refreshDetail(qc, id, assessment);
       invalidateLists(qc);
@@ -93,10 +94,14 @@ const lifecycleMutation = (fn) => () => {
   });
 };
 
-export const usePublishAssessment = lifecycleMutation(adminAssessmentService.publish);
-export const useUnpublishAssessment = lifecycleMutation(adminAssessmentService.unpublish);
-export const useCloseAssessment = lifecycleMutation(adminAssessmentService.close);
-export const useArchiveAssessment = lifecycleMutation(adminAssessmentService.archive);
+export const usePublishAssessment = () =>
+  useAssessmentLifecycleMutation(adminAssessmentService.publish);
+export const useUnpublishAssessment = () =>
+  useAssessmentLifecycleMutation(adminAssessmentService.unpublish);
+export const useCloseAssessment = () =>
+  useAssessmentLifecycleMutation(adminAssessmentService.close);
+export const useArchiveAssessment = () =>
+  useAssessmentLifecycleMutation(adminAssessmentService.archive);
 
 // Questions
 export const useAddQuestion = (assessmentId) => {
@@ -142,7 +147,7 @@ export const useRetestStudent = (assessmentId) => {
   return useMutation({
     mutationFn: (studentId) => adminAssessmentService.retestStudent(assessmentId, studentId),
     onSuccess: () =>
-      qc.invalidateQueries({ queryKey: [...ADMIN_ASSESSMENTS, assessmentId, 'analytics'] }),
+      qc.invalidateQueries({ queryKey: adminAssessmentKeys.analytics(assessmentId) }),
   });
 };
 

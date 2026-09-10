@@ -12,6 +12,7 @@ import ProtectedRoute from '../guards/ProtectedRoute';
 import GuestRoute from '../guards/GuestRoute';
 import RoleGuard from '../guards/RoleGuard';
 import PermissionGuard from '../guards/PermissionGuard';
+import PlatformGuard from '../guards/PlatformGuard';
 import useAuth from '../features/auth/hooks/useAuth';
 import Spinner from '../components/common/Spinner';
 import EmptyState from '../components/common/EmptyState';
@@ -119,6 +120,9 @@ const AuditLogsPage = lazy(() => import('../features/audit/pages/AuditLogsPage')
 const CertificateDetailsPage = lazy(
   () => import('../features/certificates/pages/CertificateDetailsPage'),
 );
+const CertificateTemplateManagerPage = lazy(
+  () => import('../features/certificates/pages/CertificateTemplateManagerPage'),
+);
 const NotificationPage = lazy(() => import('../features/notifications/pages/NotificationPage'));
 const ProfilePage = lazy(() => import('../features/profile/pages/ProfilePage'));
 const SecurityPage = lazy(() => import('../features/profile/pages/SecurityPage'));
@@ -136,8 +140,8 @@ export const router = createBrowserRouter([
     element: <Navigate to={ROUTES.LOGIN} replace />,
   },
   {
-    path: ROUTES.PLATFORM_TENANTS,
-    element: suspend(<PlatformTenantPage />),
+    element: <PlatformGuard />,
+    children: [{ path: ROUTES.PLATFORM_TENANTS, element: suspend(<PlatformTenantPage />) }],
   },
   {
     element: <GuestRoute />,
@@ -193,6 +197,10 @@ export const router = createBrowserRouter([
               { path: ROUTES.ENROLLMENT_DETAILS(), element: suspend(<EnrollmentDetailsPage />) },
               { path: ROUTES.ORGANIZATION, element: suspend(<OrganizationPage />) },
               {
+                path: ROUTES.ADMIN_CERTIFICATE_TEMPLATES,
+                element: suspend(<CertificateTemplateManagerPage />),
+              },
+              {
                 path: ROUTES.ORGANIZATION_SETTINGS,
                 element: suspend(<OrganizationSettingsPage />),
               },
@@ -211,14 +219,7 @@ export const router = createBrowserRouter([
                     path: ROUTES.ADMIN_ASSESSMENT_CREATE,
                     element: suspend(<AdminCreateAssessmentPage />),
                   },
-                  {
-                    path: ROUTES.ADMIN_ASSESSMENT_DETAILS(),
-                    element: suspend(<AdminAssessmentDetailsPage />),
-                  },
-                  {
-                    path: ROUTES.ADMIN_ASSESSMENT_EDIT(),
-                    element: suspend(<AdminEditAssessmentPage />),
-                  },
+                  // Static routes must be registered before :assessmentId routes.
                   {
                     path: ROUTES.ADMIN_GRADING,
                     element: suspend(<GradingWorkflowPage />),
@@ -226,6 +227,14 @@ export const router = createBrowserRouter([
                   {
                     path: ROUTES.ADMIN_RUBRICS,
                     element: suspend(<RubricManagerPage />),
+                  },
+                  {
+                    path: ROUTES.ADMIN_ASSESSMENT_DETAILS(),
+                    element: suspend(<AdminAssessmentDetailsPage />),
+                  },
+                  {
+                    path: ROUTES.ADMIN_ASSESSMENT_EDIT(),
+                    element: suspend(<AdminEditAssessmentPage />),
                   },
                 ],
               },
@@ -236,7 +245,10 @@ export const router = createBrowserRouter([
 
       {
         path: '/instructor',
-        element: <RoleGuard allowedRoles={[ROLES.INSTRUCTOR, ROLES.ADMIN, ROLES.SUPER_ADMIN]} />,
+        // Tenant administrators have their own /admin workspace.  Keeping this
+        // route instructor-only prevents an administrator from accidentally
+        // entering a workspace whose data/actions are instructor-scoped.
+        element: <RoleGuard allowedRoles={[ROLES.INSTRUCTOR]} />,
         children: [
           {
             element: <InstructorLayout />,
@@ -248,15 +260,12 @@ export const router = createBrowserRouter([
               { path: ROUTES.COURSE_DETAILS(), element: suspend(<CourseDetailsPage />) },
               { path: ROUTES.COURSE_EDIT(), element: suspend(<EditCoursePage />) },
               { path: ROUTES.ASSESSMENTS, element: suspend(<AssessmentListPage />) },
+              {
+                path: ROUTES.INSTRUCTOR_CERTIFICATE_TEMPLATES,
+                element: suspend(<CertificateTemplateManagerPage />),
+              },
               { path: ROUTES.ASSESSMENT_CREATE, element: suspend(<CreateAssessmentPage />) },
-              {
-                path: ROUTES.INSTRUCTOR_ASSESSMENT_DETAILS(),
-                element: suspend(<AdminAssessmentDetailsPage />),
-              },
-              {
-                path: ROUTES.INSTRUCTOR_ASSESSMENT_EDIT(),
-                element: suspend(<AdminEditAssessmentPage />),
-              },
+              // Keep named pages ahead of the parameterized assessment route.
               {
                 path: ROUTES.INSTRUCTOR_GRADING,
                 element: suspend(<GradingWorkflowPage />),
@@ -265,33 +274,50 @@ export const router = createBrowserRouter([
                 path: ROUTES.INSTRUCTOR_RUBRICS,
                 element: suspend(<RubricManagerPage />),
               },
+              {
+                path: ROUTES.INSTRUCTOR_ASSESSMENT_DETAILS(),
+                element: suspend(<AdminAssessmentDetailsPage />),
+              },
+              {
+                path: ROUTES.INSTRUCTOR_ASSESSMENT_EDIT(),
+                element: suspend(<AdminEditAssessmentPage />),
+              },
             ],
           },
         ],
       },
 
-      // Standalone Full-Window Lockdown Exam & Proctoring Environment
-      {
-        path: ROUTES.ASSESSMENT_ATTEMPT(),
-        element: suspend(<StudentAssessmentTakingPage />),
-      },
-
       {
         path: '/learn',
-        element: <RoleBasedLayout />,
+        // Learning and assessment-taking are student-only experiences.  The
+        // API performs the final authorization check; this prevents a logged-in
+        // admin/instructor from rendering learner pages by typing their URL.
+        element: <RoleGuard allowedRoles={[ROLES.STUDENT]} />,
         children: [
-          { index: true, element: <Navigate to={ROUTES.MY_COURSES} replace /> },
-          { path: ROUTES.MY_COURSES, element: suspend(<MyCoursesPage />) },
-          { path: ROUTES.STUDENT_PROGRESS, element: suspend(<StudentProgressPage />) },
-          { path: ROUTES.STUDENT_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
-          { path: ROUTES.MY_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
-          { path: ROUTES.CERTIFICATES, element: suspend(<CertificateListPage />) },
-          { path: ROUTES.CERTIFICATE_DETAILS(), element: suspend(<CertificateDetailsPage />) },
-          { path: ROUTES.ASSESSMENT_RESULT(), element: suspend(<AssessmentResultPage />) },
-          { path: ROUTES.LEARNING(), element: suspend(<LearningPage />) },
-          { path: ROUTES.LESSON(), element: suspend(<LessonPage />) },
-          { path: ROUTES.COURSE_PLAYER(), element: suspend(<CoursePlayerPage />) },
+          {
+            element: <StudentLayout />,
+            children: [
+              { index: true, element: <Navigate to={ROUTES.MY_COURSES} replace /> },
+              { path: ROUTES.MY_COURSES, element: suspend(<MyCoursesPage />) },
+              { path: ROUTES.STUDENT_PROGRESS, element: suspend(<StudentProgressPage />) },
+              { path: ROUTES.STUDENT_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
+              { path: ROUTES.CERTIFICATES, element: suspend(<CertificateListPage />) },
+              { path: ROUTES.CERTIFICATE_DETAILS(), element: suspend(<CertificateDetailsPage />) },
+              { path: ROUTES.ASSESSMENT_RESULT(), element: suspend(<AssessmentResultPage />) },
+              { path: ROUTES.LEARNING(), element: suspend(<LearningPage />) },
+              { path: ROUTES.LESSON(), element: suspend(<LessonPage />) },
+              { path: ROUTES.COURSE_PLAYER(), element: suspend(<CoursePlayerPage />) },
+            ],
+          },
         ],
+      },
+
+      // Keep this parameterized route after the named /results route above.
+      // It is intentionally outside the learning layout for the full-screen exam experience.
+      {
+        path: ROUTES.ASSESSMENT_ATTEMPT(),
+        element: <RoleGuard allowedRoles={[ROLES.STUDENT]} />,
+        children: [{ index: true, element: suspend(<StudentAssessmentTakingPage />) }],
       },
 
       {

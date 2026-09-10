@@ -44,7 +44,11 @@ export const invitationService = {
    * `role` is the ROLE NAME (e.g. "INSTRUCTOR"), NOT a UUID.
    */
   invite: async ({ name, email, role }) => {
-    const inv = await http.post(API_ENDPOINTS.invitations.base, { name, email, role });
+    const inv = await http.post(API_ENDPOINTS.invitations.base, {
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      role,
+    });
     return normalizeInvitation(inv);
   },
 

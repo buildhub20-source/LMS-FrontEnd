@@ -10,6 +10,7 @@ import profileService from '../services/profileService';
 import { normalizeError } from '../../../utils/errorUtils';
 import { useToast } from '../../../components/feedback/Toast';
 import { motion } from 'framer-motion';
+import { PASSWORD_POLICY } from '../../../utils/validationUtils';
 
 export const ChangePasswordForm = () => {
   const toast = useToast();
@@ -34,7 +35,7 @@ export const ChangePasswordForm = () => {
   // Password strength calculation
   const strengthMetrics = useMemo(() => {
     const checks = {
-      length: newPassword.length >= 8,
+      length: newPassword.length >= PASSWORD_POLICY.minLength,
       uppercase: /[A-Z]/.test(newPassword),
       number: /[0-9]/.test(newPassword),
       special: /[^A-Za-z0-9]/.test(newPassword),
@@ -197,7 +198,7 @@ export const ChangePasswordForm = () => {
           {/* Criteria Checklist */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
             <span style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 6, color: strengthMetrics.checks.length ? '#10b981' : 'var(--text-muted)' }}>
-              {strengthMetrics.checks.length ? <Check size={14} /> : <X size={14} />} At least 8 characters
+              {strengthMetrics.checks.length ? <Check size={14} /> : <X size={14} />} At least {PASSWORD_POLICY.minLength} characters
             </span>
             <span style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 6, color: strengthMetrics.checks.uppercase ? '#10b981' : 'var(--text-muted)' }}>
               {strengthMetrics.checks.uppercase ? <Check size={14} /> : <X size={14} />} Uppercase letter (A-Z)

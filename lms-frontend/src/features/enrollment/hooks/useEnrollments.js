@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData } from '@tanstack/react-query';
 import { enrollmentService } from '../services/enrollmentService';
 import { useToast } from '../../../components/feedback/Toast';
 
@@ -21,7 +22,7 @@ export const useAdminEnrollments = (filters) => {
   return useQuery({
     queryKey: enrollmentKeys.adminList(filters),
     queryFn: () => enrollmentService.getAdminEnrollments(filters),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 };
 
@@ -70,7 +71,7 @@ export const useInstructorEnrollments = (filters) => {
   return useQuery({
     queryKey: enrollmentKeys.instructorList(filters),
     queryFn: () => enrollmentService.getInstructorEnrollments(filters),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 };
 

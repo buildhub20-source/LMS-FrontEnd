@@ -13,6 +13,7 @@ import {
   CalendarRange,
   Presentation,
   ScrollText,
+  Award,
 } from 'lucide-react';
 import MainNavigation from '../MainNavigation';
 import { ROUTES } from '../../../constants/routes';
@@ -22,7 +23,7 @@ const ITEMS = [
   {
     label: 'Dashboard',
     to: ROUTES.ADMIN_ANALYTICS,
-    permission: PERMISSIONS.ANALYTICS_READ,
+    permission: PERMISSIONS.ANALYTICS_VIEW,
     icon: <LayoutDashboard className="h-5 w-5" />,
   },
   {
@@ -103,7 +104,7 @@ const ITEMS = [
   {
     label: 'Enrollments',
     to: ROUTES.ENROLLMENTS,
-    permission: PERMISSIONS.ENROLLMENT_READ,
+    permission: PERMISSIONS.ENROLLMENT_VIEW,
     group: 'Learning',
     icon: <ClipboardList className="h-5 w-5" />,
   },
@@ -121,9 +122,15 @@ const ITEMS = [
     icon: <ScrollText className="h-5 w-5" />,
   },
   {
+    label: 'E-Certificates',
+    to: ROUTES.ADMIN_CERTIFICATE_TEMPLATES,
+    group: 'Learning',
+    icon: <Award className="h-5 w-5" />,
+  },
+  {
     label: 'Organization',
     to: ROUTES.ORGANIZATION,
-    permission: PERMISSIONS.TENANT_READ,
+    permission: PERMISSIONS.ORGANIZATION_VIEW,
     group: 'Settings',
     icon: <Building2 className="h-5 w-5" />,
   },

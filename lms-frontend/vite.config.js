@@ -8,6 +8,37 @@ const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'VITE_');
+  const tenantHeader = (proxy) => {
+    proxy.on('proxyReq', (proxyRequest, request) => {
+      const host = String(request.headers.host ?? '').split(':')[0].toLowerCase();
+      const suffix = '.localhost';
+      if (!host.endsWith(suffix)) return;
+      const slug = host.slice(0, -suffix.length);
+      if (!env.VITE_DEV_TENANT_SLUG && slug && !slug.includes('.') && slug !== 'platform') {
+        proxyRequest.setHeader('X-Tenant-Slug', slug);
+      }
+    });
+  };
+  const proxy = {};
+  if (env.VITE_DEV_PROXY_TARGET) {
+    proxy['/api'] = {
+      target: env.VITE_DEV_PROXY_TARGET,
+      changeOrigin: true,
+      secure: false,
+      headers: env.VITE_DEV_TENANT_SLUG ? { 'X-Tenant-Slug': env.VITE_DEV_TENANT_SLUG } : undefined,
+      configure: tenantHeader,
+    };
+  }
+  if (env.VITE_CERTIFICATE_SERVICE_URL) {
+    proxy['/certificate-api'] = {
+      target: env.VITE_CERTIFICATE_SERVICE_URL,
+      changeOrigin: true,
+      secure: false,
+      rewrite: (path) => path.replace(/^\/certificate-api/, ''),
+      headers: env.VITE_DEV_TENANT_SLUG ? { 'X-Tenant-Slug': env.VITE_DEV_TENANT_SLUG } : undefined,
+      configure: tenantHeader,
+    };
+  }
 
   return {
     plugins: [react(), tailwindcss()],
@@ -35,34 +66,7 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
       // Supports tenant.localhost workspaces without accepting arbitrary hosts.
       allowedHosts: ['.localhost'],
-      proxy: env.VITE_DEV_PROXY_TARGET
-        ? {
-            '/api': {
-              target: env.VITE_DEV_PROXY_TARGET,
-              changeOrigin: true,
-              secure: false,
-              // This scoped local setting also covers the initial login
-              // before browser storage is available to the client.
-              headers: env.VITE_DEV_TENANT_SLUG
-                ? { 'X-Tenant-Slug': env.VITE_DEV_TENANT_SLUG }
-                : undefined,
-              // The proxy is the local equivalent of production host-based
-              // tenant resolution. It makes the first login request tenant-aware
-              // before browser storage has been populated.
-              configure(proxy) {
-                proxy.on('proxyReq', (proxyRequest, request) => {
-                  const host = String(request.headers.host ?? '').split(':')[0].toLowerCase();
-                  const suffix = '.localhost';
-                  if (!host.endsWith(suffix)) return;
-                  const slug = host.slice(0, -suffix.length);
-                  if (!env.VITE_DEV_TENANT_SLUG && slug && !slug.includes('.') && slug !== 'platform') {
-                    proxyRequest.setHeader('X-Tenant-Slug', slug);
-                  }
-                });
-              },
-            },
-          }
-        : undefined,
+      proxy: Object.keys(proxy).length ? proxy : undefined,
     },
 
     preview: { port: 3000 },

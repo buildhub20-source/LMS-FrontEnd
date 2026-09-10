@@ -553,7 +553,7 @@ export const AdminAssessmentDetailsPage = () => {
                   <div className={s.statRowIcon}><BarChart2 size={13} /></div>
                   Total Marks
                 </div>
-                <span className={s.statRowValue}>{a.totalMarks}%</span>
+                <span className={s.statRowValue}>{a.totalMarks} points</span>
               </div>
               <div className={s.statRow}>
                 <div className={s.statRowLabel}>

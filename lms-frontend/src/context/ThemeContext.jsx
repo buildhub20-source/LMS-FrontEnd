@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import storage from '../services/storage/localStorage';
+import { STORAGE_KEYS } from '../constants/appConstants';
 
 export const ThemeContext = createContext({
   theme: 'dark',
@@ -9,15 +11,14 @@ export const ThemeContext = createContext({
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setThemeState] = useState(() => {
-    return localStorage.getItem('lms-theme') || 'dark';
+    return storage.get(STORAGE_KEYS.THEME) || 'dark';
   });
 
   const applyTheme = useCallback((newTheme) => {
     document.documentElement.classList.remove('light', 'dark');
     document.documentElement.classList.add(newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('lms-theme', newTheme);
-    localStorage.setItem('lms.theme', newTheme);
+    storage.set(STORAGE_KEYS.THEME, newTheme);
   }, []);
 
   useEffect(() => {

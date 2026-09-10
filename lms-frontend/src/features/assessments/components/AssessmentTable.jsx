@@ -208,7 +208,7 @@ export const AssessmentTable = ({ onAction, ...rest }) => {
     {
       key: 'totalMarks',
       header: 'Total Score',
-      render: (a) => `${a.totalMarks ?? 0}%`,
+      render: (a) => `${a.totalMarks ?? 0} points`,
     },
     {
       key: 'durationMinutes',
