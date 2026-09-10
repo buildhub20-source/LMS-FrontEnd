@@ -2,7 +2,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import {
   Clock, BarChart2, HelpCircle, Rocket, ArchiveIcon, XCircle,
   Edit2, Trash2, Plus, FileQuestion, Timer, Cpu, ChevronRight,
-  Info, CheckCircle, RefreshCw,
+  Info, CheckCircle, RefreshCw, Eye, EyeOff,
 } from 'lucide-react';
 import { useState } from 'react';
 import Spinner from '../../../components/common/Spinner';
@@ -23,10 +23,12 @@ import {
   useUpdateQuestion,
   useRemoveQuestion,
   useDeleteAdminAssessment,
+  useToggleResultAnalytics,
 } from '../hooks/useAdminAssessments';
 import {
   useAdminSections,
   useCreateSection,
+  useUpdateSection,
   useDeleteSection,
   useAddQuestionToSection,
 } from '../hooks/useAdminSections';
@@ -44,6 +46,7 @@ export const AdminAssessmentDetailsPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [targetSectionId, setTargetSectionId] = useState(null); // which section to add a question to
   const [editingQuestion, setEditingQuestion] = useState(null); // question object being edited
+  const [editingSection, setEditingSection] = useState(null); // section object being edited
   const [showSectionForm, setShowSectionForm] = useState(false); // for adding a new section
 
   const { data: a, isLoading, error } = useAdminAssessment(assessmentId);
@@ -58,8 +61,10 @@ export const AdminAssessmentDetailsPage = () => {
   const addSectionQ = useAddQuestionToSection(assessmentId);
   const removeQ   = useRemoveQuestion(assessmentId);
   const deleteA   = useDeleteAdminAssessment();
+  const toggleAnalytics = useToggleResultAnalytics(assessmentId);
 
   const createSection = useCreateSection(assessmentId);
+  const updateSection = useUpdateSection(assessmentId);
   const deleteSection = useDeleteSection(assessmentId);
 
   // useUpdateQuestion needs a questionId — we call mutateAsync directly
@@ -104,11 +109,34 @@ export const AdminAssessmentDetailsPage = () => {
     e.preventDefault();
     const formData = new FormData(e.target);
     try {
-      await createSection.mutateAsync({ title: formData.get('title') });
+      await createSection.mutateAsync({
+        title: formData.get('title'),
+        description: formData.get('description') || '',
+      });
       toast.success('Section added');
       setShowSectionForm(false);
     } catch (err) {
       toast.error(err.message || 'Failed to add section');
+    }
+  };
+
+  const handleUpdateSection = async (e) => {
+    e.preventDefault();
+    if (!editingSection) return;
+    const formData = new FormData(e.target);
+    try {
+      await updateSection.mutateAsync({
+        sectionId: editingSection.id,
+        data: {
+          title: formData.get('title'),
+          description: formData.get('description') || '',
+        },
+      });
+      toast.success('Section updated');
+      setEditingSection(null);
+    } catch (err) {
+      console.error('Update section failed:', err);
+      toast.error(err.message || 'Failed to update section');
     }
   };
 
@@ -286,12 +314,46 @@ export const AdminAssessmentDetailsPage = () => {
                 <div className={s.sectionsWrap}>
                   {/* Add Section Form */}
                   {showSectionForm && (
-                    <div className={s.inlineFormWrap} style={{ border: '1px solid var(--text-primary)', marginBottom: 20 }}>
-                      <h4 className={s.inlineFormTitle}>New Section</h4>
-                      <form onSubmit={handleAddSection} className={s.sectionForm}>
-                        <input name="title" placeholder="Section Title (e.g., General Coding, Data Structures)" required className={s.input} style={{ width: '100%', marginBottom: 12 }} />
+                    <div className={s.inlineFormWrap} style={{ border: '1px solid var(--border-color)', borderRadius: 10, padding: 18, marginBottom: 20, background: 'var(--surface-medium)' }}>
+                      <h4 className={s.inlineFormTitle} style={{ margin: '0 0 12px', fontSize: 15, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <Plus size={15} /> New Section
+                      </h4>
+                      <form onSubmit={handleAddSection} className={s.sectionForm} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        <input
+                          name="title"
+                          placeholder="Section Title (e.g., General Coding, Data Structures)"
+                          required
+                          className={s.input}
+                          style={{
+                            width: '100%',
+                            padding: '10px 14px',
+                            borderRadius: 8,
+                            border: '1px solid var(--border-color)',
+                            background: 'var(--bg-primary)',
+                            color: 'var(--text-primary)',
+                            fontSize: 14,
+                            outline: 'none',
+                          }}
+                        />
+                        <textarea
+                          name="description"
+                          placeholder="Section Description (optional)"
+                          rows={2}
+                          className={s.input}
+                          style={{
+                            width: '100%',
+                            padding: '10px 14px',
+                            borderRadius: 8,
+                            border: '1px solid var(--border-color)',
+                            background: 'var(--bg-primary)',
+                            color: 'var(--text-primary)',
+                            fontSize: 14,
+                            resize: 'vertical',
+                            outline: 'none',
+                          }}
+                        />
                         <div style={{ display: 'flex', gap: 8 }}>
-                          <Button type="submit" variant="primary" size="sm">Save Section</Button>
+                          <Button type="submit" variant="primary" size="sm" isLoading={createSection.isPending}>Save Section</Button>
                           <Button type="button" variant="ghost" size="sm" onClick={() => setShowSectionForm(false)}>Cancel</Button>
                         </div>
                       </form>
@@ -301,29 +363,80 @@ export const AdminAssessmentDetailsPage = () => {
                   {/* Render Sections */}
                   {sections.map(section => (
                     <div key={section.id} className={s.sectionCard} style={{ border: '1px solid var(--border-color)', borderRadius: 10, marginBottom: 20, overflow: 'hidden', background: 'var(--lms-card)' }}>
-                      <div className={s.sectionHead} style={{ background: 'var(--surface-medium)', padding: '14px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)' }}>
-                        <div>
-                          <h4 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>{section.title}</h4>
-                          {section.description && <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>{section.description}</p>}
+                      {/* Section Head or Edit Section Form */}
+                      {editingSection?.id === section.id ? (
+                        <div style={{ padding: '16px 18px', background: 'var(--surface-medium)', borderBottom: '1px solid var(--border-color)' }}>
+                          <h4 style={{ margin: '0 0 12px', fontSize: 15, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-primary)' }}>
+                            <Edit2 size={15} /> Edit Section: {section.title}
+                          </h4>
+                          <form onSubmit={handleUpdateSection} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                            <input
+                              name="title"
+                              defaultValue={editingSection.title}
+                              placeholder="Section Title (e.g., General Coding, Data Structures)"
+                              required
+                              style={{
+                                width: '100%',
+                                padding: '10px 14px',
+                                borderRadius: 8,
+                                border: '1px solid var(--border-color)',
+                                background: 'var(--bg-primary)',
+                                color: 'var(--text-primary)',
+                                fontSize: 14,
+                                outline: 'none',
+                              }}
+                            />
+                            <textarea
+                              name="description"
+                              defaultValue={editingSection.description || ''}
+                              placeholder="Section Description (optional)"
+                              rows={2}
+                              style={{
+                                width: '100%',
+                                padding: '10px 14px',
+                                borderRadius: 8,
+                                border: '1px solid var(--border-color)',
+                                background: 'var(--bg-primary)',
+                                color: 'var(--text-primary)',
+                                fontSize: 14,
+                                resize: 'vertical',
+                                outline: 'none',
+                              }}
+                            />
+                            <div style={{ display: 'flex', gap: 8 }}>
+                              <Button type="submit" variant="primary" size="sm" isLoading={updateSection.isPending}>Update Section</Button>
+                              <Button type="button" variant="ghost" size="sm" onClick={() => setEditingSection(null)}>Cancel</Button>
+                            </div>
+                          </form>
                         </div>
-                        {canEditQuestions && (
-                          <div style={{ display: 'flex', gap: 8 }}>
-                            <Button variant="secondary" size="sm" onClick={() => {
-                              setTargetSectionId(section.id);
-                              setShowForm(true);
-                            }}>
-                              <Plus size={13} style={{ marginRight: 4 }} /> Add Question
-                            </Button>
-                            <Button variant="ghost" size="sm" onClick={() => {
-                               if (window.confirm('Delete this section? Questions will be moved to unsectioned.')) {
-                                  deleteSection.mutateAsync(section.id).catch(e => toast.error(e.message || 'Failed to delete section'));
-                               }
-                            }}>
-                              <Trash2 size={13} />
-                            </Button>
+                      ) : (
+                        <div className={s.sectionHead} style={{ background: 'var(--surface-medium)', padding: '14px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)' }}>
+                          <div>
+                            <h4 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>{section.title}</h4>
+                            {section.description && <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>{section.description}</p>}
                           </div>
-                        )}
-                      </div>
+                          {canEditQuestions && (
+                            <div style={{ display: 'flex', gap: 8 }}>
+                              <Button variant="secondary" size="sm" onClick={() => {
+                                setTargetSectionId(section.id);
+                                setShowForm(true);
+                              }}>
+                                <Plus size={13} style={{ marginRight: 4 }} /> Add Question
+                              </Button>
+                              <Button variant="ghost" size="sm" onClick={() => setEditingSection(section)} title="Edit section">
+                                <Edit2 size={13} />
+                              </Button>
+                              <Button variant="ghost" size="sm" onClick={() => {
+                                 if (window.confirm('Delete this section? Questions will be moved to unsectioned.')) {
+                                    deleteSection.mutateAsync(section.id).catch(e => toast.error(e.message || 'Failed to delete section'));
+                                 }
+                              }} title="Delete section">
+                                <Trash2 size={13} />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                       {/* Question Form inside target section */}
                       {showForm && targetSectionId === section.id && (
@@ -352,6 +465,11 @@ export const AdminAssessmentDetailsPage = () => {
                               <div className={s.questionContent} style={{ flex: 1 }}>
                                 <p className={s.questionTitle} style={{ margin: '0 0 4px', fontSize: 15, fontWeight: 600 }}>{q.title}</p>
                                 <div className={s.questionChips} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                                  {q.questionType === 'MULTIPLE_CHOICE' ? (
+                                    <Badge tone="info">MCQ</Badge>
+                                  ) : (
+                                    <Badge tone="neutral">Coding</Badge>
+                                  )}
                                   <Badge tone={DIFFICULTY_TONE[q.difficulty] ?? 'neutral'}>{q.difficulty}</Badge>
                                   <span className={s.chip} style={{ fontSize: 12, color: 'var(--text-muted)' }}><BarChart2 size={10} /> {q.marks} marks</span>
                                 </div>
@@ -386,6 +504,11 @@ export const AdminAssessmentDetailsPage = () => {
                             <div className={s.questionContent}>
                               <p className={s.questionTitle}>{q.title}</p>
                               <div className={s.questionChips}>
+                                {q.questionType === 'MULTIPLE_CHOICE' ? (
+                                  <Badge tone="info">MCQ</Badge>
+                                ) : (
+                                  <Badge tone="neutral">Coding</Badge>
+                                )}
                                 <Badge tone={DIFFICULTY_TONE[q.difficulty] ?? 'neutral'}>{q.difficulty}</Badge>
                                 <span className={s.chip}><BarChart2 size={10} /> {q.marks} marks</span>
                               </div>
@@ -468,6 +591,48 @@ export const AdminAssessmentDetailsPage = () => {
                   </span>
                 </div>
               )}
+              <div className={s.statRow}>
+                <div className={s.statRowLabel}>
+                  <div className={s.statRowIcon}><Eye size={13} /></div>
+                  Student Results
+                </div>
+                <span className={s.statRowValue}>
+                  {a.showResultAnalytics ? 'Released' : 'Hidden'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Student Result Analytics Card */}
+          <div className={s.sideCard} style={{ marginTop: 16 }}>
+            <div className={s.sideCardHead} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>Result Analytics</span>
+              <Badge tone={a.showResultAnalytics ? 'success' : 'neutral'}>
+                {a.showResultAnalytics ? 'Enabled' : 'Disabled'}
+              </Badge>
+            </div>
+            <div className={s.sideCardBody}>
+              <p style={{ margin: '0 0 12px', fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                {a.showResultAnalytics
+                  ? 'Students can view all question answers, correct options, and points breakdown.'
+                  : 'Answers, points breakdown, and question solutions are currently hidden from students.'}
+              </p>
+              <Button
+                variant={a.showResultAnalytics ? 'secondary' : 'primary'}
+                size="sm"
+                style={{ width: '100%', justifyContent: 'center' }}
+                isLoading={toggleAnalytics.isPending}
+                onClick={async () => {
+                  try {
+                    await toggleAnalytics.mutateAsync(!a.showResultAnalytics);
+                    toast.success(a.showResultAnalytics ? 'Result analytics disabled for students' : 'Result analytics released to students!');
+                  } catch (e) {
+                    toast.error(e?.response?.data?.message || e.message || 'Failed to update result analytics');
+                  }
+                }}
+              >
+                {a.showResultAnalytics ? 'Disable for Students' : 'Release to Students'}
+              </Button>
             </div>
           </div>
 

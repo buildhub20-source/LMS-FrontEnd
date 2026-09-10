@@ -28,6 +28,10 @@ export const adminAssessmentService = {
 
   // Retest
   retestStudent: (assessmentId, studentId) => http.post(ep.retest(assessmentId, studentId)),
+
+  // Result Analytics Visibility Toggle
+  toggleResultAnalytics: (id, enabled) =>
+    http.patch(ep.resultAnalytics(id), null, { params: { enabled } }),
 };
 
 export default adminAssessmentService;

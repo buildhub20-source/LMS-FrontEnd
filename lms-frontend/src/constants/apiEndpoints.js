@@ -112,6 +112,7 @@ export const API_ENDPOINTS = Object.freeze({
       `/admin/assessments/${assessmentId}/questions/${questionId}`,
     updateQuestion: (questionId) => `/admin/assessments/questions/${questionId}`,
     analytics: (id) => `/admin/assessments/${id}/analytics`,
+    resultAnalytics: (id) => `/admin/assessments/${id}/result-analytics`,
     retest: (assessmentId, studentId) => `/admin/assessments/${assessmentId}/students/${studentId}/retest`,
     rubrics: '/admin/assessments/rubrics',
     rubricById: (id) => `/admin/assessments/rubrics/${id}`,

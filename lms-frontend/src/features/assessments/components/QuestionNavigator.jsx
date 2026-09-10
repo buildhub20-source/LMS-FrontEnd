@@ -226,6 +226,17 @@ export const QuestionNavigator = ({
                     color: '#64748b',
                   }}
                 >
+                  <span style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    padding: '1px 5px',
+                    borderRadius: 4,
+                    background: q.questionType === 'MULTIPLE_CHOICE' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(59, 130, 246, 0.15)',
+                    color: q.questionType === 'MULTIPLE_CHOICE' ? '#c4b5fd' : '#93c5fd',
+                  }}>
+                    {q.questionType === 'MULTIPLE_CHOICE' ? 'MCQ' : 'CODE'}
+                  </span>
+                  <span>•</span>
                   <span>{q.marks ?? 10} pts</span>
                   <span>•</span>
                   <span style={{ color: hasCode ? '#10b981' : '#64748b', fontWeight: hasCode ? 600 : 400 }}>

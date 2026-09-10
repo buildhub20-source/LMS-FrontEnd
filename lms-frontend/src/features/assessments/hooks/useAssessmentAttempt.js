@@ -25,6 +25,7 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
   const [attempt, setAttempt] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [latestAttemptId, setLatestAttemptId] = useState(null);
 
   // ── Per-question code: { [questionId]: { language, sourceCode } }
   const [drafts, setDrafts] = useState({});
@@ -141,12 +142,16 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
     if (!assessmentId) return;
 
     let cancelled = false;
+    const abortController = new AbortController();
+
     const startOrResume = async () => {
       setLoading(true);
       setError(null);
       try {
         // 1. Start or retrieve existing in-progress attempt from server
-        const res = await assessmentService.startAttempt(assessmentId);
+        //    Pass AbortController signal so duplicate requests (e.g. React StrictMode
+        //    double-invoke) are cancelled before reaching the backend.
+        const res = await assessmentService.startAttempt(assessmentId, { signal: abortController.signal });
         const attemptData = res?.data?.data ?? res?.data ?? res;
 
         if (!cancelled && attemptData) {
@@ -213,8 +218,12 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
           setDrafts(initialDrafts);
         }
       } catch (err) {
+        // Ignore AbortController cancellations — these are intentional cleanup, not real errors
+        if (abortController.signal.aborted) return;
         if (!cancelled) {
-          setError(err?.message || err?.response?.data?.message || 'Failed to start or resume assessment.');
+          // Prefer server-side message from normalizeError, then Axios response, then fallback
+          const msg = err?.response?.data?.message || err?.message || 'Failed to start or resume assessment.';
+          setError(msg);
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -222,8 +231,42 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
     };
 
     startOrResume();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      abortController.abort();
+    };
   }, [assessmentId, refreshTrigger]);
+
+  // ── Fetch latest attempt history when startAttempt fails (e.g. limit reached) ──
+  useEffect(() => {
+    if (!error || !assessmentId || attempt) return;
+    let alive = true;
+    console.log('[useAssessmentAttempt] Error detected, fetching attempt history for:', assessmentId);
+    (async () => {
+      try {
+        const histRes = await assessmentService.getAttemptHistory(assessmentId);
+        console.log('[useAssessmentAttempt] histRes:', histRes?.data);
+        const histContent =
+          histRes?.data?.data?.content ||
+          histRes?.data?.content ||
+          [];
+        console.log('[useAssessmentAttempt] histContent:', histContent);
+        if (Array.isArray(histContent) && histContent.length > 0) {
+          // Prefer most-recent terminal attempt
+          const terminal = histContent.find(
+            (a) => a.status === 'EXPIRED' || a.status === 'SUBMITTED' || a.status === 'EVALUATED'
+          ) || histContent[0];
+          console.log('[useAssessmentAttempt] terminal attempt:', terminal);
+          if (terminal?.attemptId && alive) {
+            setLatestAttemptId(terminal.attemptId);
+          }
+        }
+      } catch (err) {
+        console.error('[useAssessmentAttempt] History fetch error:', err);
+      }
+    })();
+    return () => { alive = false; };
+  }, [error, assessmentId, attempt]);
 
   // ── Server-authoritative countdown timer ─────────────────────────────────
   useEffect(() => {
@@ -255,6 +298,7 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
     attempt,
     loading,
     error,
+    latestAttemptId,
     drafts,
     saveStatus,
     submitting,

@@ -11,10 +11,8 @@ import {
   ShieldCheck,
   Pencil,
   Mail,
-  Plus,
   Trash2,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import AdminButton from '../../../components/ui/AdminButton';
 import AdminBadge from '../../../components/ui/AdminBadge';
 import AdminInput from '../../../components/ui/AdminInput';
@@ -26,7 +24,6 @@ import AdminPagination, {
 import { AdminTableSkeleton } from '../../../components/ui/AdminSkeleton';
 import PermissionGuard from '../../../guards/PermissionGuard';
 import { PERMISSIONS } from '../../../constants/permissions';
-import { ROUTES } from '../../../constants/routes';
 import userService from '../services/userService';
 import roleService from '../../roles/services/roleService';
 import { useToast } from '../../../components/feedback/Toast';
@@ -129,7 +126,6 @@ const STATUS_FILTERS = ['ALL', 'ACTIVE', 'LOCKED', 'INACTIVE'];
 /* ─── component ─── */
 
 export const UserListPage = () => {
-  const navigate = useNavigate();
   const { success: toastSuccess, error: toastError } = useToast();
 
   // List state
@@ -373,14 +369,7 @@ export const UserListPage = () => {
             Manage user accounts, roles, and access status.
           </p>
         </div>
-        <PermissionGuard required={[PERMISSIONS.USER_WRITE]} fallback={null}>
-          <AdminButton
-            icon={<Plus className="h-4 w-4" />}
-            onClick={() => navigate(ROUTES.USER_CREATE)}
-          >
-            Add User
-          </AdminButton>
-        </PermissionGuard>
+
       </div>
 
       {/* Filters bar */}
