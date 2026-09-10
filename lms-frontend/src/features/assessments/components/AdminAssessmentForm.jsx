@@ -26,8 +26,9 @@ export const AdminAssessmentForm = ({
     resolver: zodResolver(assessmentSchema),
     defaultValues: {
       title: '', description: '', durationMinutes: 60, maxAttempts: 1,
-      startTime: '', endTime: '',
+      startTime: '', endTime: '', showResultAnalytics: true,
       ...defaultValues,
+      showResultAnalytics: defaultValues.showResultAnalytics !== undefined ? defaultValues.showResultAnalytics : true,
       startTime: toLocal(defaultValues.startTime),
       endTime: toLocal(defaultValues.endTime),
     },
@@ -126,16 +127,35 @@ export const AdminAssessmentForm = ({
                     <option value="AVERAGE_SCORE">Average Score (Mean of all attempts counts)</option>
                   </select>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', paddingTop: 24, gap: 10 }}>
-                  <input
-                    id="randomizeQuestions"
-                    type="checkbox"
-                    style={{ width: 18, height: 18, cursor: 'pointer' }}
-                    {...register('randomizeQuestions')}
-                  />
-                  <label htmlFor="randomizeQuestions" style={{ cursor: 'pointer', fontWeight: 500, fontSize: '0.9rem' }}>
-                    Randomize Question Order
-                  </label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14, paddingTop: 20 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <input
+                      id="randomizeQuestions"
+                      type="checkbox"
+                      style={{ width: 18, height: 18, cursor: 'pointer' }}
+                      {...register('randomizeQuestions')}
+                    />
+                    <label htmlFor="randomizeQuestions" style={{ cursor: 'pointer', fontWeight: 500, fontSize: '0.9rem' }}>
+                      Randomize Question Order
+                    </label>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                    <input
+                      id="showResultAnalytics"
+                      type="checkbox"
+                      style={{ width: 18, height: 18, cursor: 'pointer', marginTop: 2 }}
+                      {...register('showResultAnalytics')}
+                    />
+                    <div>
+                      <label htmlFor="showResultAnalytics" style={{ cursor: 'pointer', fontWeight: 600, fontSize: '0.9rem', display: 'block' }}>
+                        Release Result Analytics to Students
+                      </label>
+                      <p style={{ margin: '2px 0 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                        When enabled, students can see their answers, points earned, solutions, and performance benchmarks after submission.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

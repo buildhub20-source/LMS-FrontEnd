@@ -4,10 +4,11 @@ import {
   Copy, Clock, Database, ChevronDown, ChevronUp, Play,
   CheckCircle2, XCircle, Terminal, AlertCircle, RefreshCw,
   Code2, RotateCcw, Check, Sparkles, HelpCircle, Layers,
-  FileCode, CheckCheck, SendHorizonal, Lock, Eye, EyeOff
+  FileCode, CheckCheck, SendHorizonal, Lock, Eye, EyeOff, CloudUpload
 } from 'lucide-react';
 import Badge from '../../../components/common/Badge';
 import Button from '../../../components/common/Button';
+import assessmentService from '../services/assessmentService';
 import { DIFFICULTY_TONE } from '../constants/assessmentConstants';
 
 /** Supported languages with Monaco language IDs */
@@ -235,6 +236,7 @@ export const CodingQuestionPanel = ({
   isReadOnly = false,
   onSubmitQuestion = null,
   isQuestionSubmitted = false,
+  attemptId = null,   // needed for direct backend submission
 }) => {
   const [showConstraints, setShowConstraints] = useState(true);
   const [activeConsoleTab, setActiveConsoleTab] = useState('testcases');
@@ -242,6 +244,7 @@ export const CodingQuestionPanel = ({
   const [customInput, setCustomInput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false);
+  const [submitSaveStatus, setSubmitSaveStatus] = useState(null); // null | 'saving' | 'saved' | 'error'
   const [runResults, setRunResults] = useState(null);
   const [isConsoleExpanded, setIsConsoleExpanded] = useState(true);
   const [copiedKey, setCopiedKey] = useState(null);
@@ -329,18 +332,37 @@ export const CodingQuestionPanel = ({
   };
 
   /**
-   * "Save & Submit Question" — executes against the actual sample test cases
-   * configured for this question in the backend and persists the draft.
+   * "Save & Submit Question" — persists code to backend immediately via API,
+   * then runs against the sample test cases for immediate visual feedback.
    */
   const handleSubmitQuestion = async () => {
     if (isRunning || isSubmittingQuestion || isReadOnly || !draft.sourceCode?.trim()) return;
     setIsSubmittingQuestion(true);
     setActiveConsoleTab('results');
     setIsConsoleExpanded(true);
+    setSubmitSaveStatus('saving');
 
-    // Save draft to DB immediately
-    onDraftChange?.(draft);
+    // 1. Persist the current code to backend draft immediately
+    try {
+      if (attemptId && question?.id) {
+        await assessmentService.saveSubmissionDraft(
+          attemptId,
+          question.id,
+          draft.language || 'java',
+          draft.sourceCode || '',
+        );
+        setSubmitSaveStatus('saved');
+      } else {
+        // Fallback: notify parent to trigger autosave
+        onDraftChange?.(draft);
+        setSubmitSaveStatus('saved');
+      }
+    } catch (saveErr) {
+      console.warn('Submit question draft save error (non-fatal):', saveErr);
+      setSubmitSaveStatus('error');
+    }
 
+    // 2. Run sandbox for immediate visual test case feedback
     try {
       const outcome = await executeCodeSandbox(
         draft.language || 'java',
@@ -357,6 +379,8 @@ export const CodingQuestionPanel = ({
       });
     } finally {
       setIsSubmittingQuestion(false);
+      // Clear save status indicator after 3s
+      setTimeout(() => setSubmitSaveStatus(null), 3000);
     }
   };
 
@@ -924,19 +948,40 @@ export const CodingQuestionPanel = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {!isReadOnly && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11 }}>
+                {/* Autosave status */}
                 {saveStatus === 'saving' && (
                   <span style={{ color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 4 }}>
                     <RefreshCw size={11} className="animate-spin" /> Saving draft…
                   </span>
                 )}
-                {saveStatus === 'saved' && (
+                {saveStatus === 'saved' && !submitSaveStatus && (
                   <span style={{ color: '#34d399', display: 'flex', alignItems: 'center', gap: 4 }}>
                     <Check size={12} /> All changes saved
                   </span>
                 )}
-                {saveStatus === 'error' && (
+                {saveStatus === 'error' && !submitSaveStatus && (
                   <span style={{ color: '#f87171', display: 'flex', alignItems: 'center', gap: 4 }}>
                     <AlertCircle size={12} /> Autosave failed
+                  </span>
+                )}
+                {/* Submit-to-server status (overrides autosave status while active) */}
+                {submitSaveStatus === 'saving' && (
+                  <span style={{ color: '#818cf8', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700 }}>
+                    <CloudUpload size={12} style={{ animation: 'pulse 1s infinite' }} /> Submitting to server…
+                  </span>
+                )}
+                {submitSaveStatus === 'saved' && (
+                  <span style={{
+                    color: '#10b981', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700,
+                    background: 'rgba(16,185,129,0.1)', padding: '2px 8px', borderRadius: 5,
+                    border: '1px solid rgba(16,185,129,0.25)',
+                  }}>
+                    <CheckCheck size={12} /> Answer saved to server!
+                  </span>
+                )}
+                {submitSaveStatus === 'error' && (
+                  <span style={{ color: '#f87171', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700 }}>
+                    <AlertCircle size={12} /> Save failed — draft kept locally
                   </span>
                 )}
               </div>

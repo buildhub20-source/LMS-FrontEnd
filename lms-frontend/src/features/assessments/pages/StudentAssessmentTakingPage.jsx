@@ -3,12 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   ChevronRight, Send, Maximize2, Minimize2,
   AlertTriangle, Shield, Video, Sparkles, Terminal, Code2,
-  ArrowLeft, CheckCircle2
+  ArrowLeft, CheckCircle2, BarChart3, RefreshCw
 } from 'lucide-react';
 import Spinner from '../../../components/common/Spinner';
-import Alert from '../../../components/feedback/Alert';
 import Button from '../../../components/common/Button';
+import Alert from '../../../components/feedback/Alert';
 import { CodingQuestionPanel } from '../components/CodingQuestionPanel';
+import { McqQuestionPanel } from '../components/McqQuestionPanel';
 import { QuestionNavigator } from '../components/QuestionNavigator';
 import { SubmitConfirmModal } from '../components/SubmitConfirmModal';
 import { ProcessingScreen } from '../components/ProcessingScreen';
@@ -58,6 +59,7 @@ export const StudentAssessmentTakingPage = () => {
     attempt,
     loading,
     error,
+    latestAttemptId,
     drafts,
     saveStatus,
     submitting,
@@ -255,8 +257,8 @@ export const StudentAssessmentTakingPage = () => {
     return () => window.removeEventListener('keydown', handler);
   }, [attempt?.questions?.length, examStage]);
 
-  // Fallback for STARTED stage if data is still loading
-  if (examStage === 'STARTED' && loading && !attempt) {
+  // Global loading fallback if data is still initializing
+  if (loading && !attempt) {
     return (
       <div
         style={{
@@ -268,6 +270,7 @@ export const StudentAssessmentTakingPage = () => {
           background: '#070a13',
           color: '#cbd5e1',
           gap: 16,
+          fontFamily: 'Inter, system-ui, sans-serif',
         }}
       >
         <Spinner size="lg" />
@@ -278,8 +281,14 @@ export const StudentAssessmentTakingPage = () => {
     );
   }
 
-  // Fatal error fallback only if already in STARTED stage
-  if (examStage === 'STARTED' && error && !attempt) {
+  // Fatal error fallback if initialization fails or attempt cannot be started (e.g. limit reached)
+  if (error && !attempt) {
+    const isLimitReached =
+      error.toLowerCase().includes('limit') ||
+      error.toLowerCase().includes('already submitted') ||
+      error.toLowerCase().includes('completed') ||
+      error.toLowerCase().includes('reached');
+
     return (
       <div
         style={{
@@ -289,6 +298,7 @@ export const StudentAssessmentTakingPage = () => {
           minHeight: '100vh',
           background: '#070a13',
           padding: 24,
+          fontFamily: 'Inter, system-ui, sans-serif',
         }}
       >
         <div
@@ -297,50 +307,89 @@ export const StudentAssessmentTakingPage = () => {
             width: '100%',
             background: '#0f172a',
             borderRadius: 16,
-            border: '1px solid rgba(239, 68, 68, 0.3)',
-            padding: 32,
-            boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
+            border: `1px solid ${isLimitReached ? 'rgba(99, 102, 241, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+            padding: 36,
+            boxShadow: '0 25px 50px rgba(0,0,0,0.6)',
             textAlign: 'center',
             color: '#ffffff',
           }}
         >
           <div
             style={{
-              width: 54,
-              height: 54,
+              width: 58,
+              height: 58,
               borderRadius: '50%',
-              background: 'rgba(239, 68, 68, 0.15)',
-              color: '#f87171',
+              background: isLimitReached ? 'rgba(99, 102, 241, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+              color: isLimitReached ? '#818cf8' : '#f87171',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              margin: '0 auto 16px',
+              margin: '0 auto 18px',
             }}
           >
-            <AlertTriangle size={28} />
+            {isLimitReached ? <CheckCircle2 size={30} /> : <AlertTriangle size={30} />}
           </div>
 
           <h2 style={{ margin: '0 0 8px', fontSize: 20, fontWeight: 800 }}>
-            Unable to Start Assessment
+            {isLimitReached ? 'Assessment Already Completed' : 'Unable to Start Assessment'}
           </h2>
-          <p style={{ margin: '0 0 24px', fontSize: 14, color: '#94a3b8', lineHeight: 1.6 }}>
+          <p style={{ margin: '0 0 26px', fontSize: 14, color: '#94a3b8', lineHeight: 1.6 }}>
             {error}
           </p>
 
-          <Button
-            variant="primary"
-            onClick={() => navigate(ROUTES.STUDENT_ASSESSMENTS)}
-            iconLeft={<ArrowLeft size={16} />}
-            style={{
-              background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-              width: '100%',
-              justifyContent: 'center',
-              padding: '11px 0',
-              fontWeight: 700,
-            }}
-          >
-            Return to Assessments
-          </Button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {latestAttemptId && (
+              <Button
+                variant="primary"
+                onClick={() => navigate(ROUTES.ASSESSMENT_RESULT(latestAttemptId))}
+                iconLeft={<BarChart3 size={16} />}
+                style={{
+                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  width: '100%',
+                  justifyContent: 'center',
+                  padding: '11px 0',
+                  fontWeight: 700,
+                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)',
+                }}
+              >
+                View Result Analytics
+              </Button>
+            )}
+
+            {!isLimitReached && (
+              <Button
+                variant="primary"
+                onClick={retry}
+                iconLeft={<RefreshCw size={16} />}
+                style={{
+                  background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                  width: '100%',
+                  justifyContent: 'center',
+                  padding: '11px 0',
+                  fontWeight: 700,
+                }}
+              >
+                Try Again
+              </Button>
+            )}
+
+            <Button
+              variant="secondary"
+              onClick={() => navigate(ROUTES.STUDENT_ASSESSMENTS)}
+              iconLeft={<ArrowLeft size={16} />}
+              style={{
+                width: '100%',
+                justifyContent: 'center',
+                padding: '11px 0',
+                fontWeight: 600,
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                color: '#cbd5e1',
+              }}
+            >
+              Return to Assessments
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -567,22 +616,33 @@ export const StudentAssessmentTakingPage = () => {
         {/* Center/Right: Problem statement + Monaco Editor + Test Console */}
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           {currentQuestion ? (
-            <CodingQuestionPanel
-              key={currentQuestion.id}
-              question={currentQuestion}
-              draft={drafts[currentQuestion.id] ?? { language: 'java', sourceCode: '' }}
-              saveStatus={saveStatus[currentQuestion.id]}
-              onDraftChange={(patch) => updateDraft(currentQuestion.id, patch)}
-              onSubmitQuestion={(result) => {
-                // Ensure the draft is saved when the student clicks "Submit Question"
-                if (result?.sourceCode) {
-                  updateDraft(currentQuestion.id, {
-                    language: result.language,
-                    sourceCode: result.sourceCode,
-                  });
-                }
-              }}
-            />
+            currentQuestion.questionType === 'MULTIPLE_CHOICE' ? (
+              <McqQuestionPanel
+                key={currentQuestion.id}
+                question={currentQuestion}
+                draft={drafts[currentQuestion.id] ?? { language: 'MCQ', sourceCode: '' }}
+                saveStatus={saveStatus[currentQuestion.id]}
+                onDraftChange={(patch) => updateDraft(currentQuestion.id, patch)}
+              />
+            ) : (
+              <CodingQuestionPanel
+                key={currentQuestion.id}
+                question={currentQuestion}
+                draft={drafts[currentQuestion.id] ?? { language: 'java', sourceCode: '' }}
+                saveStatus={saveStatus[currentQuestion.id]}
+                onDraftChange={(patch) => updateDraft(currentQuestion.id, patch)}
+                attemptId={attempt?.id || attempt?.attemptId}
+                onSubmitQuestion={(result) => {
+                  // Update draft in parent state so final submit uses the latest code
+                  if (result?.sourceCode) {
+                    updateDraft(currentQuestion.id, {
+                      language: result.language,
+                      sourceCode: result.sourceCode,
+                    });
+                  }
+                }}
+              />
+            )
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, color: '#94a3b8' }}>
               No question selected.

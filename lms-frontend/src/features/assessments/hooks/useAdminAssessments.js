@@ -145,3 +145,15 @@ export const useRetestStudent = (assessmentId) => {
       qc.invalidateQueries({ queryKey: [...ADMIN_ASSESSMENTS, assessmentId, 'analytics'] }),
   });
 };
+
+// Result Analytics Visibility Toggle
+export const useToggleResultAnalytics = (assessmentId) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (enabled) => adminAssessmentService.toggleResultAnalytics(assessmentId, enabled),
+    onSuccess: (data) => {
+      refreshDetail(qc, assessmentId, data);
+      invalidateLists(qc);
+    },
+  });
+};

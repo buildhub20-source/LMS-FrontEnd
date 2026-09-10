@@ -4,7 +4,7 @@ import {
   Clock, Award, Search, ArrowRight, RotateCcw,
   PlayCircle, RefreshCcw, CheckCircle2, Filter,
   Code2, Shield, Calendar, AlertCircle, BookOpen,
-  TrendingUp, Sparkles, CheckCircle
+  TrendingUp, Sparkles, CheckCircle, BarChart2, Lock, EyeOff, ArrowUpRight
 } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
@@ -36,10 +36,6 @@ export const AssessmentListPage = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
 
-  useEffect(() => {
-    fetchAssessments();
-  }, []);
-
   const fetchAssessments = async () => {
     setLoading(true);
     setError(null);
@@ -62,23 +58,27 @@ export const AssessmentListPage = () => {
       historyResults.forEach((result) => {
         if (result.status === 'fulfilled') {
           const { assessmentId, history } = result.value;
-          if (history.length > 0) {
-            const latest = [...history].sort((a, b) => b.attemptNumber - a.attemptNumber)[0];
+          // Normalize history — could be paginated or raw array
+          const historyArr = Array.isArray(history) ? history : (history?.content ?? []);
+          if (historyArr.length > 0) {
+            const latest = [...historyArr].sort((a, b) => b.attemptNumber - a.attemptNumber)[0];
             const extraAttempts = latest.extraAttempts ?? 0;
             const canRetake = latest.canRetake ?? false;
             map[assessmentId] = {
               status: latest.status,
               attemptNumber: latest.attemptNumber,
-              attemptsUsed: history.length,
+              attemptsUsed: historyArr.length,
               attemptId: latest.attemptId || latest.id,
               score: latest.score ?? latest.obtainedMarks,
               totalMarks: latest.totalMarks,
               percentage: latest.percentage,
               extraAttempts,
               canRetake,
+              showResultAnalytics: latest.showResultAnalytics,
+              allAttempts: historyArr, // store full history for modal display
             };
           } else {
-            map[assessmentId] = { status: 'NOT_STARTED', attemptsUsed: 0, extraAttempts: 0, canRetake: true };
+            map[assessmentId] = { status: 'NOT_STARTED', attemptsUsed: 0, extraAttempts: 0, canRetake: true, allAttempts: [] };
           }
         }
       });
@@ -90,6 +90,11 @@ export const AssessmentListPage = () => {
     }
   };
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchAssessments();
+  }, []);
+
   const getAttemptInfo = (id) => attemptMap[id] ?? { status: 'NOT_STARTED', attemptsUsed: 0 };
 
   // Calculate high-level stats
@@ -97,7 +102,12 @@ export const AssessmentListPage = () => {
   const inProgressCount = assessments.filter((a) => getAttemptInfo(a.id).status === ATTEMPT_STATUS.IN_PROGRESS).length;
   const completedCount = assessments.filter((a) => {
     const s = getAttemptInfo(a.id).status;
-    return s === ATTEMPT_STATUS.SUBMITTED || s === ATTEMPT_STATUS.TIMED_OUT || s === ATTEMPT_STATUS.EVALUATED;
+    return (
+      s === ATTEMPT_STATUS.SUBMITTED ||
+      s === ATTEMPT_STATUS.TIMED_OUT ||
+      s === ATTEMPT_STATUS.EVALUATED ||
+      s === ATTEMPT_STATUS.EXPIRED
+    );
   }).length;
   const pendingCount = totalCount - inProgressCount - completedCount;
 
@@ -116,7 +126,12 @@ export const AssessmentListPage = () => {
     if (statusFilter === 'ALL') return true;
     const status = getAttemptInfo(a.id).status;
     if (statusFilter === ATTEMPT_STATUS.SUBMITTED) {
-      return status === ATTEMPT_STATUS.SUBMITTED || status === ATTEMPT_STATUS.TIMED_OUT || status === ATTEMPT_STATUS.EVALUATED;
+      return (
+        status === ATTEMPT_STATUS.SUBMITTED ||
+        status === ATTEMPT_STATUS.TIMED_OUT ||
+        status === ATTEMPT_STATUS.EVALUATED ||
+        status === ATTEMPT_STATUS.EXPIRED
+      );
     }
     return status === statusFilter;
   });
@@ -125,53 +140,118 @@ export const AssessmentListPage = () => {
     const info = getAttemptInfo(assessment.id);
     if (info.status === ATTEMPT_STATUS.IN_PROGRESS) {
       navigate(ROUTES.ASSESSMENT_ATTEMPT(assessment.id));
-    } else if (info.status === ATTEMPT_STATUS.SUBMITTED || info.status === ATTEMPT_STATUS.TIMED_OUT || info.status === ATTEMPT_STATUS.EVALUATED) {
+    } else if (
+      info.status === ATTEMPT_STATUS.SUBMITTED ||
+      info.status === ATTEMPT_STATUS.TIMED_OUT ||
+      info.status === ATTEMPT_STATUS.EVALUATED ||
+      info.status === ATTEMPT_STATUS.EXPIRED
+    ) {
       navigate(ROUTES.ASSESSMENT_RESULT(info.attemptId));
     } else {
       navigate(ROUTES.ASSESSMENT_ATTEMPT(assessment.id));
     }
   };
 
+  const handleViewAnalytics = (assessment) => {
+    // If disabled by instructor, do not allow viewing
+    if (assessment.showResultAnalytics === false) return;
+
+    const info = getAttemptInfo(assessment.id);
+    navigate(ROUTES.ASSESSMENT_RESULT(info?.attemptId || assessment.id));
+  };
+
   const getActionButton = (assessment) => {
     const info = getAttemptInfo(assessment.id);
-    const effectiveMax = Math.max(assessment.maxAttempts || 1, info.attemptsUsed || 0) + (info.extraAttempts || 0);
     // Trust the backend's canRetake flag directly — it accounts for both
     // default maxAttempts and any admin-granted extra attempts (remaining).
     const exhausted = !info.canRetake;
 
-    if (info.status === ATTEMPT_STATUS.IN_PROGRESS) {
-      return (
-        <Button
-          variant="primary"
-          onClick={() => handleAction(assessment)}
-          iconRight={<ArrowRight size={15} />}
-          style={{
-            background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-            padding: '9px 20px',
-            fontSize: 13,
-            fontWeight: 700,
-            boxShadow: '0 4px 14px rgba(99,102,241,0.35)',
-          }}
-        >
-          Resume Test
-        </Button>
-      );
-    }
-    if (info.status === ATTEMPT_STATUS.SUBMITTED || info.status === ATTEMPT_STATUS.TIMED_OUT || info.status === ATTEMPT_STATUS.EVALUATED) {
-      return (
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+    // Check if result analytics is enabled for this assessment
+    const isAnalyticsEnabled = assessment.showResultAnalytics !== false;
+
+    const renderAnalyticsButton = () => {
+      if (!isAnalyticsEnabled) {
+        return (
           <Button
-            variant="secondary"
-            onClick={() => navigate(ROUTES.ASSESSMENT_RESULT(info.attemptId))}
-            iconLeft={<CheckCircle2 size={14} style={{ color: '#10b981' }} />}
+            variant="ghost"
+            disabled
+            iconLeft={<Lock size={14} />}
+            title="Result analytics is disabled by instructor. Answers, points, and score breakdowns cannot be viewed."
             style={{
-              padding: '9px 16px',
+              opacity: 0.5,
+              cursor: 'not-allowed',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              background: 'rgba(255, 255, 255, 0.04)',
+              color: 'var(--text-muted)',
               fontSize: 13,
               fontWeight: 600,
+              padding: '9px 16px',
             }}
           >
-            View Results
+            Result Analytics
           </Button>
+        );
+      }
+
+      const isCompletedAttempt =
+        info?.attemptId &&
+        (info.status === ATTEMPT_STATUS.SUBMITTED ||
+          info.status === ATTEMPT_STATUS.TIMED_OUT ||
+          info.status === ATTEMPT_STATUS.EVALUATED ||
+          info.status === ATTEMPT_STATUS.EXPIRED);
+
+      return (
+        <Button
+          variant="secondary"
+          onClick={() => handleViewAnalytics(assessment)}
+          iconLeft={<BarChart2 size={14} style={{ color: isCompletedAttempt ? '#10b981' : '#818cf8' }} />}
+          title="View Result Analytics & Solutions"
+          style={{
+            background: isCompletedAttempt ? 'rgba(16, 185, 129, 0.12)' : 'rgba(99, 102, 241, 0.12)',
+            border: `1px solid ${isCompletedAttempt ? 'rgba(16, 185, 129, 0.35)' : 'rgba(99, 102, 241, 0.35)'}`,
+            color: isCompletedAttempt ? '#6ee7b7' : '#a5b4fc',
+            fontSize: 13,
+            fontWeight: 700,
+            padding: '9px 16px',
+            boxShadow: isCompletedAttempt ? '0 2px 8px rgba(16, 185, 129, 0.15)' : '0 2px 8px rgba(99, 102, 241, 0.15)',
+            transition: 'all 0.2s ease',
+          }}
+        >
+          Result Analytics
+        </Button>
+      );
+    };
+
+    if (info.status === ATTEMPT_STATUS.IN_PROGRESS) {
+      return (
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          {renderAnalyticsButton()}
+          <Button
+            variant="primary"
+            onClick={() => handleAction(assessment)}
+            iconRight={<ArrowRight size={15} />}
+            style={{
+              background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+              padding: '9px 20px',
+              fontSize: 13,
+              fontWeight: 700,
+              boxShadow: '0 4px 14px rgba(99,102,241,0.35)',
+            }}
+          >
+            Resume Test
+          </Button>
+        </div>
+      );
+    }
+    if (
+      info.status === ATTEMPT_STATUS.SUBMITTED ||
+      info.status === ATTEMPT_STATUS.TIMED_OUT ||
+      info.status === ATTEMPT_STATUS.EVALUATED ||
+      info.status === ATTEMPT_STATUS.EXPIRED
+    ) {
+      return (
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          {renderAnalyticsButton()}
           {!exhausted && (
             <Button
               variant="primary"
@@ -191,20 +271,23 @@ export const AssessmentListPage = () => {
       );
     }
     return (
-      <Button
-        variant="primary"
-        onClick={() => handleAction(assessment)}
-        iconRight={<PlayCircle size={15} />}
-        style={{
-          background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-          padding: '9px 24px',
-          fontSize: 13,
-          fontWeight: 700,
-          boxShadow: '0 4px 14px rgba(16,185,129,0.35)',
-        }}
-      >
-        Start Assessment
-      </Button>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+        {renderAnalyticsButton()}
+        <Button
+          variant="primary"
+          onClick={() => handleAction(assessment)}
+          iconRight={<PlayCircle size={15} />}
+          style={{
+            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+            padding: '9px 24px',
+            fontSize: 13,
+            fontWeight: 700,
+            boxShadow: '0 4px 14px rgba(16,185,129,0.35)',
+          }}
+        >
+          Start Assessment
+        </Button>
+      </div>
     );
   };
 
@@ -476,23 +559,63 @@ export const AssessmentListPage = () => {
                 }}
               >
                 {/* Card Top Pill: Category & Status */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span
-                    style={{
-                      padding: '4px 10px',
-                      borderRadius: 6,
-                      background: 'rgba(99, 102, 241, 0.12)',
-                      border: '1px solid rgba(99, 102, 241, 0.25)',
-                      fontSize: 11,
-                      fontWeight: 700,
-                      color: '#a5b4fc',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 4,
-                    }}
-                  >
-                    <Code2 size={13} /> Coding Assessment
-                  </span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 6 }}>
+                  <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                    <span
+                      style={{
+                        padding: '4px 10px',
+                        borderRadius: 6,
+                        background: 'rgba(99, 102, 241, 0.12)',
+                        border: '1px solid rgba(99, 102, 241, 0.25)',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: '#a5b4fc',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 4,
+                      }}
+                    >
+                      <Code2 size={13} /> Coding Assessment
+                    </span>
+
+                    {item.showResultAnalytics !== false ? (
+                      <span
+                        style={{
+                          padding: '4px 8px',
+                          borderRadius: 6,
+                          background: 'rgba(99, 102, 241, 0.15)',
+                          border: '1px solid rgba(99, 102, 241, 0.3)',
+                          fontSize: 11,
+                          fontWeight: 700,
+                          color: '#818cf8',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 4,
+                        }}
+                        title="Instructor has enabled result analytics for this assessment"
+                      >
+                        <BarChart2 size={11} /> Analytics On
+                      </span>
+                    ) : (
+                      <span
+                        style={{
+                          padding: '4px 8px',
+                          borderRadius: 6,
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          fontSize: 11,
+                          fontWeight: 600,
+                          color: 'var(--text-muted)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 4,
+                        }}
+                        title="Instructor has disabled result analytics for this assessment"
+                      >
+                        <Lock size={11} /> Analytics Off
+                      </span>
+                    )}
+                  </div>
 
                   {info.status === 'NOT_STARTED' ? (
                     <span
@@ -646,6 +769,7 @@ export const AssessmentListPage = () => {
           })}
         </div>
       )}
+
     </PageContainer>
   );
 };

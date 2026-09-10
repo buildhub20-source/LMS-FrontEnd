@@ -4,7 +4,12 @@ import {
   Search, Filter, Calendar, Clock, Percent, ArrowUpRight,
   TrendingUp, AlertCircle, FileCheck, CheckCircle2, XCircle, RefreshCw
 } from 'lucide-react';
-import { useAdminAssessmentAnalytics, useRetestStudent } from '../hooks/useAdminAssessments';
+import {
+  useAdminAssessmentAnalytics,
+  useRetestStudent,
+  useAdminAssessment,
+  useToggleResultAnalytics
+} from '../hooks/useAdminAssessments';
 import Spinner from '../../../components/common/Spinner';
 import Alert from '../../../components/feedback/Alert';
 import Badge from '../../../components/common/Badge';
@@ -13,7 +18,9 @@ import { formatDate } from '../../../utils/dateUtils';
 
 export const AssessmentAnalyticsTab = ({ assessmentId }) => {
   const { data: analytics, isLoading, error } = useAdminAssessmentAnalytics(assessmentId);
+  const { data: assessment } = useAdminAssessment(assessmentId);
   const retest = useRetestStudent(assessmentId);
+  const toggleAnalytics = useToggleResultAnalytics(assessmentId);
   const toast = useToast();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -152,6 +159,75 @@ export const AssessmentAnalyticsTab = ({ assessmentId }) => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+      {/* Student Result Analytics Control Banner */}
+      <div style={{
+        padding: '16px 20px',
+        borderRadius: 12,
+        background: assessment?.showResultAnalytics
+          ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.05) 100%)'
+          : 'linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(217, 119, 6, 0.05) 100%)',
+        border: assessment?.showResultAnalytics
+          ? '1px solid rgba(16, 185, 129, 0.3)'
+          : '1px solid rgba(245, 158, 11, 0.3)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 16,
+        flexWrap: 'wrap',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: 10,
+            background: assessment?.showResultAnalytics ? 'rgba(16, 185, 129, 0.2)' : 'rgba(245, 158, 11, 0.2)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: assessment?.showResultAnalytics ? '#10b981' : '#f59e0b',
+          }}>
+            {assessment?.showResultAnalytics ? <CheckCircle2 size={22} /> : <AlertCircle size={22} />}
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <h4 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
+                Student Result Analytics &amp; Solutions
+              </h4>
+              <Badge tone={assessment?.showResultAnalytics ? 'success' : 'warning'}>
+                {assessment?.showResultAnalytics ? 'Released to Students' : 'Hidden from Students'}
+              </Badge>
+            </div>
+            <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
+              {assessment?.showResultAnalytics
+                ? 'Students can view all question answers, submitted code, chosen options, and points breakdown.'
+                : 'Answers, points breakdown, and question solutions are currently restricted from student view.'}
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          disabled={toggleAnalytics.isPending}
+          onClick={async () => {
+            try {
+              await toggleAnalytics.mutateAsync(!assessment?.showResultAnalytics);
+              toast.success(assessment?.showResultAnalytics ? 'Result analytics hidden from students' : 'Result analytics released to students!');
+            } catch (e) {
+              toast.error(e?.response?.data?.message || e.message || 'Failed to toggle analytics');
+            }
+          }}
+          style={{
+            padding: '8px 18px',
+            borderRadius: 8,
+            fontWeight: 700,
+            fontSize: 13,
+            cursor: 'pointer',
+            border: 'none',
+            background: assessment?.showResultAnalytics ? 'rgba(239, 68, 68, 0.15)' : '#10b981',
+            color: assessment?.showResultAnalytics ? '#ef4444' : '#ffffff',
+            transition: 'all 0.15s ease',
+          }}
+        >
+          {assessment?.showResultAnalytics ? 'Hide Answers from Students' : 'Release Answers & Points to Students'}
+        </button>
+      </div>
 
       {/* ── 1. Top Stat Cards Grid (Grading System Integration) ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16 }}>
