@@ -83,6 +83,15 @@
   --input-bg: #121212;
   --badge-bg: #1c1c1c;
   --badge-text: #d4d4d8;
+  --dashboard-accent: #3b6fe0;
+  --dashboard-accent-text: #8fb4ff;
+  --dashboard-accent-soft: rgba(59, 111, 224, 0.15);
+  --dashboard-success-text: #6ee7b7;
+  --dashboard-success-soft: rgba(16, 185, 129, 0.14);
+  --dashboard-warning-text: #fcd34d;
+  --dashboard-warning-soft: rgba(245, 158, 11, 0.14);
+  --dashboard-pink-text: #f9a8d4;
+  --dashboard-pink-soft: rgba(236, 72, 153, 0.14);
 }
 
 /* Light theme — explicitly resets all tokens when html.light or data-theme='light' is active */
@@ -117,6 +126,15 @@ html.light {
   --input-bg: #ffffff;
   --badge-bg: #f1f5f9;
   --badge-text: #334155;
+  --dashboard-accent: #2f59b8;
+  --dashboard-accent-text: #244690;
+  --dashboard-accent-soft: #d9e6ff;
+  --dashboard-success-text: #047857;
+  --dashboard-success-soft: #d1fae5;
+  --dashboard-warning-text: #92400e;
+  --dashboard-warning-soft: #fef3c7;
+  --dashboard-pink-text: #9d174d;
+  --dashboard-pink-soft: #fce7f3;
 }
 
 [data-theme='dark'],
@@ -155,4 +173,13 @@ html.dark {
   --input-bg: #121212;
   --badge-bg: #1c1c1c;
   --badge-text: #d4d4d8;
+  --dashboard-accent: #3b6fe0;
+  --dashboard-accent-text: #8fb4ff;
+  --dashboard-accent-soft: rgba(59, 111, 224, 0.15);
+  --dashboard-success-text: #6ee7b7;
+  --dashboard-success-soft: rgba(16, 185, 129, 0.14);
+  --dashboard-warning-text: #fcd34d;
+  --dashboard-warning-soft: rgba(245, 158, 11, 0.14);
+  --dashboard-pink-text: #f9a8d4;
+  --dashboard-pink-soft: rgba(236, 72, 153, 0.14);
 }
