@@ -61,41 +61,4 @@ export const useSuspendStudent = (studentId) => {
   });
 };
 
-// ─── admission categories ──────────────────────────────────────────────────
-
-const CATEGORY_KEY = [...QUERY_KEYS.STUDENTS, 'categories'];
-
-export const useStudentCategories = () =>
-  useQuery({ queryKey: CATEGORY_KEY, queryFn: studentService.listCategories });
-
-/** Categories feed the intake form's dropdown, so its reference data goes stale too. */
-const invalidateCategories = (queryClient) => () => {
-  queryClient.invalidateQueries({ queryKey: CATEGORY_KEY });
-  queryClient.invalidateQueries({ queryKey: [...QUERY_KEYS.STUDENTS, 'reference-data'] });
-};
-
-export const useCreateStudentCategory = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: studentService.createCategory,
-    onSuccess: invalidateCategories(queryClient),
-  });
-};
-
-export const useUpdateStudentCategory = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, ...payload }) => studentService.updateCategory(id, payload),
-    onSuccess: invalidateCategories(queryClient),
-  });
-};
-
-export const useDeleteStudentCategory = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: studentService.removeCategory,
-    onSuccess: invalidateCategories(queryClient),
-  });
-};
-
 export default useStudents;

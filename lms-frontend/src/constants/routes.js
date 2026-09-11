@@ -32,7 +32,6 @@ export const ROUTES = Object.freeze({
   BATCHES: '/admin/batches',
   STUDENTS: '/admin/students',
   STUDENT_CREATE: '/admin/students/new',
-  STUDENT_CATEGORIES: '/admin/students/categories',
   STUDENT_DETAILS: (id = ':studentId') => `/admin/students/${id}`,
   STUDENT_EDIT: (id = ':studentId') => `/admin/students/${id}/edit`,
   ENROLLMENTS: '/admin/enrollments',

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Outlet, useLocation, Link } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, User } from 'lucide-react';
 import Sidebar from '../components/layout/Sidebar';
@@ -21,6 +21,12 @@ export const AppShell = ({ navigation, title }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await logout();
+    navigate(ROUTES.LOGIN, { replace: true, state: {} });
+  };
 
   // Theme is handled globally by ThemeContext and main.jsx
 
@@ -40,7 +46,7 @@ export const AppShell = ({ navigation, title }) => {
           <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email}</p>
         </div>
         <button
-          onClick={logout}
+          onClick={handleSignOut}
           style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 4, borderRadius: 6, display: 'flex', alignItems: 'center' }}
           title="Sign out"
           aria-label="Sign out"

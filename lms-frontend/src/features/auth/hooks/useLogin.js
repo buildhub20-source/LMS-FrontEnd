@@ -59,7 +59,23 @@ export const useLogin = () => {
 
       const primaryRole = result.payload?.roles?.[0];
       const fallback = ROLE_HOME_ROUTE[primaryRole] ?? ROUTES.PROFILE;
-      navigate(location.state?.from?.pathname ?? fallback, { replace: true });
+      const returnPath = location.state?.from?.pathname;
+
+      // Never redirect back to transient forms (e.g. /new, /edit), auth routes, or root
+      const isTransientOrForm =
+        returnPath &&
+        (returnPath.endsWith('/new') ||
+          returnPath.endsWith('/edit') ||
+          returnPath.startsWith('/auth') ||
+          returnPath === ROUTES.LOGIN ||
+          returnPath === ROUTES.ROOT);
+
+      // Administrators logging in should land on their dashboard overview (/admin/analytics)
+      const isAdminRole = primaryRole === 'ADMIN' || primaryRole === 'SUPER_ADMIN';
+      const destination =
+        returnPath && !isTransientOrForm && !isAdminRole ? returnPath : fallback;
+
+      navigate(destination, { replace: true });
       return true;
     },
     [dispatch, navigate, location],

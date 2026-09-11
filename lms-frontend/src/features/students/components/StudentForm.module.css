@@ -4,6 +4,59 @@
   gap: var(--space-4);
 }
 
+.personalInfoSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.formDivider {
+  height: 1px;
+  background: var(--border-color, #222222);
+  margin: var(--space-1) 0;
+  opacity: 0.7;
+}
+
+.fieldsStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.rowTwoCols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.rowThreeCols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+@media (max-width: 900px) {
+  .rowThreeCols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rowThreeCols > *:last-child:nth-child(odd) {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 640px) {
+  .rowTwoCols,
+  .rowThreeCols {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+
+  .rowThreeCols > *:last-child:nth-child(odd) {
+    grid-column: span 1;
+  }
+}
+
 /*
  * Four columns on desktop, matching the intake form layout; collapses to two
  * on tablet and one on phones so no field ever gets squeezed below readable.

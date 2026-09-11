@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Share2, Bookmark, CheckCircle2, PauseCircle, Play, ChevronDown, ChevronUp, Edit3, ArrowLeft,
-  FileText, Presentation, FileCode, Music, HelpCircle, Download, ExternalLink, BarChart2
+  FileText, Presentation, FileCode, Music, HelpCircle, Download, ExternalLink, BarChart2,
+  Lock, AlertCircle
 } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
@@ -14,12 +15,14 @@ import { ROUTES } from '../../../constants/routes';
 import { ROLES } from '../../../constants/roles';
 import { PERMISSIONS } from '../../../constants/permissions';
 import usePermission from '../../../hooks/usePermission';
+import useAuth from '../../auth/hooks/useAuth';
+import learningService from '../../learning/services/learningService';
 import { formatSectionTitle } from '../components/CurriculumBuilder';
 import CourseAnalyticsTab from '../components/CourseAnalyticsTab';
 import courseService from '../services/courseService';
 
 export const CourseDetailsPage = () => {
-  const { courseId } = useParams();
+  const { courseId, lessonId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const { data: course, isLoading, error, refetch } = useCourse(courseId);
@@ -52,12 +55,68 @@ export const CourseDetailsPage = () => {
   }, [course]);
 
   const [activeLessonIndex, setActiveLessonIndex] = useState(0);
+
+  useEffect(() => {
+    if (lessonId && allLessons.length > 0) {
+      const idx = allLessons.findIndex((l) => l.id === lessonId);
+      if (idx >= 0) setActiveLessonIndex(idx);
+    }
+  }, [lessonId, allLessons]);
+
+  const { user } = useAuth();
+  const userId = user?.id || 'guest';
+  const storageKey = `lms_completed_lessons_${userId}_${courseId}`;
+
   const [completedLessonIds, setCompletedLessonIds] = useState(() => {
-    return allLessons.length > 0 ? [allLessons[0].id] : [];
+    try {
+      const saved = localStorage.getItem(`lms_completed_lessons_${userId}_${courseId}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (_) {}
+    return [];
   });
+
   const [recordingPlaybackUrl, setRecordingPlaybackUrl] = useState(null);
   const [startedLessonId, setStartedLessonId] = useState(null);
+  const [videoNotice, setVideoNotice] = useState(null);
+  const [videoProgressPercent, setVideoProgressPercent] = useState(0);
+
+  const videoRef = useRef(null);
+  const maxWatchedTimeRef = useRef(0);
+  const videoNoticeTimeoutRef = useRef(null);
+
   const currentLesson = allLessons[activeLessonIndex] || allLessons[0] || null;
+
+  const isStudent = !isAdminOrInstructor || location.pathname.startsWith('/learn');
+  const isAdmin = location.pathname.startsWith('/admin');
+
+  // Reset video watch tracking when switching lessons
+  useEffect(() => {
+    maxWatchedTimeRef.current = 0;
+    setVideoProgressPercent(0);
+    setVideoNotice(null);
+  }, [currentLesson?.id]);
+
+  const showNotice = (text, type = 'warning') => {
+    if (videoNoticeTimeoutRef.current) {
+      clearTimeout(videoNoticeTimeoutRef.current);
+    }
+    setVideoNotice({ text, type });
+    videoNoticeTimeoutRef.current = setTimeout(() => {
+      setVideoNotice(null);
+    }, 3500);
+  };
+
+  const markLessonCompleted = (lessonIdToComplete) => {
+    if (!lessonIdToComplete) return;
+    setCompletedLessonIds((prev) => {
+      if (prev.includes(lessonIdToComplete)) return prev;
+      return [...prev, lessonIdToComplete];
+    });
+    showNotice('🎉 Lesson completed! Great job!', 'success');
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -86,10 +145,75 @@ export const CourseDetailsPage = () => {
   const completedCount = completedLessonIds.length;
   const progressPercent = allLessons.length > 0 ? Math.round((completedCount / allLessons.length) * 100) : 0;
 
+  // Persist completed lessons whenever they update
+  useEffect(() => {
+    if (courseId) {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(completedLessonIds));
+      } catch (_) {}
+      if (isStudent) {
+        learningService.saveProgress(courseId, {
+          completedLessonIds,
+          percent: progressPercent
+        }).catch(() => {});
+      }
+    }
+  }, [courseId, storageKey, completedLessonIds, isStudent, progressPercent]);
+
   const toggleComplete = (id) => {
     setCompletedLessonIds(prev =>
       prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
     );
+  };
+
+  const handleVideoTimeUpdate = (e) => {
+    const video = e.currentTarget;
+    if (!video || !video.duration) return;
+
+    const currentTime = video.currentTime;
+    const duration = video.duration;
+    const isCompleted = completedLessonIds.includes(currentLesson?.id);
+
+    const pct = Math.min(100, Math.round((currentTime / duration) * 100));
+    setVideoProgressPercent(pct);
+
+    // Enforce watch limits for students on uncompleted lessons
+    if (isStudent && !isCompleted) {
+      // User scrubbed/skipped forward past what has been watched (+ 2s buffer for micro-skips)
+      if (currentTime > maxWatchedTimeRef.current + 2.0) {
+        video.currentTime = maxWatchedTimeRef.current;
+        showNotice('Fast-forward is locked. Please watch the full video to complete this lesson.');
+        return;
+      }
+
+      if (currentTime > maxWatchedTimeRef.current) {
+        maxWatchedTimeRef.current = currentTime;
+      }
+
+      // Check if watched through the full video (at least 98% or within 1.5s of the end)
+      if (currentTime / duration >= 0.98 || duration - currentTime <= 1.5) {
+        markLessonCompleted(currentLesson?.id);
+      }
+    }
+  };
+
+  const handleVideoSeeking = (e) => {
+    const video = e.currentTarget;
+    if (!video) return;
+    const isCompleted = completedLessonIds.includes(currentLesson?.id);
+
+    if (isStudent && !isCompleted) {
+      if (video.currentTime > maxWatchedTimeRef.current + 1.5) {
+        video.currentTime = maxWatchedTimeRef.current;
+        showNotice('Fast-forward is locked. Please watch the full video to complete this lesson.');
+      }
+    }
+  };
+
+  const handleVideoEnded = () => {
+    if (currentLesson?.id) {
+      markLessonCompleted(currentLesson.id);
+    }
   };
 
   const toggleModuleCollapse = (modId) => {
@@ -108,14 +232,13 @@ export const CourseDetailsPage = () => {
   const lessonPosterUrl = currentLesson?.thumbnailUrl || course.thumbnailUrl || null;
   const isCurrentLessonPlaying = startedLessonId === currentLesson?.id;
 
-  const isAdmin = location.pathname.startsWith('/admin');
-  const backRoute = isAdmin ? ROUTES.ADMIN_COURSES : ROUTES.COURSES;
+  const backRoute = isStudent ? ROUTES.MY_COURSES : isAdmin ? ROUTES.ADMIN_COURSES : ROUTES.COURSES;
   const editRoute = isAdmin ? ROUTES.ADMIN_COURSE_EDIT(courseId) : ROUTES.COURSE_EDIT(courseId);
 
   return (
     <PageContainer
       title={course.title}
-      breadcrumbs={[{ label: 'Courses', to: backRoute }, { label: course.title }]}
+      breadcrumbs={[{ label: isStudent ? 'My Courses' : 'Courses', to: backRoute }, { label: course.title }]}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20, fontFamily: 'system-ui, -apple-system, sans-serif' }}>
         
@@ -125,7 +248,7 @@ export const CourseDetailsPage = () => {
             <button
               onClick={() => navigate(backRoute)}
               style={iconBtnStyle}
-              title="Back to Courses"
+              title={isStudent ? 'Back to My Courses' : 'Back to Courses'}
             >
               <ArrowLeft size={18} />
             </button>
@@ -134,13 +257,15 @@ export const CourseDetailsPage = () => {
             </h1>
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate(editRoute)}
-          >
-            <Edit3 size={14} style={{ marginRight: 6 }} /> Edit Course
-          </Button>
+          {isAdminOrInstructor && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate(editRoute)}
+            >
+              <Edit3 size={14} style={{ marginRight: 6 }} /> Edit Course
+            </Button>
+          )}
         </div>
 
         {/* ── Glassmorphic Pill Tab Navigation (Restricted to Admin & Instructor) ── */}
@@ -308,16 +433,51 @@ export const CourseDetailsPage = () => {
                   <span style={videoPosterLabelStyle}>Play lesson</span>
                 </button>
               ) : mediaUrl ? (
-                <video
-                  autoPlay
-                  controls
-                  key={currentLesson?.id}
-                  style={{ width: '100%', height: '100%', maxHeight: 420, objectFit: 'contain' }}
-                  poster={lessonPosterUrl || undefined}
-                >
-                  <source src={mediaUrl} />
-                  Your browser does not support video playback.
-                </video>
+                <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000000' }}>
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    controls
+                    key={currentLesson?.id}
+                    style={{ width: '100%', height: '100%', maxHeight: 420, objectFit: 'contain' }}
+                    poster={lessonPosterUrl || undefined}
+                    onTimeUpdate={handleVideoTimeUpdate}
+                    onSeeking={handleVideoSeeking}
+                    onSeeked={handleVideoSeeking}
+                    onEnded={handleVideoEnded}
+                  >
+                    <source src={mediaUrl} />
+                    Your browser does not support video playback.
+                  </video>
+
+                  {/* Video Notice Banner */}
+                  {videoNotice && (
+                    <div style={{
+                      position: 'absolute',
+                      bottom: 54,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      background: videoNotice.type === 'success' ? '#10b981' : 'rgba(220, 38, 38, 0.95)',
+                      color: '#ffffff',
+                      padding: '8px 18px',
+                      borderRadius: 8,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      zIndex: 20,
+                      pointerEvents: 'none',
+                      backdropFilter: 'blur(6px)',
+                      maxWidth: '90%',
+                      textAlign: 'center'
+                    }}>
+                      {videoNotice.type === 'success' ? <CheckCircle2 size={16} /> : <Lock size={16} />}
+                      <span>{videoNotice.text}</span>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <div style={{ width: '100%', padding: 32, textAlign: 'center', color: '#ffffff' }}>
                   <Play size={56} style={{ opacity: 0.8, marginBottom: 12 }} />
@@ -353,7 +513,35 @@ export const CourseDetailsPage = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                {/* Watch Progress Badge for Students */}
+                {isStudent && currentLesson && (
+                  <div style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '6px 12px',
+                    borderRadius: 99,
+                    background: completedLessonIds.includes(currentLesson.id) ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                    border: `1px solid ${completedLessonIds.includes(currentLesson.id) ? '#10b981' : '#f59e0b'}`,
+                    color: completedLessonIds.includes(currentLesson.id) ? '#10b981' : '#f59e0b',
+                    fontSize: 12,
+                    fontWeight: 600
+                  }}>
+                    {completedLessonIds.includes(currentLesson.id) ? (
+                      <>
+                        <CheckCircle2 size={15} />
+                        <span>Completed</span>
+                      </>
+                    ) : (
+                      <>
+                        <Lock size={13} />
+                        <span>Watch full video to complete ({videoProgressPercent}%)</span>
+                      </>
+                    )}
+                  </div>
+                )}
+
                 <button onClick={handleShare} style={actionIconBtnStyle} title="Share Course">
                   <Share2 size={18} />
                 </button>
@@ -536,9 +724,25 @@ export const CourseDetailsPage = () => {
                                 >
                                   {/* Status Icon */}
                                   <div
-                                    onClick={(e) => { e.stopPropagation(); toggleComplete(l.id); }}
-                                    style={{ cursor: 'pointer', flexShrink: 0 }}
-                                    title={isCompleted ? 'Mark incomplete' : 'Mark complete'}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (!isStudent) {
+                                        toggleComplete(l.id);
+                                      } else if (!isCompleted) {
+                                        showNotice('Please watch the full video to complete this lesson.');
+                                      }
+                                    }}
+                                    style={{
+                                      cursor: isStudent ? 'default' : 'pointer',
+                                      flexShrink: 0
+                                    }}
+                                    title={
+                                      isCompleted
+                                        ? 'Completed'
+                                        : isStudent
+                                          ? 'Watch full video to complete this lesson'
+                                          : 'Mark complete'
+                                    }
                                   >
                                     {isCompleted ? (
                                       <div style={{ width: 24, height: 24, borderRadius: '50%', background: '#10b981', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

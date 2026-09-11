@@ -11,7 +11,6 @@ const validLearner = () => ({
   registrationNo: 'REG-001',
   dateOfBirth: '1998-12-10',
   gender: 'FEMALE',
-  categoryId: '',
   admissionDate: '2026-08-01',
   photoKey: 'students/photos/abc.png',
   highestQualification: 'B.Sc Computer Science',

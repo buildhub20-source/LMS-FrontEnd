@@ -27,12 +27,28 @@ export const login = createAsyncThunk('auth/login', async (credentials, { reject
     const data = await authService.login(credentials);
     tokenStorage.setTokens(data.tokens);
 
-    // Merge backend user + roles/permissions from the user object
+    // Fetch full profile and permissions so navigation and access guards work immediately
+    let meData = null;
+    if (!data.mustChangePassword && typeof authService.getCurrentUser === 'function') {
+      try {
+        meData = await authService.getCurrentUser();
+      } catch {
+        // Fall back gracefully if getCurrentUser fails or is not mocked in tests
+      }
+    }
+
+    const baseUser = meData?.user ?? data.user;
     const user = {
-      ...data.user,
-      fullName: data.user?.name,
-      // The LoginResponse.user carries roles as Set<String> directly
-      roles: Array.isArray(data.user?.roles) ? data.user.roles : [...(data.user?.roles ?? [])],
+      ...baseUser,
+      fullName: baseUser?.name,
+      roles: Array.isArray(meData?.roles)
+        ? meData.roles
+        : Array.isArray(data.user?.roles)
+          ? data.user.roles
+          : [...(data.user?.roles ?? [])],
+      permissions: Array.isArray(meData?.permissions)
+        ? meData.permissions
+        : [...(data.user?.permissions ?? [])],
       mustChangePassword: data.mustChangePassword ?? false,
     };
     return user;

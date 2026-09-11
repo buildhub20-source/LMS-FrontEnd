@@ -47,7 +47,6 @@ const RoleDetailsPage = lazy(() => import('../features/roles/pages/RoleDetailsPa
 const PermissionsPage = lazy(() => import('../features/roles/pages/PermissionsPage'));
 const InvitationListPage = lazy(() => import('../features/invitations/pages/InvitationListPage'));
 const StudentListPage = lazy(() => import('../features/students/pages/StudentListPage'));
-const StudentCategoryPage = lazy(() => import('../features/students/pages/StudentCategoryPage'));
 const EditStudentPage = lazy(() => import('../features/students/pages/EditStudentPage'));
 const StudentDetailsPage = lazy(() => import('../features/students/pages/StudentDetailsPage'));
 const InstructorListPage = lazy(() => import('../features/instructors/pages/InstructorListPage'));
@@ -80,9 +79,6 @@ const EnrollmentListPage = lazy(() => import('../features/enrollment/pages/Enrol
 const EnrollmentDetailsPage = lazy(
   () => import('../features/enrollment/pages/EnrollmentDetailsPage'),
 );
-const LearningPage = lazy(() => import('../features/learning/pages/LearningPage'));
-const LessonPage = lazy(() => import('../features/learning/pages/LessonPage'));
-const CoursePlayerPage = lazy(() => import('../features/learning/pages/CoursePlayerPage'));
 const AssessmentListPage = lazy(() => import('../features/assessments/pages/AssessmentListPage'));
 const AssessmentPage = lazy(() => import('../features/assessments/pages/AssessmentPage'));
 const StudentAssessmentTakingPage = lazy(
@@ -182,7 +178,6 @@ export const router = createBrowserRouter([
               { path: ROUTES.BATCHES, element: suspend(<BatchListPage />) },
               { path: ROUTES.STUDENTS, element: suspend(<StudentListPage />) },
               { path: ROUTES.STUDENT_CREATE, element: suspend(<AddStudentPage />) },
-              { path: ROUTES.STUDENT_CATEGORIES, element: suspend(<StudentCategoryPage />) },
               { path: ROUTES.STUDENT_EDIT(), element: suspend(<EditStudentPage />) },
               { path: ROUTES.STUDENT_DETAILS(), element: suspend(<StudentDetailsPage />) },
               { path: ROUTES.INSTRUCTORS, element: suspend(<InstructorListPage />) },
@@ -280,17 +275,22 @@ export const router = createBrowserRouter([
         path: '/learn',
         element: <RoleBasedLayout />,
         children: [
-          { index: true, element: <Navigate to={ROUTES.MY_COURSES} replace /> },
-          { path: ROUTES.MY_COURSES, element: suspend(<MyCoursesPage />) },
-          { path: ROUTES.STUDENT_PROGRESS, element: suspend(<StudentProgressPage />) },
-          { path: ROUTES.STUDENT_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
-          { path: ROUTES.MY_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
-          { path: ROUTES.CERTIFICATES, element: suspend(<CertificateListPage />) },
-          { path: ROUTES.CERTIFICATE_DETAILS(), element: suspend(<CertificateDetailsPage />) },
-          { path: ROUTES.ASSESSMENT_RESULT(), element: suspend(<AssessmentResultPage />) },
-          { path: ROUTES.LEARNING(), element: suspend(<LearningPage />) },
-          { path: ROUTES.LESSON(), element: suspend(<LessonPage />) },
-          { path: ROUTES.COURSE_PLAYER(), element: suspend(<CoursePlayerPage />) },
+          {
+            element: <StudentLayout />,
+            children: [
+              { index: true, element: <Navigate to={ROUTES.MY_COURSES} replace /> },
+              { path: ROUTES.MY_COURSES, element: suspend(<MyCoursesPage />) },
+              { path: ROUTES.STUDENT_PROGRESS, element: suspend(<StudentProgressPage />) },
+              { path: ROUTES.STUDENT_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
+              { path: ROUTES.MY_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
+              { path: ROUTES.CERTIFICATES, element: suspend(<CertificateListPage />) },
+              { path: ROUTES.CERTIFICATE_DETAILS(), element: suspend(<CertificateDetailsPage />) },
+              { path: ROUTES.ASSESSMENT_RESULT(), element: suspend(<AssessmentResultPage />) },
+              { path: ROUTES.LEARNING(), element: suspend(<CourseDetailsPage />) },
+              { path: ROUTES.LESSON(), element: suspend(<CourseDetailsPage />) },
+              { path: ROUTES.COURSE_PLAYER(), element: suspend(<CourseDetailsPage />) },
+            ],
+          },
         ],
       },
 

@@ -56,13 +56,6 @@ export const studentService = {
   /** DELETE /students/{id} */
   remove: (id) => http.delete(API_ENDPOINTS.students.byId(id)),
 
-  // ─── admission categories ───────────────────────────────────────────────
-  listCategories: () => http.get(API_ENDPOINTS.students.categories),
-  createCategory: (payload) => http.post(API_ENDPOINTS.students.categories, payload),
-  updateCategory: (id, payload) => http.put(API_ENDPOINTS.students.categoryById(id), payload),
-  /** Refused by the API while learners still hold the category. */
-  removeCategory: (id) => http.delete(API_ENDPOINTS.students.categoryById(id)),
-
   uploadPhoto,
 };
 

@@ -51,11 +51,6 @@ const ITEMS = [
         permission: PERMISSIONS.STUDENT_CREATE,
       },
       { label: 'Learner List', to: ROUTES.STUDENTS, end: true },
-      {
-        label: 'Categories',
-        to: ROUTES.STUDENT_CATEGORIES,
-        permission: PERMISSIONS.STUDENT_UPDATE,
-      },
     ],
   },
   {
