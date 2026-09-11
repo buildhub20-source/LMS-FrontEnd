@@ -91,6 +91,13 @@ export const AdminAssessmentDetailsPage = () => {
 
   const handleAddQuestion = async (values) => {
     try {
+      if (isPublished) {
+        const confirmUnpublish = window.confirm(
+          `"${a.title}" is currently PUBLISHED.\n\nBackend policy requires an assessment to be in DRAFT to add questions.\n\nWould you like to unpublish it now to add this question?`
+        );
+        if (!confirmUnpublish) return;
+        await unpublish.mutateAsync(assessmentId);
+      }
       if (targetSectionId) {
         await addSectionQ.mutateAsync({ sectionId: targetSectionId, data: values });
       } else {
@@ -101,7 +108,38 @@ export const AdminAssessmentDetailsPage = () => {
       setTargetSectionId(null);
     } catch (e) {
       console.error('Question add failed:', e);
-      toast.error(e.message || 'Failed to add question');
+      toast.error(e?.response?.data?.message || e.message || 'Failed to add question');
+    }
+  };
+
+  const handleDeleteQuestion = async (q) => {
+    if (isPublished) {
+      const confirmUnpublish = window.confirm(
+        `"${a.title}" is currently PUBLISHED.\n\nBackend policy requires an assessment to be in DRAFT to delete questions.\n\nWould you like to unpublish it now and delete "${q.title}"?`
+      );
+      if (!confirmUnpublish) return;
+      try {
+        await unpublish.mutateAsync(assessmentId);
+        await removeQ.mutateAsync(q.id);
+        toast.success(`Assessment reverted to draft and "${q.title}" removed`);
+        if (editingQuestion?.id === q.id) {
+          setEditingQuestion(null);
+        }
+      } catch (e) {
+        toast.error(e?.response?.data?.message || e.message || 'Failed to remove question');
+      }
+      return;
+    }
+
+    if (!window.confirm(`Delete question "${q.title}"?`)) return;
+    try {
+      await removeQ.mutateAsync(q.id);
+      toast.success('Question deleted');
+      if (editingQuestion?.id === q.id) {
+        setEditingQuestion(null);
+      }
+    } catch (e) {
+      toast.error(e?.response?.data?.message || e.message || 'Failed to delete question');
     }
   };
 
@@ -479,7 +517,7 @@ export const AdminAssessmentDetailsPage = () => {
                                   <Button variant="ghost" size="sm" onClick={() => { setShowForm(false); setEditingQuestion(editingQuestion?.id === q.id ? null : q); }} title="Edit question">
                                     <Edit2 size={13} />
                                   </Button>
-                                  <Button variant="ghost" size="sm" onClick={() => removeQ.mutateAsync(q.id).catch(e => toast.error(e.message))} title="Delete question">
+                                  <Button variant="ghost" size="sm" onClick={() => handleDeleteQuestion(q)} title="Delete question">
                                     <Trash2 size={13} />
                                   </Button>
                                 </div>
@@ -518,7 +556,7 @@ export const AdminAssessmentDetailsPage = () => {
                                 <Button variant="ghost" size="sm" onClick={() => { setShowForm(false); setEditingQuestion(editingQuestion?.id === q.id ? null : q); }} title="Edit question">
                                   <Edit2 size={13} />
                                 </Button>
-                                <Button variant="ghost" size="sm" onClick={() => removeQ.mutateAsync(q.id).catch(e => toast.error(e.message))} title="Delete question">
+                                <Button variant="ghost" size="sm" onClick={() => handleDeleteQuestion(q)} title="Delete question">
                                   <Trash2 size={13} />
                                 </Button>
                               </div>

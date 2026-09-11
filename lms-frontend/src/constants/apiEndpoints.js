@@ -50,8 +50,6 @@ export const API_ENDPOINTS = Object.freeze({
     base: '/students',
     byId: (id) => `/students/${id}`,
     referenceData: '/students/reference-data',
-    categories: '/students/categories',
-    categoryById: (id) => `/students/categories/${id}`,
     photoUploadUrl: '/students/photo/upload-url',
   },
   courses: {

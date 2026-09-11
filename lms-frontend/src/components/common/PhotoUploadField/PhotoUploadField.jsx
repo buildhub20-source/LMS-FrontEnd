@@ -1,18 +1,31 @@
 import { useEffect, useId, useRef, useState } from 'react';
-
+import { Camera, Upload, Trash2, User, AlertCircle, Loader2 } from 'lucide-react';
 import { PHOTO_ACCEPT, PHOTO_MAX_BYTES } from '../../../constants/personConstants';
+import { initials } from '../../../utils/formatUtils';
+import Button from '../Button';
 import styles from './PhotoUploadField.module.css';
 
 const ACCEPTED = PHOTO_ACCEPT.split(',');
 
 /**
- * Drag-and-drop photo field.
+ * Modern profile avatar & drag-and-drop photo field.
  *
  * Controlled on the storage key, not the file: the upload happens as soon as a
- * file is picked, and the form only ever carries the key the API expects. That
- * keeps submit fast and means a failed upload surfaces here rather than on save.
+ * file is picked, and the form only ever carries the key the API expects.
+ * Shows high-resolution avatar preview, initials fallback, and responsive controls.
  */
-export const PhotoUploadField = ({ label, value, onChange, onUpload, required = false, error }) => {
+export const PhotoUploadField = ({
+  label = 'Learner Photo',
+  name = '',
+  value,
+  initialUrl = '',
+  onChange,
+  onUpload,
+  required = false,
+  error,
+  hint,
+  className = '',
+}) => {
   const inputRef = useRef(null);
   const inputId = useId();
 
@@ -21,8 +34,7 @@ export const PhotoUploadField = ({ label, value, onChange, onUpload, required = 
   const [uploadError, setUploadError] = useState(null);
   const [preview, setPreview] = useState(null);
 
-  // Object URLs are revoked on replace and on unmount; without this every
-  // re-pick leaks the previous blob for the life of the page.
+  // Object URLs are revoked on replace and on unmount to prevent blob leaks
   useEffect(() => () => preview && URL.revokeObjectURL(preview.url), [preview]);
 
   const reject = (message) => {
@@ -77,34 +89,26 @@ export const PhotoUploadField = ({ label, value, onChange, onUpload, required = 
   };
 
   const shown = error || uploadError;
-  const zoneClasses = [
-    styles.dropzone,
+  const displayUrl = preview?.url || (value ? initialUrl : null);
+  const hasPhoto = Boolean(displayUrl);
+  const userInitials = initials(name);
+
+  const containerClasses = [
+    styles.card,
     dragging ? styles.dragging : '',
     shown ? styles.invalid : '',
     uploading ? styles.busy : '',
+    className,
   ]
     .filter(Boolean)
     .join(' ');
 
   return (
-    <div className={styles.field}>
-      <label className={styles.label} htmlFor={inputId}>
-        {label}
-        {required && <span className={styles.required}>*</span>}
-      </label>
-
+    <div className={styles.fieldWrapper}>
       <div
-        className={zoneClasses}
-        role="button"
-        tabIndex={0}
-        aria-describedby={shown ? `${inputId}-error` : undefined}
-        onClick={() => inputRef.current?.click()}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            inputRef.current?.click();
-          }
-        }}
+        className={containerClasses}
+        role="region"
+        aria-label={label}
         onDragOver={(event) => {
           event.preventDefault();
           setDragging(true);
@@ -112,24 +116,87 @@ export const PhotoUploadField = ({ label, value, onChange, onUpload, required = 
         onDragLeave={() => setDragging(false)}
         onDrop={onDrop}
       >
-        {uploading && <span>Uploading…</span>}
+        {/* Avatar Display Box with Camera Hover Overlay */}
+        <div
+          className={styles.avatarWrap}
+          onClick={() => !uploading && inputRef.current?.click()}
+          role="button"
+          tabIndex={0}
+          title={hasPhoto ? 'Click to change photo' : 'Click to upload photo'}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              inputRef.current?.click();
+            }
+          }}
+        >
+          {hasPhoto ? (
+            <img className={styles.avatarImg} src={displayUrl} alt={name || label} />
+          ) : userInitials ? (
+            <span className={styles.avatarInitials}>{userInitials}</span>
+          ) : (
+            <User className={styles.placeholderIcon} size={34} />
+          )}
 
-        {!uploading && value && (
-          <span className={styles.preview}>
-            {preview && <img className={styles.thumb} src={preview.url} alt="" />}
-            <span className={styles.fileName}>{preview?.name ?? 'Photo attached'}</span>
-            <button
+          {/* Interactive Hover Overlay */}
+          <div className={styles.hoverOverlay} aria-hidden="true">
+            <Camera size={18} />
+            <span className={styles.hoverText}>{hasPhoto ? 'Change' : 'Upload'}</span>
+          </div>
+
+          {uploading && (
+            <div className={styles.uploadingOverlay}>
+              <Loader2 className={styles.spinner} size={22} />
+            </div>
+          )}
+        </div>
+
+        {/* Info & Action Controls */}
+        <div className={styles.details}>
+          <div className={styles.headerRow}>
+            <span className={styles.label}>{label}</span>
+            {required ? (
+              <span className={styles.required}>* Required</span>
+            ) : (
+              <span className={styles.badge}>Optional</span>
+            )}
+          </div>
+
+          <p className={styles.hint}>
+            {dragging
+              ? 'Drop the image file right here'
+              : hint || 'PNG, JPG or WebP up to 5MB. Square photo recommended for ID cards.'}
+          </p>
+
+          <div className={styles.actionRow}>
+            <Button
               type="button"
-              className={styles.clear}
-              onClick={clear}
-              aria-label={`Remove ${label}`}
+              variant="secondary"
+              size="sm"
+              leftIcon={uploading ? <Loader2 className={styles.spinner} size={14} /> : <Upload size={14} />}
+              disabled={uploading}
+              onClick={() => inputRef.current?.click()}
             >
-              ✕
-            </button>
-          </span>
-        )}
+              {uploading ? 'Uploading…' : hasPhoto ? 'Change photo' : 'Upload photo'}
+            </Button>
 
-        {!uploading && !value && <span>Drag &amp; drop a file here or click</span>}
+            {hasPhoto && !uploading && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className={styles.removeBtn}
+                leftIcon={<Trash2 size={14} />}
+                onClick={clear}
+                aria-label={`Remove ${label}`}
+              >
+                Remove
+              </Button>
+            )}
+
+            <span className={styles.dropPrompt}>or drag &amp; drop</span>
+          </div>
+        </div>
       </div>
 
       <input
@@ -142,9 +209,10 @@ export const PhotoUploadField = ({ label, value, onChange, onUpload, required = 
       />
 
       {shown && (
-        <span className={styles.error} id={`${inputId}-error`} role="alert">
-          {shown}
-        </span>
+        <div className={styles.error} id={`${inputId}-error`} role="alert">
+          <AlertCircle size={14} />
+          <span>{shown}</span>
+        </div>
       )}
     </div>
   );

@@ -5,10 +5,12 @@ import { useAdminAssessments } from '../../assessments/hooks/useAdminAssessments
 import { useUsers } from '../../users/hooks/useUsers';
 import { courseService } from '../../courses/services/courseService';
 import { useToast } from '../../../components/feedback/Toast';
+import { AdminModal } from '../../../components/ui/AdminModal';
 import {
   CheckSquare, Globe, Users, UserCheck, BookOpen, FileCheck2,
   ArrowRight, Filter, CheckCircle2, XCircle, UserPlus,
-  UserMinus, RefreshCw, GraduationCap, LayoutDashboard, Search, ChevronDown
+  UserMinus, RefreshCw, GraduationCap, LayoutDashboard, Search, ChevronDown,
+  Target, ArrowLeftRight, X, Layers
 } from 'lucide-react';
 
 /* ─── Design tokens matching Roles List page ──────────────────────── */
@@ -97,6 +99,8 @@ export const EnrollmentListPage = () => {
   const [statusFilter, setStatusFilter]   = useState('ALL');
   const [selectedCourseId, setSelectedCourseId]       = useState('');
   const [selectedAssessmentId, setSelectedAssessmentId] = useState('');
+  const [targetModalOpen, setTargetModalOpen]         = useState(false);
+  const [targetSearchQuery, setTargetSearchQuery]     = useState('');
   const [selectionMode, setSelectionMode] = useState('PARTICULAR');
   const [selectedUserIds, setSelectedUserIds]         = useState([]);
   const [searchQuery, setSearchQuery]     = useState('');
@@ -128,6 +132,21 @@ export const EnrollmentListPage = () => {
   const assessments     = useMemo(() => extract(assessmentsData),[assessmentsData]);
   const rawUsers        = useMemo(() => extract(usersData),      [usersData]);
 
+  const activeCourse = useMemo(() =>
+    courses.find(c => c.id === selectedCourseId),
+    [courses, selectedCourseId]);
+
+  const activeAssessment = useMemo(() =>
+    assessments.find(a => a.id === selectedAssessmentId),
+    [assessments, selectedAssessmentId]);
+
+  const activeTarget = topTab === 'COURSES' ? activeCourse : activeAssessment;
+
+  const targetEnrolledCount = useMemo(() => {
+    if (!selectedCourseId) return 0;
+    return rawEnrollments.filter(e => e.course?.id === selectedCourseId && e.status !== 'INACTIVE').length;
+  }, [rawEnrollments, selectedCourseId]);
+
   const students = useMemo(() =>
     rawUsers.filter(u => u.roles?.includes('STUDENT') || (!u.roles?.includes('INSTRUCTOR') && !u.roles?.includes('ADMIN'))),
     [rawUsers]);
@@ -135,6 +154,22 @@ export const EnrollmentListPage = () => {
   const instructors = useMemo(() =>
     rawUsers.filter(u => u.roles?.includes('INSTRUCTOR') || u.roles?.includes('ADMIN')),
     [rawUsers]);
+
+  const targetInstructor = useMemo(() => {
+    if (!activeCourse?.instructorId) return null;
+    return instructors.find(i => i.id === activeCourse.instructorId);
+  }, [activeCourse, instructors]);
+
+  const filteredModalTargets = useMemo(() => {
+    const list = topTab === 'COURSES' ? courses : assessments;
+    if (!targetSearchQuery.trim()) return list;
+    const q = targetSearchQuery.toLowerCase();
+    return list.filter(item =>
+      (item.title || '').toLowerCase().includes(q) ||
+      (item.description || '').toLowerCase().includes(q) ||
+      (item.instructorName || '').toLowerCase().includes(q)
+    );
+  }, [topTab, courses, assessments, targetSearchQuery]);
 
   const activeTargetList = subTab === 'STUDENTS' ? students : instructors;
 
@@ -480,27 +515,315 @@ export const EnrollmentListPage = () => {
           </div>
         </div>
 
+        {/* ─── Target Spotlight Banner (Option 2) ────────────────── */}
+        <div style={{ padding: '16px 24px', borderBottom: `1px solid ${T.border}`, background: 'rgba(255, 255, 255, 0.01)' }}>
+          {activeTarget ? (
+            /* Active Target Card */
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 16,
+                padding: '16px 20px',
+                borderRadius: 10,
+                background: 'linear-gradient(135deg, rgba(115, 103, 240, 0.12) 0%, rgba(115, 103, 240, 0.03) 100%)',
+                border: '1px solid rgba(115, 103, 240, 0.3)',
+                boxShadow: '0 4px 20px rgba(115, 103, 240, 0.08)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, minWidth: 0, flex: 1 }}>
+                <div
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 12,
+                    background: 'rgba(115, 103, 240, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: T.primary,
+                    flexShrink: 0,
+                    boxShadow: '0 0 16px rgba(115, 103, 240, 0.25)',
+                  }}
+                >
+                  {topTab === 'COURSES' ? <BookOpen size={24} /> : <FileCheck2 size={24} />}
+                </div>
+
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 5,
+                        fontSize: 10,
+                        fontWeight: 800,
+                        letterSpacing: '0.08em',
+                        textTransform: 'uppercase',
+                        padding: '2px 8px',
+                        borderRadius: 99,
+                        background: 'rgba(115, 103, 240, 0.2)',
+                        color: T.primary,
+                      }}
+                    >
+                      <span style={{ width: 6, height: 6, borderRadius: '50%', background: T.primary }} />
+                      Active Target {topTab === 'COURSES' ? 'Course' : 'Assessment'}
+                    </span>
+                    {activeCourse?.status && (
+                      <span style={{ fontSize: 11, fontWeight: 600, color: T.textMuted }}>
+                        • {activeCourse.status}
+                      </span>
+                    )}
+                  </div>
+
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: 17,
+                      fontWeight: 700,
+                      color: T.textMain,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {activeTarget.title}
+                  </h3>
+
+                  <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 16, marginTop: 6, fontSize: 12, color: T.textMuted }}>
+                    {topTab === 'COURSES' ? (
+                      <>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                          <Users size={13} color={T.primary} />
+                          <strong style={{ color: T.textMain }}>{targetEnrolledCount}</strong> enrolled student{targetEnrolledCount === 1 ? '' : 's'}
+                        </span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                          <UserCheck size={13} color={T.success} />
+                          Instructor: <strong style={{ color: T.textMain }}>{targetInstructor?.fullName || targetInstructor?.name || activeCourse?.instructorName || 'Unassigned'}</strong>
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                          <CheckCircle2 size={13} color={T.teal} />
+                          Total Marks: <strong style={{ color: T.textMain }}>{activeAssessment?.totalMarks ?? '—'}</strong>
+                        </span>
+                        {activeAssessment?.durationMinutes && (
+                          <span>
+                            Duration: <strong style={{ color: T.textMain }}>{activeAssessment.durationMinutes} mins</strong>
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                <button
+                  type="button"
+                  onClick={() => setTargetModalOpen(true)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '8px 14px',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    borderRadius: 8,
+                    background: 'rgba(115, 103, 240, 0.18)',
+                    color: T.primary,
+                    border: '1px solid rgba(115, 103, 240, 0.35)',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = 'rgba(115, 103, 240, 0.28)';
+                    e.currentTarget.style.borderColor = T.primary;
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = 'rgba(115, 103, 240, 0.18)';
+                    e.currentTarget.style.borderColor = 'rgba(115, 103, 240, 0.35)';
+                  }}
+                >
+                  <ArrowLeftRight size={14} /> Switch {topTab === 'COURSES' ? 'Course' : 'Assessment'}
+                </button>
+
+                <button
+                  type="button"
+                  title="Clear selection to view all"
+                  onClick={() => topTab === 'COURSES' ? setSelectedCourseId('') : setSelectedAssessmentId('')}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 34,
+                    height: 34,
+                    borderRadius: 8,
+                    background: T.surface,
+                    color: T.textMuted,
+                    border: `1px solid ${T.border}`,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.color = T.danger;
+                    e.currentTarget.style.borderColor = 'rgba(234, 84, 85, 0.4)';
+                    e.currentTarget.style.background = 'rgba(234, 84, 85, 0.1)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.color = T.textMuted;
+                    e.currentTarget.style.borderColor = T.border;
+                    e.currentTarget.style.background = T.surface;
+                  }}
+                >
+                  <X size={15} />
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* Unselected Empty State Card */
+            <div
+              style={{
+                padding: '18px 22px',
+                borderRadius: 10,
+                background: T.surface,
+                border: `1px dashed ${T.border}`,
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 16,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 10,
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: T.textMuted,
+                  }}
+                >
+                  <Target size={22} />
+                </div>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: T.textMain }}>
+                    No Target {topTab === 'COURSES' ? 'Course' : 'Assessment'} Selected
+                  </h4>
+                  <p style={{ margin: '3px 0 0', fontSize: 13, color: T.textMuted }}>
+                    Select a target to view enrolled members, check status, and assign {subTab.toLowerCase()}.
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                {/* Quick select chips */}
+                {(topTab === 'COURSES' ? courses : assessments).slice(0, 3).map(item => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => topTab === 'COURSES' ? setSelectedCourseId(item.id) : setSelectedAssessmentId(item.id)}
+                    style={{
+                      padding: '5px 10px',
+                      fontSize: 12,
+                      fontWeight: 500,
+                      borderRadius: 6,
+                      background: 'rgba(255, 255, 255, 0.04)',
+                      color: T.textSub,
+                      border: `1px solid ${T.border}`,
+                      cursor: 'pointer',
+                      maxWidth: 160,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      transition: 'all 0.15s ease',
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.background = T.hover;
+                      e.currentTarget.style.color = T.primary;
+                      e.currentTarget.style.borderColor = T.primary;
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
+                      e.currentTarget.style.color = T.textSub;
+                      e.currentTarget.style.borderColor = T.border;
+                    }}
+                  >
+                    ⚡ {item.title}
+                  </button>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() => setTargetModalOpen(true)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '8px 16px',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    borderRadius: 8,
+                    background: T.primary,
+                    color: '#fff',
+                    border: 'none',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 8px rgba(115, 103, 240, 0.3)',
+                    transition: 'all 0.15s ease',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.filter = 'brightness(1.1)'}
+                  onMouseLeave={e => e.currentTarget.style.filter = 'none'}
+                >
+                  <Target size={15} /> Choose Target {topTab === 'COURSES' ? 'Course' : 'Assessment'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Toolbar: dropdown + filter + search + action */}
         <div style={{ padding: '12px 24px', display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, borderBottom: `1px solid ${T.border}` }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', gap: 16, flex: 1 }}>
-            {/* Target Dropdown */}
-            <div style={{ width: 200 }}>
+            {/* Target Quick Switcher Button */}
+            <div>
               <label style={{ display: 'block', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: T.textMuted, marginBottom: 4 }}>
                 {topTab === 'COURSES' ? 'Target Course' : 'Target Assessment'}
               </label>
-              <div style={{ position: 'relative' }}>
-                <select
-                  value={topTab === 'COURSES' ? selectedCourseId : selectedAssessmentId}
-                  onChange={e => topTab === 'COURSES' ? setSelectedCourseId(e.target.value) : setSelectedAssessmentId(e.target.value)}
-                  style={selectStyle}
-                >
-                  <option value="">Select {topTab === 'COURSES' ? 'Course' : 'Assessment'}...</option>
-                  {(topTab === 'COURSES' ? courses : assessments).map(item => (
-                    <option key={item.id} value={item.id}>{item.title}</option>
-                  ))}
-                </select>
-                <ChevronDown size={14} style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', color: T.textMuted, pointerEvents: 'none' }} />
-              </div>
+              <button
+                type="button"
+                onClick={() => setTargetModalOpen(true)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  height: 38,
+                  padding: '0 12px',
+                  background: T.surface,
+                  border: `1px solid ${activeTarget ? 'rgba(115, 103, 240, 0.4)' : T.border}`,
+                  borderRadius: 8,
+                  cursor: 'pointer',
+                  color: activeTarget ? T.textMain : T.textMuted,
+                  fontSize: 13,
+                  fontWeight: 500,
+                  maxWidth: 240,
+                  transition: 'all 0.15s ease',
+                }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = T.primary}
+                onMouseLeave={e => e.currentTarget.style.borderColor = activeTarget ? 'rgba(115, 103, 240, 0.4)' : T.border}
+              >
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, textAlign: 'left' }}>
+                  {activeTarget ? activeTarget.title : `Select ${topTab === 'COURSES' ? 'Course' : 'Assessment'}...`}
+                </span>
+                <ChevronDown size={14} style={{ color: T.textMuted, flexShrink: 0 }} />
+              </button>
             </div>
 
             {/* View Filter */}
@@ -674,6 +997,266 @@ export const EnrollmentListPage = () => {
           </div>
         </div>
       </div>
+
+      {/* ─── Target Picker Modal (Option 2) ────────────────────── */}
+      {targetModalOpen && (
+        <AdminModal
+          open
+          onClose={() => {
+            setTargetModalOpen(false);
+            setTargetSearchQuery('');
+          }}
+          title={topTab === 'COURSES' ? 'Select Target Course' : 'Select Target Assessment'}
+          description={`Search and choose a ${topTab === 'COURSES' ? 'course' : 'assessment'} to filter the roster and manage assignments.`}
+          size="lg"
+          footer={
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  if (topTab === 'COURSES') setSelectedCourseId('');
+                  else setSelectedAssessmentId('');
+                  setTargetModalOpen(false);
+                  setTargetSearchQuery('');
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: T.danger,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  padding: '6px 12px',
+                  borderRadius: 6,
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(234, 84, 85, 0.1)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'none'}
+              >
+                Clear Selection (View All)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setTargetModalOpen(false);
+                  setTargetSearchQuery('');
+                }}
+                style={{
+                  padding: '8px 18px',
+                  borderRadius: 8,
+                  background: T.surface,
+                  color: T.textMain,
+                  border: `1px solid ${T.border}`,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = T.hover}
+                onMouseLeave={e => e.currentTarget.style.background = T.surface}
+              >
+                Close
+              </button>
+            </div>
+          }
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {/* Search filter input */}
+            <div style={{ position: 'relative' }}>
+              <Search
+                size={16}
+                style={{
+                  position: 'absolute',
+                  left: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: T.textMuted,
+                }}
+              />
+              <input
+                type="text"
+                autoFocus
+                placeholder={`Search ${topTab === 'COURSES' ? 'courses by title, instructor, or description' : 'assessments'}...`}
+                value={targetSearchQuery}
+                onChange={e => setTargetSearchQuery(e.target.value)}
+                style={{
+                  width: '100%',
+                  height: 42,
+                  padding: '0 36px 0 38px',
+                  background: 'var(--input-bg, var(--surface-medium))',
+                  border: `1px solid ${T.border}`,
+                  borderRadius: 8,
+                  fontSize: 14,
+                  color: T.textMain,
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+              />
+              {targetSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setTargetSearchQuery('')}
+                  style={{
+                    position: 'absolute',
+                    right: 10,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: T.textMuted,
+                  }}
+                >
+                  <X size={15} />
+                </button>
+              )}
+            </div>
+
+            {/* Total items counter */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: T.textMuted, padding: '0 2px' }}>
+              <span>Showing <strong>{filteredModalTargets.length}</strong> {topTab === 'COURSES' ? 'courses' : 'assessments'}</span>
+              <span>Click a card to set as active target</span>
+            </div>
+
+            {/* List of items */}
+            <div style={{ maxHeight: '52vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8, paddingRight: 4 }}>
+              {filteredModalTargets.length === 0 ? (
+                <div style={{ padding: '36px 16px', textAlign: 'center', color: T.textMuted }}>
+                  <Target size={32} style={{ opacity: 0.4, margin: '0 auto 8px', display: 'block' }} />
+                  <p style={{ margin: 0, fontSize: 14, fontWeight: 500 }}>
+                    No {topTab === 'COURSES' ? 'courses' : 'assessments'} match "{targetSearchQuery}"
+                  </p>
+                </div>
+              ) : (
+                filteredModalTargets.map((item) => {
+                  const isSelected = topTab === 'COURSES'
+                    ? selectedCourseId === item.id
+                    : selectedAssessmentId === item.id;
+                  
+                  const enrolledCount = topTab === 'COURSES'
+                    ? rawEnrollments.filter(e => e.course?.id === item.id && e.status !== 'INACTIVE').length
+                    : null;
+
+                  const inst = topTab === 'COURSES' && item.instructorId
+                    ? instructors.find(i => i.id === item.instructorId)
+                    : null;
+
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={() => {
+                        if (topTab === 'COURSES') setSelectedCourseId(item.id);
+                        else setSelectedAssessmentId(item.id);
+                        setTargetModalOpen(false);
+                        setTargetSearchQuery('');
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 14,
+                        padding: '12px 16px',
+                        borderRadius: 8,
+                        cursor: 'pointer',
+                        background: isSelected ? 'rgba(115, 103, 240, 0.12)' : 'var(--surface-medium)',
+                        border: isSelected ? `1px solid ${T.primary}` : `1px solid ${T.border}`,
+                        transition: 'all 0.15s ease',
+                      }}
+                      onMouseEnter={e => {
+                        if (!isSelected) {
+                          e.currentTarget.style.background = T.hover;
+                          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                        }
+                      }}
+                      onMouseLeave={e => {
+                        if (!isSelected) {
+                          e.currentTarget.style.background = 'var(--surface-medium)';
+                          e.currentTarget.style.borderColor = T.border;
+                        }
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0, flex: 1 }}>
+                        <div
+                          style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: 8,
+                            background: isSelected ? T.primary : 'rgba(255, 255, 255, 0.05)',
+                            color: isSelected ? '#fff' : T.textMuted,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                          }}
+                        >
+                          {topTab === 'COURSES' ? <BookOpen size={20} /> : <FileCheck2 size={20} />}
+                        </div>
+
+                        <div style={{ minWidth: 0, flex: 1 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                            <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: T.textMain }}>
+                              {item.title}
+                            </p>
+                            {isSelected && (
+                              <span
+                                style={{
+                                  fontSize: 11,
+                                  fontWeight: 700,
+                                  color: T.primary,
+                                  background: 'rgba(115, 103, 240, 0.2)',
+                                  padding: '1px 7px',
+                                  borderRadius: 4,
+                                }}
+                              >
+                                Selected
+                              </span>
+                            )}
+                          </div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 4, fontSize: 12, color: T.textMuted }}>
+                            {topTab === 'COURSES' ? (
+                              <>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                  <Users size={13} color={T.primary} />
+                                  {enrolledCount} enrolled student{enrolledCount === 1 ? '' : 's'}
+                                </span>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                  <UserCheck size={13} color={T.success} />
+                                  {inst?.fullName || inst?.name || item.instructorName || 'Unassigned'}
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <span>Total Marks: {item.totalMarks ?? '—'}</span>
+                                {item.durationMinutes && <span>Duration: {item.durationMinutes}m</span>}
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ flexShrink: 0 }}>
+                        <span
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            padding: '5px 12px',
+                            fontSize: 12,
+                            fontWeight: 600,
+                            borderRadius: 6,
+                            background: isSelected ? T.primary : 'transparent',
+                            color: isSelected ? '#fff' : T.primary,
+                            border: isSelected ? 'none' : `1px solid rgba(115, 103, 240, 0.35)`,
+                          }}
+                        >
+                          {isSelected ? 'Active Target' : 'Select'}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        </AdminModal>
+      )}
     </div>
   );
 };

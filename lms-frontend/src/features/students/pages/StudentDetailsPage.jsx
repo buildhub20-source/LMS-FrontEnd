@@ -122,7 +122,6 @@ export const StudentDetailsPage = () => {
                   </Fact>
                   <Fact label="Gender">{student.gender}</Fact>
                   <Fact label="Date Of Birth">{formatDate(student.dateOfBirth)}</Fact>
-                  <Fact label="Category">{student.categoryName}</Fact>
                   <Fact label="Admission Date">{formatDate(student.admissionDate)}</Fact>
                   <Fact label="Phone Number">{student.phone}</Fact>
                   <Fact label="Email">{student.email}</Fact>

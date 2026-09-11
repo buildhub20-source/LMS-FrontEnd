@@ -20,7 +20,6 @@ const EMPTY_STUDENT = {
   registrationNo: '',
   dateOfBirth: '',
   gender: '',
-  categoryId: '',
   admissionDate: new Date().toISOString().slice(0, 10),
   photoKey: '',
   highestQualification: '',
@@ -49,11 +48,14 @@ export const StudentForm = ({
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(studentSchema),
     defaultValues: { ...EMPTY_STUDENT, ...defaultValues },
   });
+
+  const fullName = watch('fullName');
 
   const { fields, append, remove } = useFieldArray({ control, name: 'enrolments' });
 
@@ -82,89 +84,98 @@ export const StudentForm = ({
     <form onSubmit={handleSubmit(onSubmit)} noValidate className={styles.form}>
       {error && <Alert tone="error">{error.message}</Alert>}
 
-      <Card title="Personal Info">
-        <div className={styles.grid}>
-          <Input
-            label="Full Name"
-            required
-            placeholder="Enter full name"
-            error={errors.fullName?.message}
-            {...register('fullName')}
-          />
-          <Input
-            label="Email"
-            type="email"
-            required
-            placeholder="Enter email address"
-            hint={
-              isEdit
-                ? 'This is the sign-in address. Resend the invitation after changing it.'
-                : 'Onboarding details are sent here'
-            }
-            error={errors.email?.message}
-            {...register('email')}
-          />
-          <Input
-            label="Phone"
-            required
-            placeholder="Enter phone number"
-            error={errors.phone?.message}
-            {...register('phone')}
-          />
-          <Input
-            label="Registration No"
-            required
-            readOnly={isEdit}
-            placeholder="Enter registration number"
-            hint={isEdit ? 'Fixed at admission' : undefined}
-            error={errors.registrationNo?.message}
-            {...register('registrationNo')}
-          />
-
-          <Input
-            label="Date Of Birth"
-            type="date"
-            required
-            error={errors.dateOfBirth?.message}
-            {...register('dateOfBirth')}
-          />
-          <Select
-            label="Gender"
-            placeholder="Select gender"
-            options={GENDER_OPTIONS}
-            error={errors.gender?.message}
-            {...register('gender')}
-          />
-          <Select
-            label="Category"
-            placeholder="Select a category"
-            options={(referenceData?.categories ?? []).map((item) => ({
-              value: item.id,
-              label: item.label,
-            }))}
-            error={errors.categoryId?.message}
-            {...register('categoryId')}
-          />
-          <Input
-            label="Admission Date"
-            type="date"
-            error={errors.admissionDate?.message}
-            {...register('admissionDate')}
-          />
-
+      <Card
+        title="Personal Info"
+        subtitle="Identity credentials, contact details, and admission record"
+      >
+        <div className={styles.personalInfoSection}>
           <Controller
             name="photoKey"
             control={control}
             render={({ field, fieldState }) => (
               <PhotoUploadField
                 label="Learner Photo"
+                name={fullName || defaultValues?.fullName}
                 value={field.value}
+                initialUrl={defaultValues?.photoUrl}
                 onChange={field.onChange}
                 onUpload={studentService.uploadPhoto}
                 error={fieldState.error?.message}
               />
             )}
           />
+
+          <div className={styles.formDivider} />
+
+          <div className={styles.fieldsStack}>
+            {/* Primary Student Identification */}
+            <div className={styles.rowTwoCols}>
+              <Input
+                label="Full Name"
+                required
+                placeholder="Enter full name"
+                error={errors.fullName?.message}
+                {...register('fullName')}
+              />
+              <Input
+                label="Registration No"
+                required
+                readOnly={isEdit}
+                placeholder="Enter registration number"
+                hint={isEdit ? 'Fixed at admission' : undefined}
+                error={errors.registrationNo?.message}
+                {...register('registrationNo')}
+              />
+            </div>
+
+            {/* Contact Details */}
+            <div className={styles.rowTwoCols}>
+              <Input
+                label="Email"
+                type="email"
+                required
+                placeholder="Enter email address"
+                hint={
+                  isEdit
+                    ? 'This is the sign-in address. Resend the invitation after changing it.'
+                    : 'Onboarding details are sent here'
+                }
+                error={errors.email?.message}
+                {...register('email')}
+              />
+              <Input
+                label="Phone"
+                required
+                placeholder="Enter phone number"
+                error={errors.phone?.message}
+                {...register('phone')}
+              />
+            </div>
+
+            {/* Demographics & Admission */}
+            <div className={styles.rowThreeCols}>
+              <Input
+                label="Date Of Birth"
+                type="date"
+                required
+                error={errors.dateOfBirth?.message}
+                {...register('dateOfBirth')}
+              />
+              <Select
+                label="Gender"
+                placeholder="Select gender"
+                options={GENDER_OPTIONS}
+                error={errors.gender?.message}
+                {...register('gender')}
+              />
+              <Input
+                label="Admission Date"
+                type="date"
+                error={errors.admissionDate?.message}
+                {...register('admissionDate')}
+              />
+            </div>
+          </div>
         </div>
       </Card>
 

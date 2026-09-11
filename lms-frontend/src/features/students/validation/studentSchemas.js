@@ -71,7 +71,6 @@ export const studentSchema = z
         message: 'Date of birth must be in the past',
       }),
     gender: z.string().optional().or(z.literal('')),
-    categoryId: z.string().optional().or(z.literal('')),
     admissionDate: z.string().optional().or(z.literal('')),
     photoKey: z.string().optional().or(z.literal('')),
 
@@ -161,7 +160,6 @@ export function toCreateStudentPayload(values) {
     registrationNo: values.registrationNo.trim(),
     dateOfBirth: values.dateOfBirth,
     gender: blankToNull(values.gender),
-    categoryId: blankToNull(values.categoryId),
     admissionDate: blankToNull(values.admissionDate),
     photoKey: blankToNull(values.photoKey),
 
@@ -208,9 +206,9 @@ export function toStudentFormValues(student) {
     registrationNo: text(student.registrationNo),
     dateOfBirth: text(student.dateOfBirth),
     gender: text(student.gender),
-    categoryId: text(student.categoryId),
     admissionDate: text(student.admissionDate),
     photoKey: text(student.photoKey),
+    photoUrl: text(student.photoUrl),
 
     highestQualification: text(student.highestQualification),
     institution: text(student.institution),

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Search,
   ShieldCheck,
@@ -10,6 +11,10 @@ import {
   ChevronDown,
   MoreVertical,
   KeyRound,
+  Lock,
+  Unlock,
+  UserX,
+  UserCheck,
 } from 'lucide-react';
 import AdminButton from '../../../components/ui/AdminButton';
 import AdminInput from '../../../components/ui/AdminInput';
@@ -18,6 +23,7 @@ import { AdminCardSkeleton } from '../../../components/ui/AdminSkeleton';
 import { AdminErrorState } from '../../../components/ui/AdminPagination';
 import PermissionGuard from '../../../guards/PermissionGuard';
 import { PERMISSIONS } from '../../../constants/permissions';
+import { ROUTES } from '../../../constants/routes';
 import roleService from '../services/roleService';
 import userService from '../../users/services/userService';
 import { useToast } from '../../../components/feedback/Toast';
@@ -298,6 +304,7 @@ function RoleCard({ role, usersWithRole, onEdit, onDelete }) {
 
 /* ─── Main page ────────────────────────────────────────────────────── */
 export const RoleListPage = () => {
+  const navigate = useNavigate();
   const { success: toastSuccess, error: toastError } = useToast();
 
   const [roles, setRoles] = useState([]);
@@ -313,6 +320,23 @@ export const RoleListPage = () => {
   const [userPage, setUserPage] = useState(0);
   const [userTotal, setUserTotal] = useState(0);
   const PAGE_SIZE = 10;
+
+  // User table action states
+  const [userMenuOpenId, setUserMenuOpenId] = useState(null);
+  const [deleteUserTarget, setDeleteUserTarget] = useState(null);
+  const [deletingUser, setDeletingUser] = useState(false);
+  const [rolesUserTarget, setRolesUserTarget] = useState(null);
+  const [selectedUserRoleIds, setSelectedUserRoleIds] = useState([]);
+  const [savingUserRoles, setSavingUserRoles] = useState(false);
+  const [confirmUserAction, setConfirmUserAction] = useState(null);
+
+  // Close user dropdown menu on click outside
+  useEffect(() => {
+    if (!userMenuOpenId) return;
+    const handler = () => setUserMenuOpenId(null);
+    window.addEventListener('click', handler);
+    return () => window.removeEventListener('click', handler);
+  }, [userMenuOpenId]);
 
   const [editRole, setEditRole] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -448,6 +472,71 @@ export const RoleListPage = () => {
     } catch (err) {
       toastError(err?.message ?? 'Failed to delete.');
       setDeleting(false);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    if (!deleteUserTarget) return;
+    setDeletingUser(true);
+    try {
+      await userService.delete(deleteUserTarget.id);
+      toastSuccess(`${deleteUserTarget.fullName || deleteUserTarget.name || 'User'} has been removed.`);
+      setDeleteUserTarget(null);
+      loadUsers();
+    } catch (err) {
+      toastError(err?.message ?? 'Failed to remove user.');
+    } finally {
+      setDeletingUser(false);
+    }
+  };
+
+  const openEditUserRoles = (u) => {
+    setRolesUserTarget(u);
+    const userRoleNames = (u.roles ?? []).map((r) =>
+      typeof r === 'string' ? r : (r?.name ?? '')
+    );
+    const preSelected = roles
+      .filter((r) => userRoleNames.some((name) => name.toLowerCase() === r.name?.toLowerCase()))
+      .map((r) => r.id);
+    setSelectedUserRoleIds(preSelected);
+  };
+
+  const handleSaveUserRoles = async () => {
+    if (!rolesUserTarget) return;
+    setSavingUserRoles(true);
+    try {
+      await userService.updateRoles(rolesUserTarget.id, selectedUserRoleIds);
+      toastSuccess(`Roles updated for ${rolesUserTarget.fullName || rolesUserTarget.name || 'user'}.`);
+      setRolesUserTarget(null);
+      loadUsers();
+    } catch (err) {
+      toastError(err?.message ?? 'Failed to update roles.');
+    } finally {
+      setSavingUserRoles(false);
+    }
+  };
+
+  const handleUserStatusAction = async () => {
+    if (!confirmUserAction) return;
+    const { user: u, type } = confirmUserAction;
+    setConfirmUserAction((prev) => ({ ...prev, loading: true }));
+    try {
+      if (type === 'activate') await userService.activate(u.id);
+      if (type === 'deactivate') await userService.deactivate(u.id);
+      if (type === 'lock') await userService.lock(u.id);
+      if (type === 'unlock') await userService.unlock(u.id);
+      toastSuccess(
+        type === 'lock'
+          ? `${u.fullName || u.name} has been locked.`
+          : type === 'unlock'
+            ? `${u.fullName || u.name} has been unlocked.`
+            : `${u.fullName || u.name} has been ${type}d.`
+      );
+      setConfirmUserAction(null);
+      loadUsers();
+    } catch (err) {
+      toastError(err?.message ?? `Failed to ${type} user.`);
+      setConfirmUserAction((prev) => ({ ...prev, loading: false }));
     }
   };
 
@@ -890,31 +979,237 @@ export const RoleListPage = () => {
                         <StatusBadge user={user} />
                       </td>
                       <td style={{ padding: '10px 16px' }}>
-                        <div style={{ display: 'flex', gap: 2 }}>
-                          {[
-                            <Trash2 size={16} />,
-                            <Eye size={16} />,
-                            <MoreVertical size={16} />,
-                          ].map((icon, i) => (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 4, position: 'relative' }}>
+                          {/* Remove user button */}
+                          <button
+                            type="button"
+                            title="Remove user"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDeleteUserTarget(user);
+                            }}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              cursor: 'pointer',
+                              padding: 6,
+                              borderRadius: 6,
+                              color: M.textMuted,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              transition: 'all 0.15s ease',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = 'rgba(234, 84, 85, 0.12)';
+                              e.currentTarget.style.color = '#ea5455';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = 'none';
+                              e.currentTarget.style.color = M.textMuted;
+                            }}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+
+                          {/* View user details button */}
+                          <button
+                            type="button"
+                            title="View user details"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(ROUTES.USER_DETAILS(user.id));
+                            }}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              cursor: 'pointer',
+                              padding: 6,
+                              borderRadius: 6,
+                              color: M.textMuted,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              transition: 'all 0.15s ease',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = 'var(--hover-bg)';
+                              e.currentTarget.style.color = 'var(--text-primary)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = 'none';
+                              e.currentTarget.style.color = M.textMuted;
+                            }}
+                          >
+                            <Eye size={16} />
+                          </button>
+
+                          {/* More options dropdown button */}
+                          <div style={{ position: 'relative' }}>
                             <button
-                              key={i}
+                              type="button"
+                              title="More options"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setUserMenuOpenId(userMenuOpenId === user.id ? null : user.id);
+                              }}
                               style={{
-                                background: 'none',
+                                background: userMenuOpenId === user.id ? 'var(--hover-bg)' : 'none',
                                 border: 'none',
                                 cursor: 'pointer',
                                 padding: 6,
                                 borderRadius: 6,
-                                color: M.textMuted,
+                                color: userMenuOpenId === user.id ? 'var(--text-primary)' : M.textMuted,
                                 display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'all 0.15s ease',
                               }}
-                              onMouseEnter={(e) =>
-                                (e.currentTarget.style.background = 'var(--hover-bg)')
-                              }
-                              onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background = 'var(--hover-bg)';
+                                e.currentTarget.style.color = 'var(--text-primary)';
+                              }}
+                              onMouseLeave={(e) => {
+                                if (userMenuOpenId !== user.id) {
+                                  e.currentTarget.style.background = 'none';
+                                  e.currentTarget.style.color = M.textMuted;
+                                }
+                              }}
                             >
-                              {icon}
+                              <MoreVertical size={16} />
                             </button>
-                          ))}
+
+                            {userMenuOpenId === user.id && (
+                              <div
+                                onClick={(e) => e.stopPropagation()}
+                                style={{
+                                  position: 'absolute',
+                                  right: 0,
+                                  top: '100%',
+                                  marginTop: 4,
+                                  zIndex: 100,
+                                  minWidth: 160,
+                                  borderRadius: 8,
+                                  border: '1px solid var(--border-color)',
+                                  background: 'var(--surface-dark, #0a0a0a)',
+                                  padding: '4px 0',
+                                  boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
+                                }}
+                              >
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setUserMenuOpenId(null);
+                                    openEditUserRoles(user);
+                                  }}
+                                  style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 8,
+                                    padding: '8px 12px',
+                                    fontSize: 13,
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    color: 'var(--text-primary)',
+                                    textAlign: 'left',
+                                  }}
+                                  onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
+                                  onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+                                >
+                                  <ShieldCheck size={14} /> Manage Roles
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setUserMenuOpenId(null);
+                                    setConfirmUserAction({
+                                      user,
+                                      type: user.locked ? 'unlock' : 'lock',
+                                      loading: false,
+                                    });
+                                  }}
+                                  style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 8,
+                                    padding: '8px 12px',
+                                    fontSize: 13,
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    color: user.locked ? '#28c76f' : '#ea5455',
+                                    textAlign: 'left',
+                                  }}
+                                  onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
+                                  onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+                                >
+                                  {user.locked ? <Unlock size={14} /> : <Lock size={14} />}
+                                  {user.locked ? 'Unlock Account' : 'Lock Account'}
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setUserMenuOpenId(null);
+                                    setConfirmUserAction({
+                                      user,
+                                      type: user.active ? 'deactivate' : 'activate',
+                                      loading: false,
+                                    });
+                                  }}
+                                  style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 8,
+                                    padding: '8px 12px',
+                                    fontSize: 13,
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    color: user.active ? '#ea5455' : '#28c76f',
+                                    textAlign: 'left',
+                                  }}
+                                  onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
+                                  onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+                                >
+                                  {user.active ? <UserX size={14} /> : <UserCheck size={14} />}
+                                  {user.active ? 'Deactivate' : 'Activate'}
+                                </button>
+
+                                <div style={{ height: 1, background: 'var(--border-color)', margin: '4px 0' }} />
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setUserMenuOpenId(null);
+                                    setDeleteUserTarget(user);
+                                  }}
+                                  style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 8,
+                                    padding: '8px 12px',
+                                    fontSize: 13,
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    color: '#ea5455',
+                                    textAlign: 'left',
+                                  }}
+                                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(234, 84, 85, 0.1)')}
+                                  onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+                                >
+                                  <Trash2 size={14} /> Remove User
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -1213,6 +1508,184 @@ export const RoleListPage = () => {
           variant="danger"
           loading={deleting}
         />
+      )}
+
+      {/* Delete User confirm */}
+      {deleteUserTarget && (
+        <AdminConfirmModal
+          open
+          onClose={() => setDeleteUserTarget(null)}
+          onConfirm={handleDeleteUser}
+          title="Remove User"
+          message={`Are you sure you want to remove "${deleteUserTarget.fullName || deleteUserTarget.name || deleteUserTarget.email}"? This action cannot be undone.`}
+          confirmLabel="Remove User"
+          variant="danger"
+          loading={deletingUser}
+        />
+      )}
+
+      {/* Lock / Unlock / Activate / Deactivate confirm */}
+      {confirmUserAction && (
+        <AdminConfirmModal
+          open
+          onClose={() => setConfirmUserAction(null)}
+          onConfirm={handleUserStatusAction}
+          title={
+            confirmUserAction.type === 'lock'
+              ? 'Lock Account'
+              : confirmUserAction.type === 'unlock'
+              ? 'Unlock Account'
+              : confirmUserAction.type === 'deactivate'
+              ? 'Deactivate User'
+              : 'Activate User'
+          }
+          message={
+            confirmUserAction.type === 'lock'
+              ? `Are you sure you want to lock the account for "${confirmUserAction.user?.fullName || confirmUserAction.user?.name || confirmUserAction.user?.email}"? They will not be able to log in.`
+              : confirmUserAction.type === 'unlock'
+              ? `Are you sure you want to unlock the account for "${confirmUserAction.user?.fullName || confirmUserAction.user?.name || confirmUserAction.user?.email}"?`
+              : confirmUserAction.type === 'deactivate'
+              ? `Are you sure you want to deactivate "${confirmUserAction.user?.fullName || confirmUserAction.user?.name || confirmUserAction.user?.email}"?`
+              : `Are you sure you want to activate "${confirmUserAction.user?.fullName || confirmUserAction.user?.name || confirmUserAction.user?.email}"?`
+          }
+          confirmLabel={
+            confirmUserAction.type === 'lock'
+              ? 'Lock Account'
+              : confirmUserAction.type === 'unlock'
+              ? 'Unlock Account'
+              : confirmUserAction.type === 'deactivate'
+              ? 'Deactivate'
+              : 'Activate'
+          }
+          variant={
+            confirmUserAction.type === 'lock' || confirmUserAction.type === 'deactivate'
+              ? 'danger'
+              : 'primary'
+          }
+          loading={confirmUserAction.loading}
+        />
+      )}
+
+      {/* Manage User Roles modal */}
+      {rolesUserTarget && (
+        <AdminModal
+          open
+          onClose={() => setRolesUserTarget(null)}
+          title={`Manage Roles — ${rolesUserTarget.fullName || rolesUserTarget.name || rolesUserTarget.email}`}
+          description="Select the system roles assigned to this user."
+          size="md"
+          footer={
+            <>
+              <AdminButton
+                variant="outline"
+                onClick={() => setRolesUserTarget(null)}
+                disabled={savingUserRoles}
+              >
+                Cancel
+              </AdminButton>
+              <AdminButton
+                variant="primary"
+                onClick={handleSaveUserRoles}
+                loading={savingUserRoles}
+              >
+                Save Roles
+              </AdminButton>
+            </>
+          }
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {roles.length === 0 ? (
+              <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>No roles available.</p>
+            ) : (
+              roles.map((role) => {
+                const checked = selectedUserRoleIds.includes(role.id);
+                return (
+                  <button
+                    key={role.id}
+                    type="button"
+                    onClick={() =>
+                      setSelectedUserRoleIds((prev) =>
+                        prev.includes(role.id)
+                          ? prev.filter((id) => id !== role.id)
+                          : [...prev, role.id]
+                      )
+                    }
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 12,
+                      padding: '10px 14px',
+                      borderRadius: 8,
+                      border: checked
+                        ? '1px solid var(--primary-color, #7367f0)'
+                        : '1px solid var(--border-color)',
+                      background: checked
+                        ? 'rgba(115, 103, 240, 0.08)'
+                        : 'var(--surface-medium)',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'all 0.15s ease',
+                      width: '100%',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 18,
+                        height: 18,
+                        borderRadius: 4,
+                        border: checked
+                          ? '2px solid var(--primary-color, #7367f0)'
+                          : '2px solid var(--border-color)',
+                        background: checked
+                          ? 'var(--primary-color, #7367f0)'
+                          : 'transparent',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {checked && (
+                        <svg
+                          style={{ width: 12, height: 12, color: '#fff' }}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={3}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <p
+                        style={{
+                          margin: 0,
+                          fontSize: 14,
+                          fontWeight: 600,
+                          color: 'var(--text-primary)',
+                        }}
+                      >
+                        {role.name}
+                      </p>
+                      {role.description && (
+                        <p
+                          style={{
+                            margin: '2px 0 0',
+                            fontSize: 12,
+                            color: 'var(--text-muted)',
+                          }}
+                        >
+                          {role.description}
+                        </p>
+                      )}
+                    </div>
+                  </button>
+                );
+              })
+            )}
+          </div>
+        </AdminModal>
       )}
     </div>
   );

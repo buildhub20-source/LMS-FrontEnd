@@ -17,7 +17,17 @@ export const ProtectedRoute = ({ children }) => {
   if (status === 'idle' || status === 'loading') return <Spinner fullPage />;
 
   if (status !== 'authenticated') {
-    return <Navigate to={ROUTES.LOGIN} state={{ from: location }} replace />;
+    const isFormOrAuthPath =
+      location.pathname.endsWith('/new') ||
+      location.pathname.endsWith('/edit') ||
+      location.pathname.startsWith('/auth');
+    return (
+      <Navigate
+        to={ROUTES.LOGIN}
+        state={isFormOrAuthPath ? undefined : { from: location }}
+        replace
+      />
+    );
   }
 
   // Invited user on their first login — force them to set a real password
