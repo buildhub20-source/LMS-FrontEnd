@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Share2, Bookmark, CheckCircle2, PauseCircle, Play, ChevronDown, ChevronUp, Edit3, ArrowLeft,
   FileText, Presentation, FileCode, Music, HelpCircle, Download, ExternalLink, BarChart2,
-  Lock, AlertCircle, BookOpen
+  Lock, AlertCircle, BookOpen, ChevronLeft, ChevronRight, RotateCcw
 } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
@@ -95,12 +95,32 @@ export const CourseDetailsPage = () => {
   const isStudent = !isAdminOrInstructor || location.pathname.startsWith('/learn');
   const isAdmin = location.pathname.startsWith('/admin');
 
-  // Reset video watch tracking when switching lessons
+  const [currentVideoTime, setCurrentVideoTime] = useState(0);
+  const lastSavedPositionRef = useRef(0);
+
+  // Key for persisting resume position per student, course, and lesson
+  const resumePositionKey = currentLesson?.id
+    ? `lms_video_pos_${userId}_${courseId}_${currentLesson.id}`
+    : null;
+
+  // Restore maxWatchedTime and resume position from localStorage when switching lessons
   useEffect(() => {
     maxWatchedTimeRef.current = 0;
     setVideoProgressPercent(0);
     setVideoNotice(null);
-  }, [currentLesson?.id]);
+    setCurrentVideoTime(0);
+    lastSavedPositionRef.current = 0;
+
+    if (resumePositionKey) {
+      try {
+        const savedPos = parseFloat(localStorage.getItem(resumePositionKey) || '0');
+        if (!isNaN(savedPos) && savedPos > 0) {
+          maxWatchedTimeRef.current = savedPos;
+          lastSavedPositionRef.current = savedPos;
+        }
+      } catch (_) {}
+    }
+  }, [currentLesson?.id, resumePositionKey]);
 
   const showNotice = (text, type = 'warning') => {
     if (videoNoticeTimeoutRef.current) {
@@ -119,6 +139,103 @@ export const CourseDetailsPage = () => {
       return [...prev, lessonIdToComplete];
     });
     showNotice('🎉 Lesson completed! Great job!', 'success');
+  };
+
+  const handleVideoLoadedMetadata = (e) => {
+    const video = e.currentTarget;
+    if (!video || !resumePositionKey) return;
+    try {
+      const savedPos = parseFloat(localStorage.getItem(resumePositionKey) || '0');
+      if (!isNaN(savedPos) && savedPos > 2 && savedPos < (video.duration - 3)) {
+        video.currentTime = savedPos;
+        maxWatchedTimeRef.current = Math.max(maxWatchedTimeRef.current, savedPos);
+        showNotice(`Resumed playback at ${Math.floor(savedPos / 60)}:${String(Math.floor(savedPos % 60)).padStart(2, '0')}`, 'success');
+      }
+    } catch (_) {}
+  };
+
+  const handleVideoTimeUpdate = (e) => {
+    const video = e.currentTarget;
+    if (!video || !video.duration) return;
+
+    const currentTime = video.currentTime;
+    const duration = video.duration;
+    const isCompleted = completedLessonIds.includes(currentLesson?.id);
+
+    setCurrentVideoTime(currentTime);
+
+    const pct = Math.min(100, Math.round((currentTime / duration) * 100));
+    setVideoProgressPercent(pct);
+
+    // Save resume position periodically (every ~3 seconds)
+    if (resumePositionKey && Math.abs(currentTime - lastSavedPositionRef.current) >= 3.0) {
+      lastSavedPositionRef.current = currentTime;
+      try {
+        localStorage.setItem(resumePositionKey, String(Math.floor(currentTime)));
+      } catch (_) {}
+    }
+
+    // Enforce watch limits for students on uncompleted lessons
+    if (isStudent && !isCompleted) {
+      // User scrubbed/skipped forward past what has been watched (+ 2s buffer for micro-skips)
+      if (currentTime > maxWatchedTimeRef.current + 2.0) {
+        video.currentTime = maxWatchedTimeRef.current;
+        showNotice('Fast-forward is locked. Please watch the full video to complete this lesson.');
+        return;
+      }
+
+      if (currentTime > maxWatchedTimeRef.current) {
+        maxWatchedTimeRef.current = currentTime;
+      }
+
+      // Check if watched through the full video (at least 98% or within 1.5s of the end)
+      if (currentTime / duration >= 0.98 || duration - currentTime <= 1.5) {
+        markLessonCompleted(currentLesson?.id);
+      }
+    }
+  };
+
+  const handleVideoSeeking = (e) => {
+    const video = e.currentTarget;
+    if (!video) return;
+    const isCompleted = completedLessonIds.includes(currentLesson?.id);
+
+    if (isStudent && !isCompleted) {
+      if (video.currentTime > maxWatchedTimeRef.current + 1.5) {
+        video.currentTime = maxWatchedTimeRef.current;
+        showNotice('Fast-forward is locked. Please watch the full video to complete this lesson.');
+      }
+    }
+  };
+
+  const handleVideoEnded = () => {
+    if (currentLesson?.id) {
+      markLessonCompleted(currentLesson.id);
+      // Clear saved resume position upon successful video completion
+      if (resumePositionKey) {
+        try { localStorage.removeItem(resumePositionKey); } catch (_) {}
+      }
+      // Auto-advance to next lesson if available
+      if (activeLessonIndex < allLessons.length - 1) {
+        showNotice('🎉 Lesson complete! Advancing to next lesson in 2s...', 'success');
+        setTimeout(() => {
+          setActiveLessonIndex((prev) => (prev < allLessons.length - 1 ? prev + 1 : prev));
+        }, 2000);
+      }
+    }
+  };
+
+  const handleSeekToTime = (seconds) => {
+    if (videoRef.current) {
+      const isCompleted = completedLessonIds.includes(currentLesson?.id);
+      // If student hasn't watched that far yet on an incomplete lesson, clamp to max watched
+      if (isStudent && !isCompleted && seconds > maxWatchedTimeRef.current + 1.5) {
+        videoRef.current.currentTime = maxWatchedTimeRef.current;
+        showNotice('Fast-forward is locked. Seek is limited to previously watched segments.');
+      } else {
+        videoRef.current.currentTime = seconds;
+      }
+    }
   };
 
   useEffect(() => {
@@ -160,63 +277,10 @@ export const CourseDetailsPage = () => {
     }
   }, [courseId, storageKey, completedLessonIds, isStudent, progressPercent, isLoading]);
 
-  if (isLoading) return <Spinner fullPage />;
-  if (error) return <ErrorState error={error} onRetry={refetch} />;
-
   const toggleComplete = (id) => {
     setCompletedLessonIds(prev =>
       prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
     );
-  };
-
-  const handleVideoTimeUpdate = (e) => {
-    const video = e.currentTarget;
-    if (!video || !video.duration) return;
-
-    const currentTime = video.currentTime;
-    const duration = video.duration;
-    const isCompleted = completedLessonIds.includes(currentLesson?.id);
-
-    const pct = Math.min(100, Math.round((currentTime / duration) * 100));
-    setVideoProgressPercent(pct);
-
-    // Enforce watch limits for students on uncompleted lessons
-    if (isStudent && !isCompleted) {
-      // User scrubbed/skipped forward past what has been watched (+ 2s buffer for micro-skips)
-      if (currentTime > maxWatchedTimeRef.current + 2.0) {
-        video.currentTime = maxWatchedTimeRef.current;
-        showNotice('Fast-forward is locked. Please watch the full video to complete this lesson.');
-        return;
-      }
-
-      if (currentTime > maxWatchedTimeRef.current) {
-        maxWatchedTimeRef.current = currentTime;
-      }
-
-      // Check if watched through the full video (at least 98% or within 1.5s of the end)
-      if (currentTime / duration >= 0.98 || duration - currentTime <= 1.5) {
-        markLessonCompleted(currentLesson?.id);
-      }
-    }
-  };
-
-  const handleVideoSeeking = (e) => {
-    const video = e.currentTarget;
-    if (!video) return;
-    const isCompleted = completedLessonIds.includes(currentLesson?.id);
-
-    if (isStudent && !isCompleted) {
-      if (video.currentTime > maxWatchedTimeRef.current + 1.5) {
-        video.currentTime = maxWatchedTimeRef.current;
-        showNotice('Fast-forward is locked. Please watch the full video to complete this lesson.');
-      }
-    }
-  };
-
-  const handleVideoEnded = () => {
-    if (currentLesson?.id) {
-      markLessonCompleted(currentLesson.id);
-    }
   };
 
   const toggleModuleCollapse = (modId) => {
@@ -229,6 +293,9 @@ export const CourseDetailsPage = () => {
       alert('Course link copied to clipboard!');
     }
   };
+
+  if (isLoading) return <Spinner fullPage />;
+  if (error || !course) return <ErrorState error={error} onRetry={refetch} />;
 
   const rawMedia = currentLesson?.content || currentLesson?.videoUrl || recordingPlaybackUrl;
   const mediaUrl = rawMedia;
@@ -444,6 +511,7 @@ export const CourseDetailsPage = () => {
                     key={currentLesson?.id}
                     style={{ width: '100%', height: '100%', maxHeight: 420, objectFit: 'contain' }}
                     poster={lessonPosterUrl || undefined}
+                    onLoadedMetadata={handleVideoLoadedMetadata}
                     onTimeUpdate={handleVideoTimeUpdate}
                     onSeeking={handleVideoSeeking}
                     onSeeked={handleVideoSeeking}
@@ -490,6 +558,66 @@ export const CourseDetailsPage = () => {
                   <p style={{ margin: '6px 0 0', fontSize: 13, opacity: 0.8 }}>
                     {currentLesson?.lessonType ? `Format: ${currentLesson.lessonType}` : 'Select a lesson from the playlist on the right'}
                   </p>
+                </div>
+              )}
+
+              {/* ── Lesson Previous / Next Progression Navigation Bar ── */}
+              {allLessons.length > 1 && (
+                <div style={{
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '10px 16px',
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                  boxSizing: 'border-box',
+                }}>
+                  <button
+                    disabled={activeLessonIndex <= 0}
+                    onClick={() => setActiveLessonIndex((i) => Math.max(0, i - 1))}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      padding: '6px 12px',
+                      borderRadius: 6,
+                      background: activeLessonIndex > 0 ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      color: activeLessonIndex > 0 ? '#ffffff' : 'rgba(255, 255, 255, 0.3)',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      cursor: activeLessonIndex > 0 ? 'pointer' : 'not-allowed',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <ChevronLeft size={14} /> Previous Lesson
+                  </button>
+
+                  <span style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.6)', fontWeight: 500 }}>
+                    Lesson {activeLessonIndex + 1} of {allLessons.length}
+                  </span>
+
+                  <button
+                    disabled={activeLessonIndex >= allLessons.length - 1}
+                    onClick={() => setActiveLessonIndex((i) => Math.min(allLessons.length - 1, i + 1))}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      padding: '6px 12px',
+                      borderRadius: 6,
+                      background: activeLessonIndex < allLessons.length - 1 ? '#3b82f6' : 'transparent',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      color: activeLessonIndex < allLessons.length - 1 ? '#ffffff' : 'rgba(255, 255, 255, 0.3)',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      cursor: activeLessonIndex < allLessons.length - 1 ? 'pointer' : 'not-allowed',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    Next Lesson <ChevronRight size={14} />
+                  </button>
                 </div>
               )}
             </div>
@@ -601,6 +729,8 @@ export const CourseDetailsPage = () => {
                   const idx = allLessons.findIndex((l) => l.id === id);
                   if (idx >= 0) setActiveLessonIndex(idx);
                 }}
+                currentVideoTime={currentVideoTime}
+                onSeekToTime={handleSeekToTime}
               />
             )}
 

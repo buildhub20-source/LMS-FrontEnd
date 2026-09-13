@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   FileText,
   Copy,
@@ -8,7 +8,26 @@ import {
   Save,
   BookOpen,
   ExternalLink,
+  Clock,
 } from 'lucide-react';
+
+const formatSeconds = (sec) => {
+  if (sec == null || isNaN(sec)) return '00:00';
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+};
+
+const parseTimestampToSeconds = (timestampStr) => {
+  const parts = timestampStr.split(':').map(Number);
+  if (parts.length === 2) {
+    return parts[0] * 60 + parts[1];
+  }
+  if (parts.length === 3) {
+    return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  }
+  return 0;
+};
 
 export const LessonNotesPanel = ({
   courseId,
@@ -16,6 +35,8 @@ export const LessonNotesPanel = ({
   currentLesson,
   allLessons = [],
   onSelectLesson,
+  currentVideoTime = 0,
+  onSeekToTime = null,
 }) => {
   const lessonId = currentLesson?.id || 'general';
   const lessonTitle = currentLesson?.title || 'General Notes';
@@ -25,6 +46,7 @@ export const LessonNotesPanel = ({
   const [lastSaved, setLastSaved] = useState(null);
   const [copied, setCopied] = useState(false);
   const [activeSubTab, setActiveSubTab] = useState('current'); // 'current' | 'all'
+  const textareaRef = useRef(null);
 
   // Load note for current lesson
   useEffect(() => {
@@ -101,6 +123,74 @@ export const LessonNotesPanel = ({
       .filter(Boolean);
   }, [activeSubTab, allLessons, courseId]);
 
+  const handleInsertTimestamp = () => {
+    const formatted = formatSeconds(currentVideoTime || 0);
+    const tag = `[${formatted}] `;
+    const textarea = textareaRef.current;
+    if (textarea) {
+      const start = textarea.selectionStart || 0;
+      const end = textarea.selectionEnd || 0;
+      const newText = noteContent.substring(0, start) + tag + noteContent.substring(end);
+      setNoteContent(newText);
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + tag.length, start + tag.length);
+      }, 0);
+    } else {
+      setNoteContent((prev) => (prev ? `${prev}\n${tag}` : tag));
+    }
+  };
+
+  const renderContentWithClickableTimestamps = (text) => {
+    if (!text) return null;
+    // Regex for [mm:ss] or [hh:mm:ss]
+    const timestampRegex = /\[(\d{1,2}:\d{2}(?::\d{2})?)\]/g;
+    const parts = [];
+    let lastIdx = 0;
+    let match;
+
+    while ((match = timestampRegex.exec(text)) !== null) {
+      const preceding = text.substring(lastIdx, match.index);
+      if (preceding) parts.push(preceding);
+
+      const timeStr = match[1];
+      const seconds = parseTimestampToSeconds(timeStr);
+
+      parts.push(
+        <button
+          key={`${match.index}-${timeStr}`}
+          onClick={() => onSeekToTime?.(seconds)}
+          title={`Jump video to ${timeStr}`}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 3,
+            background: 'rgba(59, 130, 246, 0.18)',
+            border: '1px solid rgba(59, 130, 246, 0.4)',
+            color: '#60a5fa',
+            borderRadius: 4,
+            padding: '1px 5px',
+            fontSize: 11,
+            fontWeight: 700,
+            cursor: onSeekToTime ? 'pointer' : 'default',
+            margin: '0 2px',
+            verticalAlign: 'baseline',
+          }}
+        >
+          <Clock size={11} />
+          {timeStr}
+        </button>
+      );
+      lastIdx = match.index + match[0].length;
+    }
+
+    if (lastIdx < text.length) {
+      parts.push(text.substring(lastIdx));
+    }
+
+    return parts;
+  };
+
   return (
     <div
       style={{
@@ -167,6 +257,28 @@ export const LessonNotesPanel = ({
 
         {activeSubTab === 'current' && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            {onSeekToTime && (
+              <button
+                onClick={handleInsertTimestamp}
+                title="Insert current video timestamp"
+                style={{
+                  background: 'rgba(59, 130, 246, 0.15)',
+                  border: '1px solid rgba(59, 130, 246, 0.35)',
+                  borderRadius: 6,
+                  padding: '4px 8px',
+                  cursor: 'pointer',
+                  color: '#60a5fa',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  fontSize: 11,
+                  fontWeight: 600,
+                }}
+              >
+                <Clock size={12} />
+                {formatSeconds(currentVideoTime)}
+              </button>
+            )}
             <button
               onClick={handleCopy}
               disabled={!noteContent}
@@ -265,9 +377,10 @@ export const LessonNotesPanel = ({
           </div>
 
           <textarea
+            ref={textareaRef}
             value={noteContent}
             onChange={(e) => setNoteContent(e.target.value)}
-            placeholder="Write your personal notes, code snippets, and key takeaways for this lesson... (automatically saved)"
+            placeholder="Write your personal notes, code snippets, and key takeaways for this lesson... (insert timestamps with button above)"
             style={{
               flex: 1,
               width: '100%',
@@ -285,6 +398,28 @@ export const LessonNotesPanel = ({
               boxSizing: 'border-box',
             }}
           />
+
+          {/* Quick Clickable Timestamps Preview if timestamps exist */}
+          {/\[\d{1,2}:\d{2}(?::\d{2})?\]/.test(noteContent) && (
+            <div
+              style={{
+                marginTop: 10,
+                padding: '8px 10px',
+                background: 'rgba(255, 255, 255, 0.03)',
+                borderRadius: 6,
+                border: '1px solid var(--border-color, #27272a)',
+                fontSize: 12,
+                lineHeight: 1.6,
+              }}
+            >
+              <span style={{ fontSize: 11, color: 'var(--text-muted, #71717a)', display: 'block', marginBottom: 4 }}>
+                Interactive Timestamps Preview (click to seek):
+              </span>
+              <div style={{ color: 'var(--text-secondary, #d4d4d8)', whiteSpace: 'pre-wrap' }}>
+                {renderContentWithClickableTimestamps(noteContent)}
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <div
@@ -352,17 +487,16 @@ export const LessonNotesPanel = ({
                     </button>
                   )}
                 </div>
-                <p
+                <div
                   style={{
-                    margin: 0,
                     fontSize: 12,
                     color: 'var(--text-secondary, #d4d4d8)',
                     whiteSpace: 'pre-wrap',
                     lineHeight: 1.5,
                   }}
                 >
-                  {item.content}
-                </p>
+                  {renderContentWithClickableTimestamps(item.content)}
+                </div>
               </div>
             ))
           )}

@@ -43,6 +43,37 @@ describe('LessonNotesPanel', () => {
 
     expect(screen.getByText(/No notes saved across this course yet/i)).toBeInTheDocument();
   });
+
+  it('inserts current video timestamp and supports click-to-seek', () => {
+    const onSeek = vi.fn();
+    const lesson = { id: 'l-101', title: 'Binary Search Basics', moduleTitle: 'Module 1' };
+
+    render(
+      <LessonNotesPanel
+        courseId="c-1"
+        courseTitle="Algorithms"
+        currentLesson={lesson}
+        allLessons={[lesson]}
+        currentVideoTime={125}
+        onSeekToTime={onSeek}
+      />
+    );
+
+    // 125 seconds = 02:05
+    const timestampBtn = screen.getByTitle('Insert current video timestamp');
+    expect(timestampBtn).toBeInTheDocument();
+    expect(screen.getByText('02:05')).toBeInTheDocument();
+
+    fireEvent.click(timestampBtn);
+    const textarea = screen.getByPlaceholderText(/Write your personal notes/i);
+    expect(textarea.value).toContain('[02:05]');
+
+    // Test clicking the rendered timestamp badge
+    const seekBadge = screen.getByTitle('Jump video to 02:05');
+    expect(seekBadge).toBeInTheDocument();
+    fireEvent.click(seekBadge);
+    expect(onSeek).toHaveBeenCalledWith(125);
+  });
 });
 
 describe('LessonResourcesPanel', () => {
