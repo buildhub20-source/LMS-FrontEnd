@@ -10,6 +10,8 @@ import useAuth from '../features/auth/hooks/useAuth';
 import { ThemeProvider } from '../context/ThemeContext';
 import { ROUTES } from '../constants/routes';
 import RouteErrorBoundary from '../components/common/RouteErrorBoundary';
+import ImpersonationBanner from '../features/platform/components/ImpersonationBanner';
+import BroadcastBanner from '../features/platform/components/BroadcastBanner';
 
 /**
  * Shared chrome for every authenticated area.
@@ -71,6 +73,8 @@ export const AppShell = ({ navigation, title }) => {
 
         {/* Main content column */}
         <div style={{ display: 'flex', flex: 1, flexDirection: 'column', overflow: 'hidden', background: 'var(--bg)' }}>
+          <ImpersonationBanner />
+          <BroadcastBanner />
           <Header
             title={title}
             onToggleSidebar={() => setSidebarOpen((open) => !open)}

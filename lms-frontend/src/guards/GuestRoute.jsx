@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectIsAuthenticated, selectUser, selectMustChangePassword } from '../features/auth/store/authSlice';
-import { ROLE_HOME_ROUTE } from '../constants/roles';
+import { getDefaultRouteForRoles } from '../constants/roles';
 import { ROUTES } from '../constants/routes';
 import platformAuthStorage from '../features/platform/services/platformAuthStorage';
 import { isPlatformHostname } from '../utils/tenantHostname';
@@ -13,7 +13,7 @@ export const GuestRoute = ({ children }) => {
   const mustChangePassword = useSelector(selectMustChangePassword);
 
   if (platformAuthStorage.getToken() && isPlatformHostname()) {
-    return <Navigate to={ROUTES.PLATFORM_TENANTS} replace />;
+    return <Navigate to={ROUTES.PLATFORM_DASHBOARD} replace />;
   }
 
   if (isAuthenticated) {
@@ -21,9 +21,7 @@ export const GuestRoute = ({ children }) => {
     if (mustChangePassword) {
       return <Navigate to={ROUTES.SET_PASSWORD} replace />;
     }
-    const firstRole = Array.isArray(user?.roles) ? user.roles[0] : null;
-    const home = ROLE_HOME_ROUTE[firstRole] ?? ROUTES.PROFILE;
-    return <Navigate to={home} replace />;
+    return <Navigate to={getDefaultRouteForRoles(user?.roles)} replace />;
   }
 
   return children ?? <Outlet />;

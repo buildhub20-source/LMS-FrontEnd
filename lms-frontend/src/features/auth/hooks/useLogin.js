@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { login } from '../store/authSlice';
-import { ROLE_HOME_ROUTE } from '../../../constants/roles';
+import { getDefaultRouteForRoles, getPrimaryRole } from '../../../constants/roles';
 import { ROUTES } from '../../../constants/routes';
 import storage from '../../../services/storage/localStorage';
 import { STORAGE_KEYS } from '../../../constants/appConstants';
@@ -68,43 +68,49 @@ export const useLogin = () => {
       platformAuthStorage.clear();
       storage.set(STORAGE_KEYS.TENANT, { slug });
 
-      const result = await dispatch(login(loginCredentials));
-      setIsSubmitting(false);
+      try {
+        const result = await dispatch(login(loginCredentials));
 
-      if (login.rejected.match(result)) {
-        const payload = result.payload;
-        setError(
-          payload && typeof payload === 'object' && payload.message
-            ? payload
-            : {
-                type: 'UNKNOWN',
-                title: 'Sign In Failed',
-                message: typeof payload === 'string' ? payload : 'Invalid email or password. Please try again.',
-              },
-        );
+        if (login.rejected.match(result)) {
+          const payload = result.payload;
+          setError(
+            payload && typeof payload === 'object' && payload.message
+              ? payload
+              : {
+                  type: 'UNKNOWN',
+                  title: 'Sign In Failed',
+                  message: typeof payload === 'string' ? payload : 'Invalid email or password. Please try again.',
+                },
+          );
+          return false;
+        }
+
+        const primaryRole = getPrimaryRole(result.payload?.roles);
+        const fallback = getDefaultRouteForRoles(result.payload?.roles);
+        const returnPath = location.state?.from?.pathname;
+
+        // Never redirect back to transient forms (e.g. /new, /edit), auth routes, or root
+        const isTransientOrForm =
+          returnPath &&
+          (returnPath.endsWith('/new') ||
+            returnPath.endsWith('/edit') ||
+            returnPath.startsWith('/auth') ||
+            returnPath === ROUTES.LOGIN ||
+            returnPath === ROUTES.ROOT);
+
+        // Administrators logging in should land on their dashboard overview (/admin/analytics)
+        const isAdminRole = primaryRole === 'ADMIN' || primaryRole === 'SUPER_ADMIN';
+        const destination =
+          returnPath && !isTransientOrForm && !isAdminRole ? returnPath : fallback;
+
+        navigate(destination, { replace: true });
+        return true;
+      } catch (requestError) {
+        setError(categorizeAuthError(requestError));
         return false;
+      } finally {
+        setIsSubmitting(false);
       }
-
-      const primaryRole = result.payload?.roles?.[0];
-      const fallback = ROLE_HOME_ROUTE[primaryRole] ?? ROUTES.PROFILE;
-      const returnPath = location.state?.from?.pathname;
-
-      // Never redirect back to transient forms (e.g. /new, /edit), auth routes, or root
-      const isTransientOrForm =
-        returnPath &&
-        (returnPath.endsWith('/new') ||
-          returnPath.endsWith('/edit') ||
-          returnPath.startsWith('/auth') ||
-          returnPath === ROUTES.LOGIN ||
-          returnPath === ROUTES.ROOT);
-
-      // Administrators logging in should land on their dashboard overview (/admin/analytics)
-      const isAdminRole = primaryRole === 'ADMIN' || primaryRole === 'SUPER_ADMIN';
-      const destination =
-        returnPath && !isTransientOrForm && !isAdminRole ? returnPath : fallback;
-
-      navigate(destination, { replace: true });
-      return true;
     },
     [dispatch, navigate, location],
   );

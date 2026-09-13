@@ -1,7 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
-import { ROLES } from '../constants/roles';
+import { getPrimaryRole, ROLES } from '../constants/roles';
 import { PERMISSIONS } from '../constants/permissions';
 import AuthLayout from '../layouts/AuthLayout';
 import ErrorLayout from '../layouts/ErrorLayout';
@@ -12,6 +12,7 @@ import ProtectedRoute from '../guards/ProtectedRoute';
 import GuestRoute from '../guards/GuestRoute';
 import RoleGuard from '../guards/RoleGuard';
 import PermissionGuard from '../guards/PermissionGuard';
+import RoleHomeRedirect from '../guards/RoleHomeRedirect';
 import useAuth from '../features/auth/hooks/useAuth';
 import Spinner from '../components/common/Spinner';
 import EmptyState from '../components/common/EmptyState';
@@ -19,11 +20,11 @@ import RouteErrorBoundary from '../components/common/RouteErrorBoundary';
 
 const RoleBasedLayout = () => {
   const { user } = useAuth();
-  const userRoles = user?.roles?.map((r) => (typeof r === 'string' ? r : r.name)) ?? [];
-  if (userRoles.includes(ROLES.ADMIN) || userRoles.includes(ROLES.SUPER_ADMIN)) {
+  const primaryRole = getPrimaryRole(user?.roles);
+  if (primaryRole === ROLES.ADMIN || primaryRole === ROLES.SUPER_ADMIN) {
     return <AdminLayout />;
   }
-  if (userRoles.includes(ROLES.INSTRUCTOR)) {
+  if (primaryRole === ROLES.INSTRUCTOR) {
     return <InstructorLayout />;
   }
   return <StudentLayout />;
@@ -34,10 +35,10 @@ import LoginPage from '../features/auth/pages/LoginPage';
 import ForgotPasswordPage from '../features/auth/pages/ForgotPasswordPage';
 import ResetPasswordPage from '../features/auth/pages/ResetPasswordPage';
 import AcceptInvitationPage from '../features/auth/pages/AcceptInvitationPage';
-import SetPasswordPage from '../features/auth/pages/SetPasswordPage';
 import UnauthorizedPage from '../features/auth/pages/UnauthorizedPage';
+import SetPasswordPage from '../features/auth/pages/SetPasswordPage';
 
-// Everything else is code-split per route.
+// Code-split features
 const UserListPage = lazy(() => import('../features/users/pages/UserListPage'));
 const UserDetailsPage = lazy(() => import('../features/users/pages/UserDetailsPage'));
 const CreateUserPage = lazy(() => import('../features/users/pages/CreateUserPage'));
@@ -52,9 +53,7 @@ const StudentDetailsPage = lazy(() => import('../features/students/pages/Student
 const InstructorListPage = lazy(() => import('../features/instructors/pages/InstructorListPage'));
 const AddInstructorPage = lazy(() => import('../features/instructors/pages/AddInstructorPage'));
 const EditInstructorPage = lazy(() => import('../features/instructors/pages/EditInstructorPage'));
-const InstructorDetailsPage = lazy(
-  () => import('../features/instructors/pages/InstructorDetailsPage'),
-);
+const InstructorDetailsPage = lazy(() => import('../features/instructors/pages/InstructorDetailsPage'));
 const BatchListPage = lazy(() => import('../features/batches/pages/BatchListPage'));
 const AddStudentPage = lazy(() => import('../features/students/pages/AddStudentPage'));
 const AdminAnalyticsPage = lazy(() => import('../features/analytics/pages/AdminAnalyticsPage'));
@@ -62,66 +61,45 @@ const ResourceManagementPage = lazy(
   () => import('../features/resources/pages/ResourceManagementPage'),
 );
 const AdminCourseListPage = lazy(() => import('../features/courses/pages/AdminCourseListPage'));
-const InstructorAnalyticsPage = lazy(
-  () => import('../features/analytics/pages/InstructorAnalyticsPage'),
-);
+const InstructorAnalyticsPage = lazy(() => import('../features/analytics/pages/InstructorAnalyticsPage'));
 const StudentProgressPage = lazy(() => import('../features/analytics/pages/StudentProgressPage'));
 const OrganizationPage = lazy(() => import('../features/tenants/pages/OrganizationPage'));
-const OrganizationSettingsPage = lazy(
-  () => import('../features/tenants/pages/OrganizationSettingsPage'),
-);
+const OrganizationSettingsPage = lazy(() => import('../features/tenants/pages/OrganizationSettingsPage'));
 const SubscriptionPage = lazy(() => import('../features/subscriptions/pages/SubscriptionPage'));
 const PlansPage = lazy(() => import('../features/subscriptions/pages/PlansPage'));
 const BillingPage = lazy(() => import('../features/subscriptions/pages/BillingPage'));
+const AuditLogsPage = lazy(() => import('../features/audit/pages/AuditLogsPage'));
 const CourseListPage = lazy(() => import('../features/courses/pages/CourseListPage'));
 const CourseDetailsPage = lazy(() => import('../features/courses/pages/CourseDetailsPage'));
 const CreateCoursePage = lazy(() => import('../features/courses/pages/CreateCoursePage'));
 const EditCoursePage = lazy(() => import('../features/courses/pages/EditCoursePage'));
 const MyCoursesPage = lazy(() => import('../features/courses/pages/MyCoursesPage'));
 const EnrollmentListPage = lazy(() => import('../features/enrollment/pages/EnrollmentListPage'));
-const EnrollmentDetailsPage = lazy(
-  () => import('../features/enrollment/pages/EnrollmentDetailsPage'),
-);
+const EnrollmentDetailsPage = lazy(() => import('../features/enrollment/pages/EnrollmentDetailsPage'));
+
+const AdminAssessmentListPage = lazy(() => import('../features/assessments/pages/AdminAssessmentListPage'));
+const AdminCreateAssessmentPage = lazy(() => import('../features/assessments/pages/AdminCreateAssessmentPage'));
+const AdminAssessmentDetailsPage = lazy(() => import('../features/assessments/pages/AdminAssessmentDetailsPage'));
+const AdminEditAssessmentPage = lazy(() => import('../features/assessments/pages/AdminEditAssessmentPage'));
+const GradingWorkflowPage = lazy(() => import('../features/assessments/pages/GradingWorkflowPage'));
+const RubricManagerPage = lazy(() => import('../features/assessments/pages/RubricManagerPage'));
 const AssessmentListPage = lazy(() => import('../features/assessments/pages/AssessmentListPage'));
-const AssessmentPage = lazy(() => import('../features/assessments/pages/AssessmentPage'));
-const StudentAssessmentTakingPage = lazy(
-  () => import('../features/assessments/pages/StudentAssessmentTakingPage'),
-);
-const CreateAssessmentPage = lazy(
-  () => import('../features/assessments/pages/CreateAssessmentPage'),
-);
-const AssessmentResultPage = lazy(
-  () => import('../features/assessments/pages/AssessmentResultPage'),
-);
-const AdminAssessmentListPage = lazy(
-  () => import('../features/assessments/pages/AdminAssessmentListPage'),
-);
-const AdminCreateAssessmentPage = lazy(
-  () => import('../features/assessments/pages/AdminCreateAssessmentPage'),
-);
-const AdminAssessmentDetailsPage = lazy(
-  () => import('../features/assessments/pages/AdminAssessmentDetailsPage'),
-);
-const AdminEditAssessmentPage = lazy(
-  () => import('../features/assessments/pages/AdminEditAssessmentPage'),
-);
-const GradingWorkflowPage = lazy(
-  () => import('../features/assessments/pages/GradingWorkflowPage'),
-);
-const RubricManagerPage = lazy(
-  () => import('../features/assessments/pages/RubricManagerPage'),
-);
-const CertificateListPage = lazy(
-  () => import('../features/certificates/pages/CertificateListPage'),
-);
-const AuditLogsPage = lazy(() => import('../features/audit/pages/AuditLogsPage'));
-const CertificateDetailsPage = lazy(
-  () => import('../features/certificates/pages/CertificateDetailsPage'),
-);
+const AssessmentResultPage = lazy(() => import('../features/assessments/pages/AssessmentResultPage'));
+const StudentAssessmentTakingPage = lazy(() => import('../features/assessments/pages/StudentAssessmentTakingPage'));
+const CreateAssessmentPage = lazy(() => import('../features/assessments/pages/CreateAssessmentPage'));
+
+const CertificateListPage = lazy(() => import('../features/certificates/pages/CertificateListPage'));
+const CertificateDetailsPage = lazy(() => import('../features/certificates/pages/CertificateDetailsPage'));
 const NotificationPage = lazy(() => import('../features/notifications/pages/NotificationPage'));
 const ProfilePage = lazy(() => import('../features/profile/pages/ProfilePage'));
 const SecurityPage = lazy(() => import('../features/profile/pages/SecurityPage'));
+
+// Platform Control Plane
+const PlatformLayout = lazy(() => import('../features/platform/components/PlatformLayout'));
+const PlatformDashboardPage = lazy(() => import('../features/platform/pages/PlatformDashboardPage'));
 const PlatformTenantPage = lazy(() => import('../features/platform/pages/PlatformTenantPage'));
+const PlatformAuditLogsPage = lazy(() => import('../features/platform/pages/PlatformAuditLogsPage'));
+const PlatformAnnouncementsPage = lazy(() => import('../features/platform/pages/PlatformAnnouncementsPage'));
 
 const suspend = (element) => (
   <RouteErrorBoundary>
@@ -130,14 +108,24 @@ const suspend = (element) => (
 );
 
 export const router = createBrowserRouter([
+  // Platform routes
   {
     path: ROUTES.PLATFORM_LOGIN,
     element: <Navigate to={ROUTES.LOGIN} replace />,
   },
   {
-    path: ROUTES.PLATFORM_TENANTS,
-    element: suspend(<PlatformTenantPage />),
+    path: '/platform',
+    element: suspend(<PlatformLayout />),
+    children: [
+      { index: true, element: <Navigate to={ROUTES.PLATFORM_DASHBOARD} replace /> },
+      { path: ROUTES.PLATFORM_DASHBOARD, element: suspend(<PlatformDashboardPage />) },
+      { path: ROUTES.PLATFORM_TENANTS, element: suspend(<PlatformTenantPage />) },
+      { path: ROUTES.PLATFORM_AUDIT_LOGS, element: suspend(<PlatformAuditLogsPage />) },
+      { path: ROUTES.PLATFORM_ANNOUNCEMENTS, element: suspend(<PlatformAnnouncementsPage />) },
+    ],
   },
+
+  // Auth / Guest routes
   {
     element: <GuestRoute />,
     children: [
@@ -153,9 +141,11 @@ export const router = createBrowserRouter([
     ],
   },
 
+  // Protected workspace routes
   {
     element: <ProtectedRoute />,
     children: [
+      { path: ROUTES.ROOT, element: <RoleHomeRedirect /> },
       {
         path: '/admin',
         element: <RoleGuard allowedRoles={[ROLES.ADMIN, ROLES.SUPER_ADMIN]} />,
@@ -164,6 +154,8 @@ export const router = createBrowserRouter([
             element: <AdminLayout />,
             children: [
               { index: true, element: <Navigate to={ROUTES.ADMIN_ANALYTICS} replace /> },
+              { path: 'dashboard', element: <Navigate to={ROUTES.ADMIN_ANALYTICS} replace /> },
+              { path: '/admin/dashboard', element: <Navigate to={ROUTES.ADMIN_ANALYTICS} replace /> },
               { path: ROUTES.ADMIN_ANALYTICS, element: suspend(<AdminAnalyticsPage />) },
               {
                 element: <PermissionGuard required={[PERMISSIONS.USER_READ]} />,
@@ -190,10 +182,7 @@ export const router = createBrowserRouter([
               { path: ROUTES.ENROLLMENTS, element: suspend(<EnrollmentListPage />) },
               { path: ROUTES.ENROLLMENT_DETAILS(), element: suspend(<EnrollmentDetailsPage />) },
               { path: ROUTES.ORGANIZATION, element: suspend(<OrganizationPage />) },
-              {
-                path: ROUTES.ORGANIZATION_SETTINGS,
-                element: suspend(<OrganizationSettingsPage />),
-              },
+              { path: ROUTES.ORGANIZATION_SETTINGS, element: suspend(<OrganizationSettingsPage />) },
               { path: ROUTES.SUBSCRIPTION, element: suspend(<SubscriptionPage />) },
               { path: ROUTES.PLANS, element: suspend(<PlansPage />) },
               { path: ROUTES.BILLING, element: suspend(<BillingPage />) },
@@ -206,26 +195,11 @@ export const router = createBrowserRouter([
                 element: <PermissionGuard required={[PERMISSIONS.ASSESSMENT_VIEW]} />,
                 children: [
                   { path: ROUTES.ADMIN_ASSESSMENTS, element: suspend(<AdminAssessmentListPage />) },
-                  {
-                    path: ROUTES.ADMIN_ASSESSMENT_CREATE,
-                    element: suspend(<AdminCreateAssessmentPage />),
-                  },
-                  {
-                    path: ROUTES.ADMIN_ASSESSMENT_DETAILS(),
-                    element: suspend(<AdminAssessmentDetailsPage />),
-                  },
-                  {
-                    path: ROUTES.ADMIN_ASSESSMENT_EDIT(),
-                    element: suspend(<AdminEditAssessmentPage />),
-                  },
-                  {
-                    path: ROUTES.ADMIN_GRADING,
-                    element: suspend(<GradingWorkflowPage />),
-                  },
-                  {
-                    path: ROUTES.ADMIN_RUBRICS,
-                    element: suspend(<RubricManagerPage />),
-                  },
+                  { path: ROUTES.ADMIN_ASSESSMENT_CREATE, element: suspend(<AdminCreateAssessmentPage />) },
+                  { path: ROUTES.ADMIN_ASSESSMENT_DETAILS(), element: suspend(<AdminAssessmentDetailsPage />) },
+                  { path: ROUTES.ADMIN_ASSESSMENT_EDIT(), element: suspend(<AdminEditAssessmentPage />) },
+                  { path: ROUTES.ADMIN_GRADING, element: suspend(<GradingWorkflowPage />) },
+                  { path: ROUTES.ADMIN_RUBRICS, element: suspend(<RubricManagerPage />) },
                 ],
               },
             ],
@@ -249,22 +223,10 @@ export const router = createBrowserRouter([
               { path: ROUTES.INSTRUCTOR_RESOURCES, element: suspend(<ResourceManagementPage />) },
               { path: ROUTES.ASSESSMENTS, element: suspend(<AssessmentListPage />) },
               { path: ROUTES.ASSESSMENT_CREATE, element: suspend(<CreateAssessmentPage />) },
-              {
-                path: ROUTES.INSTRUCTOR_ASSESSMENT_DETAILS(),
-                element: suspend(<AdminAssessmentDetailsPage />),
-              },
-              {
-                path: ROUTES.INSTRUCTOR_ASSESSMENT_EDIT(),
-                element: suspend(<AdminEditAssessmentPage />),
-              },
-              {
-                path: ROUTES.INSTRUCTOR_GRADING,
-                element: suspend(<GradingWorkflowPage />),
-              },
-              {
-                path: ROUTES.INSTRUCTOR_RUBRICS,
-                element: suspend(<RubricManagerPage />),
-              },
+              { path: ROUTES.INSTRUCTOR_ASSESSMENT_DETAILS(), element: suspend(<AdminAssessmentDetailsPage />) },
+              { path: ROUTES.INSTRUCTOR_ASSESSMENT_EDIT(), element: suspend(<AdminEditAssessmentPage />) },
+              { path: ROUTES.INSTRUCTOR_GRADING, element: suspend(<GradingWorkflowPage />) },
+              { path: ROUTES.INSTRUCTOR_RUBRICS, element: suspend(<RubricManagerPage />) },
             ],
           },
         ],
@@ -303,8 +265,7 @@ export const router = createBrowserRouter([
         ],
       },
 
-      // First-time password change for invited users (mustChangePassword flow)
-      // Accessible while authenticated — ProtectedRoute redirects here when mustChangePassword=true
+      // First-time password change for invited users
       {
         path: ROUTES.SET_PASSWORD,
         element: <SetPasswordPage />,
@@ -312,10 +273,10 @@ export const router = createBrowserRouter([
     ],
   },
 
+  // Error routes
   {
     element: <ErrorLayout />,
     children: [
-      { path: ROUTES.ROOT, element: <Navigate to={ROUTES.LOGIN} replace /> },
       { path: ROUTES.UNAUTHORIZED, element: <UnauthorizedPage /> },
       {
         path: '*',
