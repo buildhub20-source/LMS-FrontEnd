@@ -150,4 +150,11 @@ export const API_ENDPOINTS = Object.freeze({
     avatar: '/profile/avatar',
     changePassword: '/profile/change-password',
   },
+  resources: {
+    base: '/resources',
+    byId: (id) => `/resources/${id}`,
+    uploadUrl: '/resources/upload-url',
+    download: (id) => `/resources/${id}/download`,
+    stream: (id) => `/resources/${id}/stream`,
+  },
 });

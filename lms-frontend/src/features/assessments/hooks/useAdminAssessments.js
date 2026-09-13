@@ -111,13 +111,14 @@ export const useAddQuestion = (assessmentId) => {
   });
 };
 
-export const useUpdateQuestion = (questionId, assessmentId) => {
+export const useUpdateQuestion = (assessmentId) => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (payload) => adminAssessmentService.updateQuestion(questionId, payload),
+    mutationFn: ({ questionId, ...payload }) => adminAssessmentService.updateQuestion(questionId, payload),
     onSuccess: () => {
       if (assessmentId) {
         qc.invalidateQueries({ queryKey: adminAssessmentKeys.questions(assessmentId) });
+        qc.invalidateQueries({ queryKey: ['adminSections', assessmentId] });
         refreshDetail(qc, assessmentId);
       }
     },

@@ -66,3 +66,15 @@ export const useMoveQuestionToSection = (assessmentId) => {
         },
     });
 };
+
+export const useMoveQuestion = (assessmentId) => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ questionId, sectionId }) =>
+            assessmentSectionService.moveQuestion(assessmentId, questionId, sectionId),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['adminSections', assessmentId]);
+            queryClient.invalidateQueries(['adminAssessmentQuestions', assessmentId]);
+        },
+    });
+};

@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Share2, Bookmark, CheckCircle2, PauseCircle, Play, ChevronDown, ChevronUp, Edit3, ArrowLeft,
   FileText, Presentation, FileCode, Music, HelpCircle, Download, ExternalLink, BarChart2,
-  Lock, AlertCircle
+  Lock, AlertCircle, BookOpen
 } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
@@ -20,6 +20,8 @@ import learningService from '../../learning/services/learningService';
 import { formatSectionTitle } from '../components/CurriculumBuilder';
 import CourseAnalyticsTab from '../components/CourseAnalyticsTab';
 import courseService from '../services/courseService';
+import LessonNotesPanel from '../components/LessonNotesPanel';
+import LessonResourcesPanel from '../components/LessonResourcesPanel';
 
 export const CourseDetailsPage = () => {
   const { courseId, lessonId } = useParams();
@@ -29,6 +31,7 @@ export const CourseDetailsPage = () => {
   const { hasPermission, hasAnyRole } = usePermission();
 
   const [activeTab, setActiveTab] = useState('player'); // 'player' | 'analytics'
+  const [leftPanelTab, setLeftPanelTab] = useState('overview'); // 'overview' | 'notes' | 'resources'
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [collapsedModules, setCollapsedModules] = useState({});
@@ -139,26 +142,26 @@ export const CourseDetailsPage = () => {
     };
   }, [currentLesson?.recordingId]);
 
-  if (isLoading) return <Spinner fullPage />;
-  if (error) return <ErrorState error={error} onRetry={refetch} />;
-
   const completedCount = completedLessonIds.length;
   const progressPercent = allLessons.length > 0 ? Math.round((completedCount / allLessons.length) * 100) : 0;
 
   // Persist completed lessons whenever they update
   useEffect(() => {
-    if (courseId) {
+    if (courseId && !isLoading) {
       try {
         localStorage.setItem(storageKey, JSON.stringify(completedLessonIds));
       } catch (_) {}
       if (isStudent) {
         learningService.saveProgress(courseId, {
           completedLessonIds,
-          percent: progressPercent
+          percent: progressPercent,
         }).catch(() => {});
       }
     }
-  }, [courseId, storageKey, completedLessonIds, isStudent, progressPercent]);
+  }, [courseId, storageKey, completedLessonIds, isStudent, progressPercent, isLoading]);
+
+  if (isLoading) return <Spinner fullPage />;
+  if (error) return <ErrorState error={error} onRetry={refetch} />;
 
   const toggleComplete = (id) => {
     setCompletedLessonIds(prev =>
@@ -555,49 +558,103 @@ export const CourseDetailsPage = () => {
               </div>
             </div>
 
-            {/* About This Course Section */}
-            <div style={cardStyle}>
-              <h3 style={{ margin: '0 0 12px', fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
-                About This Course
-              </h3>
-              <p style={{
-                margin: 0,
-                fontSize: 14,
-                color: 'var(--text-secondary)',
-                lineHeight: 1.7,
-                whiteSpace: 'pre-line',
-                display: '-webkit-box',
-                WebkitLineClamp: showFullDesc ? 'none' : 4,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden'
-              }}>
-                {course.description || course.summary || 'Unlock your potential with this comprehensive course! Designed to take you from novice to confident practitioner through hands-on projects, step-by-step guidance, and expert techniques.'}
-              </p>
+            {/* ── Secondary Sub-Navigation (Overview / Notes / Resources) ── */}
+            <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--border-color)', paddingBottom: 8 }}>
+              {[
+                { id: 'overview', label: 'Overview', icon: <BookOpen size={15} /> },
+                { id: 'notes', label: 'Lesson Notes', icon: <FileText size={15} /> },
+                { id: 'resources', label: 'Resources', icon: <Download size={15} /> },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setLeftPanelTab(tab.id)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '8px 16px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    border: 'none',
+                    background: leftPanelTab === tab.id ? 'var(--surface-medium)' : 'transparent',
+                    color: leftPanelTab === tab.id ? 'var(--text-primary)' : 'var(--text-muted)',
+                    boxShadow: leftPanelTab === tab.id ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  {tab.icon}
+                  {tab.label}
+                </button>
+              ))}
+            </div>
 
-              <button
-                onClick={() => setShowFullDesc(!showFullDesc)}
-                style={{
-                  background: 'transparent', border: 'none', padding: '8px 0 0',
-                  color: 'var(--text-primary)', fontWeight: 600, fontSize: 13,
-                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4
+            {leftPanelTab === 'notes' && (
+              <LessonNotesPanel
+                courseId={courseId}
+                courseTitle={course.title}
+                currentLesson={currentLesson}
+                allLessons={allLessons}
+                onSelectLesson={(id) => {
+                  const idx = allLessons.findIndex((l) => l.id === id);
+                  if (idx >= 0) setActiveLessonIndex(idx);
                 }}
-              >
-                {showFullDesc ? <>Show less <ChevronUp size={14} /></> : <>Show more <ChevronDown size={14} /></>}
-              </button>
-            </div>
+              />
+            )}
 
-            {/* This Course Suit For Section */}
-            <div style={cardStyle}>
-              <h3 style={{ margin: '0 0 14px', fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
-                This Course Suit For:
-              </h3>
-              <ul style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 10, color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.6 }}>
-                <li>Anyone who wants to start their career & get paid for their skills.</li>
-                <li>This course is for beginners, newbies & amateurs in the field.</li>
-                <li>For anyone that needs to add certified projects to their portfolio.</li>
-                <li>Aimed at people looking for structured, high-quality learning.</li>
-              </ul>
-            </div>
+            {leftPanelTab === 'resources' && (
+              <LessonResourcesPanel currentLesson={currentLesson} course={course} />
+            )}
+
+            {leftPanelTab === 'overview' && (
+              <>
+                {/* About This Course Section */}
+                <div style={cardStyle}>
+                  <h3 style={{ margin: '0 0 12px', fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
+                    About This Course
+                  </h3>
+                  <p style={{
+                    margin: 0,
+                    fontSize: 14,
+                    color: 'var(--text-secondary)',
+                    lineHeight: 1.7,
+                    whiteSpace: 'pre-line',
+                    display: '-webkit-box',
+                    WebkitLineClamp: showFullDesc ? 'none' : 4,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden'
+                  }}>
+                    {course.description || course.summary || 'Unlock your potential with this comprehensive course! Designed to take you from novice to confident practitioner through hands-on projects, step-by-step guidance, and expert techniques.'}
+                  </p>
+
+                  <button
+                    onClick={() => setShowFullDesc(!showFullDesc)}
+                    style={{
+                      background: 'transparent', border: 'none', padding: '8px 0 0',
+                      color: 'var(--text-primary)', fontWeight: 600, fontSize: 13,
+                      cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4
+                    }}
+                  >
+                    {showFullDesc ? <>Show less <ChevronUp size={14} /></> : <>Show more <ChevronDown size={14} /></>}
+                  </button>
+                </div>
+
+                {/* This Course Suit For Section */}
+                <div style={cardStyle}>
+                  <h3 style={{ margin: '0 0 14px', fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
+                    This Course Suit For:
+                  </h3>
+                  <ul style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 10, color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.6 }}>
+                    <li>Anyone who wants to start their career & get paid for their skills.</li>
+                    <li>This course is for beginners, newbies & amateurs in the field.</li>
+                    <li>For anyone that needs to add certified projects to their portfolio.</li>
+                    <li>Aimed at people looking for structured, high-quality learning.</li>
+                  </ul>
+                </div>
+              </>
+            )}
 
           </div>
 

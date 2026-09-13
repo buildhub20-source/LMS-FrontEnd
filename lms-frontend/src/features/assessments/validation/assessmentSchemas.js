@@ -32,10 +32,11 @@ export const assessmentSchema = z
 // ─── Test case sub-form ───────────────────────────────────────────────────────
 
 export const testCaseSchema = z.object({
-  inputData: z.string().optional().nullable(),
+  id: z.any().optional(),
+  inputData: z.string().nullish(),
   expectedOutput: z.string().min(1, 'Expected output is required'),
-  sample: z.boolean().default(false),
-  hidden: z.boolean().default(true),
+  sample: z.coerce.boolean().default(false),
+  hidden: z.coerce.boolean().default(true),
   weight: z.coerce.number().int().min(1, 'Weight must be at least 1').default(1),
 });
 
@@ -43,10 +44,10 @@ export const testCaseSchema = z.object({
 
 export const questionOptionSchema = z.object({
   id: z.string().optional(),
-  optionText: z.string().trim().min(1, 'Option text cannot be blank'),
+  optionText: z.string().optional().default(''),
   isCorrect: z.boolean().default(false),
   orderIndex: z.number().int().optional(),
-  explanation: z.string().optional().nullable(),
+  explanation: z.string().nullish(),
 });
 
 // ─── Question form ────────────────────────────────────────────────────────────
@@ -60,7 +61,8 @@ export const questionSchema = z
     outputFormat: z.string().trim().optional().nullable(),
     constraints: z.string().trim().optional().nullable(),
     difficulty: z.nativeEnum(DIFFICULTY, { message: 'Select a difficulty level' }),
-    compiler: z.string().optional().default('ALL'),
+    compiler: z.string().nullish().default('ALL'),
+    sectionId: z.string().nullish(),
     marks: z.coerce.number().int().min(1).max(100).default(10),
     timeLimitMs: z.coerce.number().int().min(100).max(10000).default(2000),
     memoryLimitMb: z.coerce.number().int().min(16).max(1024).default(256),
@@ -84,6 +86,15 @@ export const questionSchema = z
           path: ['options'],
         });
       } else {
+        data.options.forEach((opt, idx) => {
+          if (!opt.optionText || !opt.optionText.trim()) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'Option text cannot be blank',
+              path: ['options', idx, 'optionText'],
+            });
+          }
+        });
         const hasCorrect = data.options.some((opt) => opt.isCorrect);
         if (!hasCorrect) {
           ctx.addIssue({

@@ -58,6 +58,9 @@ const InstructorDetailsPage = lazy(
 const BatchListPage = lazy(() => import('../features/batches/pages/BatchListPage'));
 const AddStudentPage = lazy(() => import('../features/students/pages/AddStudentPage'));
 const AdminAnalyticsPage = lazy(() => import('../features/analytics/pages/AdminAnalyticsPage'));
+const ResourceManagementPage = lazy(
+  () => import('../features/resources/pages/ResourceManagementPage'),
+);
 const AdminCourseListPage = lazy(() => import('../features/courses/pages/AdminCourseListPage'));
 const InstructorAnalyticsPage = lazy(
   () => import('../features/analytics/pages/InstructorAnalyticsPage'),
@@ -198,6 +201,7 @@ export const router = createBrowserRouter([
               { path: ROUTES.ADMIN_COURSES, element: suspend(<AdminCourseListPage />) },
               { path: ROUTES.ADMIN_COURSE_DETAILS(), element: suspend(<CourseDetailsPage />) },
               { path: ROUTES.ADMIN_COURSE_EDIT(), element: suspend(<EditCoursePage />) },
+              { path: ROUTES.CAMPUS_RESOURCES, element: suspend(<ResourceManagementPage />) },
               {
                 element: <PermissionGuard required={[PERMISSIONS.ASSESSMENT_VIEW]} />,
                 children: [
@@ -242,6 +246,7 @@ export const router = createBrowserRouter([
               { path: ROUTES.COURSE_CREATE, element: suspend(<CreateCoursePage />) },
               { path: ROUTES.COURSE_DETAILS(), element: suspend(<CourseDetailsPage />) },
               { path: ROUTES.COURSE_EDIT(), element: suspend(<EditCoursePage />) },
+              { path: ROUTES.INSTRUCTOR_RESOURCES, element: suspend(<ResourceManagementPage />) },
               { path: ROUTES.ASSESSMENTS, element: suspend(<AssessmentListPage />) },
               { path: ROUTES.ASSESSMENT_CREATE, element: suspend(<CreateAssessmentPage />) },
               {
@@ -275,22 +280,17 @@ export const router = createBrowserRouter([
         path: '/learn',
         element: <RoleBasedLayout />,
         children: [
-          {
-            element: <StudentLayout />,
-            children: [
-              { index: true, element: <Navigate to={ROUTES.MY_COURSES} replace /> },
-              { path: ROUTES.MY_COURSES, element: suspend(<MyCoursesPage />) },
-              { path: ROUTES.STUDENT_PROGRESS, element: suspend(<StudentProgressPage />) },
-              { path: ROUTES.STUDENT_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
-              { path: ROUTES.MY_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
-              { path: ROUTES.CERTIFICATES, element: suspend(<CertificateListPage />) },
-              { path: ROUTES.CERTIFICATE_DETAILS(), element: suspend(<CertificateDetailsPage />) },
-              { path: ROUTES.ASSESSMENT_RESULT(), element: suspend(<AssessmentResultPage />) },
-              { path: ROUTES.LEARNING(), element: suspend(<CourseDetailsPage />) },
-              { path: ROUTES.LESSON(), element: suspend(<CourseDetailsPage />) },
-              { path: ROUTES.COURSE_PLAYER(), element: suspend(<CourseDetailsPage />) },
-            ],
-          },
+          { index: true, element: <Navigate to={ROUTES.MY_COURSES} replace /> },
+          { path: ROUTES.MY_COURSES, element: suspend(<MyCoursesPage />) },
+          { path: ROUTES.STUDENT_PROGRESS, element: suspend(<StudentProgressPage />) },
+          { path: ROUTES.STUDENT_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
+          { path: ROUTES.MY_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
+          { path: ROUTES.CERTIFICATES, element: suspend(<CertificateListPage />) },
+          { path: ROUTES.CERTIFICATE_DETAILS(), element: suspend(<CertificateDetailsPage />) },
+          { path: ROUTES.ASSESSMENT_RESULT(), element: suspend(<AssessmentResultPage />) },
+          { path: ROUTES.LEARNING(), element: suspend(<CourseDetailsPage />) },
+          { path: ROUTES.LESSON(), element: suspend(<CourseDetailsPage />) },
+          { path: ROUTES.COURSE_PLAYER(), element: suspend(<CourseDetailsPage />) },
         ],
       },
 

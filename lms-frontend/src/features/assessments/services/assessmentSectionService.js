@@ -46,5 +46,13 @@ export const assessmentSectionService = {
     removeQuestionFromSection: async (assessmentQuestionId) => {
         const response = await http.put(`/admin/assessments/questions/${assessmentQuestionId}/unsection`);
         return response.data || response;
+    },
+
+    // Move a question by assessmentId and questionId
+    moveQuestion: async (assessmentId, questionId, sectionId) => {
+        const response = await http.put(`/admin/assessments/${assessmentId}/questions/${questionId}/section`, null, {
+            params: sectionId ? { sectionId } : {}
+        });
+        return response.data || response;
     }
 };
