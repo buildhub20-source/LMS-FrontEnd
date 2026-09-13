@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Code2, Zap, Plus, Trash2, Eye, EyeOff, Settings, CheckCircle2, ListFilter, HelpCircle, Copy, CheckCheck, ArrowRight, ArrowLeft } from 'lucide-react';
@@ -7,6 +7,7 @@ import TextArea from '../../../components/common/TextArea';
 import Select from '../../../components/common/Select';
 import Button from '../../../components/common/Button';
 import Alert from '../../../components/feedback/Alert';
+import { useToast } from '../../../components/feedback/Toast';
 import { questionSchema } from '../validation/assessmentSchemas';
 import { DIFFICULTY_OPTIONS, COMPILER_OPTIONS } from '../constants/assessmentConstants';
 
@@ -62,17 +63,51 @@ const S = {
 
 export const AdminQuestionForm = ({
   defaultValues = EMPTY_Q,
+  sections = [],
   onSubmit,
   onCancel,
   submitLabel = 'Save Question',
   error = null,
 }) => {
-  const initialValues = useMemo(() => ({
-    ...EMPTY_Q,
-    ...defaultValues,
-    testCases: defaultValues?.testCases && defaultValues.testCases.length > 0 ? defaultValues.testCases : EMPTY_Q.testCases,
-    options: defaultValues?.options && defaultValues.options.length > 0 ? defaultValues.options : EMPTY_Q.options,
-  }), [defaultValues]);
+  const toast = useToast();
+
+  const initialValues = useMemo(() => {
+    const qType = defaultValues?.questionType || 'CODING';
+    const isCoding = qType === 'CODING';
+    return {
+      ...EMPTY_Q,
+      ...defaultValues,
+      questionType: qType,
+      title: defaultValues?.title || '',
+      description: defaultValues?.description || '',
+      compiler: defaultValues?.compiler || 'ALL',
+      difficulty: defaultValues?.difficulty || 'MEDIUM',
+      sectionId: defaultValues?.sectionId || '',
+      inputFormat: defaultValues?.inputFormat || '',
+      outputFormat: defaultValues?.outputFormat || '',
+      constraints: defaultValues?.constraints || '',
+      marks: defaultValues?.marks ?? 10,
+      timeLimitMs: defaultValues?.timeLimitMs ?? 2000,
+      memoryLimitMb: defaultValues?.memoryLimitMb ?? 256,
+      testCases: isCoding
+        ? (defaultValues?.testCases && defaultValues.testCases.length > 0
+            ? defaultValues.testCases.map((tc) => ({
+                ...tc,
+                inputData: tc.inputData ?? '',
+                expectedOutput: tc.expectedOutput ?? '',
+                sample: Boolean(tc.sample),
+                hidden: tc.hidden !== undefined ? Boolean(tc.hidden) : !tc.sample,
+                weight: tc.weight ? Number(tc.weight) : 1,
+              }))
+            : EMPTY_Q.testCases)
+        : [],
+      options: !isCoding
+        ? (defaultValues?.options && defaultValues.options.length > 0
+            ? defaultValues.options
+            : EMPTY_Q.options)
+        : [],
+    };
+  }, [defaultValues]);
 
   const {
     register,
@@ -95,6 +130,16 @@ export const AdminQuestionForm = ({
 
   const questionType = watch('questionType') || 'CODING';
   const testCasesWatch = watch('testCases') || [];
+
+  // Ensure options exist when switching to MULTIPLE_CHOICE
+  useEffect(() => {
+    if (questionType === 'MULTIPLE_CHOICE' && optionFields.length === 0) {
+      appendOption([
+        { optionText: '', isCorrect: true, explanation: '' },
+        { optionText: '', isCorrect: false, explanation: '' },
+      ]);
+    }
+  }, [questionType, optionFields.length, appendOption]);
 
   // Categorize into visible (sample) and hidden (graded) test cases
   const visibleCases = fields
@@ -250,10 +295,6 @@ export const AdminQuestionForm = ({
           />
         </div>
 
-        {/* Hidden inputs to guarantee react-hook-form registration */}
-        <input type="hidden" {...register(`testCases.${originalIndex}.sample`)} />
-        <input type="hidden" {...register(`testCases.${originalIndex}.hidden`)} />
-
         {/* Weight & Visibility Info Row */}
         <div 
           style={{ background: 'var(--surface-dark, #0a0a0a)', borderColor: 'var(--border-color, #222)' }}
@@ -289,8 +330,52 @@ export const AdminQuestionForm = ({
     );
   };
 
+  const handleFormSubmit = (data) => {
+    const isCoding = data.questionType === 'CODING';
+    const payload = {
+      ...data,
+      compiler: data.compiler || 'ALL',
+      description: data.description || '',
+      testCases: isCoding
+        ? (data.testCases || []).map((tc) => ({
+            inputData: tc.inputData || '',
+            expectedOutput: tc.expectedOutput || '',
+            sample: Boolean(tc.sample),
+            hidden: tc.hidden !== undefined ? Boolean(tc.hidden) : !tc.sample,
+            weight: tc.weight ? Number(tc.weight) : 1,
+          }))
+        : [],
+      options: !isCoding
+        ? (data.options || []).map((opt, i) => ({
+            optionText: opt.optionText || '',
+            isCorrect: Boolean(opt.isCorrect),
+            explanation: opt.explanation || '',
+            orderIndex: i + 1,
+          }))
+        : [],
+    };
+    return onSubmit(payload);
+  };
+
+  const handleFormError = (formErrors) => {
+    console.error('Question form validation errors:', formErrors);
+    const findFirstMessage = (errObj) => {
+      if (!errObj) return null;
+      if (errObj.message) return errObj.message;
+      for (const key of Object.keys(errObj)) {
+        if (typeof errObj[key] === 'object') {
+          const msg = findFirstMessage(errObj[key]);
+          if (msg) return msg;
+        }
+      }
+      return null;
+    };
+    const msg = findFirstMessage(formErrors) || 'Please check all required fields.';
+    toast.error(`Cannot save: ${msg}`);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col lg:flex-row gap-6 items-start font-sans">
+    <form onSubmit={handleSubmit(handleFormSubmit, handleFormError)} noValidate className="flex flex-col lg:flex-row gap-6 items-start font-sans">
       
       {/* ── MAIN WORKSPACE (Left Column) ── */}
       <div className="flex-1 w-full space-y-6">
@@ -706,6 +791,17 @@ export const AdminQuestionForm = ({
               error={errors.difficulty?.message}
               {...register('difficulty')}
             />
+            {sections && sections.length > 0 && (
+              <Select
+                label="Section"
+                options={[
+                  { value: '', label: 'None (Unsectioned)' },
+                  ...sections.map(s => ({ value: s.id, label: s.title }))
+                ]}
+                error={errors.sectionId?.message}
+                {...register('sectionId')}
+              />
+            )}
             <Input
               label="Marks"
               type="number"

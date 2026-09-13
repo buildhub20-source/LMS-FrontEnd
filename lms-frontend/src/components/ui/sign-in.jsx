@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, Lock, Building2, ServerOff, WifiOff, ShieldAlert, X } from 'lucide-react';
 
 const GlassInputWrapper = ({ children }) => (
   <div className="rounded-2xl border border-border bg-foreground/5 backdrop-blur-sm transition-colors focus-within:border-violet-400/70 focus-within:bg-violet-500/10">
@@ -20,6 +20,27 @@ const TestimonialCard = ({ testimonial, delay }) => (
   </div>
 );
 
+const renderErrorIcon = (type) => {
+  const iconClasses = 'h-5 w-5 shrink-0';
+  switch (type) {
+    case 'CREDENTIALS':
+      return <AlertCircle className={`${iconClasses} text-red-500 dark:text-red-400`} />;
+    case 'ACCOUNT_LOCKED':
+      return <Lock className={`${iconClasses} text-amber-500 dark:text-amber-400`} />;
+    case 'TENANT_NOT_FOUND':
+    case 'TENANT_INACTIVE':
+      return <Building2 className={`${iconClasses} text-orange-500 dark:text-orange-400`} />;
+    case 'SERVER_ERROR':
+      return <ServerOff className={`${iconClasses} text-red-500 dark:text-red-400`} />;
+    case 'NETWORK_ERROR':
+      return <WifiOff className={`${iconClasses} text-rose-500 dark:text-rose-400`} />;
+    case 'RATE_LIMIT':
+      return <ShieldAlert className={`${iconClasses} text-amber-500 dark:text-amber-400`} />;
+    default:
+      return <AlertCircle className={`${iconClasses} text-red-500 dark:text-red-400`} />;
+  }
+};
+
 export const SignInPage = ({
   title = <span className="font-light tracking-tighter text-foreground">Welcome</span>,
   description = 'Access your account and continue your journey with us',
@@ -27,12 +48,29 @@ export const SignInPage = ({
   testimonials = [],
   onSignIn,
   onResetPassword,
+  error,
   errorMessage,
+  onDismissError,
   isSubmitting = false,
   showTenantSlug = false,
   tenantSlugHint = 'Select the tenant workspace you want to access.',
 }) => {
   const [showPassword, setShowPassword] = useState(false);
+
+  const errorDetails =
+    error && typeof error === 'object'
+      ? {
+          title: error.title || 'Sign In Failed',
+          message: error.message || errorMessage || 'An error occurred during sign in.',
+          type: error.type || 'UNKNOWN',
+        }
+      : (typeof error === 'string' && error) || errorMessage
+        ? {
+            title: 'Sign In Failed',
+            message: typeof error === 'string' ? error : errorMessage,
+            type: 'UNKNOWN',
+          }
+        : null;
 
   return (
     <div className="flex min-h-[100dvh] w-full flex-col font-sans md:fixed md:inset-0 md:h-[100dvh] md:min-h-0 md:flex-row md:overflow-hidden">
@@ -43,11 +81,33 @@ export const SignInPage = ({
               {title}
             </h1>
             <p className="animate-element animate-delay-200 text-muted-foreground">{description}</p>
-            <form className="space-y-5" onSubmit={onSignIn}>
-              {errorMessage && (
-                <p role="alert" className="rounded-xl bg-red-500/10 p-3 text-sm text-red-600">
-                  {errorMessage}
-                </p>
+            <form className="space-y-5" onSubmit={onSignIn} noValidate>
+              {errorDetails && (
+                <div
+                  role="alert"
+                  aria-live="polite"
+                  className="animate-element flex items-start gap-3.5 rounded-2xl border border-red-500/30 bg-red-500/10 p-4 backdrop-blur-md dark:border-red-500/25 dark:bg-red-950/40 text-left transition-all duration-200"
+                >
+                  <div className="mt-0.5">{renderErrorIcon(errorDetails.type)}</div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-semibold text-red-800 dark:text-red-200">
+                      {errorDetails.title}
+                    </h3>
+                    <p className="mt-1 text-xs sm:text-sm text-red-700 dark:text-red-300/90 leading-relaxed break-words">
+                      {errorDetails.message}
+                    </p>
+                  </div>
+                  {onDismissError && (
+                    <button
+                      type="button"
+                      onClick={onDismissError}
+                      className="rounded-lg p-1 text-red-600 hover:bg-red-500/20 hover:text-red-800 dark:text-red-400 dark:hover:bg-red-500/20 dark:hover:text-red-200 transition-colors"
+                      aria-label="Dismiss error"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
               )}
               <div className="animate-element animate-delay-300">
                 <label htmlFor="email" className="text-sm font-medium text-muted-foreground">
@@ -61,6 +121,7 @@ export const SignInPage = ({
                     autoComplete="email"
                     required
                     placeholder="Enter your email address"
+                    onChange={() => onDismissError?.()}
                     className="w-full rounded-2xl bg-transparent p-4 text-sm focus:outline-none"
                   />
                 </GlassInputWrapper>
@@ -78,6 +139,7 @@ export const SignInPage = ({
                       autoComplete="current-password"
                       required
                       placeholder="Enter your password"
+                      onChange={() => onDismissError?.()}
                       className="w-full rounded-2xl bg-transparent p-4 pr-12 text-sm focus:outline-none"
                     />
                     <button

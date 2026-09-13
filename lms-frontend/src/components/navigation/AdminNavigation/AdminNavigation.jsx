@@ -13,6 +13,7 @@ import {
   CalendarRange,
   Presentation,
   ScrollText,
+  FolderDown,
 } from 'lucide-react';
 import MainNavigation from '../MainNavigation';
 import { ROUTES } from '../../../constants/routes';
@@ -108,6 +109,12 @@ const ITEMS = [
     permission: PERMISSIONS.ASSESSMENT_VIEW,
     group: 'Learning',
     icon: <FileText className="h-5 w-5" />,
+  },
+  {
+    label: 'Campus Toolkit',
+    to: ROUTES.CAMPUS_RESOURCES,
+    group: 'Learning',
+    icon: <FolderDown className="h-5 w-5" />,
   },
   {
     label: 'Audit Logs',

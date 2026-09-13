@@ -54,6 +54,7 @@ export const ROUTES = Object.freeze({
   ADMIN_ASSESSMENT_EDIT: (id = ':assessmentId') => `/admin/assessments/${id}/edit`,
   ADMIN_GRADING: '/admin/assessments/grading',
   ADMIN_RUBRICS: '/admin/assessments/rubrics',
+  CAMPUS_RESOURCES: '/admin/resources',
 
   // Instructor
   INSTRUCTOR_ANALYTICS: '/instructor/analytics',
@@ -67,6 +68,7 @@ export const ROUTES = Object.freeze({
   INSTRUCTOR_ASSESSMENT_EDIT: (id = ':assessmentId') => `/instructor/assessments/${id}/edit`,
   INSTRUCTOR_GRADING: '/instructor/assessments/grading',
   INSTRUCTOR_RUBRICS: '/instructor/assessments/rubrics',
+  INSTRUCTOR_RESOURCES: '/instructor/resources',
 
   // Student
   MY_COURSES: '/learn/my-courses',

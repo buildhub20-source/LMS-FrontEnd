@@ -20,7 +20,7 @@ const testimonials = [
 ];
 
 export const LoginPage = () => {
-  const { submit, error, isSubmitting } = useLogin();
+  const { submit, error, isSubmitting, clearError } = useLogin();
   const navigate = useNavigate();
   const tenantSlug = tenantSlugFromHostname();
   const platformLogin = isPlatformHostname();
@@ -42,7 +42,9 @@ export const LoginPage = () => {
       testimonials={testimonials}
       onSignIn={handleSignIn}
       onResetPassword={() => navigate(ROUTES.FORGOT_PASSWORD)}
+      error={error}
       errorMessage={error?.message}
+      onDismissError={clearError}
       isSubmitting={isSubmitting}
       description={platformLogin
         ? 'Sign in to manage tenant databases and their lifecycle.'

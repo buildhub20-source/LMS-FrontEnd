@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import authService from '../services/authService';
 import tokenStorage from '../../../services/storage/tokenStorage';
-import { normalizeError } from '../../../utils/errorUtils';
+import { normalizeError, categorizeAuthError } from '../../../utils/errorUtils';
 
 /**
  * Real backend LoginResponse shape (after ApiResponse unwrapping):
@@ -53,15 +53,8 @@ export const login = createAsyncThunk('auth/login', async (credentials, { reject
     };
     return user;
   } catch (error) {
-    if (import.meta.env.DEV) {
-      // If backend is down, give a helpful message
-      const msg =
-        error?.code === 'ERR_NETWORK'
-          ? 'Backend offline. In development, use email: admin@123 / password: admin'
-          : (error?.message ?? 'Invalid credentials');
-      return rejectWithValue({ message: msg });
-    }
-    return rejectWithValue(normalizeError(error));
+    const authError = categorizeAuthError(error);
+    return rejectWithValue(authError);
   }
 });
 

@@ -9,6 +9,7 @@ import { STORAGE_KEYS } from '../../../constants/appConstants';
 import platformAuthStorage from '../../platform/services/platformAuthStorage';
 import platformService from '../../platform/services/platformService';
 import { isPlatformHostname, tenantSlugFromHostname } from '../../../utils/tenantHostname';
+import { categorizeAuthError } from '../../../utils/errorUtils';
 
 export const useLogin = () => {
   const dispatch = useDispatch();
@@ -17,12 +18,27 @@ export const useLogin = () => {
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const clearError = useCallback(() => setError(null), []);
+
   const submit = useCallback(
     async (credentials) => {
       setIsSubmitting(true);
       setError(null);
       const { tenantSlug: _tenantSlug, ...loginCredentials } = credentials;
       const slug = tenantSlugFromHostname();
+
+      const email = loginCredentials?.email?.trim();
+      const password = loginCredentials?.password;
+
+      if (!email || !password) {
+        setIsSubmitting(false);
+        setError({
+          type: 'VALIDATION',
+          title: 'Missing Required Fields',
+          message: 'Please enter both your email address and password.',
+        });
+        return false;
+      }
 
       if (isPlatformHostname()) {
         storage.remove(STORAGE_KEYS.TENANT);
@@ -34,15 +50,18 @@ export const useLogin = () => {
           return true;
         } catch (requestError) {
           setIsSubmitting(false);
-          setError({ message: requestError?.response?.data?.message
-            ?? 'Global administrator sign-in failed. Select a tenant slug for a tenant account.' });
+          setError(categorizeAuthError(requestError));
           return false;
         }
       }
 
       if (!slug) {
         setIsSubmitting(false);
-        setError({ message: 'Open your tenant workspace URL to sign in, for example lms-integration-test.localhost:3000.' });
+        setError({
+          type: 'TENANT_NOT_FOUND',
+          title: 'Workspace Required',
+          message: 'Please open your specific workspace URL to sign in (e.g. your-team.localhost:3000).',
+        });
         return false;
       }
 
@@ -53,7 +72,16 @@ export const useLogin = () => {
       setIsSubmitting(false);
 
       if (login.rejected.match(result)) {
-        setError(result.payload);
+        const payload = result.payload;
+        setError(
+          payload && typeof payload === 'object' && payload.message
+            ? payload
+            : {
+                type: 'UNKNOWN',
+                title: 'Sign In Failed',
+                message: typeof payload === 'string' ? payload : 'Invalid email or password. Please try again.',
+              },
+        );
         return false;
       }
 
@@ -81,7 +109,7 @@ export const useLogin = () => {
     [dispatch, navigate, location],
   );
 
-  return { submit, error, isSubmitting };
+  return { submit, error, isSubmitting, clearError };
 };
 
 export default useLogin;
