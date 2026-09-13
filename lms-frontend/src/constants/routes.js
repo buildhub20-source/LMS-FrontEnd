@@ -13,9 +13,13 @@ export const ROUTES = Object.freeze({
 
   // Global platform control plane
   PLATFORM_LOGIN: '/platform/login',
+  PLATFORM_DASHBOARD: '/platform/dashboard',
   PLATFORM_TENANTS: '/platform/tenants',
+  PLATFORM_AUDIT_LOGS: '/platform/audit-logs',
+  PLATFORM_ANNOUNCEMENTS: '/platform/announcements',
 
   // Admin
+  ADMIN_DASHBOARD: '/admin/dashboard',
   ADMIN_ANALYTICS: '/admin/analytics',
   USERS: '/admin/users',
   USER_CREATE: '/admin/users/new',

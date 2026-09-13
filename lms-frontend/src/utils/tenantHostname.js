@@ -20,5 +20,5 @@ export const tenantSlugFromHostname = (hostname = window.location.hostname) => {
 export const isPlatformHostname = (hostname = window.location.hostname) => {
   const host = normalize(hostname);
   const baseDomain = configuredBaseDomain() || 'localhost';
-  return host === `platform.${baseDomain}`;
+  return host === `platform.${baseDomain}` || window.location.pathname.startsWith('/platform');
 };
