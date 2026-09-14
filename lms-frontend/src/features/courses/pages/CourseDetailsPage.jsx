@@ -3,14 +3,17 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Share2, Bookmark, CheckCircle2, PauseCircle, Play, ChevronDown, ChevronUp, Edit3, ArrowLeft,
   FileText, Presentation, FileCode, Music, HelpCircle, Download, ExternalLink, BarChart2,
-  Lock, AlertCircle, BookOpen
+  Lock, AlertCircle, BookOpen, ChevronLeft, ChevronRight, RotateCcw, Trash2
 } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
 import ErrorState from '../../../components/common/ErrorState';
 import Avatar from '../../../components/common/Avatar';
 import Button from '../../../components/common/Button';
+import ConfirmDialog from '../../../components/common/ConfirmDialog';
 import useCourse from '../hooks/useCourse';
+import { useDeleteCourse } from '../hooks/useCourses';
+import { useToast } from '../../../components/feedback/Toast';
 import { ROUTES } from '../../../constants/routes';
 import { ROLES } from '../../../constants/roles';
 import { PERMISSIONS } from '../../../constants/permissions';
@@ -27,7 +30,11 @@ export const CourseDetailsPage = () => {
   const { courseId, lessonId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const toast = useToast();
   const { data: course, isLoading, error, refetch } = useCourse(courseId);
+  const deleteMutation = useDeleteCourse();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { hasPermission, hasAnyRole } = usePermission();
 
   const [activeTab, setActiveTab] = useState('player'); // 'player' | 'analytics'
@@ -261,13 +268,39 @@ export const CourseDetailsPage = () => {
           </div>
 
           {isAdminOrInstructor && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate(editRoute)}
-            >
-              <Edit3 size={14} style={{ marginRight: 6 }} /> Edit Course
-            </Button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate(editRoute)}
+              >
+                <Edit3 size={14} style={{ marginRight: 6 }} /> Edit Course
+              </Button>
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(true)}
+                title="Delete Course"
+                style={{
+                  padding: '7px 12px',
+                  borderRadius: 6,
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  background: 'rgba(239, 68, 68, 0.08)',
+                  color: '#ef4444',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  transition: 'all 0.15s ease',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.18)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)'; }}
+              >
+                <Trash2 size={14} />
+                <span>Delete</span>
+              </button>
+            </div>
           )}
         </div>
 
@@ -854,6 +887,35 @@ export const CourseDetailsPage = () => {
           </div>
         </div>
       )}
+      {/* Delete Course Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onCancel={() => setShowDeleteConfirm(false)}
+        onConfirm={async () => {
+          setIsDeleting(true);
+          try {
+            if (course?.status === 'PUBLISHED') {
+              await courseService.unpublish(courseId);
+            }
+            await deleteMutation.mutateAsync(courseId);
+            toast.success('Course deleted successfully.');
+            navigate(backRoute);
+          } catch (err) {
+            toast.error(err?.response?.data?.message || err?.message || 'Failed to delete course.');
+          } finally {
+            setIsDeleting(false);
+          }
+        }}
+        title="Delete Course"
+        message={
+          course?.status === 'PUBLISHED'
+            ? `"${course?.title}" is currently PUBLISHED. To safely delete it, it will be unpublished first and then permanently removed. Are you sure?`
+            : `Are you sure you want to delete "${course?.title}"? This action cannot be undone.`
+        }
+        confirmLabel="Delete"
+        isDestructive
+        isLoading={isDeleting}
+      />
       </div>
     </PageContainer>
   );

@@ -1,11 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Check, X, Award, FileText, Send } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Check, X, Award, FileText, Send, ChevronRight, ChevronLeft } from 'lucide-react';
+import Editor from '@monaco-editor/react';
 import Button from '../../../components/common/Button';
 import Input from '../../../components/common/Input';
 import TextArea from '../../../components/common/TextArea';
 import Alert from '../../../components/feedback/Alert';
 import gradingService from '../services/gradingService';
 import rubricService from '../services/rubricService';
+
+/** Maps submission language strings to Monaco language identifiers */
+const LANG_MAP = {
+  JAVA: 'java', java: 'java', Java: 'java',
+  PYTHON: 'python', python: 'python', Python: 'python',
+  JAVASCRIPT: 'javascript', javascript: 'javascript', JavaScript: 'javascript',
+  'C++': 'cpp', CPP: 'cpp', cpp: 'cpp',
+  C: 'c', c: 'c',
+  TYPESCRIPT: 'typescript', typescript: 'typescript',
+  GO: 'go', go: 'go',
+  RUST: 'rust', rust: 'rust',
+};
+const getMonacoLang = (lang) => LANG_MAP[lang] || 'plaintext';
 
 export const GradingWorkflowPage = () => {
   const [pending, setPending] = useState([]);
@@ -105,7 +119,7 @@ export const GradingWorkflowPage = () => {
   };
 
   return (
-    <div style={{ padding: '24px', maxWidth: 1200, margin: '0 auto' }}>
+    <div style={{ width: '100%' }}>
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: '1.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10 }}>
           <Award size={24} color="var(--primary-color, #4f46e5)" /> Instructor Grading Workflow
@@ -167,21 +181,33 @@ export const GradingWorkflowPage = () => {
                 </span>
               </div>
 
-              {/* Code display */}
-              <pre
-                style={{
-                  background: '#1e293b',
-                  color: '#f8fafc',
-                  padding: 16,
-                  borderRadius: 6,
-                  overflowX: 'auto',
-                  fontSize: '0.85rem',
-                  fontFamily: 'monospace',
-                  maxHeight: 300,
-                }}
-              >
-                {selectedSub.sourceCode || '// No code submitted'}
-              </pre>
+              {/* Syntax-highlighted code viewer (read-only Monaco Editor) */}
+              <div style={{ borderRadius: 8, overflow: 'hidden', border: '1px solid #334155' }}>
+                <Editor
+                  height="300px"
+                  language={getMonacoLang(selectedSub.language)}
+                  value={selectedSub.sourceCode || '// No code submitted'}
+                  theme="vs-dark"
+                  options={{
+                    readOnly: true,
+                    minimap: { enabled: true, scale: 1 },
+                    lineNumbers: 'on',
+                    scrollBeyondLastLine: false,
+                    fontSize: 13,
+                    fontFamily: "'Cascadia Code', 'Fira Code', 'JetBrains Mono', Consolas, monospace",
+                    wordWrap: 'on',
+                    renderLineHighlight: 'all',
+                    padding: { top: 12, bottom: 12 },
+                    domReadOnly: true,
+                    contextmenu: false,
+                    selectionHighlight: true,
+                    occurrencesHighlight: 'singleFile',
+                    bracketPairColorization: { enabled: true },
+                    folding: true,
+                    glyphMargin: false,
+                  }}
+                />
+              </div>
 
               {/* Grading Form */}
               <form onSubmit={handleSubmitGrade} style={{ marginTop: 24, paddingTop: 24, borderTop: '1px solid #e5e7eb' }}>

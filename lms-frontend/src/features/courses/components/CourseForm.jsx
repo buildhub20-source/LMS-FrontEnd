@@ -1,10 +1,11 @@
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm, useWatch, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   BookOpen, Layers, Clock, Sparkles, Image, Tag, Award, CheckCircle2, Globe
 } from 'lucide-react';
 import Input from '../../../components/common/Input';
 import TextArea from '../../../components/common/TextArea';
+import RichTextEditor from '../../../components/common/RichTextEditor';
 import Select from '../../../components/common/Select';
 import Button from '../../../components/common/Button';
 import Alert from '../../../components/feedback/Alert';
@@ -142,18 +143,20 @@ export const CourseForm = ({
         </div>
 
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-            <label style={labelStyle}>Full Course Description *</label>
-            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-              {descriptionValue.length} chars
-            </span>
-          </div>
-          <TextArea
-            rows={7}
-            required
-            placeholder="Write a thorough description covering the tools, methodologies, and concepts taught in this course..."
-            error={errors.description?.message}
-            {...register('description')}
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => (
+              <RichTextEditor
+                label="Full Course Description"
+                required
+                placeholder="Write a thorough description covering the tools, methodologies, and concepts taught in this course (supports Markdown, code blocks, lists)..."
+                error={errors.description?.message}
+                value={field.value || ''}
+                onChange={field.onChange}
+                rows={8}
+              />
+            )}
           />
         </div>
       </div>

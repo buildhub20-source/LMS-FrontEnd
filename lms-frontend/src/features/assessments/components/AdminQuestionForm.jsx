@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Code2, Zap, Plus, Trash2, Eye, EyeOff, Settings, CheckCircle2, ListFilter, HelpCircle, Copy, CheckCheck, ArrowRight, ArrowLeft } from 'lucide-react';
@@ -10,6 +10,7 @@ import Alert from '../../../components/feedback/Alert';
 import { useToast } from '../../../components/feedback/Toast';
 import { questionSchema } from '../validation/assessmentSchemas';
 import { DIFFICULTY_OPTIONS, COMPILER_OPTIONS } from '../constants/assessmentConstants';
+import QuestionPreviewModal from './QuestionPreviewModal';
 
 const QUESTION_TYPE_OPTIONS = [
   { value: 'CODING', label: '💻 Coding Challenge' },
@@ -70,6 +71,7 @@ export const AdminQuestionForm = ({
   error = null,
 }) => {
   const toast = useToast();
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   const initialValues = useMemo(() => {
     const qType = defaultValues?.questionType || 'CODING';
@@ -375,7 +377,8 @@ export const AdminQuestionForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit, handleFormError)} noValidate className="flex flex-col lg:flex-row gap-6 items-start font-sans">
+    <>
+      <form onSubmit={handleSubmit(handleFormSubmit, handleFormError)} noValidate className="flex flex-col lg:flex-row gap-6 items-start font-sans">
       
       {/* ── MAIN WORKSPACE (Left Column) ── */}
       <div className="flex-1 w-full space-y-6">
@@ -759,6 +762,30 @@ export const AdminQuestionForm = ({
           <Button type="submit" isLoading={isSubmitting} className="w-full justify-center text-base py-2.5">
             {submitLabel}
           </Button>
+          <button
+            type="button"
+            onClick={() => setShowPreviewModal(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              padding: '10px 16px',
+              borderRadius: 8,
+              border: '1px solid rgba(99, 102, 241, 0.4)',
+              background: 'rgba(99, 102, 241, 0.1)',
+              color: '#a5b4fc',
+              fontWeight: 600,
+              fontSize: 14,
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(99, 102, 241, 0.2)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(99, 102, 241, 0.1)'; }}
+          >
+            <Eye size={16} />
+            <span>Preview & Test</span>
+          </button>
           {onCancel && (
             <button 
               type="button" 
@@ -846,6 +873,13 @@ export const AdminQuestionForm = ({
 
       </div>
     </form>
+
+    <QuestionPreviewModal
+      isOpen={showPreviewModal}
+      onClose={() => setShowPreviewModal(false)}
+      questionData={watch()}
+    />
+  </>
   );
 };
 

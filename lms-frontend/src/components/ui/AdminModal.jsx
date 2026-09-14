@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { X, AlertTriangle } from 'lucide-react';
 import AdminButton from './AdminButton';
 
 /**
@@ -100,38 +100,67 @@ export const AdminModal = ({
 
 /**
  * Admin Dashboard Confirm Modal.
- * Props: open, onClose, onConfirm, title, message, confirmLabel, variant ('primary'|'danger'), loading
+ * Props: open, onClose, onCancel, onConfirm, title, message, description, confirmLabel, variant ('primary'|'danger'), danger, loading
  */
 export const AdminConfirmModal = ({
   open,
   onClose,
+  onCancel,
   onConfirm,
-  title,
+  title = 'Are you sure?',
   message,
+  description,
   confirmLabel = 'Confirm',
   variant = 'danger',
+  danger = false,
   loading = false,
-}) => (
-  <AdminModal
-    open={open}
-    onClose={onClose}
-    title={title}
-    size="sm"
-    footer={
-      <>
-        <AdminButton variant="outline" onClick={onClose} disabled={loading}>
-          Cancel
-        </AdminButton>
-        <AdminButton variant={variant} onClick={onConfirm} loading={loading}>
-          {confirmLabel}
-        </AdminButton>
-      </>
-    }
-  >
-    <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-      {message}
-    </p>
-  </AdminModal>
-);
+}) => {
+  const handleClose = onClose || onCancel;
+  const displayMessage = message || description;
+  const isDestructive = danger || variant === 'danger';
+  const resolvedVariant = isDestructive ? 'danger' : (variant || 'primary');
+
+  return (
+    <AdminModal
+      open={open}
+      onClose={handleClose}
+      title={title}
+      size="sm"
+      footer={
+        <>
+          <AdminButton variant="outline" onClick={handleClose} disabled={loading}>
+            Cancel
+          </AdminButton>
+          <AdminButton variant={resolvedVariant} onClick={onConfirm} loading={loading}>
+            {confirmLabel}
+          </AdminButton>
+        </>
+      }
+    >
+      <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+        {isDestructive && (
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: '50%',
+              background: 'rgba(239, 68, 68, 0.15)',
+              color: '#ef4444',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <AlertTriangle size={18} />
+          </div>
+        )}
+        <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6, flex: 1, whiteSpace: 'pre-line' }}>
+          {displayMessage}
+        </p>
+      </div>
+    </AdminModal>
+  );
+};
 
 export default AdminModal;
