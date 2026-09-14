@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
-import { Trash2, Edit3 } from 'lucide-react';
+import { Trash2, Edit3, Copy } from 'lucide-react';
 import DataTable from '../../../components/common/DataTable';
 import { ROUTES } from '../../../constants/routes';
 import { formatDate, formatDuration } from '../../../utils/dateUtils';
 import CourseStatusBadge from './CourseStatusBadge';
 
-export const CourseTable = ({ onDelete, ...props }) => {
+export const CourseTable = ({ onDelete, onDuplicate, ...props }) => {
   const columns = [
     {
       key: 'title',
@@ -61,6 +61,33 @@ export const CourseTable = ({ onDelete, ...props }) => {
             <Edit3 size={12} />
             <span>Edit</span>
           </Link>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDuplicate?.(course);
+            }}
+            title="Duplicate Course"
+            style={{
+              padding: '5px 10px',
+              borderRadius: 6,
+              fontSize: 12,
+              fontWeight: 600,
+              border: '1px solid var(--border-color)',
+              background: 'transparent',
+              color: 'var(--text-primary)',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 4,
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--surface-medium, rgba(255,255,255,0.05))'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+          >
+            <Copy size={12} />
+            <span>Duplicate</span>
+          </button>
           <button
             type="button"
             onClick={(e) => {

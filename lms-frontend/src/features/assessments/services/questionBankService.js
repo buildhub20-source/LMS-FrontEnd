@@ -280,13 +280,30 @@ export const questionBankService = {
     const custom = getStoredCustomQuestions();
     const newEntry = {
       ...question,
-      id: `custom-qb-${Date.now()}`,
+      id: `custom-qb-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       isCustom: true,
       createdAt: new Date().toISOString(),
     };
     custom.unshift(newEntry);
     saveCustomQuestions(custom);
     return newEntry;
+  },
+
+  /**
+   * Save a batch of questions to user's question bank
+   */
+  saveBatchToBank: async (questionsList) => {
+    const custom = getStoredCustomQuestions();
+    const now = Date.now();
+    const newEntries = questionsList.map((q, idx) => ({
+      ...q,
+      id: q.id && !String(q.id).startsWith('qb-') ? q.id : `custom-qb-${now}-${idx}`,
+      isCustom: true,
+      createdAt: new Date().toISOString(),
+    }));
+    const updated = [...newEntries, ...custom];
+    saveCustomQuestions(updated);
+    return newEntries;
   },
 
   /**
@@ -298,6 +315,406 @@ export const questionBankService = {
     saveCustomQuestions(filtered);
     return true;
   },
+
+  /**
+   * Export questions to JSON and trigger file download
+   */
+  exportToJson: (questions, filename = `questions-export-${new Date().toISOString().slice(0, 10)}.json`) => {
+    const jsonStr = JSON.stringify(questions, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
+    downloadBlob(blob, filename);
+  },
+
+  /**
+   * Export questions to CSV and trigger file download
+   */
+  exportToCsv: (questions, filename = `questions-export-${new Date().toISOString().slice(0, 10)}.csv`) => {
+    const headers = [
+      'title', 'questionType', 'difficulty', 'marks', 'category', 'tags',
+      'timeLimitMs', 'memoryLimitMb', 'description', 'inputFormat', 'outputFormat',
+      'constraints', 'testCases', 'options'
+    ];
+
+    const escapeCsv = (val) => {
+      if (val === null || val === undefined) return '""';
+      let str = typeof val === 'object' ? JSON.stringify(val) : String(val);
+      str = str.replace(/"/g, '""');
+      return `"${str}"`;
+    };
+
+    const rows = [headers.join(',')];
+    for (const q of questions) {
+      const row = [
+        escapeCsv(q.title || ''),
+        escapeCsv(q.questionType || 'CODING'),
+        escapeCsv(q.difficulty || 'MEDIUM'),
+        escapeCsv(q.marks || 10),
+        escapeCsv(q.category || 'algorithms'),
+        escapeCsv(Array.isArray(q.tags) ? q.tags.join(';') : (q.tags || '')),
+        escapeCsv(q.timeLimitMs || 2000),
+        escapeCsv(q.memoryLimitMb || 256),
+        escapeCsv(q.description || ''),
+        escapeCsv(q.inputFormat || ''),
+        escapeCsv(q.outputFormat || ''),
+        escapeCsv(q.constraints || ''),
+        escapeCsv(q.testCases || []),
+        escapeCsv(q.options || []),
+      ];
+      rows.push(row.join(','));
+    }
+
+    const csvContent = rows.join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    downloadBlob(blob, filename);
+  },
+
+  /**
+   * Returns sample JSON template
+   */
+  getSampleJsonTemplate: () => {
+    return [
+      {
+        title: "Two Sum Problem",
+        questionType: "CODING",
+        difficulty: "EASY",
+        marks: 10,
+        category: "algorithms",
+        tags: ["Arrays", "Hash Table"],
+        timeLimitMs: 2000,
+        memoryLimitMb: 256,
+        description: "Given an array of integers `nums` and integer `target`, return indices of two numbers adding to `target`.",
+        inputFormat: "First line: space-separated integers. Second line: integer target.",
+        outputFormat: "Two space-separated indices.",
+        constraints: "2 <= nums.length <= 10^4",
+        testCases: [
+          { inputData: "2 7 11 15\n9", expectedOutput: "0 1", sample: true, hidden: false, weight: 1 },
+          { inputData: "3 2 4\n6", expectedOutput: "1 2", sample: false, hidden: true, weight: 2 }
+        ],
+        options: []
+      },
+      {
+        title: "HTTP Status Codes - Resource Created",
+        questionType: "MULTIPLE_CHOICE",
+        difficulty: "EASY",
+        marks: 5,
+        category: "web-dev",
+        tags: ["HTTP", "REST", "Networking"],
+        description: "Which HTTP status code signifies that a new resource has been successfully created?",
+        inputFormat: "",
+        outputFormat: "",
+        constraints: "",
+        testCases: [],
+        options: [
+          { optionText: "200 OK", isCorrect: false, explanation: "Standard success response" },
+          { optionText: "201 Created", isCorrect: true, explanation: "Indicates resource creation success" },
+          { optionText: "204 No Content", isCorrect: false, explanation: "Action succeeded with no body" },
+          { optionText: "400 Bad Request", isCorrect: false, explanation: "Client-side error code" }
+        ]
+      }
+    ];
+  },
+
+  /**
+   * Returns sample CSV string
+   */
+  getSampleCsvTemplate: () => {
+    const sample = questionBankService.getSampleJsonTemplate();
+    const headers = [
+      'title', 'questionType', 'difficulty', 'marks', 'category', 'tags',
+      'timeLimitMs', 'memoryLimitMb', 'description', 'inputFormat', 'outputFormat',
+      'constraints', 'testCases', 'options'
+    ];
+
+    const escapeCsv = (val) => {
+      if (val === null || val === undefined) return '""';
+      let str = typeof val === 'object' ? JSON.stringify(val) : String(val);
+      str = str.replace(/"/g, '""');
+      return `"${str}"`;
+    };
+
+    const rows = [headers.join(',')];
+    for (const q of sample) {
+      rows.push([
+        escapeCsv(q.title),
+        escapeCsv(q.questionType),
+        escapeCsv(q.difficulty),
+        escapeCsv(q.marks),
+        escapeCsv(q.category),
+        escapeCsv(q.tags.join(';')),
+        escapeCsv(q.timeLimitMs),
+        escapeCsv(q.memoryLimitMb),
+        escapeCsv(q.description),
+        escapeCsv(q.inputFormat),
+        escapeCsv(q.outputFormat),
+        escapeCsv(q.constraints),
+        escapeCsv(q.testCases),
+        escapeCsv(q.options),
+      ].join(','));
+    }
+    return rows.join('\r\n');
+  },
+
+  /**
+   * Parse an uploaded JSON or CSV file into validated question objects
+   */
+  parseImportFile: async (file) => {
+    const content = await file.text();
+    const isJson = file.name.toLowerCase().endsWith('.json') || content.trim().startsWith('[');
+
+    if (isJson) {
+      return parseJsonQuestions(content);
+    } else {
+      return parseCsvQuestions(content);
+    }
+  },
 };
+
+/** Browser file download trigger */
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+/** Parse and validate JSON file content */
+function parseJsonQuestions(content) {
+  const errors = [];
+  const validQuestions = [];
+
+  let rawList;
+  try {
+    rawList = JSON.parse(content);
+    if (!Array.isArray(rawList)) {
+      rawList = [rawList];
+    }
+  } catch (err) {
+    return {
+      questions: [],
+      errors: [{ index: 0, title: 'JSON Syntax', reason: 'Invalid JSON file: ' + err.message }]
+    };
+  }
+
+  rawList.forEach((item, idx) => {
+    const validation = validateAndNormalizeQuestion(item, idx + 1);
+    if (validation.valid) {
+      validQuestions.push(validation.question);
+    } else {
+      errors.push({ index: idx + 1, title: item.title || `Item #${idx + 1}`, reason: validation.reason });
+    }
+  });
+
+  return { questions: validQuestions, errors };
+}
+
+/** Parse and validate CSV file content */
+function parseCsvQuestions(content) {
+  const errors = [];
+  const validQuestions = [];
+
+  const lines = parseCsvLines(content);
+  if (lines.length < 2) {
+    return {
+      questions: [],
+      errors: [{ index: 0, title: 'CSV Structure', reason: 'CSV must contain a header row and at least one question row' }]
+    };
+  }
+
+  const headers = lines[0].map(h => h.trim());
+  const headerMap = {};
+  headers.forEach((h, i) => {
+    headerMap[h.toLowerCase()] = i;
+  });
+
+  if (headerMap['title'] === undefined) {
+    return {
+      questions: [],
+      errors: [{ index: 0, title: 'CSV Headers', reason: 'Required header "title" is missing from CSV' }]
+    };
+  }
+
+  for (let i = 1; i < lines.length; i++) {
+    const row = lines[i];
+    if (row.length === 0 || (row.length === 1 && !row[0].trim())) continue; // Skip blank line
+
+    const getCol = (name) => {
+      const idx = headerMap[name.toLowerCase()];
+      return idx !== undefined && row[idx] !== undefined ? row[idx].trim() : '';
+    };
+
+    let tags = [];
+    const rawTags = getCol('tags');
+    if (rawTags) {
+      tags = rawTags.includes(';') ? rawTags.split(';').map(t => t.trim()) : rawTags.split(',').map(t => t.trim());
+    }
+
+    let testCases = [];
+    const rawTestCases = getCol('testcases');
+    if (rawTestCases) {
+      try {
+        testCases = JSON.parse(rawTestCases);
+      } catch {
+        testCases = [];
+      }
+    }
+
+    let options = [];
+    const rawOptions = getCol('options');
+    if (rawOptions) {
+      try {
+        options = JSON.parse(rawOptions);
+      } catch {
+        options = [];
+      }
+    }
+
+    const rawItem = {
+      title: getCol('title'),
+      questionType: getCol('questiontype') || 'CODING',
+      difficulty: getCol('difficulty') || 'MEDIUM',
+      marks: parseInt(getCol('marks')) || 10,
+      category: getCol('category') || 'algorithms',
+      tags,
+      timeLimitMs: parseInt(getCol('timelimitms')) || 2000,
+      memoryLimitMb: parseInt(getCol('memorylimitmb')) || 256,
+      description: getCol('description'),
+      inputFormat: getCol('inputformat'),
+      outputFormat: getCol('outputformat'),
+      constraints: getCol('constraints'),
+      testCases,
+      options,
+    };
+
+    const validation = validateAndNormalizeQuestion(rawItem, i);
+    if (validation.valid) {
+      validQuestions.push(validation.question);
+    } else {
+      errors.push({ index: i, title: rawItem.title || `Row #${i}`, reason: validation.reason });
+    }
+  }
+
+  return { questions: validQuestions, errors };
+}
+
+/** Robust CSV text parser supporting quotes, escaped quotes, and newlines in cells */
+function parseCsvLines(text) {
+  const rows = [];
+  let currentRow = [];
+  let currentField = '';
+  let inQuotes = false;
+  let i = 0;
+
+  while (i < text.length) {
+    const char = text[i];
+    const nextChar = text[i + 1];
+
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        currentField += '"';
+        i += 2;
+        continue;
+      } else {
+        inQuotes = !inQuotes;
+        i++;
+        continue;
+      }
+    }
+
+    if (char === ',' && !inQuotes) {
+      currentRow.push(currentField);
+      currentField = '';
+      i++;
+      continue;
+    }
+
+    if ((char === '\r' || char === '\n') && !inQuotes) {
+      currentRow.push(currentField);
+      currentField = '';
+      rows.push(currentRow);
+      currentRow = [];
+      if (char === '\r' && nextChar === '\n') {
+        i += 2;
+      } else {
+        i++;
+      }
+      continue;
+    }
+
+    currentField += char;
+    i++;
+  }
+
+  if (currentField || currentRow.length > 0) {
+    currentRow.push(currentField);
+    rows.push(currentRow);
+  }
+
+  return rows;
+}
+
+/** Validate single question object & normalize properties */
+function validateAndNormalizeQuestion(item, rowNum) {
+  if (!item.title || !String(item.title).trim()) {
+    return { valid: false, reason: 'Missing question title' };
+  }
+
+  const questionType = String(item.questionType || 'CODING').toUpperCase();
+  if (questionType !== 'CODING' && questionType !== 'MULTIPLE_CHOICE') {
+    return { valid: false, reason: `Invalid questionType "${item.questionType}". Must be CODING or MULTIPLE_CHOICE.` };
+  }
+
+  const difficulty = String(item.difficulty || 'MEDIUM').toUpperCase();
+  const validDiffs = ['EASY', 'MEDIUM', 'HARD'];
+  const normDiff = validDiffs.includes(difficulty) ? difficulty : 'MEDIUM';
+
+  const marks = parseInt(item.marks, 10);
+  if (isNaN(marks) || marks <= 0) {
+    return { valid: false, reason: 'Marks must be a positive number' };
+  }
+
+  // Question type specific validation
+  if (questionType === 'MULTIPLE_CHOICE') {
+    if (!Array.isArray(item.options) || item.options.length < 2) {
+      return { valid: false, reason: 'MULTIPLE_CHOICE question requires at least 2 options' };
+    }
+    const hasCorrect = item.options.some(opt => opt.isCorrect === true || String(opt.isCorrect).toLowerCase() === 'true');
+    if (!hasCorrect) {
+      return { valid: false, reason: 'MULTIPLE_CHOICE question must have at least one correct option' };
+    }
+  }
+
+  const normalized = {
+    title: String(item.title).trim(),
+    questionType,
+    difficulty: normDiff,
+    category: item.category || 'algorithms',
+    marks,
+    tags: Array.isArray(item.tags) ? item.tags : [],
+    timeLimitMs: parseInt(item.timeLimitMs, 10) || 2000,
+    memoryLimitMb: parseInt(item.memoryLimitMb, 10) || 256,
+    description: item.description || '',
+    inputFormat: item.inputFormat || '',
+    outputFormat: item.outputFormat || '',
+    constraints: item.constraints || '',
+    testCases: Array.isArray(item.testCases) ? item.testCases.map(tc => ({
+      inputData: String(tc.inputData ?? ''),
+      expectedOutput: String(tc.expectedOutput ?? ''),
+      sample: Boolean(tc.sample),
+      hidden: Boolean(tc.hidden),
+      weight: parseInt(tc.weight, 10) || 1,
+    })) : [],
+    options: Array.isArray(item.options) ? item.options.map(opt => ({
+      optionText: String(opt.optionText ?? ''),
+      isCorrect: Boolean(opt.isCorrect),
+      explanation: String(opt.explanation ?? ''),
+    })) : [],
+  };
+
+  return { valid: true, question: normalized };
+}
 
 export default questionBankService;

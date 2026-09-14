@@ -16,6 +16,7 @@ export const adminAssessmentService = {
   unpublish: (id) => http.post(ep.unpublish(id)),
   close: (id) => http.post(ep.close(id)),
   archive: (id) => http.post(ep.archive(id)),
+  duplicate: (id) => http.post(ep.duplicate(id)),
 
   // Questions
   getQuestions: (assessmentId) => http.get(ep.questions(assessmentId)),

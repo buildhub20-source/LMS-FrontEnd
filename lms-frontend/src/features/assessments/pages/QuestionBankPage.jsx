@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
   BookOpen, Search, Filter, Plus, Code2, CheckCircle2,
   ListFilter, Sparkles, Copy, Check, Eye, Trash2, Tag,
-  Clock, Database, Layers, ArrowUpRight, CheckSquare, Square
+  Clock, Database, Layers, ArrowUpRight, CheckSquare, Square,
+  Upload, Download, FileText
 } from 'lucide-react';
 import Button from '../../../components/common/Button';
 import Badge from '../../../components/common/Badge';
@@ -11,6 +12,7 @@ import { useToast } from '../../../components/feedback/Toast';
 import { questionBankService, QUESTION_CATEGORIES } from '../services/questionBankService';
 import QuestionPreviewModal from '../components/QuestionPreviewModal';
 import ExportToAssessmentModal from '../components/ExportToAssessmentModal';
+import ImportQuestionsFileModal from '../components/ImportQuestionsFileModal';
 import { AdminConfirmModal } from '../../../components/ui/AdminModal';
 
 export default function QuestionBankPage() {
@@ -25,10 +27,11 @@ export default function QuestionBankPage() {
   const [copiedId, setCopiedId] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  // Bulk selection and Export to Assessment states
+  // Bulk selection, Import, and Export states
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [exportModalOpen, setExportModalOpen] = useState(false);
   const [exportQuestionsList, setExportQuestionsList] = useState([]);
+  const [importFileModalOpen, setImportFileModalOpen] = useState(false);
 
   useEffect(() => {
     loadBank();
@@ -83,6 +86,37 @@ export default function QuestionBankPage() {
   const handleExportSingle = (q) => {
     setExportQuestionsList([q]);
     setExportModalOpen(true);
+  };
+
+  const handleExportFile = (format) => {
+    const toExport = selectedIds.size > 0
+      ? questions.filter((q) => selectedIds.has(q.id))
+      : questions;
+
+    if (toExport.length === 0) {
+      toast.error('No questions available to export.');
+      return;
+    }
+
+    const timestamp = new Date().toISOString().slice(0, 10);
+    if (format === 'csv') {
+      questionBankService.exportToCsv(toExport, `question-bank-${timestamp}.csv`);
+      toast.success(`Exported ${toExport.length} questions to CSV.`);
+    } else {
+      questionBankService.exportToJson(toExport, `question-bank-${timestamp}.json`);
+      toast.success(`Exported ${toExport.length} questions to JSON.`);
+    }
+  };
+
+  const handleImportSuccess = async (importedList) => {
+    try {
+      await questionBankService.saveBatchToBank(importedList);
+      toast.success(`Imported ${importedList.length} questions into Question Bank!`);
+      loadBank();
+    } catch (err) {
+      console.error('Import error:', err);
+      toast.error('Failed to save imported questions.');
+    }
   };
 
   const stats = useMemo(() => {
@@ -162,8 +196,59 @@ export default function QuestionBankPage() {
           </p>
         </div>
 
-        {/* Primary Header Action: Export to Assessment */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        {/* Header Actions: Import, Export, Export to Assessment */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <Button
+            variant="secondary"
+            onClick={() => setImportFileModalOpen(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 7,
+              padding: '9px 14px',
+              fontWeight: 600,
+            }}
+          >
+            <Upload size={15} />
+            <span>Import Questions</span>
+          </Button>
+
+          <Button
+            variant="secondary"
+            onClick={() => handleExportFile('json')}
+            disabled={questions.length === 0}
+            title="Download questions as JSON"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '9px 12px',
+              fontWeight: 500,
+              fontSize: 13,
+            }}
+          >
+            <Download size={14} />
+            <span>Export JSON</span>
+          </Button>
+
+          <Button
+            variant="secondary"
+            onClick={() => handleExportFile('csv')}
+            disabled={questions.length === 0}
+            title="Download questions as CSV spreadsheet"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '9px 12px',
+              fontWeight: 500,
+              fontSize: 13,
+            }}
+          >
+            <Download size={14} />
+            <span>Export CSV</span>
+          </Button>
+
           <Button
             variant="primary"
             onClick={handleExportSelected}
@@ -172,12 +257,12 @@ export default function QuestionBankPage() {
               display: 'flex',
               alignItems: 'center',
               gap: 8,
-              padding: '10px 18px',
+              padding: '9px 16px',
               fontWeight: 600,
               boxShadow: '0 4px 12px rgba(59, 130, 246, 0.25)',
             }}
           >
-            <Sparkles size={16} />
+            <Sparkles size={15} />
             <span>
               {selectedIds.size > 0
                 ? `Export (${selectedIds.size}) to Assessment`
@@ -699,6 +784,15 @@ export default function QuestionBankPage() {
           setSelectedIds(new Set());
           loadBank();
         }}
+      />
+
+      {/* Bulk Import Questions Modal (CSV/JSON) */}
+      <ImportQuestionsFileModal
+        isOpen={importFileModalOpen}
+        onClose={() => setImportFileModalOpen(false)}
+        onImportSuccess={handleImportSuccess}
+        target="bank"
+        targetTitle="Question Bank"
       />
 
       {deleteTarget && (
