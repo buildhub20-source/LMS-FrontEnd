@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  Search, BookOpen, Plus, LayoutList, LayoutGrid, Code, CheckCircle,
+  Search, BookOpen, Plus, LayoutList, LayoutGrid, Code, CheckCircle, Copy,
   Clock, Award, FileText, Code2, Shield, Sparkles, BarChart2, CheckCircle2
 } from 'lucide-react';
+import adminAssessmentService from '../services/adminAssessmentService';
 import AdminButton from '../../../components/ui/AdminButton';
 import { AdminConfirmModal } from '../../../components/ui/AdminModal';
 import AdminPagination from '../../../components/ui/AdminPagination';
@@ -301,6 +302,29 @@ function AssessmentCard({ assessment, onAction, onClick }) {
             >
               Edit
             </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); onAction('duplicate', assessment); }}
+              title="Duplicate assessment"
+              style={{
+                padding: '7px 10px',
+                borderRadius: 8,
+                fontSize: 13,
+                fontWeight: 600,
+                fontFamily: 'inherit',
+                cursor: 'pointer',
+                border: '1px solid var(--border-color)',
+                background: 'transparent',
+                color: 'var(--text-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'opacity 0.2s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
+              onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+            >
+              <Copy size={14} />
+            </button>
             {primary && primary.label !== 'Edit' && (
               <button
                 onClick={(e) => { e.stopPropagation(); primary.onClick(); }}
@@ -416,6 +440,28 @@ function AssessmentListRow({ assessment, onAction, onClick }) {
         >
           Edit
         </button>
+        <button
+          onClick={(e) => { e.stopPropagation(); onAction('duplicate', assessment); }}
+          title="Duplicate assessment"
+          style={{
+            padding: '7px 12px',
+            borderRadius: 99,
+            fontSize: 13,
+            fontWeight: 600,
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            background: 'rgba(255, 255, 255, 0.06)',
+            color: '#f8fafc',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'; }}
+        >
+          <Copy size={15} />
+        </button>
         {primary && primary.label !== 'Edit' && (
           <button
             onClick={(e) => { e.stopPropagation(); primary.onClick(); }}
@@ -515,6 +561,17 @@ export const AdminAssessmentListPage = () => {
   const handleAction = (type, assessment) => {
     if (type === 'edit') {
       navigate(detailsRoute(assessment.id));
+      return;
+    }
+    if (type === 'duplicate') {
+      adminAssessmentService.duplicate(assessment.id)
+        .then(() => {
+          toastSuccess(`"${assessment.title}" duplicated into DRAFT!`);
+          refetch();
+        })
+        .catch((err) => {
+          toastError(err?.response?.data?.message || err?.message || 'Failed to duplicate assessment.');
+        });
       return;
     }
     const MAP = {

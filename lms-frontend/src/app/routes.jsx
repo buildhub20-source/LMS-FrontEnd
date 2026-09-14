@@ -89,6 +89,7 @@ const AssessmentListPage = lazy(() => import('../features/assessments/pages/Asse
 const AssessmentResultPage = lazy(() => import('../features/assessments/pages/AssessmentResultPage'));
 const StudentAssessmentTakingPage = lazy(() => import('../features/assessments/pages/StudentAssessmentTakingPage'));
 const CreateAssessmentPage = lazy(() => import('../features/assessments/pages/CreateAssessmentPage'));
+const GlobalSubmissionsHistoryPage = lazy(() => import('../features/assessments/pages/GlobalSubmissionsHistoryPage'));
 
 const CertificateListPage = lazy(() => import('../features/certificates/pages/CertificateListPage'));
 const CertificateDetailsPage = lazy(() => import('../features/certificates/pages/CertificateDetailsPage'));
@@ -201,6 +202,7 @@ export const router = createBrowserRouter([
                   { path: ROUTES.ADMIN_ASSESSMENT_CREATE, element: suspend(<AdminCreateAssessmentPage />) },
                   { path: ROUTES.ADMIN_ASSESSMENT_DETAILS(), element: suspend(<AdminAssessmentDetailsPage />) },
                   { path: ROUTES.ADMIN_ASSESSMENT_EDIT(), element: suspend(<AdminEditAssessmentPage />) },
+                  { path: ROUTES.ADMIN_SUBMISSIONS_HISTORY, element: suspend(<GlobalSubmissionsHistoryPage />) },
                   { path: ROUTES.ADMIN_GRADING, element: suspend(<GradingWorkflowPage />) },
                   { path: ROUTES.ADMIN_RUBRICS, element: suspend(<RubricManagerPage />) },
                   { path: ROUTES.ADMIN_QUESTION_BANK, element: suspend(<QuestionBankPage />) },
@@ -229,6 +231,7 @@ export const router = createBrowserRouter([
               { path: ROUTES.ASSESSMENT_CREATE, element: suspend(<CreateAssessmentPage />) },
               { path: ROUTES.INSTRUCTOR_ASSESSMENT_DETAILS(), element: suspend(<AdminAssessmentDetailsPage />) },
               { path: ROUTES.INSTRUCTOR_ASSESSMENT_EDIT(), element: suspend(<AdminEditAssessmentPage />) },
+              { path: ROUTES.INSTRUCTOR_SUBMISSIONS_HISTORY, element: suspend(<GlobalSubmissionsHistoryPage />) },
               { path: ROUTES.INSTRUCTOR_GRADING, element: suspend(<GradingWorkflowPage />) },
               { path: ROUTES.INSTRUCTOR_RUBRICS, element: suspend(<RubricManagerPage />) },
               { path: ROUTES.INSTRUCTOR_ANNOUNCEMENTS, element: suspend(<AnnouncementsPage />) },

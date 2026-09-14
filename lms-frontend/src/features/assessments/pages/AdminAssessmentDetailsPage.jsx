@@ -2,8 +2,9 @@ import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Clock, BarChart2, HelpCircle, Rocket, ArchiveIcon, XCircle,
   Edit2, Trash2, Plus, FileQuestion, Timer, Cpu, ChevronRight,
-  Info, CheckCircle, RefreshCw, Eye, EyeOff, Database,
+  Info, CheckCircle, RefreshCw, Eye, EyeOff, Database, Upload, Copy,
   CalendarClock, CalendarX2, AlarmClock, Zap, Hourglass, X,
+  Trophy
 } from 'lucide-react';
 import { useState } from 'react';
 import Spinner from '../../../components/common/Spinner';
@@ -14,6 +15,8 @@ import { AdminConfirmModal } from '../../../components/ui/AdminModal';
 import AssessmentStatusBadge from '../components/AssessmentStatusBadge';
 import AdminQuestionForm from '../components/AdminQuestionForm';
 import ImportQuestionBankModal from '../components/ImportQuestionBankModal';
+import ImportQuestionsFileModal from '../components/ImportQuestionsFileModal';
+import adminAssessmentService from '../services/adminAssessmentService';
 import { DIFFICULTY_TONE } from '../constants/assessmentConstants';
 import {
   useAdminAssessment,
@@ -37,6 +40,7 @@ import {
   useMoveQuestion,
 } from '../hooks/useAdminSections';
 import AssessmentAnalyticsTab from '../components/AssessmentAnalyticsTab';
+import AssessmentLeaderboardTab from '../components/AssessmentLeaderboardTab';
 import { useToast } from '../../../components/feedback/Toast';
 import { ROUTES } from '../../../constants/routes';
 import { formatDate } from '../../../utils/dateUtils';
@@ -62,6 +66,8 @@ export const AdminAssessmentDetailsPage = () => {
   const [editingSection, setEditingSection] = useState(null); // section object being edited
   const [showSectionForm, setShowSectionForm] = useState(false); // for adding a new section
   const [showBankModal, setShowBankModal] = useState(false);
+  const [showImportFileModal, setShowImportFileModal] = useState(false);
+  const [isDuplicating, setIsDuplicating] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState(null);
 
   const { data: a, isLoading, error } = useAdminAssessment(assessmentId);
@@ -148,6 +154,39 @@ export const AdminAssessmentDetailsPage = () => {
       console.error('Question add failed:', e);
       toast.error(e?.response?.data?.message || e.message || 'Failed to add question');
     }
+  };
+
+  const handleDuplicateAssessment = async () => {
+    setIsDuplicating(true);
+    try {
+      const res = await adminAssessmentService.duplicate(assessmentId);
+      toast.success('Assessment duplicated into DRAFT!');
+      const newId = res.data?.data?.id || res.data?.id;
+      if (newId) {
+        navigate(isInstructor ? ROUTES.INSTRUCTOR_ASSESSMENT_DETAILS(newId) : ROUTES.ADMIN_ASSESSMENT_DETAILS(newId));
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err?.message || 'Failed to duplicate assessment');
+    } finally {
+      setIsDuplicating(false);
+    }
+  };
+
+  const handleImportFileQuestions = async (importedList) => {
+    let count = 0;
+    for (const q of importedList) {
+      try {
+        if (targetSectionId) {
+          await addSectionQ.mutateAsync({ sectionId: targetSectionId, data: q });
+        } else {
+          await addQ.mutateAsync(q);
+        }
+        count++;
+      } catch (err) {
+        console.error('Failed to import question into assessment:', err);
+      }
+    }
+    toast.success(`Successfully imported ${count} of ${importedList.length} questions into this assessment.`);
   };
 
   const handleDeleteQuestion = (q) => {
@@ -290,6 +329,13 @@ export const AdminAssessmentDetailsPage = () => {
           </div>
         </div>
         <div className={s.heroActions}>
+          <button
+            className={s.heroBtn}
+            onClick={handleDuplicateAssessment}
+            disabled={isDuplicating}
+          >
+            <Copy size={13} /> {isDuplicating ? 'Duplicating...' : 'Duplicate'}
+          </button>
           {canEditQuestions && (
             <button className={s.heroBtn}
               onClick={() => navigate(editRoute(assessmentId))}>
@@ -346,10 +392,30 @@ export const AdminAssessmentDetailsPage = () => {
             >
               <BarChart2 size={16} /> Statistics & Analytics
             </button>
+            <button
+              onClick={() => setActiveTab('leaderboard')}
+              style={{
+                padding: '10px 16px',
+                border: 'none',
+                background: 'transparent',
+                borderBottom: activeTab === 'leaderboard' ? '2px solid var(--text-primary)' : '2px solid transparent',
+                color: activeTab === 'leaderboard' ? 'var(--text-primary)' : 'var(--text-muted)',
+                fontWeight: 600,
+                fontSize: 14,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6
+              }}
+            >
+              <Trophy size={16} /> Leaderboard & Badges
+            </button>
           </div>
 
           {activeTab === 'analytics' ? (
             <AssessmentAnalyticsTab assessmentId={assessmentId} />
+          ) : activeTab === 'leaderboard' ? (
+            <AssessmentLeaderboardTab assessmentId={assessmentId} />
           ) : (
             <>
               {/* Description */}
@@ -411,6 +477,16 @@ export const AdminAssessmentDetailsPage = () => {
                         }}
                       >
                         <Database size={13} style={{ marginRight: 4 }} /> Import from Bank
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setTargetSectionId(null);
+                          setShowImportFileModal(true);
+                        }}
+                      >
+                        <Upload size={13} style={{ marginRight: 4 }} /> Import CSV/JSON
                       </Button>
                       {!showSectionForm && (
                         <Button
@@ -990,6 +1066,14 @@ export const AdminAssessmentDetailsPage = () => {
         onClose={() => setShowBankModal(false)}
         onImport={handleAddQuestion}
         targetSectionId={targetSectionId}
+      />
+
+      <ImportQuestionsFileModal
+        isOpen={showImportFileModal}
+        onClose={() => setShowImportFileModal(false)}
+        onImportSuccess={handleImportFileQuestions}
+        target="assessment"
+        targetTitle={a?.title || 'Assessment'}
       />
 
       {confirmDialog && (
