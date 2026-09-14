@@ -61,6 +61,7 @@ export const API_ENDPOINTS = Object.freeze({
     submit: (id) => `/courses/${id}/submit`,
     approve: (id) => `/courses/${id}/approve`,
     reject: (id) => `/courses/${id}/reject`,
+    duplicate: (id) => `/courses/${id}/duplicate`,
     recordings: (id) => `/courses/${id}/recordings`,
     thumbnail: (id) => `/courses/${id}/thumbnail`,
     mine: '/courses/mine',
@@ -105,6 +106,7 @@ export const API_ENDPOINTS = Object.freeze({
     unpublish: (id) => `/admin/assessments/${id}/unpublish`,
     close: (id) => `/admin/assessments/${id}/close`,
     archive: (id) => `/admin/assessments/${id}/archive`,
+    duplicate: (id) => `/admin/assessments/${id}/duplicate`,
     questions: (assessmentId) => `/admin/assessments/${assessmentId}/questions`,
     questionById: (assessmentId, questionId) =>
       `/admin/assessments/${assessmentId}/questions/${questionId}`,

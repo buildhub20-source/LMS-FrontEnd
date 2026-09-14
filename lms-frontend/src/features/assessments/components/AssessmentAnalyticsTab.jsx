@@ -13,6 +13,8 @@ import {
 import Spinner from '../../../components/common/Spinner';
 import Alert from '../../../components/feedback/Alert';
 import Badge from '../../../components/common/Badge';
+import LeetCodeBadge from './LeetCodeBadge';
+import { evaluateStudentBadges } from '../utils/badgeDefinitions';
 import { useToast } from '../../../components/feedback/Toast';
 import { formatDate } from '../../../utils/dateUtils';
 
@@ -622,7 +624,15 @@ export const AssessmentAnalyticsTab = ({ assessmentId }) => {
                         />
                       </td>
                       <td style={{ padding: '12px' }}>
-                        <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{s.studentName}</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                          <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{s.studentName}</span>
+                          {(() => {
+                            const badges = evaluateStudentBadges(s, 1, filteredStudents.length);
+                            return badges.slice(0, 2).map((b) => (
+                              <LeetCodeBadge key={b.id} badge={b} size="xs" interactive={false} />
+                            ));
+                          })()}
+                        </div>
                         <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{s.studentEmail}</div>
                       </td>
                       <td style={{ padding: '12px' }}>

@@ -28,6 +28,7 @@ import { ROUTES } from '../../../constants/routes';
 import useAuth from '../../auth/hooks/useAuth';
 import courseService from '../../courses/services/courseService';
 import analyticsService from '../services/analyticsService';
+import DashboardLeaderboardWidget from '../../assessments/components/DashboardLeaderboardWidget';
 
 const percent = (value) => Math.max(0, Math.min(100, Number(value) || 0));
 const number = (value) => new Intl.NumberFormat().format(Number(value) || 0);
@@ -265,6 +266,9 @@ export const AdminAnalyticsPage = () => {
           </Card>
         </div>
       )}
+
+      {/* Hall of Fame: Category Champions & Badges */}
+      <DashboardLeaderboardWidget isInstructor={false} />
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-12">
         <Card className="xl:col-span-4">

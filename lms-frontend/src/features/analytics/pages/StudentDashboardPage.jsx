@@ -38,11 +38,15 @@ import { QUERY_KEYS } from '../../../constants/appConstants';
 import Spinner from '../../../components/common/Spinner';
 import { useResources } from '../../resources/hooks/useResources';
 import resourceService from '../../resources/services/resourceService';
+import LeetCodeBadge from '../../assessments/components/LeetCodeBadge';
+import BadgeDetailModal from '../../assessments/components/BadgeDetailModal';
+import { LEETCODE_BADGES } from '../../assessments/utils/badgeDefinitions';
 
 export const StudentDashboardPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const studentName = user?.fullName || user?.firstName || user?.email?.split('@')[0] || 'Learner';
+  const [selectedBadge, setSelectedBadge] = useState(null);
 
   // Current time greeting
   const greeting = useMemo(() => {
@@ -1000,7 +1004,7 @@ export const StudentDashboardPage = () => {
         {/* Right Column: Gamification Badges & Quick Study Toolkit */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           
-          {/* Skill Badges & Milestones */}
+          {/* LeetCode Skill Badges & Category Standings */}
           <div
             style={{
               background: 'var(--lms-card)',
@@ -1009,72 +1013,89 @@ export const StudentDashboardPage = () => {
               padding: 22,
               display: 'flex',
               flexDirection: 'column',
-              gap: 14,
+              gap: 16,
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Trophy size={18} className="text-yellow-400" />
                 <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
-                  Skill Badges & Milestones
+                  Skill Badges &amp; Category Standings
                 </h3>
               </div>
-              <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)' }}>
-                2 Unlocked
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#f59e0b' }}>
+                LeetCode Honors
               </span>
             </div>
 
+            {/* Badges Display Grid */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              {badges.map((b) => (
+              {LEETCODE_BADGES.slice(0, 4).map((b) => (
                 <div
                   key={b.id}
+                  onClick={() => setSelectedBadge(b)}
                   style={{
                     background: 'var(--surface-medium)',
                     border: '1px solid var(--border-color)',
                     borderRadius: 12,
-                    padding: 12,
+                    padding: '10px 12px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 8,
+                    gap: 6,
+                    cursor: 'pointer',
+                    transition: 'transform 0.15s ease',
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'none')}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div
-                      style={{
-                        width: 32,
-                        height: 32,
-                        borderRadius: 8,
-                        background: b.badgeBg,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      {b.icon}
-                    </div>
-                    <span
-                      style={{
-                        fontSize: 9,
-                        fontWeight: 700,
-                        padding: '2px 6px',
-                        borderRadius: 4,
-                        background: b.status === 'UNLOCKED' ? 'rgba(16, 185, 129, 0.15)' : b.status === 'IN_PROGRESS' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255, 255, 255, 0.05)',
-                        color: b.status === 'UNLOCKED' ? '#10b981' : b.status === 'IN_PROGRESS' ? '#3b82f6' : 'var(--text-muted)',
-                      }}
-                    >
-                      {b.status === 'UNLOCKED' ? 'EARNED' : b.status === 'IN_PROGRESS' ? `${b.progress}%` : 'LOCKED'}
+                    <LeetCodeBadge badge={b} size="xs" interactive={false} />
+                    <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)' }}>
+                      {b.tier.label}
                     </span>
                   </div>
-                  <div>
-                    <h5 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
-                      {b.title}
-                    </h5>
-                    <p style={{ margin: 0, fontSize: 10, color: 'var(--text-muted)', lineHeight: 1.3 }}>
-                      {b.desc}
-                    </p>
-                  </div>
+                  <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.3 }}>
+                    {b.criteria}
+                  </p>
                 </div>
               ))}
+            </div>
+
+            {/* Category Standing Progress Mini-Bars */}
+            <div
+              style={{
+                background: 'var(--surface-dark, rgba(0,0,0,0.2))',
+                borderRadius: 12,
+                padding: 12,
+                border: '1px solid var(--border-color)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 10,
+              }}
+            >
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase' }}>
+                Category Skill Percentile
+              </div>
+
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>💻 Algorithms &amp; Coding</span>
+                  <strong style={{ color: '#a855f7' }}>Top 12% (Knight)</strong>
+                </div>
+                <div style={{ height: 5, borderRadius: 99, background: 'var(--border-color)', overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: '88%', background: '#a855f7', borderRadius: 99 }} />
+                </div>
+              </div>
+
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>🗄️ Database &amp; SQL</span>
+                  <strong style={{ color: '#3b82f6' }}>Top 15% (Grandmaster)</strong>
+                </div>
+                <div style={{ height: 5, borderRadius: 99, background: 'var(--border-color)', overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: '85%', background: '#3b82f6', borderRadius: 99 }} />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1480,9 +1501,15 @@ export const StudentDashboardPage = () => {
             </div>
           )}
         </div>
-
       </div>
 
+      {/* Badge Lore & Criteria Modal */}
+      {selectedBadge && (
+        <BadgeDetailModal
+          badge={selectedBadge}
+          onClose={() => setSelectedBadge(null)}
+        />
+      )}
     </div>
   );
 };

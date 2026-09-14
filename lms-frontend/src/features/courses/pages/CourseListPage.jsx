@@ -60,6 +60,16 @@ export const CourseListPage = () => {
     }
   };
 
+  const handleDuplicateCourse = async (course) => {
+    try {
+      await courseService.duplicate(course.id);
+      toast.success(`"${course.title}" duplicated into DRAFT successfully!`);
+      refetch();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err?.message || 'Failed to duplicate course.');
+    }
+  };
+
   return (
     <PageContainer
       title="Courses"
@@ -78,6 +88,7 @@ export const CourseListPage = () => {
         error={error}
         onRetry={refetch}
         onDelete={setCourseToDelete}
+        onDuplicate={handleDuplicateCourse}
       />
       <Pagination
         page={pagination.page}

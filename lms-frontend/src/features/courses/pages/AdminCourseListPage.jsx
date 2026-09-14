@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Search, BookOpen, Plus, Globe, GlobeLock, Archive,
-  CheckCircle, XCircle, Trash2, LayoutList, LayoutGrid,
+  CheckCircle, XCircle, Trash2, LayoutList, LayoutGrid, Copy,
   Clock, Layers, Award, Sparkles, ArrowRight
 } from 'lucide-react';
 import AdminButton from '../../../components/ui/AdminButton';
@@ -480,6 +480,26 @@ function CourseCard({ course, onAction, onClick }) {
               </button>
             )}
             <button
+              onClick={(e) => { e.stopPropagation(); onAction('duplicate', course); }}
+              title="Duplicate course"
+              style={{
+                padding: '7px 10px',
+                borderRadius: 8,
+                border: '1px solid var(--border-color)',
+                background: 'transparent',
+                color: 'var(--text-primary)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-medium)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              <Copy size={15} />
+            </button>
+            <button
               onClick={(e) => { e.stopPropagation(); onAction('delete', course); }}
               title="Delete course"
               style={{
@@ -616,6 +636,26 @@ function CourseListRow({ course, onAction, onClick }) {
           </button>
         )}
         <button
+          onClick={(e) => { e.stopPropagation(); onAction('duplicate', course); }}
+          title="Duplicate course"
+          style={{
+            padding: '8px 10px',
+            borderRadius: 8,
+            border: '1px solid var(--border-color)',
+            background: 'transparent',
+            color: 'var(--text-primary)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.15s ease',
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-medium)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+        >
+          <Copy size={16} />
+        </button>
+        <button
           onClick={(e) => { e.stopPropagation(); onAction('delete', course); }}
           title="Delete course"
           style={{
@@ -722,6 +762,10 @@ export const AdminCourseListPage = () => {
   const handleAction = (type, course) => {
     if (type === 'edit') { navigate(ROUTES.ADMIN_COURSE_EDIT(course.id)); return; }
     if (type === 'reject') { setRejectModal({ course, loading: false }); setRejectReason(''); return; }
+    if (type === 'duplicate') {
+      doAction(course, 'duplicate', courseService.duplicate, `"${course.title}" duplicated into DRAFT!`);
+      return;
+    }
     const MAP = {
       publish: { fn: courseService.publish, msg: 'Published!' },
       unpublish: { fn: courseService.unpublish, msg: 'Unpublished.' },
