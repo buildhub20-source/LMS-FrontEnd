@@ -54,4 +54,12 @@ export const useUpdateCourse = (id) => {
   });
 };
 
+export const useDeleteCourse = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id) => courseService.remove(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.COURSES }),
+  });
+};
+
 export default useCourses;

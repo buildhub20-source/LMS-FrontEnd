@@ -174,7 +174,7 @@ function CourseCard({ course, onAction, onClick }) {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <button onClick={(e) => { e.stopPropagation(); onAction('edit', course); }} style={{
               padding: '7px 14px', borderRadius: 8, fontSize: 13, fontWeight: 600,
               fontFamily: 'inherit', cursor: 'pointer', whiteSpace: 'nowrap',
@@ -188,7 +188,7 @@ function CourseCard({ course, onAction, onClick }) {
             >
               Edit
             </button>
-            {primary && primary.label !== 'Edit' && (
+            {primary && primary.label !== 'Edit' && primary.label !== 'Delete' && (
               <button onClick={(e) => { e.stopPropagation(); primary.onClick(); }} style={{
                 padding: '7px 14px', borderRadius: 8, fontSize: 13, fontWeight: 600,
                 fontFamily: 'inherit', cursor: 'pointer', whiteSpace: 'nowrap',
@@ -203,6 +203,26 @@ function CourseCard({ course, onAction, onClick }) {
                 {primary.label}
               </button>
             )}
+            <button
+              onClick={(e) => { e.stopPropagation(); onAction('delete', course); }}
+              title="Delete course"
+              style={{
+                padding: '7px 10px',
+                borderRadius: 8,
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                background: 'rgba(239, 68, 68, 0.08)',
+                color: '#ef4444',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)'; }}
+            >
+              <Trash2 size={15} />
+            </button>
           </div>
         </div>
 
@@ -243,19 +263,39 @@ function CourseListRow({ course, onAction, onClick }) {
           <p style={{ margin: 0, fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>{course.createdByName ?? 'Brad Traversy'}</p>
         </div>
       </div>
-      <div style={{ display: 'flex', gap: 8, borderLeft: '1px solid var(--border-color)', paddingLeft: 16 }}>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center', borderLeft: '1px solid var(--border-color)', paddingLeft: 16 }}>
         <button onClick={(e) => { e.stopPropagation(); onAction('edit', course); }} style={{
           padding: '8px 16px', borderRadius: 8, fontSize: 14, fontWeight: 600, 
           border: '1px solid var(--border-color)', background: 'transparent',
           color: 'var(--text-primary)', cursor: 'pointer'
         }}>Edit</button>
-        {primary && primary.label !== 'Edit' && (
+        {primary && primary.label !== 'Edit' && primary.label !== 'Delete' && (
           <button onClick={(e) => { e.stopPropagation(); primary.onClick(); }} style={{
             padding: '8px 16px', borderRadius: 8, fontSize: 14, fontWeight: 600, border: 'none',
             background: primary.danger ? 'rgba(239, 68, 68, 0.1)' : 'var(--text-primary)',
             color: primary.danger ? '#ef4444' : 'var(--lms-background)', cursor: 'pointer'
           }}>{primary.label}</button>
         )}
+        <button
+          onClick={(e) => { e.stopPropagation(); onAction('delete', course); }}
+          title="Delete course"
+          style={{
+            padding: '8px 10px',
+            borderRadius: 8,
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            background: 'rgba(239, 68, 68, 0.08)',
+            color: '#ef4444',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.15s ease',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)'; }}
+        >
+          <Trash2 size={16} />
+        </button>
       </div>
     </div>
   );
@@ -323,12 +363,6 @@ export const AdminCourseListPage = () => {
   const [confirmAction, setConfirmAction] = useState(null);
   const [rejectModal, setRejectModal] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
-  const [createModal, setCreateModal] = useState(false);
-  const [createTitle, setCreateTitle] = useState('');
-  const [createDesc, setCreateDesc] = useState('');
-  const [createLevel, setCreateLevel] = useState('BEGINNER');
-  const [createDuration, setCreateDuration] = useState('');
-  const [createSaving, setCreateSaving] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true); setLoadError('');
@@ -349,8 +383,19 @@ export const AdminCourseListPage = () => {
 
   const doAction = async (course, type, fn, msg) => {
     setConfirmAction(a => ({ ...a, loading: true }));
-    try { await fn(course.id); toastSuccess(msg); setConfirmAction(null); load(); }
-    catch (err) { toastError(err?.response?.data?.message ?? err?.message ?? 'Failed.'); setConfirmAction(a => ({ ...a, loading: false })); }
+    try {
+      if (type === 'delete' && course.status === 'PUBLISHED') {
+        await courseService.unpublish(course.id);
+      }
+      await fn(course.id);
+      toastSuccess(msg);
+      setConfirmAction(null);
+      load();
+    }
+    catch (err) {
+      toastError(err?.response?.data?.message ?? err?.message ?? 'Failed.');
+      setConfirmAction(a => ({ ...a, loading: false }));
+    }
   };
 
   const handleAction = (type, course) => {
@@ -373,16 +418,6 @@ export const AdminCourseListPage = () => {
     catch (err) { toastError(err?.response?.data?.message ?? 'Failed.'); setRejectModal(m => ({ ...m, loading: false })); }
   };
 
-  const handleCreate = async () => {
-    if (!createTitle.trim()) return;
-    setCreateSaving(true);
-    try {
-      await courseService.create({ title: createTitle.trim(), description: createDesc.trim() || undefined, level: createLevel, durationMinutes: createDuration ? parseInt(createDuration) : undefined });
-      toastSuccess('Created!'); setCreateModal(false); setCreateTitle(''); setCreateDesc(''); setCreateLevel('BEGINNER'); setCreateDuration(''); load();
-    } catch (err) { toastError(err?.response?.data?.message ?? 'Failed.'); }
-    finally { setCreateSaving(false); }
-  };
-
   const f = { width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', background: 'var(--lms-card)', color: 'var(--text-primary)', fontSize: 14, fontFamily: 'system-ui, -apple-system, sans-serif', boxSizing: 'border-box', outline: 'none' };
 
   return (
@@ -393,7 +428,7 @@ export const AdminCourseListPage = () => {
           <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>My Courses</h1>
         </div>
         <PermissionGuard required={[PERMISSIONS.COURSE_CREATE]} fallback={null}>
-          <AdminButton icon={<Plus className="h-4 w-4" />} onClick={() => setCreateModal(true)}>New Course</AdminButton>
+          <AdminButton icon={<Plus className="h-4 w-4" />} onClick={() => navigate(ROUTES.ADMIN_COURSE_CREATE)}>New Course</AdminButton>
         </PermissionGuard>
       </div>
 
@@ -462,7 +497,11 @@ export const AdminCourseListPage = () => {
       {confirmAction && (
         <AdminConfirmModal open
           title={`${confirmAction.action[0].toUpperCase() + confirmAction.action.slice(1)} Course`}
-          description={`Are you sure you want to ${confirmAction.action} "${confirmAction.course.title}"?`}
+          description={
+            confirmAction.action === 'delete' && confirmAction.course.status === 'PUBLISHED'
+              ? `"${confirmAction.course.title}" is currently PUBLISHED. To safely delete it, it will be unpublished first and then permanently removed. Are you sure?`
+              : `Are you sure you want to ${confirmAction.action} "${confirmAction.course.title}"?`
+          }
           confirmLabel={confirmAction.action[0].toUpperCase() + confirmAction.action.slice(1)}
           danger={['delete', 'archive'].includes(confirmAction.action)}
           loading={confirmAction.loading} onConfirm={confirmAction.fn} onCancel={() => setConfirmAction(null)}
@@ -481,38 +520,6 @@ export const AdminCourseListPage = () => {
             <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 16 }}>
               <AdminButton variant="ghost" onClick={() => setRejectModal(null)}>Cancel</AdminButton>
               <AdminButton variant="danger" loading={rejectModal.loading} onClick={handleReject}>Reject</AdminButton>
-            </div>
-          </div>
-        </AdminModal>
-      )}
-
-      {/* create modal */}
-      {createModal && (
-        <AdminModal open title="Create Course" onClose={() => setCreateModal(false)}>
-          <div style={{ padding: '0 20px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div>
-              <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-muted)', display: 'block', marginBottom: 8 }}>Title *</label>
-              <input value={createTitle} onChange={e => setCreateTitle(e.target.value)} placeholder="e.g. Intro to React" style={f} />
-            </div>
-            <div>
-              <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-muted)', display: 'block', marginBottom: 8 }}>Description</label>
-              <textarea value={createDesc} onChange={e => setCreateDesc(e.target.value)} rows={3} placeholder="Short overview…" style={{ ...f, resize: 'vertical' }} />
-            </div>
-            <div style={{ display: 'flex', gap: 16 }}>
-              <div style={{ flex: 1 }}>
-                <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-muted)', display: 'block', marginBottom: 8 }}>Level</label>
-                <select value={createLevel} onChange={e => setCreateLevel(e.target.value)} style={f}>
-                  {['BEGINNER', 'INTERMEDIATE', 'ADVANCED'].map(l => <option key={l} value={l}>{l[0] + l.slice(1).toLowerCase()}</option>)}
-                </select>
-              </div>
-              <div style={{ flex: 1 }}>
-                <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-muted)', display: 'block', marginBottom: 8 }}>Duration (min)</label>
-                <input type="number" value={createDuration} onChange={e => setCreateDuration(e.target.value)} placeholder="120" style={f} />
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 8 }}>
-              <AdminButton variant="ghost" onClick={() => setCreateModal(false)}>Cancel</AdminButton>
-              <AdminButton loading={createSaving} onClick={handleCreate} disabled={!createTitle.trim()}>Create</AdminButton>
             </div>
           </div>
         </AdminModal>

@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
-  BookOpen, Layers, ArrowLeft, Eye, CheckCircle2, AlertCircle
+  BookOpen, Layers, ArrowLeft, Eye, CheckCircle2, AlertCircle, Shield, Trash2
 } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
 import ErrorState from '../../../components/common/ErrorState';
 import Badge from '../../../components/common/Badge';
+import ConfirmDialog from '../../../components/common/ConfirmDialog';
 import CourseForm from '../components/CourseForm';
 import CurriculumBuilder from '../components/CurriculumBuilder';
+import PublishChecklist from '../components/PublishChecklist';
 import useCourse from '../hooks/useCourse';
-import { useUpdateCourse } from '../hooks/useCourses';
+import { useUpdateCourse, useDeleteCourse } from '../hooks/useCourses';
+import courseService from '../services/courseService';
 import { useToast } from '../../../components/feedback/Toast';
 import { ROUTES } from '../../../constants/routes';
 import { COURSE_STATUS_TONE } from '../constants/courseConstants';
@@ -22,7 +25,11 @@ export const EditCoursePage = () => {
   const toast = useToast();
   const { data: course, isLoading, error, refetch } = useCourse(courseId);
   const { mutateAsync, error: saveError } = useUpdateCourse(courseId);
-  const [activeTab, setActiveTab] = useState('basic');
+  const deleteMutation = useDeleteCourse();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const searchTab = new URLSearchParams(location.search).get('tab');
+  const [activeTab, setActiveTab] = useState(searchTab || 'basic');
 
   const isAdmin = location.pathname.startsWith('/admin');
   const coursesRoute = isAdmin ? ROUTES.ADMIN_COURSES : ROUTES.COURSES;
@@ -38,6 +45,22 @@ export const EditCoursePage = () => {
       navigate(detailsRoute);
     } catch (e) {
       toast.error(e?.message || 'Failed to save course changes.');
+    }
+  };
+
+  const handleDeleteCourse = async () => {
+    setIsDeleting(true);
+    try {
+      if (course?.status === 'PUBLISHED') {
+        await courseService.unpublish(courseId);
+      }
+      await deleteMutation.mutateAsync(courseId);
+      toast.success('Course deleted successfully.');
+      navigate(coursesRoute);
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err?.message || 'Failed to delete course.');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -94,7 +117,7 @@ export const EditCoursePage = () => {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
             <button
               onClick={() => navigate(detailsRoute)}
               style={{
@@ -104,6 +127,20 @@ export const EditCoursePage = () => {
               }}
             >
               <Eye size={14} /> Preview Course
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowDeleteConfirm(true)}
+              style={{
+                padding: '8px 14px', borderRadius: 8, fontSize: 13, fontWeight: 600,
+                border: '1px solid rgba(239, 68, 68, 0.3)', background: 'rgba(239, 68, 68, 0.08)',
+                color: '#ef4444', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.18)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)'; }}
+            >
+              <Trash2 size={14} /> Delete Course
             </button>
           </div>
         </div>
@@ -153,22 +190,63 @@ export const EditCoursePage = () => {
           </button>
         </div>
 
-        {/* ── Active Tab Content ── */}
-        <div>
-          {activeTab === 'basic' ? (
-            <CourseForm
-              defaultValues={course}
-              onSubmit={handleSubmit}
-              onCancel={() => navigate(-1)}
-              error={saveError}
-            />
-          ) : (
-            <CurriculumBuilder course={course} />
+        {/* ── Active Tab Content with Publish Checklist Sidebar ── */}
+        <div style={{
+          display: activeTab === 'curriculum' ? 'grid' : 'block',
+          gridTemplateColumns: activeTab === 'curriculum' ? '1fr 280px' : '1fr',
+          gap: 20,
+          alignItems: 'start',
+        }}>
+          <div>
+            {activeTab === 'basic' ? (
+              <CourseForm
+                defaultValues={course}
+                onSubmit={handleSubmit}
+                onCancel={() => navigate(-1)}
+                error={saveError}
+              />
+            ) : (
+              <CurriculumBuilder course={course} />
+            )}
+          </div>
+
+          {activeTab === 'curriculum' && (
+            <div style={{ position: 'sticky', top: 20 }}>
+              <PublishChecklist
+                course={course}
+                modules={course?.modules || []}
+                onPublish={course?.status === 'DRAFT' ? async () => {
+                  try {
+                    await mutateAsync({ ...course, status: 'PUBLISHED' });
+                    toast.success('Course published successfully! 🎉');
+                    refetch();
+                  } catch (e) {
+                    toast.error(e?.message || 'Failed to publish course.');
+                  }
+                } : undefined}
+              />
+            </div>
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onCancel={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDeleteCourse}
+        title="Delete Course"
+        message={
+          course?.status === 'PUBLISHED'
+            ? `"${course?.title}" is currently PUBLISHED. To safely delete it, it will be unpublished first and then permanently removed. Are you sure?`
+            : `Are you sure you want to delete "${course?.title}"? This action cannot be undone.`
+        }
+        confirmLabel="Delete"
+        isDestructive
+        isLoading={isDeleting}
+      />
     </PageContainer>
   );
 };
 
 export default EditCoursePage;
+

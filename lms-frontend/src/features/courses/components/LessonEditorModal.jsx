@@ -4,6 +4,7 @@ import {
   UploadCloud, CheckCircle2, FileText, Video, Presentation, FileCode, Music, HelpCircle, X, Image as ImageIcon
 } from 'lucide-react';
 import Button from '../../../components/common/Button';
+import RichTextEditor from '../../../components/common/RichTextEditor';
 import { useToast } from '../../../components/feedback/Toast';
 import courseService from '../services/courseService';
 import curriculumService from '../services/curriculumService';
@@ -432,12 +433,12 @@ export default function LessonEditorModal({ courseId, moduleId, lesson, onClose,
           {/* Text/Article Content Textarea */}
           {lessonType === 'TEXT' && (
              <div>
-               <label style={labelStyle}>Article Text Content</label>
-               <textarea 
-                 style={{ ...inputStyle, height: 120, resize: 'vertical' }} 
+               <RichTextEditor
+                 label="Article Text Content"
+                 placeholder="Enter lesson instructions, notes, or article content (supports Markdown)..."
                  value={content}
                  onChange={(e) => setContent(e.target.value)}
-                 placeholder="Enter lesson instructions, notes, or article content..."
+                 rows={10}
                />
              </div>
           )}

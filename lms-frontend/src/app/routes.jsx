@@ -62,6 +62,8 @@ const ResourceManagementPage = lazy(
 );
 const AdminCourseListPage = lazy(() => import('../features/courses/pages/AdminCourseListPage'));
 const InstructorAnalyticsPage = lazy(() => import('../features/analytics/pages/InstructorAnalyticsPage'));
+const AnnouncementsPage = lazy(() => import('../features/notifications/pages/AnnouncementsPage'));
+const QuestionBankPage = lazy(() => import('../features/assessments/pages/QuestionBankPage'));
 const StudentProgressPage = lazy(() => import('../features/analytics/pages/StudentProgressPage'));
 const OrganizationPage = lazy(() => import('../features/tenants/pages/OrganizationPage'));
 const OrganizationSettingsPage = lazy(() => import('../features/tenants/pages/OrganizationSettingsPage'));
@@ -188,6 +190,7 @@ export const router = createBrowserRouter([
               { path: ROUTES.BILLING, element: suspend(<BillingPage />) },
               { path: ROUTES.AUDIT_LOGS, element: suspend(<AuditLogsPage />) },
               { path: ROUTES.ADMIN_COURSES, element: suspend(<AdminCourseListPage />) },
+              { path: ROUTES.ADMIN_COURSE_CREATE, element: suspend(<CreateCoursePage />) },
               { path: ROUTES.ADMIN_COURSE_DETAILS(), element: suspend(<CourseDetailsPage />) },
               { path: ROUTES.ADMIN_COURSE_EDIT(), element: suspend(<EditCoursePage />) },
               { path: ROUTES.CAMPUS_RESOURCES, element: suspend(<ResourceManagementPage />) },
@@ -200,6 +203,7 @@ export const router = createBrowserRouter([
                   { path: ROUTES.ADMIN_ASSESSMENT_EDIT(), element: suspend(<AdminEditAssessmentPage />) },
                   { path: ROUTES.ADMIN_GRADING, element: suspend(<GradingWorkflowPage />) },
                   { path: ROUTES.ADMIN_RUBRICS, element: suspend(<RubricManagerPage />) },
+                  { path: ROUTES.ADMIN_QUESTION_BANK, element: suspend(<QuestionBankPage />) },
                 ],
               },
             ],
@@ -221,12 +225,14 @@ export const router = createBrowserRouter([
               { path: ROUTES.COURSE_DETAILS(), element: suspend(<CourseDetailsPage />) },
               { path: ROUTES.COURSE_EDIT(), element: suspend(<EditCoursePage />) },
               { path: ROUTES.INSTRUCTOR_RESOURCES, element: suspend(<ResourceManagementPage />) },
-              { path: ROUTES.ASSESSMENTS, element: suspend(<AssessmentListPage />) },
+              { path: ROUTES.ASSESSMENTS, element: suspend(<AdminAssessmentListPage />) },
               { path: ROUTES.ASSESSMENT_CREATE, element: suspend(<CreateAssessmentPage />) },
               { path: ROUTES.INSTRUCTOR_ASSESSMENT_DETAILS(), element: suspend(<AdminAssessmentDetailsPage />) },
               { path: ROUTES.INSTRUCTOR_ASSESSMENT_EDIT(), element: suspend(<AdminEditAssessmentPage />) },
               { path: ROUTES.INSTRUCTOR_GRADING, element: suspend(<GradingWorkflowPage />) },
               { path: ROUTES.INSTRUCTOR_RUBRICS, element: suspend(<RubricManagerPage />) },
+              { path: ROUTES.INSTRUCTOR_ANNOUNCEMENTS, element: suspend(<AnnouncementsPage />) },
+              { path: ROUTES.INSTRUCTOR_QUESTION_BANK, element: suspend(<QuestionBankPage />) },
             ],
           },
         ],

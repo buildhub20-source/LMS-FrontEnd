@@ -1,16 +1,18 @@
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Clock, BarChart2, HelpCircle, Rocket, ArchiveIcon, XCircle,
   Edit2, Trash2, Plus, FileQuestion, Timer, Cpu, ChevronRight,
-  Info, CheckCircle, RefreshCw, Eye, EyeOff,
+  Info, CheckCircle, RefreshCw, Eye, EyeOff, Database,
 } from 'lucide-react';
 import { useState } from 'react';
 import Spinner from '../../../components/common/Spinner';
 import Alert from '../../../components/feedback/Alert';
 import Button from '../../../components/common/Button';
 import Badge from '../../../components/common/Badge';
+import { AdminConfirmModal } from '../../../components/ui/AdminModal';
 import AssessmentStatusBadge from '../components/AssessmentStatusBadge';
 import AdminQuestionForm from '../components/AdminQuestionForm';
+import ImportQuestionBankModal from '../components/ImportQuestionBankModal';
 import { DIFFICULTY_TONE } from '../constants/assessmentConstants';
 import {
   useAdminAssessment,
@@ -42,13 +44,21 @@ import s from './AssessmentDetails.module.css';
 export const AdminAssessmentDetailsPage = () => {
   const { assessmentId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const toast = useToast();
+
+  const isInstructor = location.pathname.startsWith('/instructor');
+  const listRoute = isInstructor ? ROUTES.ASSESSMENTS : ROUTES.ADMIN_ASSESSMENTS;
+  const editRoute = (id) => isInstructor ? ROUTES.INSTRUCTOR_ASSESSMENT_EDIT(id) : ROUTES.ADMIN_ASSESSMENT_EDIT(id);
+
   const [activeTab, setActiveTab] = useState('questions'); // 'questions' | 'analytics'
   const [showForm, setShowForm] = useState(false);
   const [targetSectionId, setTargetSectionId] = useState(null); // which section to add a question to
   const [editingQuestion, setEditingQuestion] = useState(null); // question object being edited
   const [editingSection, setEditingSection] = useState(null); // section object being edited
   const [showSectionForm, setShowSectionForm] = useState(false); // for adding a new section
+  const [showBankModal, setShowBankModal] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState(null);
 
   const { data: a, isLoading, error } = useAdminAssessment(assessmentId);
   const { data: questions = [] } = useAdminAssessmentQuestions(assessmentId);
@@ -94,11 +104,32 @@ export const AdminAssessmentDetailsPage = () => {
   const handleAddQuestion = async (values) => {
     try {
       if (isPublished) {
-        const confirmUnpublish = window.confirm(
-          `"${a.title}" is currently PUBLISHED.\n\nBackend policy requires an assessment to be in DRAFT to add questions.\n\nWould you like to unpublish it now to add this question?`
-        );
-        if (!confirmUnpublish) return;
-        await unpublish.mutateAsync(assessmentId);
+        setConfirmDialog({
+          title: 'Unpublish to Add Question',
+          message: `"${a?.title}" is currently PUBLISHED. Backend policy requires an assessment to be in DRAFT to add questions.\n\nWould you like to unpublish it now and add this question?`,
+          confirmLabel: 'Unpublish & Continue',
+          variant: 'primary',
+          onConfirm: async () => {
+            setConfirmDialog((prev) => ({ ...prev, loading: true }));
+            try {
+              await unpublish.mutateAsync(assessmentId);
+              if (targetSectionId) {
+                await addSectionQ.mutateAsync({ sectionId: targetSectionId, data: values });
+              } else {
+                await addQ.mutateAsync(values);
+              }
+              toast.success('Question added');
+              setShowForm(false);
+              setTargetSectionId(null);
+              setConfirmDialog(null);
+            } catch (e) {
+              console.error('Question add failed:', e);
+              toast.error(e?.response?.data?.message || e.message || 'Failed to add question');
+              setConfirmDialog(null);
+            }
+          },
+        });
+        return;
       }
       if (targetSectionId) {
         await addSectionQ.mutateAsync({ sectionId: targetSectionId, data: values });
@@ -114,35 +145,52 @@ export const AdminAssessmentDetailsPage = () => {
     }
   };
 
-  const handleDeleteQuestion = async (q) => {
+  const handleDeleteQuestion = (q) => {
     if (isPublished) {
-      const confirmUnpublish = window.confirm(
-        `"${a.title}" is currently PUBLISHED.\n\nBackend policy requires an assessment to be in DRAFT to delete questions.\n\nWould you like to unpublish it now and delete "${q.title}"?`
-      );
-      if (!confirmUnpublish) return;
-      try {
-        await unpublish.mutateAsync(assessmentId);
-        await removeQ.mutateAsync(q.id);
-        toast.success(`Assessment reverted to draft and "${q.title}" removed`);
-        if (editingQuestion?.id === q.id) {
-          setEditingQuestion(null);
-        }
-      } catch (e) {
-        toast.error(e?.response?.data?.message || e.message || 'Failed to remove question');
-      }
+      setConfirmDialog({
+        title: 'Unpublish & Delete Question',
+        message: `"${a?.title}" is currently PUBLISHED. Backend policy requires an assessment to be in DRAFT to delete questions.\n\nWould you like to unpublish it now and delete "${q.title}"?`,
+        confirmLabel: 'Unpublish & Delete',
+        variant: 'danger',
+        onConfirm: async () => {
+          setConfirmDialog((prev) => ({ ...prev, loading: true }));
+          try {
+            await unpublish.mutateAsync(assessmentId);
+            await removeQ.mutateAsync(q.id);
+            toast.success(`Assessment reverted to draft and "${q.title}" removed`);
+            if (editingQuestion?.id === q.id) {
+              setEditingQuestion(null);
+            }
+            setConfirmDialog(null);
+          } catch (e) {
+            toast.error(e?.response?.data?.message || e.message || 'Failed to remove question');
+            setConfirmDialog(null);
+          }
+        },
+      });
       return;
     }
 
-    if (!window.confirm(`Delete question "${q.title}"?`)) return;
-    try {
-      await removeQ.mutateAsync(q.id);
-      toast.success('Question deleted');
-      if (editingQuestion?.id === q.id) {
-        setEditingQuestion(null);
-      }
-    } catch (e) {
-      toast.error(e?.response?.data?.message || e.message || 'Failed to delete question');
-    }
+    setConfirmDialog({
+      title: 'Delete Question',
+      message: `Are you sure you want to delete question "${q.title}"? This cannot be undone.`,
+      confirmLabel: 'Delete Question',
+      variant: 'danger',
+      onConfirm: async () => {
+        setConfirmDialog((prev) => ({ ...prev, loading: true }));
+        try {
+          await removeQ.mutateAsync(q.id);
+          toast.success('Question deleted');
+          if (editingQuestion?.id === q.id) {
+            setEditingQuestion(null);
+          }
+          setConfirmDialog(null);
+        } catch (e) {
+          toast.error(e?.response?.data?.message || e.message || 'Failed to delete question');
+          setConfirmDialog(null);
+        }
+      },
+    });
   };
 
   const handleAddSection = async (e) => {
@@ -197,16 +245,26 @@ export const AdminAssessmentDetailsPage = () => {
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm('Delete this assessment permanently?')) return;
-    try {
-      await deleteA.mutateAsync(assessmentId);
-      toast.success('Deleted');
-      navigate(ROUTES.ADMIN_ASSESSMENTS);
-    } catch (e) {
-      console.error('Delete failed:', e);
-      toast.error(e.message || 'Failed to delete');
-    }
+  const handleDelete = () => {
+    setConfirmDialog({
+      title: 'Delete Assessment',
+      message: `Are you sure you want to permanently delete "${a?.title || 'this assessment'}"?\n\nAll questions, sections, and associated test configurations will be removed. This action cannot be undone.`,
+      confirmLabel: 'Delete Assessment',
+      variant: 'danger',
+      onConfirm: async () => {
+        setConfirmDialog((prev) => ({ ...prev, loading: true }));
+        try {
+          await deleteA.mutateAsync(assessmentId);
+          toast.success('Assessment deleted successfully');
+          setConfirmDialog(null);
+          navigate(listRoute);
+        } catch (e) {
+          console.error('Delete failed:', e);
+          toast.error(e.message || 'Failed to delete assessment');
+          setConfirmDialog(null);
+        }
+      },
+    });
   };
 
   return (
@@ -216,7 +274,7 @@ export const AdminAssessmentDetailsPage = () => {
       <div className={s.heroBanner}>
         <div className={s.heroLeft}>
           <div className={s.heroBreadcrumb}>
-            <Link to={ROUTES.ADMIN_ASSESSMENTS} className={s.heroBreadcrumbLink}>Assessments</Link>
+            <Link to={listRoute} className={s.heroBreadcrumbLink}>Assessments</Link>
             <ChevronRight size={12} />
             <span>{a.title}</span>
           </div>
@@ -229,7 +287,7 @@ export const AdminAssessmentDetailsPage = () => {
         <div className={s.heroActions}>
           {canEditQuestions && (
             <button className={s.heroBtn}
-              onClick={() => navigate(ROUTES.ADMIN_ASSESSMENT_EDIT(assessmentId))}>
+              onClick={() => navigate(editRoute(assessmentId))}>
               <Edit2 size={13} /> Edit
             </button>
           )}
@@ -339,6 +397,16 @@ export const AdminAssessmentDetailsPage = () => {
                       >
                         <Plus size={13} style={{ marginRight: 4 }} /> Add Question
                       </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setTargetSectionId(null);
+                          setShowBankModal(true);
+                        }}
+                      >
+                        <Database size={13} style={{ marginRight: 4 }} /> Import from Bank
+                      </Button>
                       {!showSectionForm && (
                         <Button
                           variant={sections.length === 0 ? "outline" : "primary"}
@@ -381,6 +449,9 @@ export const AdminAssessmentDetailsPage = () => {
                       <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
                         <Button variant="primary" size="sm" onClick={() => { setTargetSectionId(null); setShowForm(true); }}>
                           <Plus size={13} style={{ marginRight: 4 }} /> Add Question
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => { setTargetSectionId(null); setShowBankModal(true); }}>
+                          <Database size={13} style={{ marginRight: 4 }} /> Import from Bank
                         </Button>
                         <Button variant="outline" size="sm" onClick={() => setShowSectionForm(true)}>
                           <Plus size={13} style={{ marginRight: 4 }} /> Create Section
@@ -522,9 +593,23 @@ export const AdminAssessmentDetailsPage = () => {
                                 <Edit2 size={13} />
                               </Button>
                               <Button variant="ghost" size="sm" onClick={() => {
-                                 if (window.confirm('Delete this section? Questions will be moved to unsectioned.')) {
-                                    deleteSection.mutateAsync(section.id).catch(e => toast.error(e.message || 'Failed to delete section'));
-                                 }
+                                setConfirmDialog({
+                                  title: 'Delete Section',
+                                  message: `Are you sure you want to delete section "${section.title}"?\n\nQuestions in this section will be moved to unsectioned.`,
+                                  confirmLabel: 'Delete Section',
+                                  variant: 'danger',
+                                  onConfirm: async () => {
+                                    setConfirmDialog((prev) => ({ ...prev, loading: true }));
+                                    try {
+                                      await deleteSection.mutateAsync(section.id);
+                                      toast.success(`Section "${section.title}" deleted`);
+                                      setConfirmDialog(null);
+                                    } catch (e) {
+                                      toast.error(e.message || 'Failed to delete section');
+                                      setConfirmDialog(null);
+                                    }
+                                  },
+                                });
                               }} title="Delete section">
                                 <Trash2 size={13} />
                               </Button>
@@ -894,6 +979,26 @@ export const AdminAssessmentDetailsPage = () => {
 
         </div>
       </div>
+
+      <ImportQuestionBankModal
+        isOpen={showBankModal}
+        onClose={() => setShowBankModal(false)}
+        onImport={handleAddQuestion}
+        targetSectionId={targetSectionId}
+      />
+
+      {confirmDialog && (
+        <AdminConfirmModal
+          open={Boolean(confirmDialog)}
+          onClose={() => setConfirmDialog(null)}
+          onConfirm={confirmDialog.onConfirm}
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          confirmLabel={confirmDialog.confirmLabel}
+          variant={confirmDialog.variant}
+          loading={confirmDialog.loading}
+        />
+      )}
     </div>
   );
 };

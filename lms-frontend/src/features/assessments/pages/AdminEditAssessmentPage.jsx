@@ -1,4 +1,4 @@
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import AdminAssessmentForm from '../components/AdminAssessmentForm';
 import Spinner from '../../../components/common/Spinner';
@@ -10,7 +10,12 @@ import { ROUTES } from '../../../constants/routes';
 export const AdminEditAssessmentPage = () => {
   const { assessmentId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const toast = useToast();
+
+  const isInstructor = location.pathname.startsWith('/instructor');
+  const detailsRoute = isInstructor ? ROUTES.INSTRUCTOR_ASSESSMENT_DETAILS(assessmentId) : ROUTES.ADMIN_ASSESSMENT_DETAILS(assessmentId);
+  const listRoute = isInstructor ? ROUTES.ASSESSMENTS : ROUTES.ADMIN_ASSESSMENTS;
 
   const { data: assessment, isLoading, error: loadErr } = useAdminAssessment(assessmentId);
   const { mutateAsync, error: saveErr } = useUpdateAdminAssessment(assessmentId);
@@ -21,16 +26,16 @@ export const AdminEditAssessmentPage = () => {
   const handleSubmit = async (values) => {
     await mutateAsync(values);
     toast.success('Changes saved');
-    navigate(ROUTES.ADMIN_ASSESSMENT_DETAILS(assessmentId));
+    navigate(detailsRoute);
   };
 
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: 10 }}>
-          <Link to={ROUTES.ADMIN_ASSESSMENTS} style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}>Assessments</Link>
+          <Link to={listRoute} style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}>Assessments</Link>
           <ChevronRight size={12} />
-          <Link to={ROUTES.ADMIN_ASSESSMENT_DETAILS(assessmentId)} style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}>
+          <Link to={detailsRoute} style={{ color: 'var(--color-text-muted)', textDecoration: 'none' }}>
             {assessment.title}
           </Link>
           <ChevronRight size={12} />
@@ -47,7 +52,7 @@ export const AdminEditAssessmentPage = () => {
       <AdminAssessmentForm
         defaultValues={assessment}
         onSubmit={handleSubmit}
-        onCancel={() => navigate(ROUTES.ADMIN_ASSESSMENT_DETAILS(assessmentId))}
+        onCancel={() => navigate(detailsRoute)}
         submitLabel="Save changes"
         error={saveErr}
       />

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Search, BookOpen, Plus, LayoutList, LayoutGrid, Code, CheckCircle
 } from 'lucide-react';
@@ -296,7 +296,12 @@ const STATUS_FILTERS = ['ALL', ...Object.values(ASSESSMENT_STATUS)];
 /* ── Page ── */
 export const AdminAssessmentListPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { success: toastSuccess, error: toastError } = useToast();
+
+  const isInstructor = location.pathname.startsWith('/instructor');
+  const detailsRoute = (id) => isInstructor ? ROUTES.INSTRUCTOR_ASSESSMENT_DETAILS(id) : ROUTES.ADMIN_ASSESSMENT_DETAILS(id);
+  const createRoute = isInstructor ? ROUTES.ASSESSMENT_CREATE : ROUTES.ADMIN_ASSESSMENT_CREATE;
 
   const [page, setPage] = useState(0);
   const pageSize = 12;
@@ -337,7 +342,7 @@ export const AdminAssessmentListPage = () => {
 
   const handleAction = (type, assessment) => {
     if (type === 'edit') {
-      navigate(ROUTES.ADMIN_ASSESSMENT_DETAILS(assessment.id));
+      navigate(detailsRoute(assessment.id));
       return;
     }
     const MAP = {
@@ -367,7 +372,7 @@ export const AdminAssessmentListPage = () => {
           <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>Assessments</h1>
         </div>
         <PermissionGuard required={[PERMISSIONS.ASSESSMENT_CREATE]} fallback={null}>
-          <AdminButton icon={<Plus className="h-4 w-4" />} onClick={() => navigate(ROUTES.ADMIN_ASSESSMENT_CREATE)}>New Assessment</AdminButton>
+          <AdminButton icon={<Plus className="h-4 w-4" />} onClick={() => navigate(createRoute)}>New Assessment</AdminButton>
         </PermissionGuard>
       </div>
 
@@ -419,14 +424,14 @@ export const AdminAssessmentListPage = () => {
       ) : view === 'grid' ? (
         <>
           <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
-            {assessments.map(a => <AssessmentCard key={a.id} assessment={a} onAction={handleAction} onClick={() => navigate(ROUTES.ADMIN_ASSESSMENT_DETAILS(a.id))} />)}
+            {assessments.map(a => <AssessmentCard key={a.id} assessment={a} onAction={handleAction} onClick={() => navigate(detailsRoute(a.id))} />)}
           </div>
           {totalPages > 1 && <div style={{ marginTop: 24 }}><AdminPagination page={page} totalPages={totalPages} totalElements={totalElements} pageSize={pageSize} onPageChange={setPage} /></div>}
         </>
       ) : (
         <>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {assessments.map(a => <AssessmentListRow key={a.id} assessment={a} onAction={handleAction} onClick={() => navigate(ROUTES.ADMIN_ASSESSMENT_DETAILS(a.id))} />)}
+            {assessments.map(a => <AssessmentListRow key={a.id} assessment={a} onAction={handleAction} onClick={() => navigate(detailsRoute(a.id))} />)}
           </div>
           {totalPages > 1 && <div style={{ marginTop: 24 }}><AdminPagination page={page} totalPages={totalPages} totalElements={totalElements} pageSize={pageSize} onPageChange={setPage} /></div>}
         </>

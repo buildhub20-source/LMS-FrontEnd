@@ -46,6 +46,7 @@ export const ROUTES = Object.freeze({
   PLANS: '/admin/subscription/plans',
   BILLING: '/admin/subscription/billing',
   ADMIN_COURSES: '/admin/courses',
+  ADMIN_COURSE_CREATE: '/admin/courses/new',
   ADMIN_COURSE_DETAILS: (id = ':courseId') => `/admin/courses/${id}`,
   ADMIN_COURSE_EDIT: (id = ':courseId') => `/admin/courses/${id}/edit`,
 
@@ -73,6 +74,9 @@ export const ROUTES = Object.freeze({
   INSTRUCTOR_GRADING: '/instructor/assessments/grading',
   INSTRUCTOR_RUBRICS: '/instructor/assessments/rubrics',
   INSTRUCTOR_RESOURCES: '/instructor/resources',
+  INSTRUCTOR_ANNOUNCEMENTS: '/instructor/announcements',
+  INSTRUCTOR_QUESTION_BANK: '/instructor/question-bank',
+  ADMIN_QUESTION_BANK: '/admin/assessments/question-bank',
 
   // Student
   MY_COURSES: '/learn/my-courses',
