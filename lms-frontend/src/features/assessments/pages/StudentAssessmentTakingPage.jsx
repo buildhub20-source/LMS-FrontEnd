@@ -68,7 +68,7 @@ export const StudentAssessmentTakingPage = () => {
     answeredCount,
     totalQuestions,
     updateDraft,
-    handleSubmit,
+    flushDrafts,
     retry,
   } = useAssessmentAttempt(assessmentId, {
     onTimeExpired: handleAutoSubmitOnExpiry,
@@ -79,7 +79,8 @@ export const StudentAssessmentTakingPage = () => {
   const isCritical = (remainingSeconds ?? 999) <= 300; // 5 mins warning
 
   // Finalize exam, flush active draft, and upload recording with real-time synchronized stages
-  const handleFinalSubmit = useCallback(async (isAuto = false, shouldNavigate = true) => {
+  const handleFinalSubmit = useCallback(async (_isAuto = false, shouldNavigate = true) => {
+    if (isSubmittingRef.current) return;
     // Mark as submitting FIRST — suppresses proctoring events synchronously
     isSubmittingRef.current = true;
     setShowSubmitModal(false);
@@ -88,37 +89,14 @@ export const StudentAssessmentTakingPage = () => {
 
     // 1. Exit fullscreen immediately so the processing screen displays cleanly
     if (document.fullscreenElement) {
-      try { await document.exitFullscreen(); } catch {}
+      try { await document.exitFullscreen(); } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
     }
 
     try {
-      // Resolve valid attempt ID
-      let targetAttemptId = attempt?.id || attempt?.attemptId;
-      if (!targetAttemptId && assessmentId) {
-        try {
-          const startRes = await assessmentService.startAttempt(assessmentId);
-          const startData = startRes?.data?.data ?? startRes?.data ?? startRes;
-          targetAttemptId = startData?.attemptId || startData?.id;
-        } catch (startErr) {
-          console.warn('Could not retrieve attempt ID on submit:', startErr);
-        }
-      }
-
-      // Stage 1: Flush currently active question's draft to DB
+      const targetAttemptId = attempt?.id || attempt?.attemptId;
+      if (!targetAttemptId) throw new Error('No active attempt. Reload the assessment before submitting.');
       setSubmissionStage('saving');
-      if (currentQuestion && drafts[currentQuestion.id] && targetAttemptId) {
-        try {
-          const d = drafts[currentQuestion.id];
-          await assessmentService.saveSubmissionDraft(
-            targetAttemptId,
-            currentQuestion.id,
-            d.language || 'java',
-            d.sourceCode || '',
-          );
-        } catch (e) {
-          console.warn('Draft flush error on submit (non-fatal):', e);
-        }
-      }
+      await flushDrafts();
 
       // Stage 2: Stop and upload screen recording telemetry (safeguarded timeout)
       setSubmissionStage('uploading');
@@ -146,7 +124,7 @@ export const StudentAssessmentTakingPage = () => {
             errMsg.includes('already completed') ||
             errMsg.includes('expired')
           ) {
-            console.info('Attempt already marked as finalized on server.');
+            // The server already finalized this attempt.
           } else {
             throw submitErr;
           }
@@ -158,7 +136,7 @@ export const StudentAssessmentTakingPage = () => {
         (attempt?.questions ?? []).forEach((q) => {
           try {
             localStorage.removeItem(`lms_assessment_draft_${targetAttemptId}_${q.id}`);
-          } catch {}
+          } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
         });
       }
 
@@ -172,15 +150,16 @@ export const StudentAssessmentTakingPage = () => {
         }, 400);
       }
     } catch (err) {
+      isSubmittingRef.current = false;
       console.error('Final submit failed:', err);
       setSubmissionStage('error');
       setSubmissionErrorMsg(
         err?.response?.data?.message || err?.message || 'Submission failed. Please check your network connection and retry.'
       );
     }
-  }, [attempt?.id, attempt?.questions, assessmentId, currentQuestion, drafts, navigate]);
+  }, [attempt?.id, attempt?.attemptId, attempt?.questions, assessmentId, flushDrafts, navigate]);
 
-  handleFinalSubmitRef.current = handleFinalSubmit;
+  useEffect(() => { handleFinalSubmitRef.current = handleFinalSubmit; }, [handleFinalSubmit]);
 
   // Proctoring & Lockdown hook
   const {
@@ -191,7 +170,6 @@ export const StudentAssessmentTakingPage = () => {
     showViolationModal,
     setShowViolationModal,
     isTerminated,
-    isRulesAgreed,
     setIsRulesAgreed,
     screenStream,
     isScreenRecording,
@@ -204,7 +182,7 @@ export const StudentAssessmentTakingPage = () => {
     suppressRef: isSubmittingRef,
   });
 
-  stopRecordingRef.current = stopAndGetRecordingBlob;
+  useEffect(() => { stopRecordingRef.current = stopAndGetRecordingBlob; }, [stopAndGetRecordingBlob]);
 
   // Step 1: Request screen recording stream inside lobby
   const handleRequestScreen = async () => {
@@ -219,7 +197,7 @@ export const StudentAssessmentTakingPage = () => {
   const handleLaunchAssessment = async () => {
     try {
       await enterFullscreen();
-    } catch {}
+    } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
     setIsRulesAgreed(true);
     setExamStage('COUNTDOWN');
   };

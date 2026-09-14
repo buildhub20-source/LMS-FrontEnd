@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react';
 import { Camera, Check, Eye, UploadCloud } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Avatar from '../../../components/common/Avatar';
 import Button from '../../../components/common/Button';
 import { validateFile } from '../../../utils/fileUtils';
 import appConfig from '../../../config/appConfig';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export const ProfileAvatar = ({ user, onUpload, isUploading }) => {
   const inputRef = useRef(null);

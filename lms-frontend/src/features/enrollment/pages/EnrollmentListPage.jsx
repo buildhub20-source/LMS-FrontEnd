@@ -1,4 +1,10 @@
 import { useState, useMemo, useCallback } from 'react';
+import {
+  CheckSquare, Globe, Users, UserCheck, BookOpen, FileCheck2,
+  ArrowRight, Filter, CheckCircle2, XCircle, UserPlus,
+  UserMinus, RefreshCw, GraduationCap, LayoutDashboard, Search, ChevronDown,
+  Target, ArrowLeftRight, X, Layers
+} from 'lucide-react';
 import { useAdminEnrollments, useCreateAdminEnrollment, useUpdateAdminEnrollmentStatus } from '../hooks/useEnrollments';
 import { useCourses } from '../../courses/hooks/useCourses';
 import { useAdminAssessments } from '../../assessments/hooks/useAdminAssessments';
@@ -6,12 +12,6 @@ import { useUsers } from '../../users/hooks/useUsers';
 import { courseService } from '../../courses/services/courseService';
 import { useToast } from '../../../components/feedback/Toast';
 import { AdminModal } from '../../../components/ui/AdminModal';
-import {
-  CheckSquare, Globe, Users, UserCheck, BookOpen, FileCheck2,
-  ArrowRight, Filter, CheckCircle2, XCircle, UserPlus,
-  UserMinus, RefreshCw, GraduationCap, LayoutDashboard, Search, ChevronDown,
-  Target, ArrowLeftRight, X, Layers
-} from 'lucide-react';
 
 /* ─── Design tokens matching Roles List page ──────────────────────── */
 const T = {
@@ -333,11 +333,7 @@ export const EnrollmentListPage = () => {
     outline: 'none', color: T.textMain, background: T.input, width: '100%',
   };
 
-  const selectStyle = {
-    appearance: 'none', paddingLeft: 12, paddingRight: 28, paddingTop: 7, paddingBottom: 7,
-    fontSize: 13, border: `1px solid ${T.border}`, borderRadius: 6,
-    outline: 'none', cursor: 'pointer', color: T.textMain, background: T.input, width: '100%',
-  };
+  
 
   const pillBtn = (isActive) => ({
     display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px',
@@ -1122,7 +1118,7 @@ export const EnrollmentListPage = () => {
                 <div style={{ padding: '36px 16px', textAlign: 'center', color: T.textMuted }}>
                   <Target size={32} style={{ opacity: 0.4, margin: '0 auto 8px', display: 'block' }} />
                   <p style={{ margin: 0, fontSize: 14, fontWeight: 500 }}>
-                    No {topTab === 'COURSES' ? 'courses' : 'assessments'} match "{targetSearchQuery}"
+                    No {topTab === 'COURSES' ? 'courses' : 'assessments'} match &quot;{targetSearchQuery}&quot;
                   </p>
                 </div>
               ) : (

@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState, useMemo } from 'react';
 import { Eye, EyeOff, KeyRound, ShieldCheck, Check, X, Lock } from 'lucide-react';
+import { motion } from 'framer-motion';
 import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';
 import Alert from '../../../components/feedback/Alert';
@@ -9,7 +10,6 @@ import { changePasswordSchema } from '../validation/profileSchemas';
 import profileService from '../services/profileService';
 import { normalizeError } from '../../../utils/errorUtils';
 import { useToast } from '../../../components/feedback/Toast';
-import { motion } from 'framer-motion';
 
 export const ChangePasswordForm = () => {
   const toast = useToast();

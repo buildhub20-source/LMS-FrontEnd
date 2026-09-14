@@ -21,22 +21,22 @@ export const RubricManager = () => {
   ]);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    fetchRubrics();
-  }, []);
-
   const fetchRubrics = async () => {
     setLoading(true);
     setError(null);
     try {
       const res = await rubricService.list();
-      setRubrics(res?.data?.data?.content || []);
+      setRubrics(res?.content ?? []);
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load rubrics');
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchRubrics();
+  }, []);
 
   const handleAddCriterion = () => {
     setCriteria([...criteria, { criterionName: '', description: '', maxPoints: 10, weight: 1.0 }]);

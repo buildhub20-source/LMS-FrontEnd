@@ -32,6 +32,10 @@ export const adminAssessmentService = {
   // Result Analytics Visibility Toggle
   toggleResultAnalytics: (id, enabled) =>
     http.patch(ep.resultAnalytics(id), null, { params: { enabled } }),
+
+  // Time & Scheduling Management
+  extend: (id, minutes) => http.post(ep.extend(id), { minutes }),
+  updateSchedule: (id, { startTime, endTime }) => http.patch(ep.schedule(id), { startTime, endTime }),
 };
 
 export default adminAssessmentService;

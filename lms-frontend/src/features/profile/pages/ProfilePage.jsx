@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { User, Shield, Laptop, BadgeInfo, CheckCircle2, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import PageContainer from '../../../components/layout/PageContainer';
 import Card from '../../../components/common/Card';
 import Spinner from '../../../components/common/Spinner';
@@ -13,7 +14,6 @@ import AccountDetailsTab from '../components/AccountDetailsTab';
 import profileService from '../services/profileService';
 import { QUERY_KEYS } from '../../../constants/appConstants';
 import { useToast } from '../../../components/feedback/Toast';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('profile');

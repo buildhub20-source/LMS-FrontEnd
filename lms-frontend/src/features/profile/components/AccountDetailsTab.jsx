@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Copy, Check, Shield, Calendar, Key, Search, Sparkles, UserCheck } from 'lucide-react';
-import Card from '../../../components/common/Card';
 import { motion } from 'framer-motion';
+import Card from '../../../components/common/Card';
 
 export const AccountDetailsTab = ({ user }) => {
   const [copiedId, setCopiedId] = useState(false);

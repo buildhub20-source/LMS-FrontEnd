@@ -1,12 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Laptop, Smartphone, Globe, ShieldAlert, LogOut, CheckCircle2, Clock } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Card from '../../../components/common/Card';
 import Button from '../../../components/common/Button';
 import Spinner from '../../../components/common/Spinner';
 import Alert from '../../../components/feedback/Alert';
 import profileService from '../services/profileService';
 import { useToast } from '../../../components/feedback/Toast';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export const ActiveSessionsCard = () => {
   const queryClient = useQueryClient();

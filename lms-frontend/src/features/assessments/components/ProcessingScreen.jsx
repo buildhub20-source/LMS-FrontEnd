@@ -49,10 +49,9 @@ export const ProcessingScreen = ({
   assessmentTitle = 'Assessment',
   onRetry,
   onCancel,
-  onDone,
 }) => {
   const [elapsedMs, setElapsedMs] = useState(0);
-  const startTimeRef = useRef(Date.now());
+  const startTimeRef = useRef(0);
   const timerRef = useRef(null);
 
   // Derive questions statistics

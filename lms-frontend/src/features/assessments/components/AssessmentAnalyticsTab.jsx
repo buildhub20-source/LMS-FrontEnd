@@ -39,7 +39,6 @@ export const AssessmentAnalyticsTab = ({ assessmentId }) => {
     attendedCount = 0,
     nonAttendedCount = 0,
     completedCount = 0,
-    inProgressCount = 0,
     pendingGradingCount = 0,
     passedCount = 0,
     failedCount = 0,

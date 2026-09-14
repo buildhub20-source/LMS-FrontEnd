@@ -210,12 +210,47 @@ export const resourceService = {
   },
 
   /**
-   * Uploads a raw binary File directly to Cloudflare R2 object store.
+   * Uploads a raw binary File to Cloudflare R2 object store.
+   * Prioritizes direct backend multipart upload to bypass browser CORS limitations on R2,
+   * with automatic fallback to presigned direct PUT.
    */
   uploadFileToR2: async (file, category, onProgress) => {
     if (!file) throw new Error('File is required for upload');
 
-    // 1. Get presigned upload URL from backend
+    // 1. Primary path: Direct multipart upload via backend proxy (immune to browser CORS)
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      if (category) formData.append('category', category);
+
+      const res = await http.post(API_ENDPOINTS.resources.uploadDirect, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: (progressEvent) => {
+          if (onProgress && progressEvent.total) {
+            const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            onProgress(percent);
+          }
+        },
+      });
+
+      if (res?.fileKey) {
+        return {
+          fileKey: res.fileKey,
+          uploadUrl: res.uploadUrl,
+          publicUrl: res.publicUrl,
+          fileName: file.name,
+          fileSize: formatBytes(file.size),
+          fileSizeBytes: file.size,
+          fileType: file.name.split('.').pop()?.toUpperCase() || 'PDF',
+        };
+      }
+    } catch (backendUploadErr) {
+      console.warn('Backend direct multipart upload failed, attempting presigned PUT:', backendUploadErr?.message);
+    }
+
+    // 2. Fallback path: Presigned direct PUT to Cloudflare R2
     const urlData = await resourceService.getUploadUrl({
       fileName: file.name,
       contentType: file.type || 'application/octet-stream',
@@ -230,7 +265,6 @@ export const resourceService = {
       throw new Error('Could not obtain Cloudflare R2 upload credentials');
     }
 
-    // 2. Direct binary PUT upload to Cloudflare R2
     await axios.put(uploadUrl, file, {
       headers: {
         'Content-Type': file.type || 'application/octet-stream',
@@ -263,10 +297,17 @@ export const resourceService = {
       if (filters.search) params.search = filters.search;
 
       const backendItems = await http.get(API_ENDPOINTS.resources.base, { params });
-      if (Array.isArray(backendItems) && backendItems.length > 0) {
+      if (Array.isArray(backendItems)) {
         const normalized = backendItems.map(normalizeResource);
-        saveStored(normalized);
-        return normalized;
+        // Preserve any offline/unsynced locally created items
+        const local = getStored();
+        const backendIds = new Set(normalized.map((b) => b.id));
+        const unsynced = local.filter((l) => !backendIds.has(l.id) && l.id?.startsWith('res-'));
+        const combined = [...unsynced, ...normalized].sort(
+          (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+        );
+        saveStored(combined);
+        return combined;
       }
     } catch (err) {
       console.warn('Backend resources unavailable, serving from local cache:', err?.message);
@@ -426,13 +467,49 @@ export const resourceService = {
 
   /**
    * Trigger real browser download:
-   * First asks backend for presigned R2 download URL.
-   * If available, redirects or downloads via anchor.
-   * Otherwise falls back to blob generator.
+   * 1. First attempts authenticated direct stream download from backend (/stream).
+   *    This guarantees zero CORS errors, correct Content-Disposition headers, and avoids blank tabs.
+   * 2. Falls back to presigned R2 GET URL.
+   * 3. Falls back to local generated blob for offline/mock data.
    */
   downloadFile: async (resource) => {
+    // 1. Direct authenticated stream download from backend
+    if (resource?.id && !resource.id.startsWith('res-')) {
+      try {
+        const blobData = await http.get(API_ENDPOINTS.resources.stream(resource.id), {
+          responseType: 'blob',
+        });
+
+        if (blobData) {
+          const blob = new Blob([blobData]);
+          const blobUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = resource.fileName || `${resource.title}.${resource.fileType?.toLowerCase() || 'pdf'}`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(blobUrl);
+
+          // Increment download count locally
+          const items = getStored();
+          const idx = items.findIndex((r) => r.id === resource.id);
+          if (idx !== -1) {
+            items[idx].downloadsCount = (items[idx].downloadsCount || 0) + 1;
+            saveStored([...items]);
+          }
+
+          // Trigger download record on backend asynchronously
+          http.get(API_ENDPOINTS.resources.download(resource.id)).catch(() => {});
+          return true;
+        }
+      } catch (streamErr) {
+        console.warn('Backend stream download failed, attempting presigned download URL:', streamErr?.message);
+      }
+    }
+
+    // 2. Presigned Cloudflare R2 download URL
     try {
-      // 1. Try to obtain presigned Cloudflare R2 download URL from backend
       const res = await http.get(API_ENDPOINTS.resources.download(resource.id));
       const downloadUrl = res?.downloadUrl || resource.downloadUrl;
 
@@ -440,18 +517,23 @@ export const resourceService = {
         const link = document.createElement('a');
         link.href = downloadUrl;
         link.download = res?.fileName || resource.fileName || `${resource.title}.${resource.fileType?.toLowerCase() || 'pdf'}`;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+
+        const items = getStored();
+        const idx = items.findIndex((r) => r.id === resource.id);
+        if (idx !== -1) {
+          items[idx].downloadsCount = (items[idx].downloadsCount || 0) + 1;
+          saveStored([...items]);
+        }
         return true;
       }
     } catch (err) {
       console.warn('Backend download URL request fallback to local Blob:', err?.message);
     }
 
-    // 2. Resilient fallback: Generate local download blob
+    // 3. Resilient fallback: Generate local download blob
     try {
       const items = getStored();
       const idx = items.findIndex((r) => r.id === resource.id);
@@ -461,7 +543,7 @@ export const resourceService = {
       }
 
       const content = resource.content || `# ${resource.title}\n\n${resource.description || 'Study Guide & Toolkit Asset.'}`;
-      const ext = resource.fileType === 'ZIP' ? 'zip' : resource.fileType === 'MD' ? 'md' : 'pdf';
+      const ext = resource.fileType === 'ZIP' ? 'zip' : resource.fileType === 'MD' ? 'md' : resource.fileType === 'DOCX' ? 'docx' : 'pdf';
       const filename = `${resource.title.replace(/[^a-zA-Z0-9_-]/g, '_')}.${ext}`;
 
       const blob = new Blob([content], { type: 'application/octet-stream' });
