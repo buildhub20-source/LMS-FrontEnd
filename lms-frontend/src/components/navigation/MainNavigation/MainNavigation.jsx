@@ -504,7 +504,7 @@ const QuickSearchModal = ({ isOpen, onClose, items, navigate }) => {
                 fontSize: 13,
               }}
             >
-              No matching results found for "{query}"
+              No matching results found for &quot;{query}&quot;
             </div>
           ) : (
             filteredItems.map((item, idx) => {

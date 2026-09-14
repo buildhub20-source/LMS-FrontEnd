@@ -36,10 +36,6 @@ export const GradingWorkflowPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState(null);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     setLoading(true);
     setError(null);
@@ -48,17 +44,22 @@ export const GradingWorkflowPage = () => {
         gradingService.getPendingSubmissions(),
         rubricService.list(),
       ]);
-      setPending(pendingRes?.data?.data?.content || []);
-      setRubrics(rubricsRes?.data?.data?.content || []);
-      if (pendingRes?.data?.data?.content?.length > 0) {
-        setSelectedSub(pendingRes.data.data.content[0]);
-      }
+      setPending(pendingRes?.content ?? []);
+      setRubrics(rubricsRes?.content ?? []);
+      setSelectedSub(pendingRes?.content?.[0] ?? null);
+      setSelectedRubricId('');
+      setRubricScores({});
+      setManualScore('');
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to load grading queue');
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleSelectRubric = (rubricId) => {
     setSelectedRubricId(rubricId);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+
 import { useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -16,7 +16,7 @@ import { ROUTES } from '../../../constants/routes';
 export const OrganizationPage = () => {
   const navigate = useNavigate();
 
-  const { data: rawData, isLoading } = useQuery({
+  const { data: rawData } = useQuery({
     queryKey: ['tenant', 'current'],
     queryFn: () => tenantService.getCurrent().catch(() => null),
   });

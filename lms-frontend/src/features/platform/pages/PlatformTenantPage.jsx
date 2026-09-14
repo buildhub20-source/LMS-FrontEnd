@@ -308,7 +308,7 @@ export const PlatformTenantPage = () => {
           </div>
         ) : tenants.data?.length === 0 ? (
           <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
-            No tenants registered yet. Use the "Register Workspace" button above to create one.
+            No tenants registered yet. Use the &quot;Register Workspace&quot; button above to create one.
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>

@@ -683,7 +683,7 @@ export const RoleListPage = () => {
             >
               Add new role,
               <br />
-              if it doesn't exist.
+              if it doesn&apos;t exist.
             </p>
           </div>
         </div>
@@ -704,7 +704,7 @@ export const RoleListPage = () => {
             Total users with their roles
           </h2>
           <p style={{ fontSize: 13, color: M.textMuted, margin: '4px 0 0' }}>
-            Find all of your platform's user accounts and their associated roles.
+            Find all of your platform&apos;s user accounts and their associated roles.
           </p>
         </div>
 

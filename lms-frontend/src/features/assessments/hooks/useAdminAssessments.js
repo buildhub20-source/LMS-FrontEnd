@@ -143,7 +143,7 @@ export const useRetestStudent = (assessmentId) => {
   return useMutation({
     mutationFn: (studentId) => adminAssessmentService.retestStudent(assessmentId, studentId),
     onSuccess: () =>
-      qc.invalidateQueries({ queryKey: [...ADMIN_ASSESSMENTS, assessmentId, 'analytics'] }),
+      qc.invalidateQueries({ queryKey: adminAssessmentKeys.analytics(assessmentId) }),
   });
 };
 
@@ -152,6 +152,29 @@ export const useToggleResultAnalytics = (assessmentId) => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (enabled) => adminAssessmentService.toggleResultAnalytics(assessmentId, enabled),
+    onSuccess: (data) => {
+      refreshDetail(qc, assessmentId, data);
+      invalidateLists(qc);
+    },
+  });
+};
+
+// Time & Schedule Mutations
+export const useExtendAssessment = (assessmentId) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (minutes) => adminAssessmentService.extend(assessmentId, minutes),
+    onSuccess: (data) => {
+      refreshDetail(qc, assessmentId, data);
+      invalidateLists(qc);
+    },
+  });
+};
+
+export const useUpdateAssessmentSchedule = (assessmentId) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (payload) => adminAssessmentService.updateSchedule(assessmentId, payload),
     onSuccess: (data) => {
       refreshDetail(qc, assessmentId, data);
       invalidateLists(qc);

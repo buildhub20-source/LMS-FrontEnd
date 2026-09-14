@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   LayoutList,
@@ -911,8 +911,9 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark }) 
 }
 
 /* ─── Right Sidebar Widgets (Fills Widescreen Space Perfectly) ─── */
-function CourseSidebar({ courses, navigate }) {
+function CourseSidebar({  navigate }) {
   const [downloadSuccess, setDownloadSuccess] = useState('');
+  const [expandedToolkit, setExpandedToolkit] = useState(false);
   const { data: resources = [] } = useResources();
 
   const handleFakeDownload = (name) => {
@@ -1135,42 +1136,110 @@ function CourseSidebar({ courses, navigate }) {
           {resources.length === 0 ? (
             <p style={{ margin: 0, fontSize: 11, color: '#64748b' }}>No guides uploaded yet.</p>
           ) : (
-            resources.slice(0, 4).map((kit) => (
-              <div
-                key={kit.id}
-                onClick={() => {
-                  resourceService.downloadFile(kit);
-                  handleFakeDownload(kit.title);
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '9px 12px',
-                  borderRadius: 10,
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.06)',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.07)';
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
-                }}
-              >
-                <div style={{ minWidth: 0 }}>
-                  <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: '#f1f5f9', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {kit.title}
-                  </p>
-                  <p style={{ margin: 0, fontSize: 10, color: '#64748b' }}>{kit.fileType} • {kit.fileSize}</p>
-                </div>
-                <Download size={14} color="#38bdf8" />
-              </div>
-            ))
+            <>
+              {(expandedToolkit ? resources : resources.slice(0, 5)).map((kit) => {
+                const isNew = kit.createdAt && (Date.now() - new Date(kit.createdAt).getTime() < 7 * 24 * 3600 * 1000);
+                const fileTypeUpper = (kit.fileType || 'PDF').toUpperCase();
+                const badgeColor =
+                  fileTypeUpper === 'DOCX' || fileTypeUpper === 'DOC'
+                    ? { bg: 'rgba(59, 130, 246, 0.15)', text: '#60a5fa', border: 'rgba(59, 130, 246, 0.3)' }
+                    : fileTypeUpper === 'ZIP' || fileTypeUpper === 'RAR'
+                    ? { bg: 'rgba(16, 185, 129, 0.15)', text: '#34d399', border: 'rgba(16, 185, 129, 0.3)' }
+                    : { bg: 'rgba(239, 68, 68, 0.15)', text: '#f87171', border: 'rgba(239, 68, 68, 0.3)' };
+
+                return (
+                  <div
+                    key={kit.id}
+                    onClick={() => {
+                      resourceService.downloadFile(kit);
+                      handleFakeDownload(kit.title);
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '9px 12px',
+                      borderRadius: 10,
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(255,255,255,0.06)',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                      gap: 8,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.07)';
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+                    }}
+                  >
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                        <span
+                          style={{
+                            fontSize: 9,
+                            fontWeight: 800,
+                            padding: '1px 5px',
+                            borderRadius: 4,
+                            background: badgeColor.bg,
+                            color: badgeColor.text,
+                            border: `1px solid ${badgeColor.border}`,
+                          }}
+                        >
+                          {fileTypeUpper}
+                        </span>
+                        <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: '#f1f5f9', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {kit.title}
+                        </p>
+                        {isNew && (
+                          <span
+                            style={{
+                              fontSize: 9,
+                              fontWeight: 800,
+                              padding: '1px 5px',
+                              borderRadius: 99,
+                              background: 'rgba(249, 115, 22, 0.2)',
+                              color: '#fb923c',
+                              border: '1px solid rgba(249, 115, 22, 0.4)',
+                            }}
+                          >
+                            NEW
+                          </span>
+                        )}
+                      </div>
+                      <p style={{ margin: 0, fontSize: 10, color: '#64748b' }}>{kit.fileSize} • by {kit.authorRole || 'Faculty'}</p>
+                    </div>
+                    <Download size={14} color="#38bdf8" />
+                  </div>
+                );
+              })}
+
+              {resources.length > 5 && (
+                <button
+                  onClick={() => setExpandedToolkit((prev) => !prev)}
+                  style={{
+                    marginTop: 4,
+                    padding: '8px 12px',
+                    borderRadius: 8,
+                    fontSize: 11,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    background: 'rgba(56, 189, 248, 0.08)',
+                    border: '1px solid rgba(56, 189, 248, 0.2)',
+                    color: '#38bdf8',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  {expandedToolkit ? 'Show Less' : `View All (${resources.length}) Guides`}
+                </button>
+              )}
+            </>
           )}
         </div>
       </div>

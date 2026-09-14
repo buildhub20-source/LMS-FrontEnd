@@ -144,7 +144,7 @@ export function useAssessmentProctoring({
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       try {
         mediaRecorderRef.current.stop();
-      } catch {}
+      } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
     }
     if (screenStream) {
       screenStream.getTracks().forEach((track) => track.stop());
@@ -199,7 +199,7 @@ export function useAssessmentProctoring({
       if (screenStream) {
         try {
           screenStream.getTracks().forEach((track) => track.stop());
-        } catch {}
+        } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
         setScreenStream(null);
       }
       setIsScreenRecording(false);

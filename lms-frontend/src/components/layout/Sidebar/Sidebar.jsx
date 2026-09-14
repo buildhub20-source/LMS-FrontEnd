@@ -1,5 +1,5 @@
-import appConfig from '../../../config/appConfig';
 import { X } from 'lucide-react';
+import '../../../config/appConfig';
 
 /* ─── Monochrome Logo ──────────────────────────────────────── */
 const Logo = () => (

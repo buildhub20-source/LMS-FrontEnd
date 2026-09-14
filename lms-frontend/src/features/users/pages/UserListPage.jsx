@@ -48,10 +48,7 @@ const AVATAR_COLORS = [
   'bg-violet-100 text-violet-700',
 ];
 
-function avatarColor(name = '') {
-  const hash = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
-}
+
 
 function formatDate(str) {
   if (!str) return '—';

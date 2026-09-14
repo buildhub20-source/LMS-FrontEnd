@@ -9,8 +9,8 @@ import LoginPage from '../../src/features/auth/pages/LoginPage';
 import authService from '../../src/features/auth/services/authService';
 import platformService from '../../src/features/platform/services/platformService';
 import * as tenantHostname from '../../src/utils/tenantHostname';
-import tokenStorage from '../../src/services/storage/tokenStorage';
-import platformAuthStorage from '../../src/features/platform/services/platformAuthStorage';
+import '../../src/services/storage/tokenStorage';
+import '../../src/features/platform/services/platformAuthStorage';
 
 vi.mock('../../src/features/auth/services/authService', () => ({
   default: {

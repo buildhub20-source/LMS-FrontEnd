@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Award, Download, ArrowLeft, Calendar, User, BookOpen } from 'lucide-react';
@@ -8,19 +9,6 @@ import Button from '../../../components/common/Button';
 import certificateService from '../services/certificateService';
 import { ROUTES } from '../../../constants/routes';
 
-const handleDownload = async (id, courseName) => {
-  try {
-    const res = await certificateService.download(id);
-    const url = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `certificate-${courseName?.replace(/\s+/g, '-') ?? id}.pdf`;
-    a.click();
-    URL.revokeObjectURL(url);
-  } catch {
-    // silently ignore
-  }
-};
 
 /**
  * Fully wired certificate detail page.
@@ -29,6 +17,22 @@ const handleDownload = async (id, courseName) => {
 export const CertificateDetailsPage = () => {
   const { certificateId } = useParams();
   const navigate = useNavigate();
+  const [downloadError, setDownloadError] = useState(null);
+  const handleDownload = async (id, courseName) => {
+  setDownloadError(null);
+  try {
+    const res = await certificateService.download(id);
+    const url = URL.createObjectURL(res);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `certificate-${courseName?.replace(/\s+/g, '-') ?? id}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    setDownloadError(error?.message || 'Certificate download failed. Please retry.');
+  }
+};
+
 
   const { data: raw, isLoading, error, refetch } = useQuery({
     queryKey: ['certificate', certificateId],
@@ -50,6 +54,7 @@ export const CertificateDetailsPage = () => {
         </Button>
       }
     >
+      {downloadError && <p role="alert">{downloadError}</p>}
       <div style={{ maxWidth: 720, margin: '0 auto' }}>
         {/* Certificate Visual */}
         <div style={{
@@ -84,7 +89,7 @@ export const CertificateDetailsPage = () => {
             </p>
 
             <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: 8, lineHeight: 1.2 }}>
-              {cert?.courseName ?? cert?.title ?? 'Course Certificate'}
+              {cert?.courseTitle ?? cert?.title ?? 'Course Certificate'}
             </h1>
 
             {cert?.studentName && (
@@ -137,12 +142,12 @@ export const CertificateDetailsPage = () => {
                 </div>
               </div>
             )}
-            {cert.courseName && (
+            {cert.courseTitle && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <BookOpen size={18} style={{ color: '#10b981' }} />
                 <div>
                   <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Course</p>
-                  <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{cert.courseName}</p>
+                  <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{cert.courseTitle}</p>
                 </div>
               </div>
             )}
@@ -164,7 +169,7 @@ export const CertificateDetailsPage = () => {
         <div style={{ display: 'flex', gap: 12 }}>
           <Button
             variant="primary"
-            onClick={() => handleDownload(certificateId, cert?.courseName)}
+            onClick={() => handleDownload(certificateId, cert?.courseTitle)}
             iconLeft={<Download size={16} />}
           >
             Download PDF

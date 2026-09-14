@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Share2, Bookmark, CheckCircle2, PauseCircle, Play, ChevronDown, ChevronUp, Edit3, ArrowLeft,
@@ -27,6 +28,12 @@ import LessonNotesPanel from '../components/LessonNotesPanel';
 import LessonResourcesPanel from '../components/LessonResourcesPanel';
 
 export const CourseDetailsPage = () => {
+  const { courseId } = useParams();
+  const { user } = useAuth();
+  return <CourseDetailsContent key={String(user?.id) + ':' + courseId} />;
+};
+
+const CourseDetailsContent = () => {
   const { courseId, lessonId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -75,18 +82,26 @@ export const CourseDetailsPage = () => {
 
   const { user } = useAuth();
   const userId = user?.id || 'guest';
-  const storageKey = `lms_completed_lessons_${userId}_${courseId}`;
-
-  const [completedLessonIds, setCompletedLessonIds] = useState(() => {
-    try {
-      const saved = localStorage.getItem(`lms_completed_lessons_${userId}_${courseId}`);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
-      }
-    } catch (_) {}
-    return [];
+  const queryClient = useQueryClient();
+  const progressKey = ['learning-progress', userId, courseId];
+  const progressQuery = useQuery({
+    queryKey: progressKey,
+    queryFn: () => learningService.getProgress(courseId),
+    enabled: Boolean(courseId) && !isAdminOrInstructor,
   });
+  const progressMutation = useMutation({
+    mutationFn: (ids) => learningService.saveProgress(courseId, { completedLessonIds: ids }),
+    onSuccess: (saved) => {
+      queryClient.setQueryData(progressKey, saved);
+      queryClient.invalidateQueries({ queryKey: ['courses'] });
+    },
+  });
+  const completedLessonIds = progressQuery.data?.completedLessonIds ?? [];
+  const setCompletedLessonIds = (update) => {
+    if (isAdminOrInstructor || progressQuery.isPending || progressQuery.error || progressMutation.isPending) return;
+    const next = update(completedLessonIds);
+    if (next !== completedLessonIds) progressMutation.mutate(next);
+  };
 
   const [recordingPlaybackUrl, setRecordingPlaybackUrl] = useState(null);
   const [startedLessonId, setStartedLessonId] = useState(null);
@@ -145,7 +160,7 @@ export const CourseDetailsPage = () => {
       if (prev.includes(lessonIdToComplete)) return prev;
       return [...prev, lessonIdToComplete];
     });
-    showNotice('🎉 Lesson completed! Great job!', 'success');
+
   };
 
   const handleVideoLoadedMetadata = (e) => {

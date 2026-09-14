@@ -1,4 +1,4 @@
-import { useState } from 'react';
+
 import { useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -15,7 +15,7 @@ import { ROUTES } from '../../../constants/routes';
 export const SubscriptionPage = () => {
   const navigate = useNavigate();
 
-  const { data: rawData, isLoading } = useQuery({
+  const { data: rawData } = useQuery({
     queryKey: ['subscription', 'current'],
     queryFn: () => subscriptionService.getCurrent().catch(() => null),
   });

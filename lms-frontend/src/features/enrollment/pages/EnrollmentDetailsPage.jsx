@@ -1,12 +1,12 @@
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import {
   ArrowLeft, User, BookOpen, Clock, CheckCircle2,
   XCircle, AlertCircle, ChevronRight, RefreshCw,
 } from 'lucide-react';
+import { useState } from 'react';
 import Spinner from '../../../components/common/Spinner';
 import AdminButton from '../../../components/ui/AdminButton';
 import { AdminConfirmModal } from '../../../components/ui/AdminModal';
-import { useState } from 'react';
 import { useAdminEnrollment, useUpdateAdminEnrollmentStatus } from '../hooks/useEnrollments';
 import { ROUTES } from '../../../constants/routes';
 import { formatDateTime } from '../../../utils/dateUtils';
@@ -56,7 +56,7 @@ function SectionCard({ title, icon: Icon, children }) {
 
 export const EnrollmentDetailsPage = () => {
   const { enrollmentId } = useParams();
-  const navigate = useNavigate();
+  
   const { success: toastSuccess, error: toastError } = useToast();
   const [confirmStatus, setConfirmStatus] = useState(null); // 'ACTIVE' | 'INACTIVE'
 

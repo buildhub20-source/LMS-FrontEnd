@@ -1,27 +1,15 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Award, Download, ExternalLink, Calendar } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
 import ErrorState from '../../../components/common/ErrorState';
 import EmptyState from '../../../components/common/EmptyState';
 import Button from '../../../components/common/Button';
 import certificateService from '../services/certificateService';
-import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../constants/routes';
 
-const handleDownload = async (id, courseName) => {
-  try {
-    const res = await certificateService.download(id);
-    const url = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `certificate-${courseName?.replace(/\s+/g, '-') ?? id}.pdf`;
-    a.click();
-    URL.revokeObjectURL(url);
-  } catch {
-    // silently ignore — user can retry
-  }
-};
 
 /**
  * Fully wired certificate gallery page.
@@ -29,6 +17,22 @@ const handleDownload = async (id, courseName) => {
  */
 export const CertificateListPage = () => {
   const navigate = useNavigate();
+  const [downloadError, setDownloadError] = useState(null);
+  const handleDownload = async (id, courseName) => {
+  setDownloadError(null);
+  try {
+    const res = await certificateService.download(id);
+    const url = URL.createObjectURL(res);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `certificate-${courseName?.replace(/\s+/g, '-') ?? id}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    setDownloadError(error?.message || 'Certificate download failed. Please retry.');
+  }
+};
+
 
   const { data: raw, isLoading, error, refetch } = useQuery({
     queryKey: ['certificates'],
@@ -38,13 +42,14 @@ export const CertificateListPage = () => {
   if (isLoading) return <Spinner fullPage />;
   if (error) return <ErrorState error={error} onRetry={refetch} />;
 
-  const certs = raw?.data?.data?.content ?? raw?.data?.content ?? raw?.data ?? [];
+  const certs = raw?.content ?? [];
 
   return (
     <PageContainer
       title="Certificates"
       subtitle="Certificates you have earned for completing courses."
     >
+      {downloadError && <p role="alert">{downloadError}</p>}
       {certs.length === 0 ? (
         <EmptyState
           title="No certificates yet"
@@ -106,7 +111,7 @@ export const CertificateListPage = () => {
               {/* Course name */}
               <div>
                 <p style={{ margin: 0, fontSize: 18, fontWeight: 800, lineHeight: 1.3 }}>
-                  {cert.courseName ?? cert.title ?? 'Course Certificate'}
+                  {cert.courseTitle ?? cert.title ?? 'Course Certificate'}
                 </p>
                 {cert.studentName && (
                   <p style={{ margin: '4px 0 0', fontSize: 12, opacity: 0.75 }}>
@@ -129,7 +134,7 @@ export const CertificateListPage = () => {
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
-                  onClick={() => handleDownload(cert.id, cert.courseName)}
+                  onClick={() => handleDownload(cert.id, cert.courseTitle)}
                   style={{
                     flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                     background: 'rgba(255,255,255,0.15)',

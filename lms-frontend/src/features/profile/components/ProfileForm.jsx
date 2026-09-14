@@ -1,12 +1,12 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { User, Mail, Phone, Briefcase, FileText, Lock, Save, CheckCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
 import Input from '../../../components/common/Input';
 import TextArea from '../../../components/common/TextArea';
 import Button from '../../../components/common/Button';
 import Alert from '../../../components/feedback/Alert';
 import { profileSchema } from '../validation/profileSchemas';
-import { motion } from 'framer-motion';
 
 export const ProfileForm = ({ defaultValues, onSubmit, error = null }) => {
   const {
