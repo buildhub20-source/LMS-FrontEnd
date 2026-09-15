@@ -59,6 +59,7 @@ export const ROUTES = Object.freeze({
   ADMIN_ASSESSMENT_EDIT: (id = ':assessmentId') => `/admin/assessments/${id}/edit`,
   ADMIN_GRADING: '/admin/assessments/grading',
   ADMIN_RUBRICS: '/admin/assessments/rubrics',
+  ADMIN_GAMIFICATION: '/admin/gamification',
   CAMPUS_RESOURCES: '/admin/resources',
 
   // Instructor
@@ -90,6 +91,7 @@ export const ROUTES = Object.freeze({
   STUDENT_PROGRESS: '/learn/progress',
   CERTIFICATES: '/learn/certificates',
   CERTIFICATE_DETAILS: (id = ':certificateId') => `/learn/certificates/${id}`,
+  GAMIFICATION: '/learn/gamification',
 
   // Shared
   NOTIFICATIONS: '/notifications',

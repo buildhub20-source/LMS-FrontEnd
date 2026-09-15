@@ -14,6 +14,7 @@ import {
   Presentation,
   ScrollText,
   FolderDown,
+  Trophy,
 } from 'lucide-react';
 import MainNavigation from '../MainNavigation';
 import { ROUTES } from '../../../constants/routes';
@@ -135,6 +136,13 @@ const ITEMS = [
     permission: PERMISSIONS.SUBSCRIPTION_READ,
     group: 'Settings',
     icon: <CreditCard className="h-5 w-5" />,
+  },
+  {
+    label: 'Gamification',
+    to: ROUTES.ADMIN_GAMIFICATION,
+    permission: PERMISSIONS.GAMIFICATION_MANAGE,
+    group: 'Settings',
+    icon: <Trophy className="h-5 w-5" />,
   },
 ];
 
