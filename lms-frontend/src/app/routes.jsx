@@ -93,6 +93,8 @@ const GlobalSubmissionsHistoryPage = lazy(() => import('../features/assessments/
 
 const CertificateListPage = lazy(() => import('../features/certificates/pages/CertificateListPage'));
 const CertificateDetailsPage = lazy(() => import('../features/certificates/pages/CertificateDetailsPage'));
+const GamificationDashboard = lazy(() => import('../features/gamification/pages/GamificationDashboard'));
+const AdminGamificationPage = lazy(() => import('../features/gamification/pages/AdminGamificationPage'));
 const NotificationPage = lazy(() => import('../features/notifications/pages/NotificationPage'));
 const ProfilePage = lazy(() => import('../features/profile/pages/ProfilePage'));
 const SecurityPage = lazy(() => import('../features/profile/pages/SecurityPage'));
@@ -195,6 +197,7 @@ export const router = createBrowserRouter([
               { path: ROUTES.ADMIN_COURSE_DETAILS(), element: suspend(<CourseDetailsPage />) },
               { path: ROUTES.ADMIN_COURSE_EDIT(), element: suspend(<EditCoursePage />) },
               { path: ROUTES.CAMPUS_RESOURCES, element: suspend(<ResourceManagementPage />) },
+              { path: ROUTES.ADMIN_GAMIFICATION, element: suspend(<AdminGamificationPage />) },
               {
                 element: <PermissionGuard required={[PERMISSIONS.ASSESSMENT_VIEW]} />,
                 children: [
@@ -258,6 +261,7 @@ export const router = createBrowserRouter([
           { path: ROUTES.MY_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
           { path: ROUTES.CERTIFICATES, element: suspend(<CertificateListPage />) },
           { path: ROUTES.CERTIFICATE_DETAILS(), element: suspend(<CertificateDetailsPage />) },
+          { path: ROUTES.GAMIFICATION, element: suspend(<GamificationDashboard />) },
           { path: ROUTES.ASSESSMENT_RESULT(), element: suspend(<AssessmentResultPage />) },
           { path: ROUTES.LEARNING(), element: suspend(<CourseDetailsPage />) },
           { path: ROUTES.LESSON(), element: suspend(<CourseDetailsPage />) },

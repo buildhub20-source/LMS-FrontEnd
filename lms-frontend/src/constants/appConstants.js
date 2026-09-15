@@ -23,6 +23,7 @@ export const QUERY_KEYS = Object.freeze({
   SUBSCRIPTION: ['subscription'],
   TENANT: ['tenant'],
   PROFILE: ['profile'],
+  GAMIFICATION: ['gamification'],
 });
 
 export const HTTP_STATUS = Object.freeze({

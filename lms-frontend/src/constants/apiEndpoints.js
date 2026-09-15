@@ -162,4 +162,22 @@ export const API_ENDPOINTS = Object.freeze({
     download: (id) => `/resources/${id}/download`,
     stream: (id) => `/resources/${id}/stream`,
   },
+  gamification: {
+    summary: '/gamification/me/summary',
+    badges: '/gamification/me/badges',
+    milestones: '/gamification/me/milestones',
+    streak: '/gamification/me/streak',
+    points: '/gamification/me/points',
+    leaderboard: '/gamification/leaderboard',
+    admin: {
+      badges: '/admin/gamification/badges',
+      badgeById: (id) => `/admin/gamification/badges/${id}`,
+      levels: '/admin/gamification/levels',
+      levelById: (id) => `/admin/gamification/levels/${id}`,
+      milestones: '/admin/gamification/milestones',
+      milestoneById: (id) => `/admin/gamification/milestones/${id}`,
+      pointRules: '/admin/gamification/point-rules',
+      pointRuleById: (id) => `/admin/gamification/point-rules/${id}`,
+    },
+  },
 });

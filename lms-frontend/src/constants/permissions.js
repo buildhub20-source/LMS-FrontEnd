@@ -95,6 +95,10 @@ const PERMISSION_VALUES = Object.freeze({
 
   // Audit
   AUDIT_VIEW: 'AUDIT_VIEW',
+
+  // Gamification
+  GAMIFICATION_VIEW: 'GAMIFICATION_VIEW',
+  GAMIFICATION_MANAGE: 'GAMIFICATION_MANAGE',
 });
 
 /**
