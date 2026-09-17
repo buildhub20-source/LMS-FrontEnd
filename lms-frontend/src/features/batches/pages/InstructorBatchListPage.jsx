@@ -2,25 +2,13 @@ import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Users, BookOpen, Calendar, Clock, Search, LayoutGrid, LayoutList,
-  GraduationCap, Award, Layers, ExternalLink, RefreshCw, TrendingUp, Plus, Edit2, Trash2
+  ArrowRight, Download, GraduationCap, Award, Layers, ExternalLink, RefreshCw, TrendingUp
 } from 'lucide-react';
 import AdminButton from '../../../components/ui/AdminButton';
-import AdminPagination from '../../../components/ui/AdminPagination';
-import Modal from '../../../components/common/Modal';
-import ConfirmDialog from '../../../components/common/ConfirmDialog';
-import Alert from '../../../components/feedback/Alert';
-import { useToast } from '../../../components/feedback/Toast';
-import { useCourses } from '../../courses/hooks/useCourses';
-import { useInstructors } from '../../instructors/hooks/useInstructors';
+import { useBatches } from '../hooks/useBatches';
+import { useAuth } from '../../auth/hooks/useAuth';
 import { ROUTES } from '../../../constants/routes';
-import BatchForm from '../components/BatchForm';
 import CohortRosterModal from '../components/CohortRosterModal';
-import { useBatches, useCreateBatch, useDeleteBatch, useUpdateBatch } from '../hooks/useBatches';
-import {
-  toBatchFormValues,
-  toBatchPayload,
-  toUpdateBatchPayload,
-} from '../validation/batchSchemas';
 
 /* ── Status Pill ── */
 const BATCH_STATUS_CONFIG = {
@@ -36,22 +24,11 @@ function StatusPill({ status }) {
   const norm = (status || 'PLANNED').toUpperCase();
   const c = BATCH_STATUS_CONFIG[norm] || BATCH_STATUS_CONFIG.PLANNED;
   return (
-    <span
-      style={{
-        padding: '4px 12px',
-        borderRadius: 99,
-        fontSize: 12,
-        fontWeight: 600,
-        background: c.bg,
-        color: c.color,
-        border: `1px solid ${c.border}`,
-        backdropFilter: 'blur(8px)',
-        whiteSpace: 'nowrap',
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 6,
-      }}
-    >
+    <span style={{
+      padding: '4px 12px', borderRadius: 99, fontSize: 12, fontWeight: 600,
+      background: c.bg, color: c.color, border: `1px solid ${c.border}`,
+      backdropFilter: 'blur(8px)', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: 6
+    }}>
       <span style={{ width: 6, height: 6, borderRadius: '50%', background: c.color }} />
       {c.label}
     </span>
@@ -80,89 +57,59 @@ function SkeletonCard() {
 }
 
 const STATUS_FILTERS = ['ALL', 'ONGOING', 'PLANNED', 'COMPLETED', 'ARCHIVED'];
-const PAGE_SIZE = 12;
 
-export const BatchListPage = () => {
-  const toast = useToast();
+export const InstructorBatchListPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
-  const [page, setPage] = useState(0);
+  const [myCohortsOnly, setMyCohortsOnly] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
   const [selectedBatchForRoster, setSelectedBatchForRoster] = useState(null);
 
-  // null = closed, {} = creating, {id,...} = editing.
-  const [editing, setEditing] = useState(null);
-  const [deleting, setDeleting] = useState(null);
-
-  const {
-    data: pageData,
-    isLoading,
-    error,
-    refetch,
-  } = useBatches({
-    search: search || undefined,
-    status: statusFilter === 'ALL' ? undefined : (statusFilter === 'ONGOING' ? 'IN_PROGRESS' : statusFilter),
-    page,
-    size: PAGE_SIZE,
+  const { data: pageData, isLoading, refetch } = useBatches({
+    size: 100,
   });
 
-  const batches = useMemo(() => pageData?.content || [], [pageData]);
-  const totalPages = pageData?.totalPages ?? 0;
-  const totalElements = pageData?.totalElements ?? 0;
+  const batches = useMemo(() => {
+    return pageData?.content || [];
+  }, [pageData]);
 
-  // Picker sources for creation & editing
-  const { data: coursePage } = useCourses({ size: 100 });
-  const { data: instructorPage } = useInstructors({ size: 100 });
-
-  const create = useCreateBatch();
-  const update = useUpdateBatch();
-  const remove = useDeleteBatch();
-
-  // Telemetry KPIs
+  // Telemetry statistics
   const stats = useMemo(() => {
-    const total = totalElements || batches.length;
+    const total = batches.length;
     const inProgress = batches.filter((b) => b.status === 'IN_PROGRESS' || b.status === 'ONGOING').length;
     const totalEnrolled = batches.reduce((acc, b) => acc + (b.enrolledCount || 0), 0);
     const totalCapacity = batches.reduce((acc, b) => acc + (b.capacity || 0), 0);
     const avgFillRate = totalCapacity > 0 ? Math.round((totalEnrolled / totalCapacity) * 100) : 0;
 
     return { total, inProgress, totalEnrolled, avgFillRate };
-  }, [batches, totalElements]);
+  }, [batches]);
 
-  const closeModal = () => {
-    setEditing(null);
-    create.reset();
-    update.reset();
-  };
+  // Filtered batches
+  const filteredBatches = useMemo(() => {
+    return batches.filter((batch) => {
+      const q = search.toLowerCase().trim();
+      const matchesSearch =
+        !q ||
+        (batch.code && batch.code.toLowerCase().includes(q)) ||
+        (batch.name && batch.name.toLowerCase().includes(q)) ||
+        (batch.courseTitle && batch.courseTitle.toLowerCase().includes(q));
 
-  const onSubmit = async (values) => {
-    try {
-      if (editing?.id) {
-        const saved = await update.mutateAsync({ id: editing.id, ...toUpdateBatchPayload(values) });
-        toast.success(`Batch ${saved.code} updated`);
-      } else {
-        const saved = await create.mutateAsync(toBatchPayload(values));
-        toast.success(`Batch ${saved.code} scheduled`);
-      }
-      closeModal();
-      refetch();
-    } catch (err) {
-      toast.error(err?.response?.data?.message || err?.message || 'Failed to save batch');
-    }
-  };
+      const normStatus = (batch.status || '').toUpperCase();
+      const matchesStatus =
+        statusFilter === 'ALL' ||
+        normStatus === statusFilter ||
+        (statusFilter === 'ONGOING' && (normStatus === 'IN_PROGRESS' || normStatus === 'ONGOING'));
 
-  const onDelete = async () => {
-    try {
-      await remove.mutateAsync(deleting.id);
-      toast.success(`Batch ${deleting.code} deleted`);
-      setDeleting(null);
-      refetch();
-    } catch (err) {
-      toast.error(err?.response?.data?.message || err?.message || 'Failed to delete batch');
-    }
-  };
+      const matchesOwner =
+        !myCohortsOnly ||
+        (user?.id && (batch.instructorId === user.id || batch.createdBy === user.id));
+
+      return matchesSearch && matchesStatus && matchesOwner;
+    });
+  }, [batches, search, statusFilter, myCohortsOnly, user?.id]);
 
   return (
     <div className="space-y-6" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
@@ -170,10 +117,10 @@ export const BatchListPage = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
-            Batches & Cohorts
+            Cohorts & Batches
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)' }}>
-            Schedule and oversee student training cohorts, track capacity utilization, and inspect live learner rosters.
+            Oversee dated student training cohorts, track capacity utilization, and inspect live enrolled learner rosters.
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -184,17 +131,8 @@ export const BatchListPage = () => {
           >
             Sync Telemetry
           </AdminButton>
-          <AdminButton
-            variant="primary"
-            icon={<Plus className="h-4 w-4" />}
-            onClick={() => setEditing({})}
-          >
-            Schedule Batch
-          </AdminButton>
         </div>
       </div>
-
-      {remove.error && <Alert tone="error">{remove.error.message}</Alert>}
 
       {/* Telemetry KPI Cards */}
       <div
@@ -284,10 +222,7 @@ export const BatchListPage = () => {
             />
             <input
               value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(0);
-              }}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search code, batch, curriculum…"
               style={{
                 width: '100%',
@@ -314,10 +249,7 @@ export const BatchListPage = () => {
               return (
                 <button
                   key={s}
-                  onClick={() => {
-                    setStatusFilter(s);
-                    setPage(0);
-                  }}
+                  onClick={() => setStatusFilter(s)}
                   style={{
                     padding: '7px 16px',
                     borderRadius: 99,
@@ -342,17 +274,29 @@ export const BatchListPage = () => {
             })}
           </div>
 
-          {/* View Switcher */}
+          {/* My Cohorts Checkbox & View Switcher */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginLeft: 'auto' }}>
-            <div
+            <label
               style={{
                 display: 'flex',
-                background: 'rgba(0, 0, 0, 0.3)',
-                borderRadius: 8,
-                padding: 2,
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                alignItems: 'center',
+                gap: 6,
+                fontSize: 13,
+                color: '#cbd5e1',
+                cursor: 'pointer',
+                userSelect: 'none',
               }}
             >
+              <input
+                type="checkbox"
+                checked={myCohortsOnly}
+                onChange={(e) => setMyCohortsOnly(e.target.checked)}
+                style={{ cursor: 'pointer', accentColor: '#3b82f6' }}
+              />
+              <span>My Cohorts Only</span>
+            </label>
+
+            <div style={{ display: 'flex', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: 10, overflow: 'hidden', background: 'rgba(0,0,0,0.2)' }}>
               {[
                 { id: 'grid', I: LayoutGrid },
                 { id: 'table', I: LayoutList },
@@ -384,21 +328,18 @@ export const BatchListPage = () => {
         <div style={{ display: 'grid', gap: 20, gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))' }}>
           {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
         </div>
-      ) : batches.length === 0 ? (
+      ) : filteredBatches.length === 0 ? (
         <div style={{ padding: 48, textAlign: 'center', background: 'var(--lms-card)', borderRadius: 16, border: '1px solid var(--border-color)' }}>
           <GraduationCap size={48} style={{ color: 'var(--text-muted)', margin: '0 auto 16px' }} />
           <p style={{ margin: '0 0 8px', fontWeight: 600, color: 'var(--text-primary)', fontSize: 18 }}>No cohorts found</p>
-          <p style={{ margin: '0 0 20px', color: 'var(--text-muted)', fontSize: 14 }}>
-            {search || statusFilter !== 'ALL'
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 15 }}>
+            {search || statusFilter !== 'ALL' || myCohortsOnly
               ? 'Try adjusting your search query or reset active filters.'
-              : 'Schedule a batch before admitting learners into it.'}
+              : 'No training batches have been scheduled for this institution yet.'}
           </p>
-          <AdminButton variant="primary" icon={<Plus className="h-4 w-4" />} onClick={() => setEditing({})}>
-            Schedule Batch
-          </AdminButton>
         </div>
       ) : viewMode === 'grid' ? (
-        /* Operational Cohort Card Grid */
+        /* Clean Operational Cohort Card (NO course banners, NO fake monograms) */
         <div
           style={{
             display: 'grid',
@@ -406,7 +347,7 @@ export const BatchListPage = () => {
             gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
           }}
         >
-          {batches.map((batch) => {
+          {filteredBatches.map((batch) => {
             const enrolled = batch.enrolledCount || 0;
             const capacity = batch.capacity || 0;
             const pct = capacity ? Math.min(100, Math.round((enrolled / capacity) * 100)) : 0;
@@ -516,12 +457,6 @@ export const BatchListPage = () => {
                       <span>{batch.schedule}</span>
                     </div>
                   )}
-                  {batch.instructorName && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#94a3b8' }}>
-                      <Users size={13} style={{ color: '#94a3b8', flexShrink: 0 }} />
-                      <span>Instructor: <strong style={{ color: '#f8fafc' }}>{batch.instructorName}</strong></span>
-                    </div>
-                  )}
                 </div>
 
                 {/* Capacity Progress Bar */}
@@ -587,57 +522,55 @@ export const BatchListPage = () => {
                     }}
                   >
                     <Users size={13} />
-                    <span>Roster</span>
+                    <span>Inspect Roster</span>
                   </button>
 
                   <button
-                    onClick={() => setEditing(batch)}
-                    title="Edit Batch"
+                    onClick={() => navigate(`/instructor/certificates?batchId=${batch.id}`)}
+                    title="Graduation & Certification Hub"
                     style={{
                       padding: '8px 14px',
                       borderRadius: 99,
                       fontSize: 12,
                       fontWeight: 600,
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      background: 'rgba(255, 255, 255, 0.06)',
-                      color: '#f8fafc',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
+                      background: 'rgba(16, 185, 129, 0.1)',
+                      color: '#34d399',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       gap: 5,
                       transition: 'all 0.2s',
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'; }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(16, 185, 129, 0.2)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)'; }}
                   >
-                    <Edit2 size={13} />
-                    <span>Edit</span>
+                    <Award size={13} />
+                    <span>Graduation</span>
                   </button>
 
-                  <button
-                    onClick={() => setDeleting(batch)}
-                    disabled={enrolled > 0}
-                    title={enrolled > 0 ? `${enrolled} learner(s) enrolled — cannot delete` : 'Delete Batch'}
-                    style={{
-                      padding: '8px 12px',
-                      borderRadius: 99,
-                      fontSize: 12,
-                      fontWeight: 600,
-                      border: '1px solid rgba(239, 68, 68, 0.3)',
-                      background: 'rgba(239, 68, 68, 0.08)',
-                      color: '#f87171',
-                      cursor: enrolled > 0 ? 'not-allowed' : 'pointer',
-                      opacity: enrolled > 0 ? 0.4 : 1,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'all 0.2s',
-                    }}
-                    onMouseEnter={(e) => { if (enrolled === 0) e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'; }}
-                    onMouseLeave={(e) => { if (enrolled === 0) e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)'; }}
-                  >
-                    <Trash2 size={13} />
-                  </button>
+                  {batch.courseId && (
+                    <button
+                      onClick={() => navigate(ROUTES.COURSE_DETAILS(batch.courseId))}
+                      title="Course Studio"
+                      style={{
+                        padding: '8px 10px',
+                        borderRadius: 8,
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        background: 'transparent',
+                        color: '#cbd5e1',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'all 0.15s ease',
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                    >
+                      <ExternalLink size={14} />
+                    </button>
+                  )}
                 </div>
               </div>
             );
@@ -646,7 +579,7 @@ export const BatchListPage = () => {
       ) : (
         /* Table / List View */
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {batches.map((batch) => {
+          {filteredBatches.map((batch) => {
             const enrolled = batch.enrolledCount || 0;
             const capacity = batch.capacity || 0;
             const pct = capacity ? Math.min(100, Math.round((enrolled / capacity) * 100)) : 0;
@@ -714,7 +647,7 @@ export const BatchListPage = () => {
                     </span>
                     <StatusPill status={batch.status} />
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 12, color: '#94a3b8', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 12, color: '#94a3b8' }}>
                     <span style={{ color: '#38bdf8', fontWeight: 600 }}>
                       {batch.courseTitle || 'General Curriculum'}
                     </span>
@@ -724,12 +657,6 @@ export const BatchListPage = () => {
                       <>
                         <span>•</span>
                         <span>{batch.schedule}</span>
-                      </>
-                    )}
-                    {batch.instructorName && (
-                      <>
-                        <span>•</span>
-                        <span>Instructor: <strong style={{ color: '#cbd5e1' }}>{batch.instructorName}</strong></span>
                       </>
                     )}
                   </div>
@@ -769,65 +696,28 @@ export const BatchListPage = () => {
                   </button>
 
                   <button
-                    onClick={() => setEditing(batch)}
+                    onClick={() => navigate(`/instructor/certificates?batchId=${batch.id}`)}
                     style={{
-                      padding: '7px 14px',
+                      padding: '7px 16px',
                       borderRadius: 99,
                       fontSize: 13,
                       fontWeight: 600,
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      background: 'rgba(255, 255, 255, 0.06)',
-                      color: '#f8fafc',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
+                      background: 'rgba(16, 185, 129, 0.1)',
+                      color: '#34d399',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       gap: 5,
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'; }}
                   >
-                    <Edit2 size={13} />
-                    <span>Edit</span>
-                  </button>
-
-                  <button
-                    onClick={() => setDeleting(batch)}
-                    disabled={enrolled > 0}
-                    title={enrolled > 0 ? `${enrolled} learner(s) enrolled — cannot delete` : 'Delete Batch'}
-                    style={{
-                      padding: '7px 12px',
-                      borderRadius: 99,
-                      fontSize: 13,
-                      fontWeight: 600,
-                      border: '1px solid rgba(239, 68, 68, 0.3)',
-                      background: 'rgba(239, 68, 68, 0.08)',
-                      color: '#f87171',
-                      cursor: enrolled > 0 ? 'not-allowed' : 'pointer',
-                      opacity: enrolled > 0 ? 0.4 : 1,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Trash2 size={14} />
+                    <Award size={14} />
+                    <span>Graduation</span>
                   </button>
                 </div>
               </div>
             );
           })}
-        </div>
-      )}
-
-      {/* Modern Admin Pagination */}
-      {totalPages > 1 && (
-        <div style={{ marginTop: 24 }}>
-          <AdminPagination
-            page={page}
-            totalPages={totalPages}
-            totalElements={totalElements}
-            pageSize={PAGE_SIZE}
-            onPageChange={setPage}
-          />
         </div>
       )}
 
@@ -840,39 +730,9 @@ export const BatchListPage = () => {
         />
       )}
 
-      {/* Schedule / Edit Batch Modal */}
-      <Modal
-        isOpen={editing !== null}
-        onClose={closeModal}
-        title={editing?.id ? `Edit ${editing.code}` : 'Schedule a Batch'}
-      >
-        <BatchForm
-          isEdit={Boolean(editing?.id)}
-          defaultValues={editing?.id ? toBatchFormValues(editing) : undefined}
-          courses={coursePage?.content ?? []}
-          instructors={instructorPage?.content ?? []}
-          onSubmit={onSubmit}
-          onCancel={closeModal}
-          submitLabel={editing?.id ? 'Save changes' : 'Schedule batch'}
-          error={create.error || update.error}
-        />
-      </Modal>
-
-      {/* Confirm Deletion Dialog */}
-      <ConfirmDialog
-        isOpen={deleting !== null}
-        title="Delete this batch?"
-        message={`${deleting?.code} will be removed. This cannot be undone.`}
-        confirmLabel="Delete"
-        isDestructive
-        isLoading={remove.isPending}
-        onConfirm={onDelete}
-        onCancel={() => setDeleting(null)}
-      />
-
       <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}`}</style>
     </div>
   );
 };
 
-export default BatchListPage;
+export default InstructorBatchListPage;

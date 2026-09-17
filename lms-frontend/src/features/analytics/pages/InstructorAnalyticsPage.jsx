@@ -251,15 +251,15 @@ export const InstructorAnalyticsPage = () => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 22, fontFamily: 'system-ui, -apple-system, sans-serif' }}>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            1. TOP ENTERPRISE COMMAND HUD BAR (THEME-ADAPTIVE)
+            1. TOP ENTERPRISE COMMAND HUD BAR
         ═══════════════════════════════════════════════════════════════════ */}
         <div
           style={{
-            background: 'var(--lms-card, #ffffff)',
-            border: '1px solid var(--border-color, #e2e8f0)',
+            background: 'linear-gradient(135deg, rgba(24, 24, 27, 0.95) 0%, rgba(9, 9, 11, 0.98) 100%)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
             borderRadius: 18,
-            padding: '22px 26px',
-            boxShadow: 'var(--shadow-dark, 0 4px 20px rgba(0, 0, 0, 0.04))',
+            padding: '20px 24px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.35)',
             display: 'flex',
             flexDirection: 'column',
             gap: 16,
@@ -275,11 +275,11 @@ export const InstructorAnalyticsPage = () => {
                   gap: 6,
                   padding: '4px 10px',
                   borderRadius: 99,
-                  background: 'rgba(16, 185, 129, 0.12)',
+                  background: 'rgba(16, 185, 129, 0.1)',
                   border: '1px solid rgba(16, 185, 129, 0.3)',
                   fontSize: 11,
                   fontWeight: 700,
-                  color: '#059669',
+                  color: '#10b981',
                   letterSpacing: '0.05em',
                   textTransform: 'uppercase',
                 }}
@@ -290,6 +290,8 @@ export const InstructorAnalyticsPage = () => {
                     height: 7,
                     borderRadius: '50%',
                     background: '#10b981',
+                    boxShadow: '0 0 10px #10b981',
+                    animation: 'pulse 1.8s infinite',
                   }}
                 />
                 SYS-TELEMETRY // LIVE
@@ -301,39 +303,26 @@ export const InstructorAnalyticsPage = () => {
             </div>
 
             {/* Time horizon pill toggles */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
-                background: 'var(--surface-medium, #f1f5f9)',
-                padding: '3px 4px',
-                borderRadius: 8,
-                border: '1px solid var(--border-color, #e2e8f0)',
-              }}
-            >
-              {['24H', '7D', '30D', 'SEMESTER'].map((h) => {
-                const isActive = timeHorizon === h;
-                return (
-                  <button
-                    key={h}
-                    onClick={() => setTimeHorizon(h)}
-                    style={{
-                      padding: '4px 10px',
-                      borderRadius: 6,
-                      fontSize: 11,
-                      fontWeight: 700,
-                      border: 'none',
-                      background: isActive ? 'var(--text-primary)' : 'transparent',
-                      color: isActive ? 'var(--lms-background, #ffffff)' : 'var(--text-muted)',
-                      cursor: 'pointer',
-                      transition: 'all 0.15s',
-                    }}
-                  >
-                    {h}
-                  </button>
-                );
-              })}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.03)', padding: 3, borderRadius: 8, border: '1px solid rgba(255,255,255,0.06)' }}>
+              {['24H', '7D', '30D', 'SEMESTER'].map((h) => (
+                <button
+                  key={h}
+                  onClick={() => setTimeHorizon(h)}
+                  style={{
+                    padding: '4px 10px',
+                    borderRadius: 6,
+                    fontSize: 11,
+                    fontWeight: 700,
+                    border: 'none',
+                    background: timeHorizon === h ? 'var(--text-primary)' : 'transparent',
+                    color: timeHorizon === h ? 'var(--lms-background)' : 'var(--text-muted)',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  {h}
+                </button>
+              ))}
 
               <button
                 onClick={handleRefresh}
@@ -373,16 +362,16 @@ export const InstructorAnalyticsPage = () => {
                   gap: 6,
                   padding: '8px 14px',
                   borderRadius: 10,
-                  background: 'rgba(6, 182, 212, 0.12)',
-                  border: '1px solid rgba(6, 182, 212, 0.3)',
-                  color: '#0891b2',
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid var(--border-color, #e2e8f0)',
+                  color: 'var(--text-primary)',
                   fontSize: 12,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   textDecoration: 'none',
                   transition: 'all 0.15s',
                 }}
               >
-                <Plus size={14} /> Course Studio
+                <Plus size={14} style={{ color: 'var(--text-muted)' }} /> Course Studio
               </Link>
 
               <Link
@@ -391,14 +380,15 @@ export const InstructorAnalyticsPage = () => {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 6,
-                  padding: '8px 14px',
+                  padding: '8px 16px',
                   borderRadius: 10,
-                  background: 'rgba(168, 85, 247, 0.12)',
-                  border: '1px solid rgba(168, 85, 247, 0.3)',
-                  color: '#9333ea',
+                  background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+                  border: 'none',
+                  color: '#ffffff',
                   fontSize: 12,
                   fontWeight: 700,
                   textDecoration: 'none',
+                  boxShadow: '0 2px 10px rgba(37, 99, 235, 0.25)',
                   transition: 'all 0.15s',
                 }}
               >
@@ -413,23 +403,23 @@ export const InstructorAnalyticsPage = () => {
                   gap: 6,
                   padding: '8px 14px',
                   borderRadius: 10,
-                  background: 'rgba(245, 158, 11, 0.12)',
-                  border: '1px solid rgba(245, 158, 11, 0.3)',
-                  color: '#d97706',
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid var(--border-color, #e2e8f0)',
+                  color: 'var(--text-primary)',
                   fontSize: 12,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   textDecoration: 'none',
                   transition: 'all 0.15s',
                 }}
               >
-                <Award size={14} /> Solved Data Hub <ArrowUpRight size={13} />
+                <Award size={14} style={{ color: 'var(--text-muted)' }} /> Solved Data Hub <ArrowUpRight size={13} style={{ color: 'var(--text-muted)' }} />
               </Link>
             </div>
           </div>
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            2. HIGH-DENSITY 5-TILE TELEMETRY STRIP (THEME-ADAPTIVE)
+            2. HIGH-DENSITY 5-TILE TELEMETRY STRIP
         ═══════════════════════════════════════════════════════════════════ */}
         <div
           style={{
@@ -441,14 +431,14 @@ export const InstructorAnalyticsPage = () => {
           {/* 1. Active Courses */}
           <div
             style={{
-              background: 'var(--lms-card, #ffffff)',
+              background: 'linear-gradient(180deg, rgba(24, 24, 27, 0.85) 0%, rgba(18, 18, 20, 0.9) 100%)',
               border: '1px solid var(--border-color, #e2e8f0)',
               borderRadius: 14,
               padding: '16px 18px',
               display: 'flex',
               flexDirection: 'column',
               gap: 10,
-              boxShadow: 'var(--shadow-dark, 0 2px 10px rgba(0, 0, 0, 0.03))',
+              boxShadow: '0 4px 18px rgba(6, 182, 212, 0.05)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -460,8 +450,7 @@ export const InstructorAnalyticsPage = () => {
                   width: 28,
                   height: 28,
                   borderRadius: 8,
-                  background: 'rgba(6, 182, 212, 0.12)',
-                  color: '#0891b2',
+                  background: 'rgba(255, 255, 255, 0.04)', border: '1px solid var(--border-color, #e2e8f0)', color: 'var(--text-muted)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -476,29 +465,23 @@ export const InstructorAnalyticsPage = () => {
                 {courseCount}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#0891b2' }}>
-                  100% Operational
-                </span>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>100% Operational</span>
                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>• {rawCourses.filter(c => c.status === 'PUBLISHED').length || courseCount} published</span>
               </div>
-            </div>
-
-            <div style={{ height: 4, borderRadius: 99, background: 'var(--surface-medium, #e2e8f0)', overflow: 'hidden' }}>
-              <div style={{ width: '85%', height: '100%', background: '#0891b2', borderRadius: 99 }} />
             </div>
           </div>
 
           {/* 2. Total Learners */}
           <div
             style={{
-              background: 'var(--lms-card, #ffffff)',
+              background: 'linear-gradient(180deg, rgba(24, 24, 27, 0.85) 0%, rgba(18, 18, 20, 0.9) 100%)',
               border: '1px solid var(--border-color, #e2e8f0)',
               borderRadius: 14,
               padding: '16px 18px',
               display: 'flex',
               flexDirection: 'column',
               gap: 10,
-              boxShadow: 'var(--shadow-dark, 0 2px 10px rgba(0, 0, 0, 0.03))',
+              boxShadow: '0 4px 18px rgba(16, 185, 129, 0.05)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -510,8 +493,7 @@ export const InstructorAnalyticsPage = () => {
                   width: 28,
                   height: 28,
                   borderRadius: 8,
-                  background: 'rgba(16, 185, 129, 0.12)',
-                  color: '#059669',
+                  background: 'rgba(255, 255, 255, 0.04)', border: '1px solid var(--border-color, #e2e8f0)', color: 'var(--text-muted)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -526,29 +508,25 @@ export const InstructorAnalyticsPage = () => {
                 {learnerCount}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#059669' }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: '#10b981' }}>
                   +18.4% Velocity
                 </span>
                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>• Cohort active</span>
               </div>
-            </div>
-
-            <div style={{ height: 4, borderRadius: 99, background: 'var(--surface-medium, #e2e8f0)', overflow: 'hidden' }}>
-              <div style={{ width: '92%', height: '100%', background: '#10b981', borderRadius: 99 }} />
             </div>
           </div>
 
           {/* 3. Avg. Completion Rate */}
           <div
             style={{
-              background: 'var(--lms-card, #ffffff)',
+              background: 'linear-gradient(180deg, rgba(24, 24, 27, 0.85) 0%, rgba(18, 18, 20, 0.9) 100%)',
               border: '1px solid var(--border-color, #e2e8f0)',
               borderRadius: 14,
               padding: '16px 18px',
               display: 'flex',
               flexDirection: 'column',
               gap: 10,
-              boxShadow: 'var(--shadow-dark, 0 2px 10px rgba(0, 0, 0, 0.03))',
+              boxShadow: '0 4px 18px rgba(168, 85, 247, 0.05)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -560,8 +538,7 @@ export const InstructorAnalyticsPage = () => {
                   width: 28,
                   height: 28,
                   borderRadius: 8,
-                  background: 'rgba(168, 85, 247, 0.12)',
-                  color: '#9333ea',
+                  background: 'rgba(255, 255, 255, 0.04)', border: '1px solid var(--border-color, #e2e8f0)', color: 'var(--text-muted)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -576,29 +553,23 @@ export const InstructorAnalyticsPage = () => {
                 {avgCompletion}%
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#9333ea' }}>
-                  Target Exceeded
-                </span>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Target Exceeded</span>
                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>• Bench: 60%</span>
               </div>
-            </div>
-
-            <div style={{ height: 4, borderRadius: 99, background: 'var(--surface-medium, #e2e8f0)', overflow: 'hidden' }}>
-              <div style={{ width: `${avgCompletion}%`, height: '100%', background: '#8b5cf6', borderRadius: 99 }} />
             </div>
           </div>
 
           {/* 4. Avg Score & Pass Rate */}
           <div
             style={{
-              background: 'var(--lms-card, #ffffff)',
+              background: 'linear-gradient(180deg, rgba(24, 24, 27, 0.85) 0%, rgba(18, 18, 20, 0.9) 100%)',
               border: '1px solid var(--border-color, #e2e8f0)',
               borderRadius: 14,
               padding: '16px 18px',
               display: 'flex',
               flexDirection: 'column',
               gap: 10,
-              boxShadow: 'var(--shadow-dark, 0 2px 10px rgba(0, 0, 0, 0.03))',
+              boxShadow: '0 4px 18px rgba(245, 158, 11, 0.05)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -610,8 +581,7 @@ export const InstructorAnalyticsPage = () => {
                   width: 28,
                   height: 28,
                   borderRadius: 8,
-                  background: 'rgba(245, 158, 11, 0.12)',
-                  color: '#d97706',
+                  background: 'rgba(255, 255, 255, 0.04)', border: '1px solid var(--border-color, #e2e8f0)', color: 'var(--text-muted)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -626,29 +596,22 @@ export const InstructorAnalyticsPage = () => {
                 {avgScore}%
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#059669' }}>
-                  92% Pass Rate
-                </span>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>92% Pass Rate</span>
                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>• Grade A- avg</span>
               </div>
-            </div>
-
-            <div style={{ height: 4, borderRadius: 99, background: 'var(--surface-medium, #e2e8f0)', overflow: 'hidden' }}>
-              <div style={{ width: `${avgScore}%`, height: '100%', background: '#d97706', borderRadius: 99 }} />
             </div>
           </div>
 
           {/* 5. Evaluation Queue */}
           <div
             style={{
-              background: 'var(--lms-card, #ffffff)',
-              border: '1px solid var(--border-color, #e2e8f0)',
+              background: 'linear-gradient(180deg, rgba(24, 24, 27, 0.85) 0%, rgba(18, 18, 20, 0.9) 100%)',
+              border: pendingGrading > 0 ? '1px solid rgba(244, 63, 94, 0.35)' : '1px solid rgba(255, 255, 255, 0.08)',
               borderRadius: 14,
               padding: '16px 18px',
               display: 'flex',
               flexDirection: 'column',
               gap: 10,
-              boxShadow: 'var(--shadow-dark, 0 2px 10px rgba(0, 0, 0, 0.03))',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -660,8 +623,7 @@ export const InstructorAnalyticsPage = () => {
                   width: 28,
                   height: 28,
                   borderRadius: 8,
-                  background: pendingGrading > 0 ? 'rgba(244, 63, 94, 0.15)' : 'rgba(16, 185, 129, 0.12)',
-                  color: pendingGrading > 0 ? '#f43f5e' : '#059669',
+                  background: pendingGrading > 0 ? 'rgba(244, 63, 94, 0.15)' : 'rgba(255, 255, 255, 0.04)', border: '1px solid var(--border-color, #e2e8f0)', color: pendingGrading > 0 ? '#f43f5e' : 'var(--text-muted)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -676,15 +638,11 @@ export const InstructorAnalyticsPage = () => {
                 {pendingGrading}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: pendingGrading > 0 ? '#f43f5e' : '#059669' }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: pendingGrading > 0 ? '#f43f5e' : '#10b981' }}>
                   {pendingGrading > 0 ? 'Action Required' : 'Queue Optimal'}
                 </span>
                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>• Zero backlog</span>
               </div>
-            </div>
-
-            <div style={{ height: 4, borderRadius: 99, background: 'var(--surface-medium, #e2e8f0)', overflow: 'hidden' }}>
-              <div style={{ width: pendingGrading > 0 ? '60%' : '100%', height: '100%', background: pendingGrading > 0 ? '#f43f5e' : '#10b981', borderRadius: 99 }} />
             </div>
           </div>
         </div>
@@ -695,7 +653,7 @@ export const InstructorAnalyticsPage = () => {
         <DashboardLeaderboardWidget isInstructor={true} />
 
         {/* ═══════════════════════════════════════════════════════════════════
-            4. OPERATIONS TWO-COLUMN SPLIT (THEME-ADAPTIVE)
+            4. OPERATIONS TWO-COLUMN SPLIT: TELEMETRY & COURSE HEALTH / TERMINAL
         ═══════════════════════════════════════════════════════════════════ */}
         <div
           style={{
@@ -711,18 +669,18 @@ export const InstructorAnalyticsPage = () => {
             {/* Interactive Telemetry Visualizer Card */}
             <div
               style={{
-                background: 'var(--lms-card, #ffffff)',
-                border: '1px solid var(--border-color, #e2e8f0)',
+                background: 'linear-gradient(180deg, rgba(24, 24, 27, 0.9) 0%, rgba(15, 15, 18, 0.95) 100%)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
                 borderRadius: 16,
                 padding: '20px 22px',
-                boxShadow: 'var(--shadow-dark, 0 4px 20px rgba(0,0,0,0.04))',
+                boxShadow: '0 8px 30px rgba(0,0,0,0.25)',
               }}
             >
               {/* Telemetry Header with Tabs */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 18 }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <Activity size={17} style={{ color: '#0891b2' }} />
+                    <Activity size={17} style={{ color: '#06b6d4' }} />
                     <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
                       Interactive Telemetry Center
                     </h3>
@@ -733,42 +691,30 @@ export const InstructorAnalyticsPage = () => {
                 </div>
 
                 {/* Sub-view switcher */}
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: 4,
-                    background: 'var(--surface-medium, #f1f5f9)',
-                    padding: 3,
-                    borderRadius: 8,
-                    border: '1px solid var(--border-color, #e2e8f0)',
-                  }}
-                >
+                <div style={{ display: 'flex', gap: 4, background: 'rgba(255,255,255,0.03)', padding: 3, borderRadius: 8, border: '1px solid rgba(255,255,255,0.06)' }}>
                   {[
                     { id: 'VELOCITY', label: 'Learner Velocity' },
                     { id: 'COMPLETION', label: 'Module Retention' },
                     { id: 'GRADES', label: 'Grade Curve' },
-                  ].map((t) => {
-                    const isActive = activeChartTab === t.id;
-                    return (
-                      <button
-                        key={t.id}
-                        onClick={() => setActiveChartTab(t.id)}
-                        style={{
-                          padding: '4px 10px',
-                          borderRadius: 6,
-                          fontSize: 11,
-                          fontWeight: 600,
-                          border: 'none',
-                          background: isActive ? '#06b6d4' : 'transparent',
-                          color: isActive ? '#ffffff' : 'var(--text-muted)',
-                          cursor: 'pointer',
-                          transition: 'all 0.15s',
-                        }}
-                      >
-                        {t.label}
-                      </button>
-                    );
-                  })}
+                  ].map((t) => (
+                    <button
+                      key={t.id}
+                      onClick={() => setActiveChartTab(t.id)}
+                      style={{
+                        padding: '4px 10px',
+                        borderRadius: 6,
+                        fontSize: 11,
+                        fontWeight: 600,
+                        border: 'none',
+                        background: activeChartTab === t.id ? '#06b6d4' : 'transparent',
+                        color: activeChartTab === t.id ? '#000' : 'var(--text-muted)',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s',
+                      }}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -778,9 +724,9 @@ export const InstructorAnalyticsPage = () => {
                   position: 'relative',
                   height: 200,
                   width: '100%',
-                  background: 'var(--surface-medium, #f8fafc)',
+                  background: 'rgba(0, 0, 0, 0.25)',
                   borderRadius: 12,
-                  border: '1px solid var(--border-color, #e2e8f0)',
+                  border: '1px solid rgba(255,255,255,0.04)',
                   padding: '16px 20px 24px',
                   display: 'flex',
                   flexDirection: 'column',
@@ -788,9 +734,9 @@ export const InstructorAnalyticsPage = () => {
                 }}
               >
                 {/* Horizontal Gridlines */}
-                <div style={{ position: 'absolute', top: 30, left: 20, right: 20, height: 1, background: 'var(--border-color, #e2e8f0)' }} />
-                <div style={{ position: 'absolute', top: 90, left: 20, right: 20, height: 1, background: 'var(--border-color, #e2e8f0)' }} />
-                <div style={{ position: 'absolute', top: 150, left: 20, right: 20, height: 1, background: 'var(--border-color, #e2e8f0)' }} />
+                <div style={{ position: 'absolute', top: 30, left: 20, right: 20, height: 1, background: 'rgba(255,255,255,0.04)' }} />
+                <div style={{ position: 'absolute', top: 90, left: 20, right: 20, height: 1, background: 'rgba(255,255,255,0.04)' }} />
+                <div style={{ position: 'absolute', top: 150, left: 20, right: 20, height: 1, background: 'rgba(255,255,255,0.04)' }} />
 
                 {/* Bars & Glow Points Container */}
                 <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: 140, position: 'relative', zIndex: 2 }}>
@@ -818,15 +764,15 @@ export const InstructorAnalyticsPage = () => {
                             style={{
                               position: 'absolute',
                               bottom: `${heightPct + 15}%`,
-                              background: 'var(--text-primary)',
+                              background: '#18181b',
                               border: '1px solid #06b6d4',
-                              color: 'var(--lms-background, #ffffff)',
+                              color: '#fff',
                               fontSize: 11,
                               fontWeight: 700,
                               padding: '3px 8px',
                               borderRadius: 6,
                               whiteSpace: 'nowrap',
-                              boxShadow: '0 4px 12px rgba(6,182,212,0.25)',
+                              boxShadow: '0 4px 12px rgba(6,182,212,0.3)',
                               zIndex: 10,
                             }}
                           >
@@ -841,14 +787,17 @@ export const InstructorAnalyticsPage = () => {
                             maxWidth: 24,
                             minWidth: 10,
                             height: `${heightPct}%`,
-                            background: isHovered ? '#0284c7' : 'rgba(2, 132, 199, 0.7)',
+                            background: isHovered
+                              ? 'linear-gradient(180deg, #38bdf8 0%, #06b6d4 100%)'
+                              : 'linear-gradient(180deg, rgba(6, 182, 212, 0.8) 0%, rgba(6, 182, 212, 0.25) 100%)',
                             borderRadius: '6px 6px 0 0',
-                            transition: 'all 0.15s ease',
+                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                            boxShadow: isHovered ? '0 0 15px rgba(6, 182, 212, 0.6)' : 'none',
                           }}
                         />
 
                         {/* X-axis label */}
-                        <span style={{ fontSize: 10, color: isHovered ? 'var(--text-primary)' : 'var(--text-muted)', marginTop: 8, fontWeight: 600 }}>
+                        <span style={{ fontSize: 10, color: isHovered ? '#fff' : 'var(--text-muted)', marginTop: 8, fontWeight: 600 }}>
                           {pt.label}
                         </span>
                       </div>
@@ -859,17 +808,17 @@ export const InstructorAnalyticsPage = () => {
 
               {/* Telemetry Micro Stats Bar */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 10, marginTop: 14 }}>
-                <div style={{ background: 'var(--surface-medium, #f8fafc)', border: '1px solid var(--border-color, #e2e8f0)', borderRadius: 8, padding: '8px 12px' }}>
+                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: 8, padding: '8px 12px' }}>
                   <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Peak Velocity</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#0891b2', marginTop: 2 }}>Thursday (+28 pts)</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#06b6d4', marginTop: 2 }}>Thursday (+28 pts)</div>
                 </div>
-                <div style={{ background: 'var(--surface-medium, #f8fafc)', border: '1px solid var(--border-color, #e2e8f0)', borderRadius: 8, padding: '8px 12px' }}>
+                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: 8, padding: '8px 12px' }}>
                   <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Retention Index</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#059669', marginTop: 2 }}>96.8% Stable</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#10b981', marginTop: 2 }}>96.8% Stable</div>
                 </div>
-                <div style={{ background: 'var(--surface-medium, #f8fafc)', border: '1px solid var(--border-color, #e2e8f0)', borderRadius: 8, padding: '8px 12px' }}>
+                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: 8, padding: '8px 12px' }}>
                   <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Sync Rate</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#9333ea', marginTop: 2 }}>0.2s Response</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#a855f7', marginTop: 2 }}>0.2s Response</div>
                 </div>
               </div>
             </div>
@@ -877,17 +826,17 @@ export const InstructorAnalyticsPage = () => {
             {/* Curriculum Health Matrix (Expandable Course Cards) */}
             <div
               style={{
-                background: 'var(--lms-card, #ffffff)',
-                border: '1px solid var(--border-color, #e2e8f0)',
+                background: 'linear-gradient(180deg, rgba(24, 24, 27, 0.9) 0%, rgba(15, 15, 18, 0.95) 100%)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
                 borderRadius: 16,
                 padding: '20px 22px',
-                boxShadow: 'var(--shadow-dark, 0 4px 20px rgba(0,0,0,0.04))',
+                boxShadow: '0 8px 30px rgba(0,0,0,0.25)',
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <Layers size={17} style={{ color: '#9333ea' }} />
+                    <Layers size={17} style={{ color: '#a855f7' }} />
                     <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
                       Active Curriculum Health Matrix
                     </h3>
@@ -909,8 +858,8 @@ export const InstructorAnalyticsPage = () => {
                       style={{
                         padding: '6px 10px 6px 28px',
                         borderRadius: 8,
-                        background: 'var(--surface-medium, #f1f5f9)',
-                        border: '1px solid var(--border-color, #e2e8f0)',
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(255,255,255,0.08)',
                         color: 'var(--text-primary)',
                         fontSize: 12,
                         outline: 'none',
@@ -927,7 +876,7 @@ export const InstructorAnalyticsPage = () => {
                       gap: 4,
                       fontSize: 12,
                       fontWeight: 600,
-                      color: '#9333ea',
+                      color: '#a855f7',
                       textDecoration: 'none',
                     }}
                   >
@@ -946,8 +895,8 @@ export const InstructorAnalyticsPage = () => {
                     <div
                       key={c.id}
                       style={{
-                        background: isExpanded ? 'var(--hover-bg, #f1f5f9)' : 'var(--surface-medium, #f8fafc)',
-                        border: isExpanded ? '1px solid #9333ea' : '1px solid var(--border-color, #e2e8f0)',
+                        background: isExpanded ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.015)',
+                        border: isExpanded ? '1px solid rgba(168, 85, 247, 0.4)' : '1px solid rgba(255,255,255,0.05)',
                         borderRadius: 12,
                         padding: '12px 16px',
                         transition: 'all 0.2s ease',
@@ -970,8 +919,8 @@ export const InstructorAnalyticsPage = () => {
                               borderRadius: 6,
                               fontSize: 10,
                               fontWeight: 800,
-                              background: isDraft ? 'var(--surface-medium, #e2e8f0)' : 'rgba(6, 182, 212, 0.12)',
-                              color: isDraft ? 'var(--text-muted)' : '#0891b2',
+                              background: isDraft ? 'rgba(255,255,255,0.08)' : 'rgba(6, 182, 212, 0.12)',
+                              color: isDraft ? 'var(--text-muted)' : '#22d3ee',
                               letterSpacing: '0.04em',
                             }}
                           >
@@ -994,7 +943,7 @@ export const InstructorAnalyticsPage = () => {
                             <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
                               {c.enrolledCount ?? 12} enrolled
                             </span>
-                            <span style={{ fontSize: 10, color: '#059669', fontWeight: 600 }}>
+                            <span style={{ fontSize: 10, color: '#10b981', fontWeight: 600 }}>
                               {c.completionRate ?? 70}% completion
                             </span>
                           </div>
@@ -1006,11 +955,11 @@ export const InstructorAnalyticsPage = () => {
                               fontSize: 10,
                               fontWeight: 700,
                               background: isDraft
-                                ? 'var(--surface-medium, #e2e8f0)'
+                                ? 'rgba(255,255,255,0.06)'
                                 : 'rgba(16, 185, 129, 0.12)',
-                              color: isDraft ? 'var(--text-muted)' : '#059669',
+                              color: isDraft ? 'var(--text-muted)' : '#10b981',
                               border: isDraft
-                                ? '1px solid var(--border-color, #e2e8f0)'
+                                ? '1px solid rgba(255,255,255,0.1)'
                                 : '1px solid rgba(16, 185, 129, 0.25)',
                             }}
                           >
@@ -1027,7 +976,7 @@ export const InstructorAnalyticsPage = () => {
                           style={{
                             marginTop: 12,
                             paddingTop: 12,
-                            borderTop: '1px solid var(--border-color, #e2e8f0)',
+                            borderTop: '1px solid rgba(255,255,255,0.06)',
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
@@ -1047,10 +996,10 @@ export const InstructorAnalyticsPage = () => {
                                 borderRadius: 6,
                                 fontSize: 11,
                                 fontWeight: 600,
-                                background: 'var(--lms-card, #ffffff)',
+                                background: 'rgba(255,255,255,0.05)',
                                 color: 'var(--text-primary)',
                                 textDecoration: 'none',
-                                border: '1px solid var(--border-color, #e2e8f0)',
+                                border: '1px solid rgba(255,255,255,0.1)',
                               }}
                             >
                               Edit Modules
@@ -1063,10 +1012,10 @@ export const InstructorAnalyticsPage = () => {
                                 borderRadius: 6,
                                 fontSize: 11,
                                 fontWeight: 600,
-                                background: 'rgba(168, 85, 247, 0.12)',
-                                color: '#9333ea',
+                                background: 'rgba(168, 85, 247, 0.15)',
+                                color: '#c084fc',
                                 textDecoration: 'none',
-                                border: '1px solid rgba(168, 85, 247, 0.25)',
+                                border: '1px solid rgba(168, 85, 247, 0.3)',
                               }}
                             >
                               Course Studio
@@ -1087,15 +1036,15 @@ export const InstructorAnalyticsPage = () => {
             {/* Quick Command Shortcuts Matrix */}
             <div
               style={{
-                background: 'var(--lms-card, #ffffff)',
-                border: '1px solid var(--border-color, #e2e8f0)',
+                background: 'linear-gradient(180deg, rgba(24, 24, 27, 0.9) 0%, rgba(15, 15, 18, 0.95) 100%)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
                 borderRadius: 16,
                 padding: '20px 22px',
-                boxShadow: 'var(--shadow-dark, 0 4px 20px rgba(0,0,0,0.04))',
+                boxShadow: '0 8px 30px rgba(0,0,0,0.25)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-                <Zap size={16} style={{ color: '#d97706' }} />
+                <Zap size={16} style={{ color: '#f59e0b' }} />
                 <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
                   Command Operations Deck
                 </h3>
@@ -1108,42 +1057,42 @@ export const InstructorAnalyticsPage = () => {
                     desc: 'Curriculum studio',
                     to: ROUTES.COURSE_CREATE,
                     icon: Plus,
-                    tone: '#0891b2',
+                    tone: '#06b6d4',
                   },
                   {
                     title: 'New Exam',
                     desc: 'Assessment builder',
                     to: ROUTES.ASSESSMENT_CREATE,
                     icon: Zap,
-                    tone: '#059669',
+                    tone: '#10b981',
                   },
                   {
                     title: 'Grading Hub',
                     desc: 'Evaluation queue',
                     to: ROUTES.INSTRUCTOR_GRADING,
                     icon: ClipboardCheck,
-                    tone: '#9333ea',
+                    tone: '#a855f7',
                   },
                   {
                     title: 'Honors & Solved',
                     desc: 'LeetCode badges',
                     to: ROUTES.INSTRUCTOR_SUBMISSIONS_HISTORY,
                     icon: Award,
-                    tone: '#d97706',
+                    tone: '#f59e0b',
                   },
                   {
                     title: 'Question Bank',
                     desc: 'Reusable pool',
                     to: ROUTES.INSTRUCTOR_QUESTION_BANK,
                     icon: FileText,
-                    tone: '#2563eb',
+                    tone: '#3b82f6',
                   },
                   {
                     title: 'Announcements',
                     desc: 'Campus broadcast',
                     to: ROUTES.INSTRUCTOR_ANNOUNCEMENTS,
                     icon: Terminal,
-                    tone: '#e11d48',
+                    tone: '#f43f5e',
                   },
                 ].map((act) => {
                   const Icon = act.icon;
@@ -1157,19 +1106,19 @@ export const InstructorAnalyticsPage = () => {
                         gap: 6,
                         padding: '12px 14px',
                         borderRadius: 10,
-                        background: 'var(--surface-medium, #f8fafc)',
-                        border: '1px solid var(--border-color, #e2e8f0)',
+                        background: 'rgba(255,255,255,0.02)',
+                        border: '1px solid rgba(255,255,255,0.06)',
                         textDecoration: 'none',
                         transition: 'all 0.15s ease',
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'var(--hover-bg, #f1f5f9)';
-                        e.currentTarget.style.borderColor = act.tone;
+                        e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+                        e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.35)';
                         e.currentTarget.style.transform = 'translateY(-2px)';
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'var(--surface-medium, #f8fafc)';
-                        e.currentTarget.style.borderColor = 'var(--border-color, #e2e8f0)';
+                        e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
+                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
                         e.currentTarget.style.transform = 'none';
                       }}
                     >
@@ -1178,8 +1127,7 @@ export const InstructorAnalyticsPage = () => {
                           width: 30,
                           height: 30,
                           borderRadius: 8,
-                          background: `${act.tone}18`,
-                          color: act.tone,
+                          background: 'rgba(255, 255, 255, 0.04)', border: '1px solid var(--border-color, #e2e8f0)', color: 'var(--text-muted)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -1204,11 +1152,11 @@ export const InstructorAnalyticsPage = () => {
             {/* Live Operations Terminal (Event Stream) */}
             <div
               style={{
-                background: 'var(--lms-card, #ffffff)',
-                border: '1px solid var(--border-color, #e2e8f0)',
+                background: 'linear-gradient(180deg, #09090b 0%, #0d0e12 100%)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
                 borderRadius: 16,
                 padding: '18px 20px',
-                boxShadow: 'var(--shadow-dark, 0 4px 20px rgba(0,0,0,0.04))',
+                boxShadow: '0 8px 30px rgba(0,0,0,0.3)',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 14,
@@ -1217,34 +1165,31 @@ export const InstructorAnalyticsPage = () => {
               {/* Terminal Title Bar */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Terminal size={15} style={{ color: '#059669' }} />
-                  <span style={{ fontSize: 12, fontWeight: 700, color: '#059669', fontFamily: 'monospace', letterSpacing: '0.04em' }}>
+                  <Terminal size={15} style={{ color: '#10b981' }} />
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#10b981', fontFamily: 'monospace', letterSpacing: '0.04em' }}>
                     OPERATIONS TERMINAL // LOGS
                   </span>
                 </div>
 
                 <div style={{ display: 'flex', gap: 4 }}>
-                  {['ALL', 'SUBMISSION', 'ENROLLMENT'].map((f) => {
-                    const isActive = activityFilter === f;
-                    return (
-                      <button
-                        key={f}
-                        onClick={() => setActivityFilter(f)}
-                        style={{
-                          padding: '2px 8px',
-                          borderRadius: 6,
-                          fontSize: 10,
-                          fontWeight: 700,
-                          border: '1px solid var(--border-color, #e2e8f0)',
-                          background: isActive ? 'rgba(16,185,129,0.15)' : 'var(--surface-medium, #f1f5f9)',
-                          color: isActive ? '#059669' : 'var(--text-muted)',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        {f}
-                      </button>
-                    );
-                  })}
+                  {['ALL', 'SUBMISSION', 'ENROLLMENT'].map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setActivityFilter(f)}
+                      style={{
+                        padding: '2px 6px',
+                        borderRadius: 4,
+                        fontSize: 9,
+                        fontWeight: 700,
+                        border: 'none',
+                        background: activityFilter === f ? 'rgba(16,185,129,0.2)' : 'transparent',
+                        color: activityFilter === f ? '#10b981' : 'var(--text-muted)',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {f}
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -1263,8 +1208,8 @@ export const InstructorAnalyticsPage = () => {
                   <div
                     key={ev.id}
                     style={{
-                      background: 'var(--surface-medium, #f8fafc)',
-                      border: '1px solid var(--border-color, #e2e8f0)',
+                      background: 'rgba(255,255,255,0.02)',
+                      border: '1px solid rgba(255,255,255,0.04)',
                       borderRadius: 8,
                       padding: '8px 10px',
                       display: 'flex',
@@ -1300,11 +1245,11 @@ export const InstructorAnalyticsPage = () => {
                   gap: 6,
                   fontSize: 10,
                   color: 'var(--text-muted)',
-                  borderTop: '1px solid var(--border-color, #e2e8f0)',
+                  borderTop: '1px solid rgba(255,255,255,0.05)',
                   paddingTop: 8,
                 }}
               >
-                <Shield size={11} color="#059669" />
+                <Shield size={11} color="#10b981" />
                 <span>SSL Encrypted • Audit Trail Hash Verified</span>
               </div>
             </div>
