@@ -55,6 +55,7 @@ const AddInstructorPage = lazy(() => import('../features/instructors/pages/AddIn
 const EditInstructorPage = lazy(() => import('../features/instructors/pages/EditInstructorPage'));
 const InstructorDetailsPage = lazy(() => import('../features/instructors/pages/InstructorDetailsPage'));
 const BatchListPage = lazy(() => import('../features/batches/pages/BatchListPage'));
+const InstructorBatchListPage = lazy(() => import('../features/batches/pages/InstructorBatchListPage'));
 const AddStudentPage = lazy(() => import('../features/students/pages/AddStudentPage'));
 const AdminAnalyticsPage = lazy(() => import('../features/analytics/pages/AdminAnalyticsPage'));
 const ResourceManagementPage = lazy(
@@ -93,6 +94,8 @@ const GlobalSubmissionsHistoryPage = lazy(() => import('../features/assessments/
 
 const CertificateListPage = lazy(() => import('../features/certificates/pages/CertificateListPage'));
 const CertificateDetailsPage = lazy(() => import('../features/certificates/pages/CertificateDetailsPage'));
+const PublicCertificateVerifyPage = lazy(() => import('../features/certificates/pages/PublicCertificateVerifyPage'));
+const InstructorCertificationHubPage = lazy(() => import('../features/certificates/pages/InstructorCertificationHubPage'));
 const GamificationDashboard = lazy(() => import('../features/gamification/pages/GamificationDashboard'));
 const AdminGamificationPage = lazy(() => import('../features/gamification/pages/AdminGamificationPage'));
 const NotificationPage = lazy(() => import('../features/notifications/pages/NotificationPage'));
@@ -129,6 +132,10 @@ export const router = createBrowserRouter([
       { path: ROUTES.PLATFORM_ANNOUNCEMENTS, element: suspend(<PlatformAnnouncementsPage />) },
     ],
   },
+
+  // Public Certificate Verification
+  { path: ROUTES.PUBLIC_CERTIFICATE_VERIFY, element: suspend(<PublicCertificateVerifyPage />) },
+  { path: '/verify/:serialNumber', element: suspend(<PublicCertificateVerifyPage />) },
 
   // Auth / Guest routes
   {
@@ -226,6 +233,8 @@ export const router = createBrowserRouter([
               { index: true, element: <Navigate to={ROUTES.COURSES} replace /> },
               { path: ROUTES.INSTRUCTOR_ANALYTICS, element: suspend(<InstructorAnalyticsPage />) },
               { path: ROUTES.COURSES, element: suspend(<CourseListPage />) },
+              { path: ROUTES.INSTRUCTOR_BATCHES, element: suspend(<InstructorBatchListPage />) },
+              { path: ROUTES.INSTRUCTOR_CERTIFICATES, element: suspend(<InstructorCertificationHubPage />) },
               { path: ROUTES.COURSE_CREATE, element: suspend(<CreateCoursePage />) },
               { path: ROUTES.COURSE_DETAILS(), element: suspend(<CourseDetailsPage />) },
               { path: ROUTES.COURSE_EDIT(), element: suspend(<EditCoursePage />) },

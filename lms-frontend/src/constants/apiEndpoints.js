@@ -125,6 +125,7 @@ export const API_ENDPOINTS = Object.freeze({
     base: '/certificates',
     byId: (id) => `/certificates/${id}`,
     download: (id) => `/certificates/${id}/download`,
+    verify: (serialNumber) => `/certificates/verify/${encodeURIComponent(serialNumber)}`,
   },
   notifications: {
     base: '/notifications',

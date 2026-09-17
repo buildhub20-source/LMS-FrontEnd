@@ -1,4 +1,4 @@
-import { FolderDown, BookOpen, FileText, ClipboardList, LayoutDashboard, Megaphone, Database } from 'lucide-react';
+import { FolderDown, BookOpen, FileText, ClipboardList, LayoutDashboard, Megaphone, Database, Users, Award } from 'lucide-react';
 import MainNavigation from '../MainNavigation';
 import { ROUTES } from '../../../constants/routes';
 import { PERMISSIONS } from '../../../constants/permissions';
@@ -15,6 +15,13 @@ const ITEMS = [
     permission: PERMISSIONS.COURSE_VIEW,
     group: 'Teaching',
     icon: <BookOpen className="h-5 w-5" />,
+  },
+  {
+    label: 'Cohorts & Batches',
+    to: ROUTES.INSTRUCTOR_BATCHES,
+    permission: PERMISSIONS.BATCH_VIEW,
+    group: 'Teaching',
+    icon: <Users className="h-5 w-5" />,
   },
   {
     label: 'Assessments',
@@ -35,6 +42,12 @@ const ITEMS = [
     permission: PERMISSIONS.ENROLLMENT_VIEW,
     group: 'Teaching',
     icon: <ClipboardList className="h-5 w-5" />,
+  },
+  {
+    label: 'Graduation & Certificates',
+    to: ROUTES.INSTRUCTOR_CERTIFICATES,
+    group: 'Teaching',
+    icon: <Award className="h-5 w-5" />,
   },
   {
     label: 'Study Toolkits',
