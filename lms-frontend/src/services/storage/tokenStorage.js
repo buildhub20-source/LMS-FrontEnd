@@ -4,29 +4,47 @@ import storage from './localStorage';
 /**
  * SECURITY NOTE
  * -------------
- * Storing tokens in localStorage exposes them to XSS. For production, prefer
- * httpOnly + Secure + SameSite cookies issued by the API, and keep only the
- * in-memory access token here. This module centralises access so that swapping
- * the strategy touches exactly one file.
+ * Access token: kept in-memory only (module-level variable). Never written to
+ * any persistent storage, so it is cleared on page reload.
+ *
+ * Refresh token: stored in sessionStorage (tab-scoped, not accessible cross-origin,
+ * cleared when the tab is closed). This is an improvement over localStorage but
+ * still client-side JS-accessible. For full XSS protection, migrate to httpOnly
+ * + Secure + SameSite=Strict cookies issued by the API server.
+ *
+ * This module centralises access so that swapping the strategy touches exactly one file.
  */
 let accessTokenInMemory = null;
 
+const REFRESH_KEY = STORAGE_KEYS.REFRESH_TOKEN;
+
 export const tokenStorage = {
   getAccessToken() {
-    return accessTokenInMemory ?? storage.get(STORAGE_KEYS.ACCESS_TOKEN);
+    return accessTokenInMemory;
   },
 
   setAccessToken(token) {
     accessTokenInMemory = token;
-    storage.set(STORAGE_KEYS.ACCESS_TOKEN, token);
   },
 
   getRefreshToken() {
-    return storage.get(STORAGE_KEYS.REFRESH_TOKEN);
+    try {
+      return sessionStorage.getItem(REFRESH_KEY);
+    } catch {
+      return null;
+    }
   },
 
   setRefreshToken(token) {
-    storage.set(STORAGE_KEYS.REFRESH_TOKEN, token);
+    try {
+      if (token == null) {
+        sessionStorage.removeItem(REFRESH_KEY);
+      } else {
+        sessionStorage.setItem(REFRESH_KEY, token);
+      }
+    } catch {
+      // sessionStorage unavailable (e.g. private mode with storage disabled)
+    }
   },
 
   setTokens({ accessToken, refreshToken }) {
@@ -36,8 +54,12 @@ export const tokenStorage = {
 
   clear() {
     accessTokenInMemory = null;
-    storage.remove(STORAGE_KEYS.ACCESS_TOKEN);
-    storage.remove(STORAGE_KEYS.REFRESH_TOKEN);
+    storage.remove(STORAGE_KEYS.ACCESS_TOKEN); // clean up any legacy localStorage entry
+    try {
+      sessionStorage.removeItem(REFRESH_KEY);
+    } catch {
+      // ignore
+    }
   },
 };
 

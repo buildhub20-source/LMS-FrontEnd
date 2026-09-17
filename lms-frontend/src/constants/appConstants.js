@@ -24,6 +24,9 @@ export const QUERY_KEYS = Object.freeze({
   TENANT: ['tenant'],
   PROFILE: ['profile'],
   GAMIFICATION: ['gamification'],
+  CALENDAR: ['calendar'],
+  NOTES: ['notes'],
+  BOOKMARKS: ['bookmarks'],
 });
 
 export const HTTP_STATUS = Object.freeze({

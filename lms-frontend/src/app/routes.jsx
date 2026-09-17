@@ -94,6 +94,8 @@ const CertificateListPage = lazy(() => import('../features/certificates/pages/Ce
 const CertificateDetailsPage = lazy(() => import('../features/certificates/pages/CertificateDetailsPage'));
 const GamificationDashboard = lazy(() => import('../features/gamification/pages/GamificationDashboard'));
 const AdminGamificationPage = lazy(() => import('../features/gamification/pages/AdminGamificationPage'));
+const StudentCalendarPage = lazy(() => import('../features/calendar/pages/StudentCalendarPage'));
+const NotesBookmarksPage = lazy(() => import('../features/notes/pages/NotesBookmarksPage'));
 const NotificationPage = lazy(() => import('../features/notifications/pages/NotificationPage'));
 const ProfilePage = lazy(() => import('../features/profile/pages/ProfilePage'));
 const SecurityPage = lazy(() => import('../features/profile/pages/SecurityPage'));
@@ -249,7 +251,7 @@ export const router = createBrowserRouter([
 
       {
         path: '/learn',
-        element: <RoleBasedLayout />,
+        element: <StudentLayout />,
         children: [
           { index: true, element: <Navigate to={ROUTES.MY_COURSES} replace /> },
           { path: ROUTES.MY_COURSES, element: suspend(<MyCoursesPage />) },
@@ -259,6 +261,8 @@ export const router = createBrowserRouter([
           { path: ROUTES.CERTIFICATES, element: suspend(<CertificateListPage />) },
           { path: ROUTES.CERTIFICATE_DETAILS(), element: suspend(<CertificateDetailsPage />) },
           { path: ROUTES.GAMIFICATION, element: suspend(<GamificationDashboard />) },
+          { path: ROUTES.CALENDAR, element: suspend(<StudentCalendarPage />) },
+          { path: ROUTES.NOTES_BOOKMARKS, element: suspend(<NotesBookmarksPage />) },
           { path: ROUTES.ASSESSMENT_RESULT(), element: suspend(<AssessmentResultPage />) },
           { path: ROUTES.LEARNING(), element: suspend(<CourseDetailsPage />) },
           { path: ROUTES.LESSON(), element: suspend(<CourseDetailsPage />) },

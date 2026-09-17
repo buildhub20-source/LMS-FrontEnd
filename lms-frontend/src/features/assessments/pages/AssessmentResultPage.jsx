@@ -154,7 +154,7 @@ export const AssessmentResultPage = () => {
         </div>
       }
     >
-      <div style={{ maxWidth: 960, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 22 }}>
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
         {/* ── 1. Hero Banner ──────────────────────────────────────── */}
         {isNotStarted ? (

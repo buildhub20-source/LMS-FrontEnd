@@ -26,7 +26,7 @@ export const ResultSummary = ({ report }) => {
   const secondsSpent = (timeSpentSeconds || 0) % 60;
 
   return (
-    <div style={{ padding: '24px 0', maxWidth: 1000, margin: '0 auto' }}>
+    <div style={{ padding: '24px 0', width: '100%' }}>
       {/* Banner */}
       <div
         style={{

@@ -20,33 +20,38 @@ export const SubscriptionPage = () => {
     queryFn: () => subscriptionService.getCurrent().catch(() => null),
   });
 
-  const sub = rawData?.data?.data ?? rawData?.data ?? {
-    tierName: 'Enterprise Pro',
-    status: 'ACTIVE',
-    price: '$299',
-    interval: 'month',
-    renewalDate: '2026-12-31',
-    seatsUsed: 1248,
-    seatsLimit: 2000,
-    storageUsedGb: 148,
-    storageLimitGb: 500,
-    sandboxRunsUsed: 8420,
-    sandboxRunsLimit: 25000,
-    paymentMethod: {
-      brand: 'Mastercard',
-      last4: '4242',
-      expMonth: 12,
-      expYear: 28,
-    },
-  };
+  const sub = rawData?.data?.data ?? rawData?.data ?? null;
 
-  const seatsPct = Math.min(100, Math.round((sub.seatsUsed / sub.seatsLimit) * 100));
-  const storagePct = Math.min(100, Math.round((sub.storageUsedGb / sub.storageLimitGb) * 100));
-  const runsPct = Math.min(100, Math.round((sub.sandboxRunsUsed / sub.sandboxRunsLimit) * 100));
+  const seatsPct  = sub ? Math.min(100, Math.round((sub.seatsUsed / sub.seatsLimit) * 100)) : 0;
+  const storagePct = sub ? Math.min(100, Math.round((sub.storageUsedGb / sub.storageLimitGb) * 100)) : 0;
+  const runsPct   = sub ? Math.min(100, Math.round((sub.sandboxRunsUsed / sub.sandboxRunsLimit) * 100)) : 0;
+
+  if (!isLoading && !sub) {
+    return (
+      <PageContainer
+        title="Subscription &amp; Plan"
+        subtitle="Overview of your current enterprise tier, resource quota usage, and billing details."
+      >
+        <div style={{
+          maxWidth: 600, margin: '60px auto', textAlign: 'center',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16,
+        }}>
+          <CreditCard size={48} style={{ color: 'var(--text-muted)', opacity: 0.35 }} />
+          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>
+            Subscription not configured
+          </h2>
+          <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+            No active subscription plan is linked to this organisation.
+            Contact your platform administrator to set up billing.
+          </p>
+        </div>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer
-      title="Subscription & Plan"
+      title="Subscription &amp; Plan"
       subtitle="Overview of your current enterprise tier, resource quota usage, and billing details."
       actions={
         <div style={{ display: 'flex', gap: 10 }}>
@@ -55,7 +60,7 @@ export const SubscriptionPage = () => {
             onClick={() => navigate(ROUTES.BILLING)}
             iconLeft={<FileText size={15} />}
           >
-            Invoices & Billing
+            Invoices &amp; Billing
           </Button>
           <Button
             variant="primary"
@@ -95,16 +100,18 @@ export const SubscriptionPage = () => {
               </span>
             </div>
             <h1 style={{ margin: 0, fontSize: 26, fontWeight: 800, letterSpacing: '-0.02em' }}>
-              {sub.tierName}
+              {sub?.tierName ?? 'Unknown Plan'}
             </h1>
-            <p style={{ margin: '6px 0 0', fontSize: 14, opacity: 0.85 }}>
-              Renews automatically on {new Date(sub.renewalDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-            </p>
+            {sub?.renewalDate && (
+              <p style={{ margin: '6px 0 0', fontSize: 14, opacity: 0.85 }}>
+                Renews automatically on {new Date(sub.renewalDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </p>
+            )}
           </div>
 
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, position: 'relative', zIndex: 1 }}>
-            <span style={{ fontSize: 36, fontWeight: 900 }}>{sub.price}</span>
-            <span style={{ fontSize: 14, opacity: 0.75 }}>/ {sub.interval}</span>
+            <span style={{ fontSize: 36, fontWeight: 900 }}>{sub?.price ?? '—'}</span>
+            {sub?.interval && <span style={{ fontSize: 14, opacity: 0.75 }}>/ {sub.interval}</span>}
           </div>
         </div>
 
@@ -143,7 +150,7 @@ export const SubscriptionPage = () => {
                 <div style={{ height: '100%', width: `${seatsPct}%`, background: '#6366f1', borderRadius: 4 }} />
               </div>
               <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                {sub.seatsUsed.toLocaleString()} of {sub.seatsLimit.toLocaleString()} seats allocated
+                {(sub?.seatsUsed ?? 0).toLocaleString()} of {(sub?.seatsLimit ?? 0).toLocaleString()} seats allocated
               </span>
             </div>
 
@@ -168,7 +175,7 @@ export const SubscriptionPage = () => {
                 <div style={{ height: '100%', width: `${storagePct}%`, background: '#10b981', borderRadius: 4 }} />
               </div>
               <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                {sub.storageUsedGb} GB of {sub.storageLimitGb} GB cloud storage used
+                {sub?.storageUsedGb ?? 0} GB of {sub?.storageLimitGb ?? 0} GB cloud storage used
               </span>
             </div>
 
@@ -193,7 +200,7 @@ export const SubscriptionPage = () => {
                 <div style={{ height: '100%', width: `${runsPct}%`, background: '#f59e0b', borderRadius: 4 }} />
               </div>
               <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                {sub.sandboxRunsUsed.toLocaleString()} of {sub.sandboxRunsLimit.toLocaleString()} monthly submissions
+                {(sub?.sandboxRunsUsed ?? 0).toLocaleString()} of {(sub?.sandboxRunsLimit ?? 0).toLocaleString()} monthly submissions
               </span>
             </div>
           </div>
@@ -217,32 +224,36 @@ export const SubscriptionPage = () => {
                 <CreditCard size={17} style={{ color: '#6366f1' }} />
                 Payment Method
               </h3>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 14,
-                padding: '12px 16px',
-                borderRadius: 10,
-                background: 'var(--surface-medium)',
-                border: '1px solid var(--border-color)',
-              }}>
+              {sub?.paymentMethod ? (
                 <div style={{
-                  width: 38, height: 26, borderRadius: 4,
-                  background: '#1e293b', color: '#ffffff',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 10, fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 14,
+                  padding: '12px 16px',
+                  borderRadius: 10,
+                  background: 'var(--surface-medium)',
+                  border: '1px solid var(--border-color)',
                 }}>
-                  {sub.paymentMethod?.brand?.slice(0, 4)?.toUpperCase() || 'CARD'}
+                  <div style={{
+                    width: 38, height: 26, borderRadius: 4,
+                    background: '#1e293b', color: '#ffffff',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 10, fontWeight: 800,
+                  }}>
+                    {sub.paymentMethod.brand?.slice(0, 4)?.toUpperCase() ?? 'CARD'}
+                  </div>
+                  <div>
+                    <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
+                      •••• •••• •••• {sub.paymentMethod.last4}
+                    </p>
+                    <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
+                      Expires {sub.paymentMethod.expMonth}/{sub.paymentMethod.expYear}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
-                    •••• •••• •••• {sub.paymentMethod?.last4 || '4242'}
-                  </p>
-                  <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
-                    Expires {sub.paymentMethod?.expMonth}/{sub.paymentMethod?.expYear}
-                  </p>
-                </div>
-              </div>
+              ) : (
+                <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>No payment method on file.</p>
+              )}
             </div>
 
             <Button
