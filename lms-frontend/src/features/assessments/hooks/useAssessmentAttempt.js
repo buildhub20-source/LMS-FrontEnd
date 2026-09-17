@@ -241,22 +241,18 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
   useEffect(() => {
     if (!error || !assessmentId || attempt) return;
     let alive = true;
-    console.log('[useAssessmentAttempt] Error detected, fetching attempt history for:', assessmentId);
     (async () => {
       try {
         const histRes = await assessmentService.getAttemptHistory(assessmentId);
-        console.log('[useAssessmentAttempt] histRes:', histRes?.data);
         const histContent =
           histRes?.data?.data?.content ||
           histRes?.data?.content ||
           [];
-        console.log('[useAssessmentAttempt] histContent:', histContent);
         if (Array.isArray(histContent) && histContent.length > 0) {
           // Prefer most-recent terminal attempt
           const terminal = histContent.find(
             (a) => a.status === 'EXPIRED' || a.status === 'SUBMITTED' || a.status === 'EVALUATED'
           ) || histContent[0];
-          console.log('[useAssessmentAttempt] terminal attempt:', terminal);
           if (terminal?.attemptId && alive) {
             setLatestAttemptId(terminal.attemptId);
           }

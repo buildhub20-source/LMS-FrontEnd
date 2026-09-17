@@ -30,11 +30,6 @@ export default function ImportQuestionBankModal({
   const [previewQuestion, setPreviewQuestion] = useState(null);
   const [importing, setImporting] = useState(false);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    loadQuestions();
-  }, [isOpen, category, difficulty, type, search]);
-
   const loadQuestions = async () => {
     setLoading(true);
     try {
@@ -54,6 +49,12 @@ export default function ImportQuestionBankModal({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!isOpen) return;
+    loadQuestions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, category, difficulty, type, search]);
 
   const handleConfirmImport = async () => {
     if (!selectedQuestion || !onImport) return;

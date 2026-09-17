@@ -52,7 +52,7 @@ export const ProcessingScreen = ({
   onDone,
 }) => {
   const [elapsedMs, setElapsedMs] = useState(0);
-  const startTimeRef = useRef(Date.now());
+  const startTimeRef = useRef(null);
   const timerRef = useRef(null);
 
   // Derive questions statistics

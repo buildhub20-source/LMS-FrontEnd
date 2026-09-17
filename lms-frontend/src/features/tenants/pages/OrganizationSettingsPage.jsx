@@ -74,7 +74,7 @@ export const OrganizationSettingsPage = () => {
         }).catch(() => null);
       }
       toast.success('Organization settings saved successfully!');
-    } catch (err) {
+    } catch {
       toast.error('Failed to save settings. Please try again.');
     } finally {
       setIsSaving(false);
