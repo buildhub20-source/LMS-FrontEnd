@@ -79,6 +79,8 @@ export const ROUTES = Object.freeze({
   INSTRUCTOR_RESOURCES: '/instructor/resources',
   INSTRUCTOR_ANNOUNCEMENTS: '/instructor/announcements',
   INSTRUCTOR_QUESTION_BANK: '/instructor/question-bank',
+  INSTRUCTOR_BATCHES: '/instructor/batches',
+  INSTRUCTOR_CERTIFICATES: '/instructor/certificates',
   ADMIN_QUESTION_BANK: '/admin/assessments/question-bank',
 
   // Student
@@ -94,6 +96,12 @@ export const ROUTES = Object.freeze({
   CERTIFICATES: '/learn/certificates',
   CERTIFICATE_DETAILS: (id = ':certificateId') => `/learn/certificates/${id}`,
   GAMIFICATION: '/learn/gamification',
+  CALENDAR: '/learn/calendar',
+  NOTES_BOOKMARKS: '/learn/notes',
+
+  // Public & Verification
+  PUBLIC_CERTIFICATE_VERIFY: '/verify',
+  PUBLIC_CERTIFICATE_VERIFY_SERIAL: (serial = ':serialNumber') => `/verify/${serial}`,
 
   // Shared
   NOTIFICATIONS: '/notifications',

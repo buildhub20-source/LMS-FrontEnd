@@ -72,11 +72,12 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
               width: 38,
               height: 38,
               borderRadius: 10,
-              background: 'rgba(245, 158, 11, 0.12)',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid var(--border-color, #27272a)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#d97706',
+              color: 'var(--text-muted)',
             }}
           >
             <Trophy size={20} />
@@ -99,7 +100,7 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
             gap: 6,
             fontSize: 13,
             fontWeight: 600,
-            color: '#d97706',
+            color: '#60a5fa',
             textDecoration: 'none',
           }}
         >
@@ -140,7 +141,7 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
             🥇
           </div>
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#d97706', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#eab308', textTransform: 'uppercase' }}>
               Rank #1 • Gold MVP
             </div>
             <div
@@ -185,8 +186,8 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
               width: 44,
               height: 44,
               borderRadius: '50%',
-              background: 'rgba(168, 85, 247, 0.12)',
-              border: '1px solid rgba(168, 85, 247, 0.25)',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid var(--border-color, #e2e8f0)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -197,7 +198,7 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
             ⚔️
           </div>
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#9333ea', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#818cf8', textTransform: 'uppercase' }}>
               Algorithm Knight
             </div>
             <div
@@ -244,8 +245,8 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
               width: 44,
               height: 44,
               borderRadius: '50%',
-              background: 'rgba(59, 130, 246, 0.12)',
-              border: '1px solid rgba(59, 130, 246, 0.25)',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid var(--border-color, #e2e8f0)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -256,7 +257,7 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
             🗄️
           </div>
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#2563eb', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#60a5fa', textTransform: 'uppercase' }}>
               SQL Grandmaster
             </div>
             <div

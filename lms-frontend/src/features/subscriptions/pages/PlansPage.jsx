@@ -81,13 +81,12 @@ export const PlansPage = () => {
   const handleConfirmChange = async () => {
     setIsUpdating(true);
     try {
-      // Simulate API call to update subscription tier
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      toast.success(`Plan updated to ${selectedPlan?.name}!`);
-      setIsModalOpen(false);
-      navigate(ROUTES.SUBSCRIPTION);
+      // TODO: replace with real plan-change API once billing backend is implemented
+      // await subscriptionService.changePlan({ planId: selectedPlan.id, annual: isAnnual });
+      throw new Error('Billing API not yet implemented');
     } catch {
-      toast.error('Failed to change plan. Please try again.');
+      toast.error('Plan changes are not available yet. Please contact your platform administrator.');
+      setIsModalOpen(false);
     } finally {
       setIsUpdating(false);
     }
