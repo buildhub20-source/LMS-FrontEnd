@@ -55,6 +55,7 @@ const AddInstructorPage = lazy(() => import('../features/instructors/pages/AddIn
 const EditInstructorPage = lazy(() => import('../features/instructors/pages/EditInstructorPage'));
 const InstructorDetailsPage = lazy(() => import('../features/instructors/pages/InstructorDetailsPage'));
 const BatchListPage = lazy(() => import('../features/batches/pages/BatchListPage'));
+const InstructorBatchListPage = lazy(() => import('../features/batches/pages/InstructorBatchListPage'));
 const AddStudentPage = lazy(() => import('../features/students/pages/AddStudentPage'));
 const AdminAnalyticsPage = lazy(() => import('../features/analytics/pages/AdminAnalyticsPage'));
 const ResourceManagementPage = lazy(
@@ -89,9 +90,12 @@ const AssessmentListPage = lazy(() => import('../features/assessments/pages/Asse
 const AssessmentResultPage = lazy(() => import('../features/assessments/pages/AssessmentResultPage'));
 const StudentAssessmentTakingPage = lazy(() => import('../features/assessments/pages/StudentAssessmentTakingPage'));
 const CreateAssessmentPage = lazy(() => import('../features/assessments/pages/CreateAssessmentPage'));
+const GlobalSubmissionsHistoryPage = lazy(() => import('../features/assessments/pages/GlobalSubmissionsHistoryPage'));
 
 const CertificateListPage = lazy(() => import('../features/certificates/pages/CertificateListPage'));
 const CertificateDetailsPage = lazy(() => import('../features/certificates/pages/CertificateDetailsPage'));
+const PublicCertificateVerifyPage = lazy(() => import('../features/certificates/pages/PublicCertificateVerifyPage'));
+const InstructorCertificationHubPage = lazy(() => import('../features/certificates/pages/InstructorCertificationHubPage'));
 const GamificationDashboard = lazy(() => import('../features/gamification/pages/GamificationDashboard'));
 const AdminGamificationPage = lazy(() => import('../features/gamification/pages/AdminGamificationPage'));
 const StudentCalendarPage = lazy(() => import('../features/calendar/pages/StudentCalendarPage'));
@@ -130,6 +134,10 @@ export const router = createBrowserRouter([
       { path: ROUTES.PLATFORM_ANNOUNCEMENTS, element: suspend(<PlatformAnnouncementsPage />) },
     ],
   },
+
+  // Public Certificate Verification
+  { path: ROUTES.PUBLIC_CERTIFICATE_VERIFY, element: suspend(<PublicCertificateVerifyPage />) },
+  { path: '/verify/:serialNumber', element: suspend(<PublicCertificateVerifyPage />) },
 
   // Auth / Guest routes
   {
@@ -206,6 +214,7 @@ export const router = createBrowserRouter([
                   { path: ROUTES.ADMIN_ASSESSMENT_CREATE, element: suspend(<AdminCreateAssessmentPage />) },
                   { path: ROUTES.ADMIN_ASSESSMENT_DETAILS(), element: suspend(<AdminAssessmentDetailsPage />) },
                   { path: ROUTES.ADMIN_ASSESSMENT_EDIT(), element: suspend(<AdminEditAssessmentPage />) },
+                  { path: ROUTES.ADMIN_SUBMISSIONS_HISTORY, element: suspend(<GlobalSubmissionsHistoryPage />) },
                   { path: ROUTES.ADMIN_GRADING, element: suspend(<GradingWorkflowPage />) },
                   { path: ROUTES.ADMIN_RUBRICS, element: suspend(<RubricManagerPage />) },
                   { path: ROUTES.ADMIN_QUESTION_BANK, element: suspend(<QuestionBankPage />) },
@@ -226,6 +235,8 @@ export const router = createBrowserRouter([
               { index: true, element: <Navigate to={ROUTES.COURSES} replace /> },
               { path: ROUTES.INSTRUCTOR_ANALYTICS, element: suspend(<InstructorAnalyticsPage />) },
               { path: ROUTES.COURSES, element: suspend(<CourseListPage />) },
+              { path: ROUTES.INSTRUCTOR_BATCHES, element: suspend(<InstructorBatchListPage />) },
+              { path: ROUTES.INSTRUCTOR_CERTIFICATES, element: suspend(<InstructorCertificationHubPage />) },
               { path: ROUTES.COURSE_CREATE, element: suspend(<CreateCoursePage />) },
               { path: ROUTES.COURSE_DETAILS(), element: suspend(<CourseDetailsPage />) },
               { path: ROUTES.COURSE_EDIT(), element: suspend(<EditCoursePage />) },
@@ -234,6 +245,7 @@ export const router = createBrowserRouter([
               { path: ROUTES.ASSESSMENT_CREATE, element: suspend(<CreateAssessmentPage />) },
               { path: ROUTES.INSTRUCTOR_ASSESSMENT_DETAILS(), element: suspend(<AdminAssessmentDetailsPage />) },
               { path: ROUTES.INSTRUCTOR_ASSESSMENT_EDIT(), element: suspend(<AdminEditAssessmentPage />) },
+              { path: ROUTES.INSTRUCTOR_SUBMISSIONS_HISTORY, element: suspend(<GlobalSubmissionsHistoryPage />) },
               { path: ROUTES.INSTRUCTOR_GRADING, element: suspend(<GradingWorkflowPage />) },
               { path: ROUTES.INSTRUCTOR_RUBRICS, element: suspend(<RubricManagerPage />) },
               { path: ROUTES.INSTRUCTOR_ANNOUNCEMENTS, element: suspend(<AnnouncementsPage />) },

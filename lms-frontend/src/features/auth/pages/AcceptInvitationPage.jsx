@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import {
@@ -122,7 +122,7 @@ export const AcceptInvitationPage = () => {
             </div>
             <span style={styles.logoText}>LMS Platform</span>
           </div>
-          <h2 style={styles.brandHeading}>You've been invited!</h2>
+          <h2 style={styles.brandHeading}>You&apos;ve been invited!</h2>
           <p style={styles.brandBody}>
             Set up your password to activate your account and get full access to the Learning
             Management System.

@@ -8,7 +8,14 @@ import Alert from '../../../components/feedback/Alert';
 import { assessmentSchema } from '../validation/assessmentSchemas';
 import s from './AssessmentForms.module.css';
 
-const toLocal = (iso) => (iso ? iso.slice(0, 16) : '');
+const toLocal = (iso) => {
+  if (!iso) return '';
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+  const pad = (value) => String(value).padStart(2, '0');
+  return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate())
+    + 'T' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+};
 
 export const AdminAssessmentForm = ({
   defaultValues = {},
@@ -26,7 +33,6 @@ export const AdminAssessmentForm = ({
     resolver: zodResolver(assessmentSchema),
     defaultValues: {
       title: '', description: '', durationMinutes: 60, maxAttempts: 1,
-      startTime: '', endTime: '', showResultAnalytics: true,
       ...defaultValues,
       showResultAnalytics: defaultValues.showResultAnalytics !== undefined ? defaultValues.showResultAnalytics : true,
       startTime: toLocal(defaultValues.startTime),
@@ -234,7 +240,7 @@ export const AdminAssessmentForm = ({
             </div>
             <div className={s.helpItem}>
               <div className={s.helpDot} />
-              <p className={s.helpText}><strong>Add questions after saving.</strong> You'll be taken to the assessment page to add coding problems.</p>
+              <p className={s.helpText}><strong>Add questions after saving.</strong> You&apos;ll be taken to the assessment page to add coding problems.</p>
             </div>
           </div>
         </div>

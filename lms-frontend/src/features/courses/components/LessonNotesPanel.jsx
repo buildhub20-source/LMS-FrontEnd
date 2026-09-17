@@ -68,7 +68,7 @@ export const LessonNotesPanel = ({
       try {
         localStorage.setItem(storageKey, noteContent);
         setLastSaved(new Date());
-      } catch (_) {}
+      } catch (_) { /* Best-effort browser cleanup; failure must not block the workflow. */ }
     }, 600);
     return () => clearTimeout(timer);
   }, [noteContent, storageKey]);
@@ -98,7 +98,7 @@ export const LessonNotesPanel = ({
       setNoteContent('');
       try {
         localStorage.removeItem(storageKey);
-      } catch (_) {}
+      } catch (_) { /* Best-effort browser cleanup; failure must not block the workflow. */ }
     }
   }, [storageKey]);
 
@@ -117,7 +117,7 @@ export const LessonNotesPanel = ({
               content,
             };
           }
-        } catch (_) {}
+        } catch (_) { /* Best-effort browser cleanup; failure must not block the workflow. */ }
         return null;
       })
       .filter(Boolean);
@@ -444,7 +444,7 @@ export const LessonNotesPanel = ({
               <FileText size={28} style={{ margin: '0 auto 8px', opacity: 0.5 }} />
               <p style={{ margin: 0 }}>No notes saved across this course yet.</p>
               <p style={{ margin: '4px 0 0', fontSize: 11 }}>
-                Switch to "Current Lesson" to write your first note!
+                Switch to &quot;Current Lesson&quot; to write your first note!
               </p>
             </div>
           ) : (

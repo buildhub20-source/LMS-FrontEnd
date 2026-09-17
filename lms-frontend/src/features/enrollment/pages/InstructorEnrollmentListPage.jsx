@@ -1,11 +1,11 @@
 import { useState } from 'react';
+import { format } from 'date-fns';
 import PageContainer from '../../../components/layout/PageContainer';
 import DataTable from '../../../components/common/DataTable/DataTable';
 import Button from '../../../components/common/Button/Button';
 import Badge from '../../../components/common/Badge/Badge';
 import { useInstructorEnrollments } from '../hooks/useEnrollments';
 import EnrollmentFormModal from '../components/EnrollmentFormModal';
-import { format } from 'date-fns';
 
 export const InstructorEnrollmentListPage = () => {
   const [page, setPage] = useState(0);

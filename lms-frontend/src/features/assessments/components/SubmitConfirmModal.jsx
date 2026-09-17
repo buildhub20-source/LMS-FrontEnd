@@ -16,14 +16,13 @@ export const SubmitConfirmModal = ({
   assessmentTitle = 'Assessment',
   onJumpToQuestion,
 }) => {
-  if (!isOpen) return null;
 
   const answered = questions.filter((q) => drafts[q.id]?.sourceCode?.trim());
   const unanswered = questions.filter((q) => !drafts[q.id]?.sourceCode?.trim());
   const completionPct = questions.length > 0 ? Math.round((answered.length / questions.length) * 100) : 0;
 
   React.useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || isLoading) return;
     const handleModalKey = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         e.preventDefault();
@@ -35,7 +34,9 @@ export const SubmitConfirmModal = ({
     };
     window.addEventListener('keydown', handleModalKey);
     return () => window.removeEventListener('keydown', handleModalKey);
-  }, [isOpen, onConfirm, onClose]);
+  }, [isOpen, isLoading, onConfirm, onClose]);
+
+  if (!isOpen) return null;
 
   return createPortal(
     <div

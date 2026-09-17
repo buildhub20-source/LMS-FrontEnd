@@ -26,6 +26,8 @@ import {
   ExternalLink,
   MessageSquare,
   ChevronRight,
+  Search,
+  X,
 } from 'lucide-react';
 import useAuth from '../../auth/hooks/useAuth';
 import { useMyCourses } from '../../courses/hooks/useCourses';
@@ -36,11 +38,15 @@ import { QUERY_KEYS } from '../../../constants/appConstants';
 import Spinner from '../../../components/common/Spinner';
 import { useResources } from '../../resources/hooks/useResources';
 import resourceService from '../../resources/services/resourceService';
+import LeetCodeBadge from '../../assessments/components/LeetCodeBadge';
+import BadgeDetailModal from '../../assessments/components/BadgeDetailModal';
+import { LEETCODE_BADGES } from '../../assessments/utils/badgeDefinitions';
 
 export const StudentDashboardPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const studentName = user?.fullName || user?.firstName || user?.email?.split('@')[0] || 'Learner';
+  const [selectedBadge, setSelectedBadge] = useState(null);
 
   // Current time greeting
   const greeting = useMemo(() => {
@@ -60,6 +66,20 @@ export const StudentDashboardPage = () => {
   // 2. Fetch My Enrolled Courses
   const { data: coursesData, isLoading: coursesLoading } = useMyCourses();
   const { data: toolkitResources = [] } = useResources();
+  const [showAllGuidesModal, setShowAllGuidesModal] = useState(false);
+  const [toolkitCategoryFilter, setToolkitCategoryFilter] = useState('ALL');
+  const [toolkitSearch, setToolkitSearch] = useState('');
+
+  const filteredModalGuides = useMemo(() => {
+    return toolkitResources.filter((g) => {
+      const matchCat = toolkitCategoryFilter === 'ALL' || g.category === toolkitCategoryFilter;
+      const matchSearch =
+        !toolkitSearch ||
+        g.title?.toLowerCase().includes(toolkitSearch.toLowerCase()) ||
+        g.description?.toLowerCase().includes(toolkitSearch.toLowerCase());
+      return matchCat && matchSearch;
+    });
+  }, [toolkitResources, toolkitCategoryFilter, toolkitSearch]);
   const courses = useMemo(() => {
     const raw =
       coursesData?.content ??
@@ -125,16 +145,7 @@ export const StudentDashboardPage = () => {
   const maxHours = Math.max(1, ...weeklyTrends.map((d) => d.hours || 0));
 
   // Quick download helper for study cheatsheets
-  const handleQuickDownload = (fileName, title, content) => {
-    const text = `# ${title}\nGenerated on: ${new Date().toLocaleDateString()}\nStudent: ${studentName}\n\n${content}`;
-    const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+  
 
   const stats = [
     {
@@ -870,7 +881,7 @@ export const StudentDashboardPage = () => {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Target size={18} className="text-emerald-400" />
                 <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
-                  Today's Study Goal
+                  Today&apos;s Study Goal
                 </h3>
               </div>
               <span style={{ fontSize: 12, fontWeight: 700, color: '#10b981' }}>
@@ -993,7 +1004,7 @@ export const StudentDashboardPage = () => {
         {/* Right Column: Gamification Badges & Quick Study Toolkit */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           
-          {/* Skill Badges & Milestones */}
+          {/* LeetCode Skill Badges & Category Standings */}
           <div
             style={{
               background: 'var(--lms-card)',
@@ -1002,72 +1013,89 @@ export const StudentDashboardPage = () => {
               padding: 22,
               display: 'flex',
               flexDirection: 'column',
-              gap: 14,
+              gap: 16,
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Trophy size={18} className="text-yellow-400" />
                 <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
-                  Skill Badges & Milestones
+                  Skill Badges &amp; Category Standings
                 </h3>
               </div>
-              <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)' }}>
-                2 Unlocked
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#f59e0b' }}>
+                LeetCode Honors
               </span>
             </div>
 
+            {/* Badges Display Grid */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              {badges.map((b) => (
+              {LEETCODE_BADGES.slice(0, 4).map((b) => (
                 <div
                   key={b.id}
+                  onClick={() => setSelectedBadge(b)}
                   style={{
                     background: 'var(--surface-medium)',
                     border: '1px solid var(--border-color)',
                     borderRadius: 12,
-                    padding: 12,
+                    padding: '10px 12px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 8,
+                    gap: 6,
+                    cursor: 'pointer',
+                    transition: 'transform 0.15s ease',
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'none')}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div
-                      style={{
-                        width: 32,
-                        height: 32,
-                        borderRadius: 8,
-                        background: b.badgeBg,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      {b.icon}
-                    </div>
-                    <span
-                      style={{
-                        fontSize: 9,
-                        fontWeight: 700,
-                        padding: '2px 6px',
-                        borderRadius: 4,
-                        background: b.status === 'UNLOCKED' ? 'rgba(16, 185, 129, 0.15)' : b.status === 'IN_PROGRESS' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255, 255, 255, 0.05)',
-                        color: b.status === 'UNLOCKED' ? '#10b981' : b.status === 'IN_PROGRESS' ? '#3b82f6' : 'var(--text-muted)',
-                      }}
-                    >
-                      {b.status === 'UNLOCKED' ? 'EARNED' : b.status === 'IN_PROGRESS' ? `${b.progress}%` : 'LOCKED'}
+                    <LeetCodeBadge badge={b} size="xs" interactive={false} />
+                    <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)' }}>
+                      {b.tier.label}
                     </span>
                   </div>
-                  <div>
-                    <h5 style={{ margin: '0 0 2px', fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
-                      {b.title}
-                    </h5>
-                    <p style={{ margin: 0, fontSize: 10, color: 'var(--text-muted)', lineHeight: 1.3 }}>
-                      {b.desc}
-                    </p>
-                  </div>
+                  <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.3 }}>
+                    {b.criteria}
+                  </p>
                 </div>
               ))}
+            </div>
+
+            {/* Category Standing Progress Mini-Bars */}
+            <div
+              style={{
+                background: 'var(--surface-dark, rgba(0,0,0,0.2))',
+                borderRadius: 12,
+                padding: 12,
+                border: '1px solid var(--border-color)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 10,
+              }}
+            >
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase' }}>
+                Category Skill Percentile
+              </div>
+
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>💻 Algorithms &amp; Coding</span>
+                  <strong style={{ color: '#a855f7' }}>Top 12% (Knight)</strong>
+                </div>
+                <div style={{ height: 5, borderRadius: 99, background: 'var(--border-color)', overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: '88%', background: '#a855f7', borderRadius: 99 }} />
+                </div>
+              </div>
+
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>🗄️ Database &amp; SQL</span>
+                  <strong style={{ color: '#3b82f6' }}>Top 15% (Grandmaster)</strong>
+                </div>
+                <div style={{ height: 5, borderRadius: 99, background: 'var(--border-color)', overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: '85%', background: '#3b82f6', borderRadius: 99 }} />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1101,59 +1129,387 @@ export const StudentDashboardPage = () => {
                   No campus guides uploaded yet.
                 </div>
               ) : (
-                toolkitResources.slice(0, 4).map((guide) => (
-                  <div
-                    key={guide.id}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '10px 14px',
-                      borderRadius: 10,
-                      background: 'var(--surface-medium)',
-                      border: '1px solid var(--border-color)',
-                      gap: 10,
-                    }}
-                  >
-                    <div style={{ minWidth: 0 }}>
-                      <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {guide.title}
-                      </p>
-                      <p style={{ margin: '2px 0 0', fontSize: 10, color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {guide.description || `${guide.fileType} • ${guide.fileSize}`}
-                      </p>
-                    </div>
+                <>
+                  {toolkitResources.slice(0, 5).map((guide) => {
+                    const isNew = guide.createdAt && (Date.now() - new Date(guide.createdAt).getTime() < 7 * 24 * 3600 * 1000);
+                    const fileTypeUpper = (guide.fileType || 'PDF').toUpperCase();
+                    const badgeColor =
+                      fileTypeUpper === 'DOCX' || fileTypeUpper === 'DOC'
+                        ? { bg: 'rgba(59, 130, 246, 0.15)', text: '#60a5fa', border: 'rgba(59, 130, 246, 0.3)' }
+                        : fileTypeUpper === 'ZIP' || fileTypeUpper === 'RAR'
+                        ? { bg: 'rgba(16, 185, 129, 0.15)', text: '#34d399', border: 'rgba(16, 185, 129, 0.3)' }
+                        : { bg: 'rgba(239, 68, 68, 0.15)', text: '#f87171', border: 'rgba(239, 68, 68, 0.3)' };
+
+                    return (
+                      <div
+                        key={guide.id}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '10px 14px',
+                          borderRadius: 10,
+                          background: 'var(--surface-medium)',
+                          border: '1px solid var(--border-color)',
+                          gap: 10,
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <span
+                              style={{
+                                fontSize: 9,
+                                fontWeight: 800,
+                                padding: '1px 5px',
+                                borderRadius: 4,
+                                background: badgeColor.bg,
+                                color: badgeColor.text,
+                                border: `1px solid ${badgeColor.border}`,
+                                letterSpacing: '0.5px',
+                              }}
+                            >
+                              {fileTypeUpper}
+                            </span>
+                            <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {guide.title}
+                            </p>
+                            {isNew && (
+                              <span
+                                style={{
+                                  fontSize: 9,
+                                  fontWeight: 800,
+                                  padding: '1px 5px',
+                                  borderRadius: 99,
+                                  background: 'rgba(249, 115, 22, 0.2)',
+                                  color: '#fb923c',
+                                  border: '1px solid rgba(249, 115, 22, 0.4)',
+                                  letterSpacing: '0.4px',
+                                }}
+                              >
+                                NEW
+                              </span>
+                            )}
+                          </div>
+                          <p style={{ margin: 0, fontSize: 10, color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {guide.description || `${guide.fileSize || 'Reference Guide'} • by ${guide.authorRole || 'Faculty'}`}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => resourceService.downloadFile(guide)}
+                          title={`Download ${guide.title}`}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            padding: '6px 12px',
+                            borderRadius: 6,
+                            fontSize: 11,
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            background: 'var(--surface-light, #27272a)',
+                            border: '1px solid var(--border-color)',
+                            color: 'var(--text-primary)',
+                            whiteSpace: 'nowrap',
+                            transition: 'all 0.15s ease',
+                          }}
+                        >
+                          <Download size={12} />
+                          Get
+                        </button>
+                      </div>
+                    );
+                  })}
+
+                  {toolkitResources.length > 0 && (
                     <button
-                      onClick={() => resourceService.downloadFile(guide)}
-                      title="Download guide"
+                      onClick={() => setShowAllGuidesModal(true)}
                       style={{
+                        marginTop: 4,
                         display: 'flex',
                         alignItems: 'center',
-                        gap: 4,
-                        padding: '5px 10px',
-                        borderRadius: 6,
-                        fontSize: 11,
+                        justifyContent: 'center',
+                        gap: 6,
+                        padding: '9px 12px',
+                        borderRadius: 8,
+                        fontSize: 12,
                         fontWeight: 600,
                         cursor: 'pointer',
-                        background: 'var(--surface-light, #27272a)',
-                        border: '1px solid var(--border-color)',
-                        color: 'var(--text-primary)',
-                        whiteSpace: 'nowrap',
+                        background: 'rgba(59, 130, 246, 0.08)',
+                        border: '1px solid rgba(59, 130, 246, 0.2)',
+                        color: '#60a5fa',
+                        transition: 'all 0.15s ease',
                       }}
                     >
-                      <Download size={12} />
-                      Get
+                      View All {toolkitResources.length} Study Guides & Kits
+                      <ChevronRight size={14} />
                     </button>
-                  </div>
-                ))
+                  )}
+                </>
               )}
             </div>
           </div>
 
-        </div>
+          {/* ── All Guides & Toolkits Modal ── */}
+          {showAllGuidesModal && (
+            <div
+              style={{
+                position: 'fixed',
+                inset: 0,
+                zIndex: 9999,
+                background: 'rgba(0, 0, 0, 0.75)',
+                backdropFilter: 'blur(6px)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 16,
+              }}
+              onClick={() => setShowAllGuidesModal(false)}
+            >
+              <div
+                style={{
+                  background: '#12131a',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  borderRadius: 20,
+                  width: '100%',
+                  maxWidth: 680,
+                  maxHeight: '85vh',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.7)',
+                  overflow: 'hidden',
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Modal Header */}
+                <div
+                  style={{
+                    padding: '20px 24px',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: 10,
+                        background: 'rgba(59, 130, 246, 0.15)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#60a5fa',
+                      }}
+                    >
+                      <Download size={18} />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: '#fff' }}>
+                        Campus Study Toolkits & Reference Guides
+                      </h3>
+                      <p style={{ margin: 0, fontSize: 12, color: '#94a3b8' }}>
+                        {toolkitResources.length} official offline resources published for all students
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowAllGuidesModal(false)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#94a3b8',
+                      cursor: 'pointer',
+                      padding: 6,
+                      borderRadius: 8,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
 
+                {/* Modal Controls (Search & Categories) */}
+                <div style={{ padding: '16px 24px', display: 'flex', flexDirection: 'column', gap: 12, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  {/* Search Bar */}
+                  <div style={{ position: 'relative', width: '100%' }}>
+                    <Search
+                      size={16}
+                      style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#64748b' }}
+                    />
+                    <input
+                      type="text"
+                      value={toolkitSearch}
+                      onChange={(e) => setToolkitSearch(e.target.value)}
+                      placeholder="Search guides, topics, keywords..."
+                      style={{
+                        width: '100%',
+                        padding: '10px 14px 10px 38px',
+                        borderRadius: 10,
+                        background: 'rgba(255, 255, 255, 0.04)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        color: '#fff',
+                        fontSize: 13,
+                        outline: 'none',
+                        boxSizing: 'border-box',
+                      }}
+                    />
+                  </div>
+
+                  {/* Category Filter Pills */}
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {[
+                      { key: 'ALL', label: 'All Resources' },
+                      { key: 'CHEATSHEET', label: 'Cheatsheets' },
+                      { key: 'ACADEMIC_GUIDE', label: 'Academic Guides' },
+                      { key: 'POLICY_EXAM', label: 'Policies' },
+                      { key: 'SOFTWARE_KIT', label: 'Software Kits' },
+                    ].map((cat) => (
+                      <button
+                        key={cat.key}
+                        onClick={() => setToolkitCategoryFilter(cat.key)}
+                        style={{
+                          padding: '5px 12px',
+                          borderRadius: 8,
+                          fontSize: 11,
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          border: toolkitCategoryFilter === cat.key ? '1px solid #3b82f6' : '1px solid rgba(255,255,255,0.08)',
+                          background: toolkitCategoryFilter === cat.key ? '#2563eb' : 'rgba(255,255,255,0.03)',
+                          color: toolkitCategoryFilter === cat.key ? '#fff' : '#94a3b8',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Modal Resource List */}
+                <div style={{ padding: '16px 24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
+                  {filteredModalGuides.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '36px 12px', color: '#64748b' }}>
+                      No study guides match your query.
+                    </div>
+                  ) : (
+                    filteredModalGuides.map((guide) => {
+                      const isNew = guide.createdAt && (Date.now() - new Date(guide.createdAt).getTime() < 7 * 24 * 3600 * 1000);
+                      const fileTypeUpper = (guide.fileType || 'PDF').toUpperCase();
+                      const badgeColor =
+                        fileTypeUpper === 'DOCX' || fileTypeUpper === 'DOC'
+                          ? { bg: 'rgba(59, 130, 246, 0.15)', text: '#60a5fa', border: 'rgba(59, 130, 246, 0.3)' }
+                          : fileTypeUpper === 'ZIP' || fileTypeUpper === 'RAR'
+                          ? { bg: 'rgba(16, 185, 129, 0.15)', text: '#34d399', border: 'rgba(16, 185, 129, 0.3)' }
+                          : { bg: 'rgba(239, 68, 68, 0.15)', text: '#f87171', border: 'rgba(239, 68, 68, 0.3)' };
+
+                      return (
+                        <div
+                          key={guide.id}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '14px 16px',
+                            borderRadius: 12,
+                            background: 'rgba(255, 255, 255, 0.02)',
+                            border: '1px solid rgba(255, 255, 255, 0.06)',
+                            gap: 14,
+                          }}
+                        >
+                          <div style={{ minWidth: 0, flex: 1 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                              <span
+                                style={{
+                                  fontSize: 10,
+                                  fontWeight: 800,
+                                  padding: '2px 7px',
+                                  borderRadius: 5,
+                                  background: badgeColor.bg,
+                                  color: badgeColor.text,
+                                  border: `1px solid ${badgeColor.border}`,
+                                }}
+                              >
+                                {fileTypeUpper}
+                              </span>
+                              <h4 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#fff' }}>
+                                {guide.title}
+                              </h4>
+                              {isNew && (
+                                <span
+                                  style={{
+                                    fontSize: 9,
+                                    fontWeight: 800,
+                                    padding: '1px 6px',
+                                    borderRadius: 99,
+                                    background: 'rgba(249, 115, 22, 0.2)',
+                                    color: '#fb923c',
+                                    border: '1px solid rgba(249, 115, 22, 0.4)',
+                                  }}
+                                >
+                                  NEW
+                                </span>
+                              )}
+                            </div>
+                            <p style={{ margin: '0 0 6px', fontSize: 12, color: '#94a3b8', lineHeight: 1.4 }}>
+                              {guide.description || 'Supplementary institutional learning toolkit.'}
+                            </p>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 11, color: '#64748b' }}>
+                              <span>{guide.fileSize || 'Unknown size'}</span>
+                              <span>•</span>
+                              <span>Published by {guide.author || guide.authorName || 'Faculty'} ({guide.authorRole || 'Admin'})</span>
+                              {guide.downloadsCount > 0 && (
+                                <>
+                                  <span>•</span>
+                                  <span>{guide.downloadsCount} downloads</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => resourceService.downloadFile(guide)}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 6,
+                              padding: '8px 14px',
+                              borderRadius: 8,
+                              fontSize: 12,
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              border: 'none',
+                              background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+                              color: '#fff',
+                              whiteSpace: 'nowrap',
+                              boxShadow: '0 2px 8px rgba(37, 99, 235, 0.3)',
+                            }}
+                          >
+                            <Download size={13} />
+                            Download
+                          </button>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
+      {/* Badge Lore & Criteria Modal */}
+      {selectedBadge && (
+        <BadgeDetailModal
+          badge={selectedBadge}
+          onClose={() => setSelectedBadge(null)}
+        />
+      )}
     </div>
   );
 };

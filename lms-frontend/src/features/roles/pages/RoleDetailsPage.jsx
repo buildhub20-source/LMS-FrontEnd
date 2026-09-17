@@ -32,7 +32,7 @@ export const RoleDetailsPage = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const { data: rawData, isLoading, error, refetch } = useQuery({
+  const { data: rawData, isLoading, error } = useQuery({
     queryKey: ['role', roleId],
     queryFn: () => roleService.getById(roleId),
     enabled: Boolean(roleId),
@@ -307,7 +307,7 @@ export const RoleDetailsPage = () => {
               border: '1px dashed var(--border-color)',
               borderRadius: 12,
             }}>
-              No permissions found matching "{permSearch}"
+              No permissions found matching &quot;{permSearch}&quot;
             </div>
           ) : (
             <div style={{

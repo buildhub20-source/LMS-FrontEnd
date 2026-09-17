@@ -57,6 +57,7 @@ export const ROUTES = Object.freeze({
   ADMIN_ASSESSMENT_CREATE: '/admin/assessments/new',
   ADMIN_ASSESSMENT_DETAILS: (id = ':assessmentId') => `/admin/assessments/${id}`,
   ADMIN_ASSESSMENT_EDIT: (id = ':assessmentId') => `/admin/assessments/${id}/edit`,
+  ADMIN_SUBMISSIONS_HISTORY: '/admin/assessments/submissions-history',
   ADMIN_GRADING: '/admin/assessments/grading',
   ADMIN_RUBRICS: '/admin/assessments/rubrics',
   ADMIN_GAMIFICATION: '/admin/gamification',
@@ -72,11 +73,14 @@ export const ROUTES = Object.freeze({
   ASSESSMENT_CREATE: '/instructor/assessments/new',
   INSTRUCTOR_ASSESSMENT_DETAILS: (id = ':assessmentId') => `/instructor/assessments/${id}`,
   INSTRUCTOR_ASSESSMENT_EDIT: (id = ':assessmentId') => `/instructor/assessments/${id}/edit`,
+  INSTRUCTOR_SUBMISSIONS_HISTORY: '/instructor/assessments/submissions-history',
   INSTRUCTOR_GRADING: '/instructor/assessments/grading',
   INSTRUCTOR_RUBRICS: '/instructor/assessments/rubrics',
   INSTRUCTOR_RESOURCES: '/instructor/resources',
   INSTRUCTOR_ANNOUNCEMENTS: '/instructor/announcements',
   INSTRUCTOR_QUESTION_BANK: '/instructor/question-bank',
+  INSTRUCTOR_BATCHES: '/instructor/batches',
+  INSTRUCTOR_CERTIFICATES: '/instructor/certificates',
   ADMIN_QUESTION_BANK: '/admin/assessments/question-bank',
 
   // Student
@@ -94,6 +98,10 @@ export const ROUTES = Object.freeze({
   GAMIFICATION: '/learn/gamification',
   CALENDAR: '/learn/calendar',
   NOTES_BOOKMARKS: '/learn/notes',
+
+  // Public & Verification
+  PUBLIC_CERTIFICATE_VERIFY: '/verify',
+  PUBLIC_CERTIFICATE_VERIFY_SERIAL: (serial = ':serialNumber') => `/verify/${serial}`,
 
   // Shared
   NOTIFICATIONS: '/notifications',

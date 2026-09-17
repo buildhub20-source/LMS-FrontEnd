@@ -48,7 +48,7 @@ export const ExamLockdownOverlay = ({
   const isReadyToEnter = isScreenActive && !loading && !error;
 
   const onCountdownCompleteRef = useRef(onCountdownComplete);
-  onCountdownCompleteRef.current = onCountdownComplete;
+  useEffect(() => { onCountdownCompleteRef.current = onCountdownComplete; }, [onCountdownComplete]);
 
   // 15-Second Launch Countdown
   useEffect(() => {

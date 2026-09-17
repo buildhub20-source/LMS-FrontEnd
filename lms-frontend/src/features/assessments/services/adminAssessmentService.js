@@ -16,6 +16,7 @@ export const adminAssessmentService = {
   unpublish: (id) => http.post(ep.unpublish(id)),
   close: (id) => http.post(ep.close(id)),
   archive: (id) => http.post(ep.archive(id)),
+  duplicate: (id) => http.post(ep.duplicate(id)),
 
   // Questions
   getQuestions: (assessmentId) => http.get(ep.questions(assessmentId)),
@@ -32,6 +33,10 @@ export const adminAssessmentService = {
   // Result Analytics Visibility Toggle
   toggleResultAnalytics: (id, enabled) =>
     http.patch(ep.resultAnalytics(id), null, { params: { enabled } }),
+
+  // Time & Scheduling Management
+  extend: (id, minutes) => http.post(ep.extend(id), { minutes }),
+  updateSchedule: (id, { startTime, endTime }) => http.patch(ep.schedule(id), { startTime, endTime }),
 };
 
 export default adminAssessmentService;

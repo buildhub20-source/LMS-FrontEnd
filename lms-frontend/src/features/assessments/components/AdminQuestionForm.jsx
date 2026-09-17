@@ -1,9 +1,13 @@
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState, useRef } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Code2, Zap, Plus, Trash2, Eye, EyeOff, Settings, CheckCircle2, ListFilter, HelpCircle, Copy, CheckCheck, ArrowRight, ArrowLeft } from 'lucide-react';
+import {
+  Code2, Plus, Trash2, Eye, EyeOff, Settings, CheckCircle2,
+  ListFilter, Copy, Check, ArrowRight, ArrowLeft,
+  Terminal, FileCode, Sliders, Sparkles, Bold, Italic, List,
+  Quote, Braces, AlertCircle, Table
+} from 'lucide-react';
 import Input from '../../../components/common/Input';
-import TextArea from '../../../components/common/TextArea';
 import Select from '../../../components/common/Select';
 import Button from '../../../components/common/Button';
 import Alert from '../../../components/feedback/Alert';
@@ -41,26 +45,66 @@ const EMPTY_Q = {
 
 const S = {
   card: {
-    background: 'var(--surface-dark, #0a0a0a)',
-    border: '1px solid var(--border-color, #222)',
-    borderRadius: 12,
+    background: 'var(--surface-dark, #ffffff)',
+    border: '1px solid var(--border-color, #e2e8f0)',
+    borderRadius: 14,
   },
   cardHeader: {
-    background: 'var(--surface-medium, #141414)',
-    borderBottom: '1px solid var(--border-color, #222)',
+    background: 'var(--surface-medium, #f8fafc)',
+    borderBottom: '1px solid var(--border-color, #e2e8f0)',
   },
   innerCard: {
-    background: 'var(--surface-medium, #141414)',
-    border: '1px solid var(--border-color, #222)',
-    borderRadius: 8,
+    background: 'var(--surface-medium, #f8fafc)',
+    border: '1px solid var(--border-color, #e2e8f0)',
+    borderRadius: 10,
   },
   textPrimary: {
-    color: 'var(--text-primary, #ffffff)',
+    color: 'var(--text-primary, #0f172a)',
   },
   textMuted: {
-    color: 'var(--text-muted, #a1a1aa)',
+    color: 'var(--text-muted, #64748b)',
   },
 };
+
+/**
+ * Lightweight safe Markdown renderer for problem statement live preview
+ */
+function renderMarkdownPreview(md) {
+  if (!md || !md.trim()) {
+    return '<p style="color: var(--text-muted); font-style: italic; font-size: 13px;">No description provided yet. Use the Write tab to draft the problem statement.</p>';
+  }
+  let html = md
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    // Code blocks
+    .replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (_, lang, code) => {
+      return `<pre style="margin: 12px 0; padding: 12px 14px; border-radius: 8px; background: var(--surface-dark); border: 1px solid var(--border-color); font-family: monospace; font-size: 12px; color: var(--text-primary); overflow-x: auto;"><code>${code.trim()}</code></pre>`;
+    })
+    // Inline code
+    .replace(/`([^`]+)`/g, '<code style="padding: 2px 6px; border-radius: 4px; background: var(--surface-medium); color: var(--text-primary); font-family: monospace; font-size: 12px; border: 1px solid var(--border-color);">$1</code>')
+    // Bold
+    .replace(/\*\*(.+?)\*\*/g, '<strong style="font-weight: 700; color: var(--text-primary);">$1</strong>')
+    // Italic
+    .replace(/\*([^*]+)\*/g, '<em style="font-style: italic; color: var(--text-secondary);">$1</em>')
+    // Headings
+    .replace(/^### (.+)$/gm, '<h4 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 14px 0 6px;">$1</h4>')
+    .replace(/^## (.+)$/gm, '<h3 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 18px 0 8px;">$1</h3>')
+    .replace(/^# (.+)$/gm, '<h2 style="font-size: 18px; font-weight: 800; color: var(--text-primary); margin: 20px 0 10px;">$1</h2>')
+    // Blockquote
+    .replace(/^> (.+)$/gm, '<blockquote style="margin: 12px 0; padding: 6px 14px; border-left: 3px solid var(--color-primary-500, #2563eb); background: var(--surface-medium); font-size: 12px; color: var(--text-secondary); border-radius: 0 8px 8px 0;">$1</blockquote>')
+    // Unordered lists
+    .replace(/^[-*] (.+)$/gm, '<li style="color: var(--text-secondary); margin-left: 16px; list-style: disc; margin-top: 3px; margin-bottom: 3px;">$1</li>')
+    // Ordered lists
+    .replace(/^\d+\. (.+)$/gm, '<li style="color: var(--text-secondary); margin-left: 16px; list-style: decimal; margin-top: 3px; margin-bottom: 3px;">$1</li>')
+    // Line breaks
+    .replace(/\n/g, '<br/>');
+
+  // Wrap lists
+  html = html.replace(/((<li style="[^"]*list-disc[^"]*">.*?<\/li><br\/>?)+)/g, '<ul style="margin: 8px 0; padding: 0;">$1</ul>');
+  html = html.replace(/((<li style="[^"]*list-decimal[^"]*">.*?<\/li><br\/>?)+)/g, '<ol style="margin: 8px 0; padding: 0;">$1</ol>');
+  return html;
+}
 
 export const AdminQuestionForm = ({
   defaultValues = EMPTY_Q,
@@ -72,6 +116,11 @@ export const AdminQuestionForm = ({
 }) => {
   const toast = useToast();
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [descTab, setDescTab] = useState('write'); // 'write' | 'preview'
+  const [copiedKey, setCopiedKey] = useState(null);
+  const [selectedCaseIndex, setSelectedCaseIndex] = useState(0);
+  const [showAllOverview, setShowAllOverview] = useState(false);
+  const descTextareaRef = useRef(null);
 
   const initialValues = useMemo(() => {
     const qType = defaultValues?.questionType || 'CODING';
@@ -131,7 +180,9 @@ export const AdminQuestionForm = ({
   } = useFieldArray({ control, name: 'options' });
 
   const questionType = watch('questionType') || 'CODING';
+  const difficultyWatch = watch('difficulty') || 'MEDIUM';
   const testCasesWatch = watch('testCases') || [];
+  const descriptionValue = watch('description') || '';
 
   // Ensure options exist when switching to MULTIPLE_CHOICE
   useEffect(() => {
@@ -143,24 +194,16 @@ export const AdminQuestionForm = ({
     }
   }, [questionType, optionFields.length, appendOption]);
 
-  // Categorize into visible (sample) and hidden (graded) test cases
-  const visibleCases = fields
-    .map((field, originalIndex) => ({
-      field,
-      originalIndex,
-      isSample: Boolean(testCasesWatch[originalIndex]?.sample),
-      isHidden: testCasesWatch[originalIndex]?.hidden !== undefined ? Boolean(testCasesWatch[originalIndex]?.hidden) : false,
-    }))
-    .filter((item) => item.isSample && !item.isHidden);
+  // Keep selectedCaseIndex within bounds
+  useEffect(() => {
+    if (fields.length > 0 && selectedCaseIndex >= fields.length) {
+      setSelectedCaseIndex(fields.length - 1);
+    }
+  }, [fields.length, selectedCaseIndex]);
 
-  const hiddenCases = fields
-    .map((field, originalIndex) => ({
-      field,
-      originalIndex,
-      isSample: Boolean(testCasesWatch[originalIndex]?.sample),
-      isHidden: testCasesWatch[originalIndex]?.hidden !== undefined ? Boolean(testCasesWatch[originalIndex]?.hidden) : true,
-    }))
-    .filter((item) => !item.isSample || item.isHidden);
+  // Summary counts
+  const visibleCasesCount = testCasesWatch.filter((tc) => Boolean(tc?.sample) && !tc?.hidden).length;
+  const hiddenCasesCount = testCasesWatch.filter((tc) => !tc?.sample || Boolean(tc?.hidden)).length;
 
   const handleAddVisibleCase = () => {
     append({
@@ -170,6 +213,8 @@ export const AdminQuestionForm = ({
       hidden: false,
       weight: 1,
     });
+    setSelectedCaseIndex(fields.length);
+    toast.success('Sample test case added');
   };
 
   const handleAddHiddenCase = () => {
@@ -180,6 +225,8 @@ export const AdminQuestionForm = ({
       hidden: true,
       weight: 1,
     });
+    setSelectedCaseIndex(fields.length);
+    toast.success('Hidden test case added');
   };
 
   const handleAddMultipleHiddenCases = (count = 3) => {
@@ -191,10 +238,12 @@ export const AdminQuestionForm = ({
       weight: 1,
     }));
     append(newCases);
+    setSelectedCaseIndex(fields.length);
+    toast.success(`Added ${count} hidden test cases`);
   };
 
-  const handleDuplicateTestCase = (originalIndex) => {
-    const current = watch(`testCases.${originalIndex}`);
+  const handleDuplicateTestCase = (idx) => {
+    const current = watch(`testCases.${idx}`);
     append({
       inputData: current?.inputData || '',
       expectedOutput: current?.expectedOutput || '',
@@ -202,134 +251,84 @@ export const AdminQuestionForm = ({
       hidden: current?.hidden !== undefined ? Boolean(current.hidden) : true,
       weight: current?.weight ? Number(current.weight) : 1,
     });
+    setSelectedCaseIndex(fields.length);
+    toast.success('Test case duplicated');
   };
 
-  const handleMoveToHidden = (originalIndex) => {
-    setValue(`testCases.${originalIndex}.sample`, false, { shouldValidate: true, shouldDirty: true });
-    setValue(`testCases.${originalIndex}.hidden`, true, { shouldValidate: true, shouldDirty: true });
+  const handleRemoveTestCase = (idx) => {
+    remove(idx);
+    if (selectedCaseIndex >= idx && selectedCaseIndex > 0) {
+      setSelectedCaseIndex(selectedCaseIndex - 1);
+    }
+    toast.success('Test case removed');
   };
 
-  const handleMoveToVisible = (originalIndex) => {
-    setValue(`testCases.${originalIndex}.sample`, true, { shouldValidate: true, shouldDirty: true });
-    setValue(`testCases.${originalIndex}.hidden`, false, { shouldValidate: true, shouldDirty: true });
+  const handleToggleVisibility = (idx) => {
+    const isSample = Boolean(watch(`testCases.${idx}.sample`));
+    const isHidden = watch(`testCases.${idx}.hidden`) !== undefined ? Boolean(watch(`testCases.${idx}.hidden`)) : !isSample;
+    const nowSample = isHidden || !isSample;
+
+    setValue(`testCases.${idx}.sample`, nowSample, { shouldValidate: true, shouldDirty: true });
+    setValue(`testCases.${idx}.hidden`, !nowSample, { shouldValidate: true, shouldDirty: true });
+    toast.success(nowSample ? 'Set as Visible Sample' : 'Set as Hidden (Graded Only)');
   };
 
-  const renderTestCaseCard = (item, displayIndex, isVisibleCol) => {
-    const { field, originalIndex } = item;
-    return (
-      <div 
-        key={field.id} 
-        style={S.innerCard}
-        className="relative p-4 shadow-sm hover:shadow-md transition-shadow group/tc rounded-xl"
-      >
-        {/* Test Case Header */}
-        <div className="flex justify-between items-center mb-3">
-          <div className="flex items-center gap-2">
-            <span style={S.textPrimary} className="text-sm font-bold">
-              {isVisibleCol ? `Sample ${displayIndex + 1}` : `Hidden ${displayIndex + 1}`}
-            </span>
-            <span className="text-[11px] font-medium text-gray-500">
-              (Case #{originalIndex + 1})
-            </span>
-          </div>
+  const handleCopyText = (key, text) => {
+    if (!text) return;
+    navigator.clipboard?.writeText(text);
+    setCopiedKey(key);
+    setTimeout(() => setCopiedKey(null), 1500);
+  };
 
-          <div className="flex items-center gap-1.5">
-            {/* Move between columns button */}
-            {isVisibleCol ? (
-              <button
-                type="button"
-                onClick={() => handleMoveToHidden(originalIndex)}
-                className="text-[11px] text-purple-400 hover:text-purple-300 flex items-center gap-1 transition-colors px-2 py-1 rounded hover:bg-purple-500/10 border border-purple-500/20"
-                title="Move this case to Hidden (graded only)"
-              >
-                Make Hidden <ArrowRight size={12} />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => handleMoveToVisible(originalIndex)}
-                className="text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors px-2 py-1 rounded hover:bg-blue-500/10 border border-blue-500/20"
-                title="Move this case to Visible (student sample)"
-              >
-                <ArrowLeft size={12} /> Make Visible
-              </button>
-            )}
+  // Helper to insert markdown in description textarea
+  const insertDescMarkdown = (before, after = '', placeholder = '') => {
+    const ta = descTextareaRef.current;
+    const current = watch('description') || '';
+    if (!ta) {
+      setValue('description', current + before + placeholder + after, { shouldValidate: true, shouldDirty: true });
+      return;
+    }
+    const start = ta.selectionStart ?? current.length;
+    const end = ta.selectionEnd ?? current.length;
+    const selected = current.substring(start, end);
+    const text = selected || placeholder;
+    const updated = current.substring(0, start) + before + text + after + current.substring(end);
+    setValue('description', updated, { shouldValidate: true, shouldDirty: true });
+    requestAnimationFrame(() => {
+      ta.focus();
+      const newPos = start + before.length + text.length + after.length;
+      ta.setSelectionRange(newPos, newPos);
+    });
+  };
 
-            {/* Duplicate Button */}
-            <button
-              type="button"
-              onClick={() => handleDuplicateTestCase(originalIndex)}
-              className="text-gray-400 hover:text-blue-400 transition-colors p-1.5 rounded-md hover:bg-blue-500/10"
-              title="Duplicate this test case"
-            >
-              <Copy size={14} />
-            </button>
+  // Helper to insert quick template into problem statement
+  const insertTemplate = (templateType) => {
+    const current = watch('description') || '';
+    let snippet = '';
+    if (templateType === 'example') {
+      snippet = `\n\n### Example 1:\n- **Input:** \`nums = [2, 7, 11, 15], target = 9\`\n- **Output:** \`0 1\`\n- **Explanation:** \`nums[0] + nums[1] == 9\`, so indices are \`0 1\`.\n`;
+    } else if (templateType === 'note') {
+      snippet = `\n\n> **Note:** Assume each input has exactly one valid solution, and elements cannot be reused twice.\n`;
+    } else if (templateType === 'followup') {
+      snippet = `\n\n**Follow-up:** Can you design an algorithm with a time complexity better than O(n²)?\n`;
+    }
+    setValue('description', current + snippet, { shouldValidate: true, shouldDirty: true });
+    toast.success('Template section added');
+  };
 
-            {/* Remove Button */}
-            {fields.length > 1 && (
-              <button
-                type="button"
-                onClick={() => remove(originalIndex)}
-                className="text-gray-400 hover:text-red-500 transition-colors p-1.5 rounded-md hover:bg-red-500/10"
-                title="Remove test case"
-              >
-                <Trash2 size={14} />
-              </button>
-            )}
-          </div>
-        </div>
+  // Helper for quick constraint pills
+  const appendConstraint = (chip) => {
+    const current = watch('constraints') || '';
+    const updated = current ? `${current}\n${chip}` : chip;
+    setValue('constraints', updated, { shouldValidate: true, shouldDirty: true });
+    toast.success(`Appended: ${chip}`);
+  };
 
-        {/* Test Case I/O */}
-        <div className="grid grid-cols-1 gap-3">
-          <TextArea
-            label="Input Data"
-            rows={3}
-            placeholder="Leave blank if no stdin input"
-            error={errors.testCases?.[originalIndex]?.inputData?.message}
-            {...register(`testCases.${originalIndex}.inputData`)}
-          />
-          <TextArea
-            label="Expected Output"
-            rows={3}
-            placeholder="Exact expected stdout output"
-            error={errors.testCases?.[originalIndex]?.expectedOutput?.message}
-            {...register(`testCases.${originalIndex}.expectedOutput`)}
-          />
-        </div>
-
-        {/* Weight & Visibility Info Row */}
-        <div 
-          style={{ background: 'var(--surface-dark, #0a0a0a)', borderColor: 'var(--border-color, #222)' }}
-          className="flex items-center justify-between gap-3 mt-3.5 p-2.5 border rounded-lg"
-        >
-          <span className="text-xs text-gray-400 flex items-center gap-1.5">
-            {isVisibleCol ? (
-              <>
-                <Eye size={13} className="text-blue-400" />
-                <span className="text-blue-300 font-medium">Visible to student</span>
-              </>
-            ) : (
-              <>
-                <EyeOff size={13} className="text-purple-400" />
-                <span className="text-purple-300 font-medium">Hidden (graded only)</span>
-              </>
-            )}
-          </span>
-
-          <div className="flex items-center gap-2">
-            <span style={S.textMuted} className="text-xs font-semibold uppercase tracking-wider">Weight:</span>
-            <div className="w-20">
-              <Input
-                type="number"
-                min={1}
-                error={errors.testCases?.[originalIndex]?.weight?.message}
-                {...register(`testCases.${originalIndex}.weight`)}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+  // Helper for format chips
+  const appendFormat = (field, text) => {
+    const current = watch(field) || '';
+    const updated = current ? `${current}\n${text}` : text;
+    setValue(field, updated, { shouldValidate: true, shouldDirty: true });
   };
 
   const handleFormSubmit = (data) => {
@@ -376,510 +375,1076 @@ export const AdminQuestionForm = ({
     toast.error(`Cannot save: ${msg}`);
   };
 
+  const descRegister = register('description');
+
   return (
     <>
       <form onSubmit={handleSubmit(handleFormSubmit, handleFormError)} noValidate className="flex flex-col lg:flex-row gap-6 items-start font-sans">
       
-      {/* ── MAIN WORKSPACE (Left Column) ── */}
-      <div className="flex-1 w-full space-y-6">
-        
-        {/* Error Alert */}
-        {error && (
-          <div className="mb-2">
-            <Alert tone="error">{error?.response?.data?.message ?? error?.message}</Alert>
-          </div>
-        )}
+        {/* ═══════════════════════════════════════════════════════════════════
+            MAIN WORKSPACE (Left Column) — Theme-Aware Architecture (Light & Dark)
+            ═══════════════════════════════════════════════════════════════════ */}
+        <div className="flex-1 w-full space-y-5">
+          
+          {/* Error Alert */}
+          {error && (
+            <div className="mb-2">
+              <Alert tone="error">{error?.response?.data?.message ?? error?.message}</Alert>
+            </div>
+          )}
 
-        {/* Title Input (Seamless) */}
-        <div 
-          style={S.card}
-          className="p-5 shadow-sm flex flex-col gap-2 transition-all focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20"
-        >
-          <input
-            style={S.textPrimary}
-            className="w-full bg-transparent text-xl font-bold placeholder:text-[var(--text-muted)] outline-none border-none p-0 focus:ring-0"
-            placeholder="Question Title (e.g., Two Sum)..."
-            {...register('title')}
-          />
-          {errors.title && <span className="text-sm text-red-500 font-medium">{errors.title.message}</span>}
-        </div>
-
-        {/* Problem Statement / Prompt Card */}
-        <div style={S.card} className="shadow-sm overflow-hidden">
-          <div style={S.cardHeader} className="px-6 py-4">
-            <h3 style={S.textPrimary} className="text-base font-semibold flex items-center gap-2">
-              {questionType === 'MULTIPLE_CHOICE' ? (
-                <>
-                  <ListFilter size={18} className="text-purple-500" /> Question Prompt
-                </>
-              ) : (
-                <>
-                  <Code2 size={18} className="text-blue-500" /> Problem Statement
-                </>
-              )}
-            </h3>
-          </div>
-          <div className="p-6 space-y-5">
-            <TextArea
-              label={questionType === 'MULTIPLE_CHOICE' ? 'Question Prompt / Description' : 'Description'}
-              rows={questionType === 'MULTIPLE_CHOICE' ? 5 : 8}
-              placeholder={questionType === 'MULTIPLE_CHOICE' ? 'Write the question prompt or problem clearly...' : 'Describe the problem clearly. Include examples if needed.'}
-              error={errors.description?.message}
-              {...register('description')}
-            />
-            {questionType === 'CODING' && (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <TextArea
-                    label="Input Format"
-                    rows={3}
-                    placeholder="Describe the expected input structure"
-                    error={errors.inputFormat?.message}
-                    {...register('inputFormat')}
-                  />
-                  <TextArea
-                    label="Output Format"
-                    rows={3}
-                    placeholder="Describe the expected output structure"
-                    error={errors.outputFormat?.message}
-                    {...register('outputFormat')}
-                  />
+          {/* ── 1. Question Title Banner ── */}
+          <div 
+            style={S.card}
+            className="p-4 shadow-sm transition-colors focus-within:border-[var(--text-muted)]"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div 
+                  style={{ background: 'var(--surface-medium)', border: '1px solid var(--border-color)', color: 'var(--text-muted)' }}
+                  className="w-5 h-5 rounded flex items-center justify-center text-xs font-bold"
+                >
+                  <Sparkles size={11} />
                 </div>
-                <TextArea
-                  label="Constraints"
-                  rows={2}
-                  placeholder="e.g. 1 ≤ N ≤ 10⁵, time: 2 s, memory: 256 MB"
-                  error={errors.constraints?.message}
-                  {...register('constraints')}
-                />
-              </>
+                <span style={{ color: 'var(--text-muted)' }} className="text-[11px] font-semibold uppercase tracking-wider">
+                  Question Title
+                </span>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <span 
+                  style={{ background: 'var(--surface-medium)', border: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}
+                  className="text-[11px] font-medium px-2 py-0.5 rounded"
+                >
+                  {difficultyWatch}
+                </span>
+                <span 
+                  style={{ background: 'var(--surface-medium)', border: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}
+                  className="text-[11px] font-medium px-2 py-0.5 rounded"
+                >
+                  {questionType === 'CODING' ? 'Coding' : 'MCQ'}
+                </span>
+                <span style={{ color: 'var(--text-muted)' }} className="text-[11px] font-mono">
+                  {(watch('title') || '').length}/500
+                </span>
+              </div>
+            </div>
+
+            <input
+              style={{ color: 'var(--text-primary)' }}
+              className="w-full bg-transparent text-lg font-bold placeholder:opacity-40 outline-none border-none p-0 focus:ring-0 tracking-tight"
+              placeholder="e.g. Two Sum Target Finder..."
+              {...register('title')}
+            />
+            {errors.title && (
+              <span className="text-xs text-red-500 font-medium flex items-center gap-1 mt-2">
+                <AlertCircle size={12} /> {errors.title.message}
+              </span>
             )}
           </div>
-        </div>
 
-        {/* ── Multiple Choice Options Card ── */}
-        {questionType === 'MULTIPLE_CHOICE' && (
+          {/* ── 2. Problem Statement / Question Prompt Card ── */}
           <div style={S.card} className="shadow-sm overflow-hidden">
-            <div style={S.cardHeader} className="px-6 py-4 flex justify-between items-center">
-              <div>
-                <h3 style={S.textPrimary} className="text-base font-semibold flex items-center gap-2">
-                  <CheckCircle2 size={18} className="text-emerald-500" /> Answer Options
+            {/* Header with Mode Switcher (Write vs Preview) */}
+            <div style={S.cardHeader} className="px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+              <div className="flex items-center gap-2">
+                {questionType === 'MULTIPLE_CHOICE' ? (
+                  <ListFilter size={15} style={{ color: 'var(--text-muted)' }} />
+                ) : (
+                  <Code2 size={15} style={{ color: 'var(--text-muted)' }} />
+                )}
+                <h3 style={{ color: 'var(--text-primary)' }} className="text-xs font-semibold uppercase tracking-wider">
+                  {questionType === 'MULTIPLE_CHOICE' ? 'Question Prompt' : 'Problem Statement'}
                 </h3>
-                <p style={S.textMuted} className="text-xs mt-0.5">
-                  Click the letter badge to toggle whether an option is the correct answer.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => appendOption({ ...EMPTY_OPTION })}
-                className="text-sm font-semibold text-purple-400 hover:text-purple-300 flex items-center gap-1.5 transition-colors px-3 py-1.5 rounded-md hover:bg-purple-500/10"
-              >
-                <Plus size={15} /> Add Option
-              </button>
-            </div>
-
-            <div className="p-6 space-y-4">
-              {errors.options?.message && (
-                <div className="p-3 rounded-lg bg-red-950/40 border border-red-900/50 text-red-400 text-sm font-medium">
-                  {errors.options.message}
-                </div>
-              )}
-
-              {optionFields.map((field, index) => {
-                const isCorrect = watch(`options.${index}.isCorrect`);
-                const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-                const letter = letters[index] || `#${index + 1}`;
-
-                return (
-                  <div
-                    key={field.id}
-                    style={{
-                      background: isCorrect ? 'rgba(16, 185, 129, 0.08)' : 'var(--surface-medium, #141414)',
-                      borderColor: isCorrect ? 'rgba(16, 185, 129, 0.4)' : 'var(--border-color, #222)',
-                    }}
-                    className="relative rounded-xl border p-4 transition-all shadow-sm"
-                  >
-                    <div className="flex items-start gap-3">
-                      {/* Correct Answer Checkbox Badge */}
-                      <label
-                        className="mt-1 flex items-center justify-center w-8 h-8 rounded-lg cursor-pointer transition-all border font-bold text-sm select-none shrink-0"
-                        style={{
-                          background: isCorrect ? '#10b981' : 'rgba(255,255,255,0.05)',
-                          color: isCorrect ? '#ffffff' : 'inherit',
-                          borderColor: isCorrect ? '#10b981' : 'rgba(255,255,255,0.2)',
-                        }}
-                        title={isCorrect ? 'Correct Answer (Click to uncheck)' : 'Click to mark as Correct Answer'}
-                      >
-                        <input
-                          type="checkbox"
-                          className="sr-only"
-                          {...register(`options.${index}.isCorrect`)}
-                        />
-                        {letter}
-                      </label>
-
-                      {/* Option Text & Explanation */}
-                      <div className="flex-1 space-y-2">
-                        <Input
-                          placeholder={`Option ${letter} text...`}
-                          error={errors.options?.[index]?.optionText?.message}
-                          {...register(`options.${index}.optionText`)}
-                        />
-                        <Input
-                          placeholder="Explanation / feedback (optional, shown to student after submission)"
-                          {...register(`options.${index}.explanation`)}
-                        />
-                      </div>
-
-                      {/* Remove Option Button */}
-                      {optionFields.length > 2 && (
-                        <button
-                          type="button"
-                          onClick={() => removeOption(index)}
-                          className="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-red-500/10 shrink-0 mt-1"
-                          title="Remove option"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* ── Test Cases Card (Only for CODING questions) ── */}
-        {questionType === 'CODING' && (
-          <div style={S.card} className="shadow-sm overflow-hidden">
-            {/* Global Header */}
-            <div style={S.cardHeader} className="px-6 py-4 flex flex-wrap justify-between items-center gap-3">
-              <div className="flex items-center gap-3">
-                <h3 style={S.textPrimary} className="text-base font-semibold flex items-center gap-2">
-                  <Zap size={18} className="text-yellow-500" /> Test Cases Management
-                </h3>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/10 text-gray-300">
-                  {fields.length} Total ({visibleCases.length} Visible, {hiddenCases.length} Hidden)
+                <span style={{ color: 'var(--text-muted)' }} className="text-[11px] font-mono">
+                  {descriptionValue.length} chars
                 </span>
               </div>
 
-              <div className="flex items-center gap-2">
+              {/* Segmented Write / Preview Toggle */}
+              <div 
+                style={{ background: 'var(--surface-dark)', border: '1px solid var(--border-color)' }}
+                className="flex items-center gap-1 p-0.5 rounded-lg"
+              >
                 <button
                   type="button"
-                  onClick={handleAddVisibleCase}
-                  className="text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1.5 transition-colors px-3 py-1.5 rounded-md hover:bg-blue-500/10 border border-blue-500/20"
+                  onClick={() => setDescTab('write')}
+                  style={{
+                    background: descTab === 'write' ? 'var(--text-primary)' : 'transparent',
+                    color: descTab === 'write' ? 'var(--background)' : 'var(--text-muted)',
+                  }}
+                  className="px-2.5 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer"
                 >
-                  <Plus size={14} /> Add Visible Sample
+                  Write
                 </button>
                 <button
                   type="button"
-                  onClick={handleAddHiddenCase}
-                  className="text-xs font-semibold text-purple-400 hover:text-purple-300 flex items-center gap-1.5 transition-colors px-3 py-1.5 rounded-md hover:bg-purple-500/10 border border-purple-500/20"
+                  onClick={() => setDescTab('preview')}
+                  style={{
+                    background: descTab === 'preview' ? 'var(--text-primary)' : 'transparent',
+                    color: descTab === 'preview' ? 'var(--background)' : 'var(--text-muted)',
+                  }}
+                  className="px-2.5 py-1 text-xs font-medium rounded-md transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
-                  <Plus size={14} /> Add Hidden Case
+                  <Eye size={12} /> Preview
                 </button>
               </div>
             </div>
-            
-            <div className="p-6">
-              {errors.testCases?.message && (
-                <span className="text-sm font-medium text-red-500 block mb-4">{errors.testCases.message}</span>
-              )}
 
-              {/* Two Separate Columns Grid */}
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
-                
-                {/* ── COLUMN 1: VISIBLE / SAMPLE TEST CASES ── */}
-                <div 
-                  style={{ background: 'rgba(59, 130, 246, 0.03)', borderColor: 'rgba(59, 130, 246, 0.2)' }}
-                  className="rounded-2xl border p-4.5 flex flex-col gap-4"
-                >
-                  {/* Column 1 Header */}
-                  <div className="flex items-center justify-between pb-3 border-b border-blue-500/20">
-                    <div className="flex items-center gap-2.5">
-                      <div className="p-2 rounded-lg bg-blue-500/20 text-blue-400 shrink-0">
-                        <Eye size={18} />
-                      </div>
-                      <div>
-                        <h4 style={S.textPrimary} className="text-sm font-bold flex items-center gap-2">
-                          Visible to Students (Sample)
-                          <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300">
-                            {visibleCases.length}
-                          </span>
-                        </h4>
-                        <p style={S.textMuted} className="text-[11px] mt-0.5">
-                          Shown in problem statement for testing solution before submission
-                        </p>
-                      </div>
-                    </div>
-
+            {/* Formatting Toolbar (Only in Write Mode) */}
+            {descTab === 'write' && (
+              <div 
+                style={{ background: 'var(--surface-medium)', borderBottom: '1px solid var(--border-color)' }}
+                className="px-4 py-1.5 flex flex-wrap items-center justify-between gap-2"
+              >
+                {/* Text Formatting Shortcuts */}
+                <div className="flex items-center gap-1">
+                  {[
+                    { icon: Bold, title: 'Bold', action: () => insertDescMarkdown('**', '**', 'bold text') },
+                    { icon: Italic, title: 'Italic', action: () => insertDescMarkdown('*', '*', 'italic text') },
+                    { label: '</>', title: 'Inline Code', action: () => insertDescMarkdown('`', '`', 'code') },
+                    { icon: Braces, title: 'Code Block', action: () => insertDescMarkdown('\n```java\n', '\n```\n', '// code here') },
+                    { icon: List, title: 'Bulleted List', action: () => insertDescMarkdown('\n- ', '', 'List item') },
+                    { icon: Quote, title: 'Quote', action: () => insertDescMarkdown('\n> ', '', 'Important note') },
+                  ].map((btn, idx) => (
                     <button
+                      key={idx}
                       type="button"
-                      onClick={handleAddVisibleCase}
-                      className="text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 transition-all shrink-0"
+                      onClick={btn.action}
+                      style={{ color: 'var(--text-muted)' }}
+                      className="p-1.5 rounded hover:bg-[var(--hover-bg)] hover:text-[var(--text-primary)] transition-colors text-xs font-mono"
+                      title={btn.title}
                     >
-                      <Plus size={13} /> Add
+                      {btn.icon ? <btn.icon size={13} /> : btn.label}
                     </button>
-                  </div>
+                  ))}
+                </div>
 
-                  {/* Column 1 List */}
-                  <div className="space-y-4">
-                    {visibleCases.length === 0 ? (
-                      <div className="p-8 text-center border border-dashed border-blue-500/30 rounded-xl bg-blue-500/[0.02]">
-                        <Eye size={28} className="mx-auto text-blue-400/40 mb-2" />
-                        <p style={S.textPrimary} className="text-xs font-semibold">No visible sample test cases</p>
-                        <p style={S.textMuted} className="text-[11px] mt-1 mb-3">Add at least one sample case so students know the exact format</p>
-                        <button 
-                          type="button" 
-                          onClick={handleAddVisibleCase} 
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-400 border border-blue-500/30 rounded-lg hover:bg-blue-500/10 transition-all"
-                        >
-                          <Plus size={13} /> Add Sample Case
-                        </button>
-                      </div>
-                    ) : (
-                      visibleCases.map((item, idx) => renderTestCaseCard(item, idx, true))
-                    )}
-                  </div>
-
-                  {/* Column 1 Bottom Add Button */}
-                  {visibleCases.length > 0 && (
+                {/* Quick Section Templates */}
+                <div className="flex items-center gap-1.5">
+                  <span style={{ color: 'var(--text-muted)' }} className="text-[11px] font-medium">Quick Add:</span>
+                  {[
+                    { label: '+ Example', type: 'example' },
+                    { label: '+ Note', type: 'note' },
+                    { label: '+ Follow-up', type: 'followup' },
+                  ].map((t) => (
                     <button
+                      key={t.type}
                       type="button"
-                      onClick={handleAddVisibleCase}
-                      className="w-full py-2.5 rounded-xl border border-dashed border-blue-500/30 text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all mt-1"
+                      onClick={() => insertTemplate(t.type)}
+                      style={{
+                        background: 'var(--surface-dark)',
+                        border: '1px solid var(--border-color)',
+                        color: 'var(--text-secondary)',
+                      }}
+                      className="px-2 py-0.5 text-[11px] rounded hover:bg-[var(--hover-bg)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
                     >
-                      <Plus size={14} /> Add Another Visible Case
+                      {t.label}
                     </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Problem Statement Body */}
+            <div className="p-4">
+              {descTab === 'write' ? (
+                <div>
+                  <textarea
+                    rows={6}
+                    placeholder={
+                      questionType === 'MULTIPLE_CHOICE'
+                        ? 'Write the question prompt or problem clearly using Markdown...'
+                        : 'Describe the problem clearly. Include examples, expected behavior, and definitions.'
+                    }
+                    style={{
+                      background: 'var(--surface-dark)',
+                      border: '1px solid var(--border-color)',
+                      color: 'var(--text-primary)',
+                    }}
+                    className="w-full rounded-lg px-3 py-2.5 text-xs focus:outline-none focus:border-[var(--text-muted)] font-sans leading-relaxed resize-y placeholder:opacity-40"
+                    {...descRegister}
+                    ref={(e) => {
+                      descRegister.ref(e);
+                      descTextareaRef.current = e;
+                    }}
+                  />
+                  {errors.description && (
+                    <p className="text-xs text-red-500 font-medium flex items-center gap-1 mt-2">
+                      <AlertCircle size={12} /> {errors.description.message}
+                    </p>
                   )}
                 </div>
-
-                {/* ── COLUMN 2: HIDDEN / GRADED TEST CASES ── */}
+              ) : (
                 <div 
-                  style={{ background: 'rgba(168, 85, 247, 0.03)', borderColor: 'rgba(168, 85, 247, 0.2)' }}
-                  className="rounded-2xl border p-4.5 flex flex-col gap-4"
-                >
-                  {/* Column 2 Header */}
-                  <div className="flex items-center justify-between pb-3 border-b border-purple-500/20">
-                    <div className="flex items-center gap-2.5">
-                      <div className="p-2 rounded-lg bg-purple-500/20 text-purple-400 shrink-0">
-                        <EyeOff size={18} />
-                      </div>
-                      <div>
-                        <h4 style={S.textPrimary} className="text-sm font-bold flex items-center gap-2">
-                          Hidden Test Cases (Graded Only)
-                          <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-300">
-                            {hiddenCases.length}
-                          </span>
-                        </h4>
-                        <p style={S.textMuted} className="text-[11px] mt-0.5">
-                          Secret test suite evaluated only during final submission
-                        </p>
-                      </div>
-                    </div>
+                  style={{
+                    background: 'var(--surface-medium)',
+                    border: '1px solid var(--border-color)',
+                    color: 'var(--text-primary)',
+                  }}
+                  className="min-h-[140px] rounded-lg p-3.5 text-xs leading-relaxed overflow-y-auto max-h-[300px]"
+                  dangerouslySetInnerHTML={{ __html: renderMarkdownPreview(descriptionValue) }}
+                />
+              )}
 
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => handleAddMultipleHiddenCases(3)}
-                        className="text-[11px] text-gray-400 hover:text-white px-2 py-1 rounded bg-white/5 hover:bg-white/10 border border-white/10 transition-all font-medium"
-                        title="Add 3 hidden cases at once"
-                      >
-                        + 3
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleAddHiddenCase}
-                        className="text-xs font-semibold text-purple-400 hover:text-purple-300 flex items-center gap-1 px-2.5 py-1 rounded-md bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 transition-all"
-                      >
-                        <Plus size={13} /> Add
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Column 2 List */}
-                  <div className="space-y-4">
-                    {hiddenCases.length === 0 ? (
-                      <div className="p-8 text-center border border-dashed border-purple-500/30 rounded-xl bg-purple-500/[0.02]">
-                        <EyeOff size={28} className="mx-auto text-purple-400/40 mb-2" />
-                        <p style={S.textPrimary} className="text-xs font-semibold">No hidden test cases</p>
-                        <p style={S.textMuted} className="text-[11px] mt-1 mb-3">Add hidden cases to thoroughly evaluate edge cases and performance</p>
-                        <button 
-                          type="button" 
-                          onClick={handleAddHiddenCase} 
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-purple-300 bg-purple-600/80 hover:bg-purple-600 rounded-lg transition-all"
+              {/* Coding Question Specific Sub-Sections: Input/Output Formats & Constraints */}
+              {questionType === 'CODING' && (
+                <div style={{ borderTop: '1px solid var(--border-color)' }} className="mt-4 space-y-3 pt-3.5">
+                  {/* Two-Column Specification: Input & Output */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {/* Input Format */}
+                    <div 
+                      style={{ background: 'var(--surface-medium)', border: '1px solid var(--border-color)' }}
+                      className="rounded-xl p-3 space-y-1.5"
+                    >
+                      <div className="flex justify-between items-center">
+                        <span style={{ color: 'var(--text-primary)' }} className="text-xs font-semibold flex items-center gap-1.5">
+                          <Terminal size={13} style={{ color: 'var(--text-muted)' }} /> Input Format
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => appendFormat('inputFormat', 'First line contains space-separated integers for nums. Second line contains target integer.')}
+                          style={{ color: 'var(--text-muted)' }}
+                          className="text-[10px] hover:text-[var(--text-primary)] cursor-pointer"
                         >
-                          <Plus size={13} /> Add Hidden Case
+                          + Standard
                         </button>
                       </div>
-                    ) : (
-                      hiddenCases.map((item, idx) => renderTestCaseCard(item, idx, false))
-                    )}
+                      <textarea
+                        rows={2}
+                        placeholder="Describe expected input (e.g. First line: integer N...)"
+                        style={{
+                          background: 'var(--surface-dark)',
+                          border: '1px solid var(--border-color)',
+                          color: 'var(--text-primary)',
+                        }}
+                        className="w-full rounded-lg px-2.5 py-1.5 text-xs font-mono focus:outline-none resize-y placeholder:opacity-40"
+                        {...register('inputFormat')}
+                      />
+                      {errors.inputFormat && (
+                        <p className="text-xs text-red-500">{errors.inputFormat.message}</p>
+                      )}
+                    </div>
+
+                    {/* Output Format */}
+                    <div 
+                      style={{ background: 'var(--surface-medium)', border: '1px solid var(--border-color)' }}
+                      className="rounded-xl p-3 space-y-1.5"
+                    >
+                      <div className="flex justify-between items-center">
+                        <span style={{ color: 'var(--text-primary)' }} className="text-xs font-semibold flex items-center gap-1.5">
+                          <FileCode size={13} style={{ color: 'var(--text-muted)' }} /> Output Format
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => appendFormat('outputFormat', 'Space-separated pair of indices (e.g. "0 1").')}
+                          style={{ color: 'var(--text-muted)' }}
+                          className="text-[10px] hover:text-[var(--text-primary)] cursor-pointer"
+                        >
+                          + Standard
+                        </button>
+                      </div>
+                      <textarea
+                        rows={2}
+                        placeholder="Describe expected output (e.g. Space-separated indices...)"
+                        style={{
+                          background: 'var(--surface-dark)',
+                          border: '1px solid var(--border-color)',
+                          color: 'var(--text-primary)',
+                        }}
+                        className="w-full rounded-lg px-2.5 py-1.5 text-xs font-mono focus:outline-none resize-y placeholder:opacity-40"
+                        {...register('outputFormat')}
+                      />
+                      {errors.outputFormat && (
+                        <p className="text-xs text-red-500">{errors.outputFormat.message}</p>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Column 2 Bottom Add Actions */}
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 mt-1">
-                    <button
-                      type="button"
-                      onClick={handleAddHiddenCase}
-                      className="flex-1 py-2.5 rounded-xl border border-dashed border-purple-500/30 text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
-                    >
-                      <Plus size={14} /> Add Another Hidden Case
-                    </button>
-                    <div className="flex items-center gap-1.5 shrink-0 justify-center">
-                      <button
-                        type="button"
-                        onClick={() => handleAddMultipleHiddenCases(3)}
-                        className="text-xs px-2.5 py-2 rounded-lg border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-colors font-medium"
-                        title="Add 3 hidden test cases at once"
-                      >
-                        + 3 Cases
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleAddMultipleHiddenCases(5)}
-                        className="text-xs px-2.5 py-2 rounded-lg border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-colors font-medium"
-                        title="Add 5 hidden test cases at once"
-                      >
-                        + 5 Cases
-                      </button>
+                  {/* Constraints & Boundaries */}
+                  <div 
+                    style={{ background: 'var(--surface-medium)', border: '1px solid var(--border-color)' }}
+                    className="rounded-xl p-3 space-y-1.5"
+                  >
+                    <div className="flex flex-wrap justify-between items-center gap-2">
+                      <span style={{ color: 'var(--text-primary)' }} className="text-xs font-semibold flex items-center gap-1.5">
+                        <Sliders size={13} style={{ color: 'var(--text-muted)' }} /> Constraints
+                      </span>
+                      {/* Quick Chips for Common Constraints */}
+                      <div className="flex flex-wrap items-center gap-1">
+                        <span style={{ color: 'var(--text-muted)' }} className="text-[10px] font-medium">Quick Add:</span>
+                        {[
+                          '2 <= nums.length <= 10^4',
+                          '-10^9 <= nums[i] <= 10^9',
+                          'Time: 2.0s',
+                          'Memory: 256MB',
+                        ].map((chip) => (
+                          <button
+                            key={chip}
+                            type="button"
+                            onClick={() => appendConstraint(chip)}
+                            style={{
+                              background: 'var(--surface-dark)',
+                              border: '1px solid var(--border-color)',
+                              color: 'var(--text-secondary)',
+                            }}
+                            className="text-[10px] px-1.5 py-0.5 rounded hover:bg-[var(--hover-bg)] font-mono transition-colors cursor-pointer"
+                          >
+                            + {chip}
+                          </button>
+                        ))}
+                      </div>
                     </div>
+                    <textarea
+                      rows={2}
+                      placeholder="e.g. 2 <= nums.length <= 10^4&#10;-10^9 <= nums[i] <= 10^9"
+                      style={{
+                        background: 'var(--surface-dark)',
+                        border: '1px solid var(--border-color)',
+                        color: 'var(--text-primary)',
+                      }}
+                      className="w-full rounded-lg px-2.5 py-1.5 text-xs font-mono focus:outline-none resize-y placeholder:opacity-40"
+                      {...register('constraints')}
+                    />
+                    {errors.constraints && (
+                      <p className="text-xs text-red-500">{errors.constraints.message}</p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ── 3. Multiple Choice Options Card (Only when MULTIPLE_CHOICE) ── */}
+          {questionType === 'MULTIPLE_CHOICE' && (
+            <div style={S.card} className="shadow-sm overflow-hidden">
+              <div style={S.cardHeader} className="px-4 py-3 flex justify-between items-center">
+                <div>
+                  <h3 style={{ color: 'var(--text-primary)' }} className="text-xs font-semibold uppercase tracking-wider flex items-center gap-2">
+                    <CheckCircle2 size={15} style={{ color: 'var(--text-muted)' }} /> Answer Options
+                  </h3>
+                  <p style={{ color: 'var(--text-muted)' }} className="text-[11px] mt-0.5">
+                    Click an option letter to set it as the correct answer.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => appendOption({ ...EMPTY_OPTION })}
+                  style={{
+                    background: 'var(--surface-dark)',
+                    border: '1px solid var(--border-color)',
+                    color: 'var(--text-primary)',
+                  }}
+                  className="text-xs font-medium px-2.5 py-1 rounded-md hover:bg-[var(--hover-bg)] transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <Plus size={13} /> Add Option
+                </button>
+              </div>
+
+              <div className="p-4 space-y-3">
+                {errors.options?.message && (
+                  <div className="p-2.5 rounded-lg bg-red-950/30 border border-red-900/40 text-red-500 text-xs font-medium flex items-center gap-1.5">
+                    <AlertCircle size={13} /> {errors.options.message}
+                  </div>
+                )}
+
+                {optionFields.map((field, index) => {
+                  const isCorrect = watch(`options.${index}.isCorrect`);
+                  const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+                  const letter = letters[index] || `#${index + 1}`;
+
+                  return (
+                    <div
+                      key={field.id}
+                      style={{
+                        background: isCorrect ? 'var(--surface-medium)' : 'var(--surface-dark)',
+                        border: isCorrect ? '1.5px solid var(--color-primary-500, #2563eb)' : '1px solid var(--border-color)',
+                      }}
+                      className="relative rounded-xl p-3 transition-colors shadow-sm"
+                    >
+                      <div className="flex items-start gap-3">
+                        {/* Correct Answer Checkbox Badge */}
+                        <label
+                          style={{
+                            background: isCorrect ? 'var(--color-primary-500, #2563eb)' : 'var(--surface-medium)',
+                            color: isCorrect ? '#ffffff' : 'var(--text-muted)',
+                            border: isCorrect ? '1px solid var(--color-primary-500, #2563eb)' : '1px solid var(--border-color)',
+                          }}
+                          className="mt-1 flex items-center justify-center w-7 h-7 rounded-lg cursor-pointer transition-colors font-bold text-xs select-none shrink-0"
+                          title={isCorrect ? 'Correct answer (click to unmark)' : 'Mark as correct answer'}
+                        >
+                          <input
+                            type="checkbox"
+                            className="sr-only"
+                            {...register(`options.${index}.isCorrect`)}
+                          />
+                          {letter}
+                        </label>
+
+                        {/* Option Text & Explanation */}
+                        <div className="flex-1 space-y-2">
+                          <Input
+                            placeholder={`Option ${letter} text...`}
+                            error={errors.options?.[index]?.optionText?.message}
+                            {...register(`options.${index}.optionText`)}
+                          />
+                          <Input
+                            placeholder="Explanation (optional)"
+                            {...register(`options.${index}.explanation`)}
+                          />
+                        </div>
+
+                        {/* Remove Option Button */}
+                        {optionFields.length > 2 && (
+                          <button
+                            type="button"
+                            onClick={() => removeOption(index)}
+                            style={{ color: 'var(--text-muted)' }}
+                            className="hover:text-red-500 transition-colors p-1.5 rounded-lg hover:bg-red-500/10 shrink-0 mt-1 cursor-pointer"
+                            title="Remove option"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════════════════
+              ── 4. LEETCODE-STYLE TABBED TEST CASES SUITE (Theme Adaptive) ──
+              ═══════════════════════════════════════════════════════════════════ */}
+          {questionType === 'CODING' && (
+            <div style={S.card} className="shadow-sm overflow-hidden">
+              {/* Header Bar */}
+              <div style={S.cardHeader} className="px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+                <div className="flex items-center gap-2.5">
+                  <div 
+                    style={{ background: 'var(--surface-dark)', border: '1px solid var(--border-color)', color: 'var(--text-muted)' }}
+                    className="w-6 h-6 rounded flex items-center justify-center"
+                  >
+                    <Terminal size={13} />
+                  </div>
+                  <div>
+                    <h3 style={{ color: 'var(--text-primary)' }} className="text-xs font-semibold uppercase tracking-wider">
+                      Test Cases Suite
+                    </h3>
+                    <p style={{ color: 'var(--text-muted)' }} className="text-[11px]">
+                      {fields.length} Cases ({visibleCasesCount} Visible Sample · {hiddenCasesCount} Graded Hidden)
+                    </p>
                   </div>
                 </div>
 
+                {/* Quick Action Buttons */}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowAllOverview(!showAllOverview)}
+                    style={{
+                      background: showAllOverview ? 'var(--text-primary)' : 'var(--surface-dark)',
+                      color: showAllOverview ? 'var(--background)' : 'var(--text-secondary)',
+                      border: '1px solid var(--border-color)',
+                    }}
+                    className="text-xs font-medium px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
+                    title="Toggle all cases table overview"
+                  >
+                    <Table size={13} /> {showAllOverview ? 'Hide Overview' : 'View All Table'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAddVisibleCase}
+                    style={{
+                      background: 'var(--surface-dark)',
+                      border: '1px solid var(--border-color)',
+                      color: 'var(--text-primary)',
+                    }}
+                    className="text-xs font-medium px-2.5 py-1.5 rounded-lg hover:bg-[var(--hover-bg)] transition-colors flex items-center gap-1 cursor-pointer"
+                  >
+                    <Plus size={12} /> Add Sample
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAddHiddenCase}
+                    style={{
+                      background: 'var(--surface-dark)',
+                      border: '1px solid var(--border-color)',
+                      color: 'var(--text-primary)',
+                    }}
+                    className="text-xs font-medium px-2.5 py-1.5 rounded-lg hover:bg-[var(--hover-bg)] transition-colors flex items-center gap-1 cursor-pointer"
+                  >
+                    <Plus size={12} /> Add Hidden
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleAddMultipleHiddenCases(3)}
+                    style={{
+                      background: 'var(--surface-medium)',
+                      border: '1px solid var(--border-color)',
+                      color: 'var(--text-secondary)',
+                    }}
+                    className="text-[11px] font-medium px-2 py-1.5 rounded-lg hover:bg-[var(--hover-bg)] transition-colors cursor-pointer"
+                    title="Batch add 3 hidden cases"
+                  >
+                    +3 Hidden
+                  </button>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
-      </div>
 
-      {/* ── SIDEBAR (Right Column) ── */}
-      <div className="w-full lg:w-80 flex flex-col gap-6 lg:sticky lg:top-6">
-        
-        {/* Actions Card */}
-        <div style={S.card} className="p-5 shadow-sm flex flex-col gap-3">
-          <Button type="submit" isLoading={isSubmitting} className="w-full justify-center text-base py-2.5">
-            {submitLabel}
-          </Button>
-          <button
-            type="button"
-            onClick={() => setShowPreviewModal(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              padding: '10px 16px',
-              borderRadius: 8,
-              border: '1px solid rgba(99, 102, 241, 0.4)',
-              background: 'rgba(99, 102, 241, 0.1)',
-              color: '#a5b4fc',
-              fontWeight: 600,
-              fontSize: 14,
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(99, 102, 241, 0.2)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(99, 102, 241, 0.1)'; }}
-          >
-            <Eye size={16} />
-            <span>Preview & Test</span>
-          </button>
-          {onCancel && (
-            <button 
-              type="button" 
-              onClick={onCancel} 
-              style={S.textMuted}
-              className="w-full justify-center py-2 text-sm font-semibold hover:text-white hover:bg-white/5 rounded-lg transition-colors border border-transparent hover:border-white/10"
-            >
-              Cancel
-            </button>
+              {/* Error Message if any */}
+              {errors.testCases?.message && (
+                <div className="mx-4 mt-3 p-2.5 rounded-lg bg-red-950/30 border border-red-900/40 text-red-500 text-xs font-medium flex items-center gap-1.5">
+                  <AlertCircle size={13} /> {errors.testCases.message}
+                </div>
+              )}
+
+              {/* ── All Cases Overview Table (When toggled) ── */}
+              {showAllOverview && (
+                <div 
+                  style={{ borderBottom: '1px solid var(--border-color)', background: 'var(--surface-medium)' }}
+                  className="p-4"
+                >
+                  <div 
+                    style={{ border: '1px solid var(--border-color)', background: 'var(--surface-dark)' }}
+                    className="overflow-x-auto rounded-lg"
+                  >
+                    <table className="w-full text-left text-xs font-mono">
+                      <thead 
+                        style={{ background: 'var(--surface-medium)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)' }}
+                        className="text-[11px]"
+                      >
+                        <tr>
+                          <th className="py-2 px-3 font-semibold">Case</th>
+                          <th className="py-2 px-3 font-semibold">Type</th>
+                          <th className="py-2 px-3 font-semibold">Weight</th>
+                          <th className="py-2 px-3 font-semibold">Input (stdin)</th>
+                          <th className="py-2 px-3 font-semibold">Expected (stdout)</th>
+                          <th className="py-2 px-3 text-right font-semibold">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody style={{ color: 'var(--text-primary)' }} className="divide-y divide-[var(--border-color)]">
+                        {fields.map((f, i) => {
+                          const isSample = Boolean(testCasesWatch[i]?.sample);
+                          const isHidden = testCasesWatch[i]?.hidden !== undefined ? Boolean(testCasesWatch[i]?.hidden) : !isSample;
+                          const inVal = testCasesWatch[i]?.inputData || '(empty)';
+                          const outVal = testCasesWatch[i]?.expectedOutput || '(empty)';
+                          const weightVal = testCasesWatch[i]?.weight || 1;
+                          return (
+                            <tr
+                              key={f.id}
+                              onClick={() => { setSelectedCaseIndex(i); setShowAllOverview(false); }}
+                              style={{
+                                background: selectedCaseIndex === i ? 'var(--hover-bg)' : 'transparent',
+                              }}
+                              className="cursor-pointer transition-colors hover:bg-[var(--hover-bg)]"
+                            >
+                              <td className="py-2 px-3 font-bold">#{i + 1}</td>
+                              <td className="py-2 px-3">
+                                <span 
+                                  style={{
+                                    background: isSample && !isHidden ? 'var(--surface-medium)' : 'var(--surface-dark)',
+                                    color: 'var(--text-secondary)',
+                                    border: '1px solid var(--border-color)',
+                                  }}
+                                  className="px-2 py-0.5 rounded text-[10px] font-semibold"
+                                >
+                                  {isSample && !isHidden ? 'Sample' : 'Hidden'}
+                                </span>
+                              </td>
+                              <td style={{ color: 'var(--text-muted)' }} className="py-2 px-3">{weightVal} pt</td>
+                              <td style={{ color: 'var(--text-muted)' }} className="py-2 px-3 max-w-[140px] truncate">{inVal}</td>
+                              <td className="py-2 px-3 max-w-[140px] truncate font-bold">{outVal}</td>
+                              <td className="py-2 px-3 text-right">
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedCaseIndex(i);
+                                    setShowAllOverview(false);
+                                  }}
+                                  style={{ color: 'var(--color-primary-500, #2563eb)' }}
+                                  className="text-[11px] hover:underline cursor-pointer"
+                                >
+                                  Edit
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* ── Compact Tab Selector Bar (LeetCode Style) ── */}
+              <div 
+                style={{ background: 'var(--surface-medium)', borderBottom: '1px solid var(--border-color)' }}
+                className="px-4 py-2.5 flex items-center justify-between gap-3 overflow-x-auto"
+              >
+                <div className="flex items-center gap-1.5 min-w-max">
+                  {fields.map((field, idx) => {
+                    const isSample = Boolean(testCasesWatch[idx]?.sample);
+                    const isHidden = testCasesWatch[idx]?.hidden !== undefined ? Boolean(testCasesWatch[idx]?.hidden) : !isSample;
+                    const isSelected = selectedCaseIndex === idx;
+                    const hasError = Boolean(errors.testCases?.[idx]);
+
+                    return (
+                      <button
+                        key={field.id}
+                        type="button"
+                        onClick={() => setSelectedCaseIndex(idx)}
+                        style={{
+                          background: isSelected ? 'var(--text-primary)' : 'var(--surface-dark)',
+                          color: isSelected ? 'var(--background)' : 'var(--text-secondary)',
+                          border: isSelected ? '1px solid var(--text-primary)' : '1px solid var(--border-color)',
+                        }}
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition-all cursor-pointer shadow-sm"
+                      >
+                        <span 
+                          style={{
+                            background: hasError 
+                              ? '#ef4444' 
+                              : isSample && !isHidden 
+                                ? (isSelected ? 'var(--background)' : '#2563eb')
+                                : (isSelected ? 'var(--background)' : 'var(--text-muted)'),
+                          }}
+                          className="w-1.5 h-1.5 rounded-full" 
+                        />
+                        <span className="font-semibold">Case {idx + 1}</span>
+                        <span 
+                          style={{
+                            opacity: isSelected ? 0.8 : 0.6,
+                          }}
+                          className="text-[10px] font-mono"
+                        >
+                          {isSample && !isHidden ? 'Sample' : 'Hidden'}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Inline Quick Add Buttons */}
+                <div className="flex items-center gap-1 shrink-0">
+                  <button
+                    type="button"
+                    onClick={handleAddVisibleCase}
+                    style={{
+                      background: 'var(--surface-dark)',
+                      border: '1px dashed var(--border-color)',
+                      color: 'var(--text-muted)',
+                    }}
+                    className="p-1.5 rounded-md hover:text-[var(--text-primary)] hover:bg-[var(--hover-bg)] transition-colors cursor-pointer"
+                    title="Add Sample Test Case"
+                  >
+                    <Plus size={13} />
+                  </button>
+                </div>
+              </div>
+
+              {/* ── Active Case Focused Workspace ── */}
+              {fields.length === 0 ? (
+                <div style={{ background: 'var(--surface-medium)' }} className="p-8 text-center">
+                  <Terminal size={24} style={{ color: 'var(--text-muted)' }} className="mx-auto mb-2" />
+                  <p style={{ color: 'var(--text-primary)' }} className="text-xs font-medium">No test cases configured yet.</p>
+                  <p style={{ color: 'var(--text-muted)' }} className="text-[11px] mt-1 mb-3">Add at least one sample test case for student evaluation.</p>
+                  <button
+                    type="button"
+                    onClick={handleAddVisibleCase}
+                    style={{
+                      background: 'var(--surface-dark)',
+                      border: '1px solid var(--border-color)',
+                      color: 'var(--text-primary)',
+                    }}
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-[var(--hover-bg)] cursor-pointer"
+                  >
+                    + Add First Test Case
+                  </button>
+                </div>
+              ) : (
+                <div className="p-4">
+                  {fields.map((field, idx) => {
+                    const isSelected = selectedCaseIndex === idx;
+                    const isSample = Boolean(testCasesWatch[idx]?.sample);
+                    const isHidden = testCasesWatch[idx]?.hidden !== undefined ? Boolean(testCasesWatch[idx]?.hidden) : !isSample;
+                    const inputVal = watch(`testCases.${idx}.inputData`) || '';
+                    const outputVal = watch(`testCases.${idx}.expectedOutput`) || '';
+                    const currentWeight = watch(`testCases.${idx}.weight`) ?? 1;
+
+                    const inputCopyKey = `tc-${idx}-in`;
+                    const outputCopyKey = `tc-${idx}-out`;
+
+                    return (
+                      <div
+                        key={field.id}
+                        className={isSelected ? 'block space-y-4' : 'hidden'}
+                      >
+                        {/* Active Case Top Control Toolbar */}
+                        <div 
+                          style={{ borderBottom: '1px solid var(--border-color)' }}
+                          className="flex flex-wrap items-center justify-between gap-3 pb-3"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <span style={{ color: 'var(--text-primary)' }} className="text-xs font-bold uppercase tracking-wider">
+                              Editing Case #{idx + 1}
+                            </span>
+                            <span 
+                              style={{
+                                background: 'var(--surface-medium)',
+                                border: '1px solid var(--border-color)',
+                                color: 'var(--text-secondary)',
+                              }}
+                              className="px-2.5 py-0.5 rounded-md text-[11px] font-semibold flex items-center gap-1.5"
+                            >
+                              <span 
+                                style={{ background: isSample && !isHidden ? '#2563eb' : 'var(--text-muted)' }}
+                                className="w-1.5 h-1.5 rounded-full" 
+                              />
+                              {isSample && !isHidden ? 'Visible Sample (Shown to Students)' : 'Hidden (Secret Graded Suite)'}
+                            </span>
+                          </div>
+
+                          {/* Quick Action Controls */}
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => handleToggleVisibility(idx)}
+                              style={{
+                                background: 'var(--surface-dark)',
+                                border: '1px solid var(--border-color)',
+                                color: 'var(--text-primary)',
+                              }}
+                              className="text-xs font-medium hover:bg-[var(--hover-bg)] flex items-center gap-1 px-2.5 py-1 rounded-md transition-colors cursor-pointer"
+                            >
+                              {isSample && !isHidden ? (
+                                <>
+                                  Make Hidden <ArrowRight size={11} />
+                                </>
+                              ) : (
+                                <>
+                                  <ArrowLeft size={11} /> Make Sample
+                                </>
+                              )}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDuplicateTestCase(idx)}
+                              style={{
+                                background: 'var(--surface-dark)',
+                                border: '1px solid var(--border-color)',
+                                color: 'var(--text-secondary)',
+                              }}
+                              className="text-xs font-medium hover:text-[var(--text-primary)] hover:bg-[var(--hover-bg)] flex items-center gap-1 px-2.5 py-1 rounded-md transition-colors cursor-pointer"
+                              title="Duplicate test case"
+                            >
+                              <Copy size={12} /> Duplicate
+                            </button>
+                            {fields.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveTestCase(idx)}
+                                style={{
+                                  background: 'rgba(239, 68, 68, 0.08)',
+                                  border: '1px solid rgba(239, 68, 68, 0.25)',
+                                  color: '#ef4444',
+                                }}
+                                className="text-xs font-medium hover:bg-red-500/20 flex items-center gap-1 px-2.5 py-1 rounded-md transition-colors cursor-pointer"
+                                title="Remove test case"
+                              >
+                                <Trash2 size={12} /> Remove
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Side-by-Side Dual Terminal Consoles */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {/* STDIN Console */}
+                          <div 
+                            style={{ border: '1px solid var(--border-color)', background: 'var(--surface-dark)' }}
+                            className="rounded-xl overflow-hidden shadow-sm"
+                          >
+                            <div 
+                              style={{ background: 'var(--surface-medium)', borderBottom: '1px solid var(--border-color)' }}
+                              className="px-3.5 py-2 flex justify-between items-center text-xs"
+                            >
+                              <span style={{ color: 'var(--text-primary)' }} className="font-mono font-semibold flex items-center gap-1.5">
+                                <Terminal size={13} style={{ color: 'var(--text-muted)' }} /> stdin (Input Data)
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <span style={{ color: 'var(--text-muted)' }} className="text-[10px] font-mono">
+                                  {inputVal ? `${inputVal.split('\n').length} lines` : 'empty'}
+                                </span>
+                                {inputVal && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleCopyText(inputCopyKey, inputVal)}
+                                    style={{
+                                      background: 'var(--surface-dark)',
+                                      border: '1px solid var(--border-color)',
+                                      color: 'var(--text-muted)',
+                                    }}
+                                    className="hover:text-[var(--text-primary)] flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded cursor-pointer transition-colors"
+                                  >
+                                    {copiedKey === inputCopyKey ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} />}
+                                    {copiedKey === inputCopyKey ? 'Copied' : 'Copy'}
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                            <textarea
+                              rows={5}
+                              placeholder="Standard input data (e.g. 2 7 11 15&#10;9)"
+                              style={{
+                                background: 'var(--surface-dark)',
+                                color: 'var(--text-primary)',
+                              }}
+                              className="w-full px-3.5 py-2.5 text-xs font-mono focus:outline-none resize-y border-none leading-relaxed placeholder:opacity-40"
+                              {...register(`testCases.${idx}.inputData`)}
+                            />
+                          </div>
+
+                          {/* STDOUT Console */}
+                          <div 
+                            style={{ border: '1px solid var(--border-color)', background: 'var(--surface-dark)' }}
+                            className="rounded-xl overflow-hidden shadow-sm"
+                          >
+                            <div 
+                              style={{ background: 'var(--surface-medium)', borderBottom: '1px solid var(--border-color)' }}
+                              className="px-3.5 py-2 flex justify-between items-center text-xs"
+                            >
+                              <span style={{ color: 'var(--text-primary)' }} className="font-mono font-semibold flex items-center gap-1.5">
+                                <FileCode size={13} style={{ color: 'var(--text-muted)' }} /> stdout (Expected Output) <span className="text-red-500">*</span>
+                              </span>
+                              {outputVal && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleCopyText(outputCopyKey, outputVal)}
+                                  style={{
+                                    background: 'var(--surface-dark)',
+                                    border: '1px solid var(--border-color)',
+                                    color: 'var(--text-muted)',
+                                  }}
+                                  className="hover:text-[var(--text-primary)] flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded cursor-pointer transition-colors"
+                                >
+                                  {copiedKey === outputCopyKey ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} />}
+                                  {copiedKey === outputCopyKey ? 'Copied' : 'Copy'}
+                                </button>
+                              )}
+                            </div>
+                            <textarea
+                              rows={5}
+                              placeholder="Exact expected standard output (e.g. 0 1)"
+                              style={{
+                                background: 'var(--surface-dark)',
+                                color: 'var(--text-primary)',
+                              }}
+                              className="w-full px-3.5 py-2.5 text-xs font-mono focus:outline-none resize-y border-none leading-relaxed placeholder:opacity-40"
+                              {...register(`testCases.${idx}.expectedOutput`)}
+                            />
+                          </div>
+                        </div>
+
+                        {errors.testCases?.[idx]?.expectedOutput && (
+                          <p className="text-xs text-red-500 flex items-center gap-1">
+                            <AlertCircle size={12} /> {errors.testCases[idx].expectedOutput.message}
+                          </p>
+                        )}
+
+                        {/* Bottom Meta & Points Weight Configuration */}
+                        <div 
+                          style={{ border: '1px solid var(--border-color)', background: 'var(--surface-medium)' }}
+                          className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl text-xs"
+                        >
+                          <span style={{ color: 'var(--text-muted)' }} className="text-xs flex items-center gap-2">
+                            {isSample && !isHidden ? (
+                              <>
+                                <Eye size={13} />
+                                <span>Students can see this test case and run test executions against it.</span>
+                              </>
+                            ) : (
+                              <>
+                                <EyeOff size={13} />
+                                <span>Secret test case evaluated only upon final submission scoring.</span>
+                              </>
+                            )}
+                          </span>
+
+                          <div className="flex items-center gap-2">
+                            <span style={{ color: 'var(--text-muted)' }} className="text-xs font-medium uppercase tracking-wider">
+                              Points Weight:
+                            </span>
+                            <div 
+                              style={{ background: 'var(--surface-dark)', border: '1px solid var(--border-color)' }}
+                              className="flex items-center gap-1 rounded-lg p-0.5"
+                            >
+                              {[1, 2, 5].map((pts) => (
+                                <button
+                                  key={pts}
+                                  type="button"
+                                  onClick={() => setValue(`testCases.${idx}.weight`, pts, { shouldValidate: true, shouldDirty: true })}
+                                  style={{
+                                    background: Number(currentWeight) === pts ? 'var(--text-primary)' : 'transparent',
+                                    color: Number(currentWeight) === pts ? 'var(--background)' : 'var(--text-muted)',
+                                  }}
+                                  className="px-2 py-0.5 text-xs rounded font-semibold transition-colors cursor-pointer"
+                                >
+                                  {pts} pt{pts > 1 ? 's' : ''}
+                                </button>
+                              ))}
+                              <div className="w-12">
+                                <input
+                                  type="number"
+                                  min={1}
+                                  style={{ color: 'var(--text-primary)' }}
+                                  className="w-full bg-transparent px-1 text-center text-xs font-mono focus:outline-none border-none"
+                                  {...register(`testCases.${idx}.weight`)}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           )}
         </div>
 
-        {/* Configuration Card */}
-        <div style={S.card} className="shadow-sm overflow-hidden">
-          <div style={S.cardHeader} className="px-5 py-4">
-            <h3 style={S.textPrimary} className="text-sm font-semibold flex items-center gap-2 uppercase tracking-wider">
-              <Settings size={16} className="text-blue-500" /> Configuration
-            </h3>
+        {/* ═══════════════════════════════════════════════════════════════════
+            RIGHT SIDE BAR / CONTAINER — Preserved and Untouched as Instructed
+            ═══════════════════════════════════════════════════════════════════ */}
+        <div className="w-full lg:w-80 flex flex-col gap-6 lg:sticky lg:top-6">
+          
+          {/* Actions Card */}
+          <div style={S.card} className="p-5 shadow-sm flex flex-col gap-3">
+            <Button type="submit" isLoading={isSubmitting} className="w-full justify-center text-base py-2.5">
+              {submitLabel}
+            </Button>
+            <button
+              type="button"
+              onClick={() => setShowPreviewModal(true)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                padding: '10px 16px',
+                borderRadius: 8,
+                border: '1px solid rgba(99, 102, 241, 0.4)',
+                background: 'rgba(99, 102, 241, 0.1)',
+                color: '#6366f1',
+                fontWeight: 600,
+                fontSize: 14,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(99, 102, 241, 0.2)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(99, 102, 241, 0.1)'; }}
+            >
+              <Eye size={16} />
+              <span>Preview & Test</span>
+            </button>
+            {onCancel && (
+              <button 
+                type="button" 
+                onClick={onCancel} 
+                style={S.textMuted}
+                className="w-full justify-center py-2 text-sm font-semibold hover:text-[var(--text-primary)] hover:bg-[var(--hover-bg)] rounded-lg transition-colors border border-transparent hover:border-[var(--border-color)] cursor-pointer"
+              >
+                Cancel
+              </button>
+            )}
           </div>
-          <div className="p-5 space-y-5">
-            <Select
-              label="Question Type"
-              options={QUESTION_TYPE_OPTIONS}
-              error={errors.questionType?.message}
-              {...register('questionType')}
-            />
-            <Select
-              label="Difficulty"
-              options={DIFFICULTY_OPTIONS}
-              error={errors.difficulty?.message}
-              {...register('difficulty')}
-            />
-            {sections && sections.length > 0 && (
+
+          {/* Configuration Card */}
+          <div style={S.card} className="shadow-sm overflow-hidden">
+            <div style={S.cardHeader} className="px-5 py-4">
+              <h3 style={S.textPrimary} className="text-sm font-semibold flex items-center gap-2 uppercase tracking-wider">
+                <Settings size={16} className="text-blue-500" /> Configuration
+              </h3>
+            </div>
+            <div className="p-5 space-y-5">
               <Select
-                label="Section"
-                options={[
-                  { value: '', label: 'None (Unsectioned)' },
-                  ...sections.map(s => ({ value: s.id, label: s.title }))
-                ]}
-                error={errors.sectionId?.message}
-                {...register('sectionId')}
+                label="Question Type"
+                options={QUESTION_TYPE_OPTIONS}
+                error={errors.questionType?.message}
+                {...register('questionType')}
               />
-            )}
-            <Input
-              label="Marks"
-              type="number"
-              min={1}
-              max={100}
-              hint="1–100 points"
-              error={errors.marks?.message}
-              {...register('marks')}
-            />
-
-            {questionType === 'CODING' && (
-              <>
-                <div style={{ background: 'var(--border-color)' }} className="h-px w-full my-1" />
+              <Select
+                label="Difficulty"
+                options={DIFFICULTY_OPTIONS}
+                error={errors.difficulty?.message}
+                {...register('difficulty')}
+              />
+              {sections && sections.length > 0 && (
                 <Select
-                  label="Compiler / Language Engine"
-                  options={COMPILER_OPTIONS}
-                  error={errors.compiler?.message}
-                  {...register('compiler')}
+                  label="Section"
+                  options={[
+                    { value: '', label: 'None (Unsectioned)' },
+                    ...sections.map(s => ({ value: s.id, label: s.title }))
+                  ]}
+                  error={errors.sectionId?.message}
+                  {...register('sectionId')}
                 />
-                <Input
-                  label="Time Limit"
-                  type="number"
-                  min={100}
-                  max={10000}
-                  hint="100–10000 ms"
-                  error={errors.timeLimitMs?.message}
-                  {...register('timeLimitMs')}
-                />
-                <Input
-                  label="Memory Limit"
-                  type="number"
-                  min={16}
-                  max={1024}
-                  hint="16–1024 MB"
-                  error={errors.memoryLimitMb?.message}
-                  {...register('memoryLimitMb')}
-                />
-              </>
-            )}
+              )}
+              <Input
+                label="Marks"
+                type="number"
+                min={1}
+                max={100}
+                hint="1–100 points"
+                error={errors.marks?.message}
+                {...register('marks')}
+              />
+
+              {questionType === 'CODING' && (
+                <>
+                  <div style={{ background: 'var(--border-color)' }} className="h-px w-full my-1" />
+                  <Select
+                    label="Compiler / Language Engine"
+                    options={COMPILER_OPTIONS}
+                    error={errors.compiler?.message}
+                    {...register('compiler')}
+                  />
+                  <Input
+                    label="Time Limit"
+                    type="number"
+                    min={100}
+                    max={10000}
+                    hint="100–10000 ms"
+                    error={errors.timeLimitMs?.message}
+                    {...register('timeLimitMs')}
+                  />
+                  <Input
+                    label="Memory Limit"
+                    type="number"
+                    min={16}
+                    max={1024}
+                    hint="16–1024 MB"
+                    error={errors.memoryLimitMb?.message}
+                    {...register('memoryLimitMb')}
+                  />
+                </>
+              )}
+            </div>
           </div>
+
         </div>
+      </form>
 
-      </div>
-    </form>
-
-    <QuestionPreviewModal
-      isOpen={showPreviewModal}
-      onClose={() => setShowPreviewModal(false)}
-      questionData={watch()}
-    />
-  </>
+      <QuestionPreviewModal
+        isOpen={showPreviewModal}
+        onClose={() => setShowPreviewModal(false)}
+        questionData={watch()}
+      />
+    </>
   );
 };
 

@@ -79,7 +79,7 @@ export const loadSession = createAsyncThunk('auth/loadSession', async (_, { reje
   }
 });
 
-export const logout = createAsyncThunk('auth/logout', async (_, { getState }) => {
+export const logout = createAsyncThunk('auth/logout', async (_) => {
   try {
     const refreshToken = tokenStorage.getRefreshToken();
     await authService.logout(refreshToken ? { refreshToken } : undefined);

@@ -16,8 +16,6 @@ export const ResultSummary = ({ report }) => {
     attemptsUsed,
     maxAttemptsAllowed,
     timeSpentSeconds,
-    startedAt,
-    submittedAt,
     questionResults = [],
     attemptHistory = [],
   } = report;

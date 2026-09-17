@@ -180,7 +180,6 @@ export const AssessmentPage = () => {
   // ── Proctoring (fullscreen + recording + strike system)
   const {
     isRulesAgreed, setIsRulesAgreed,
-    isFullscreen,
     tabSwitchCount, maxStrikes,
     lastViolation,
     showViolationModal, setShowViolationModal,
@@ -189,7 +188,6 @@ export const AssessmentPage = () => {
     enterFullscreen,
     startScreenRecording,
     stopAndGetRecordingBlob,
-    recordStrike,
   } = useAssessmentProctoring({
     enabled: true,
     suppressRef,

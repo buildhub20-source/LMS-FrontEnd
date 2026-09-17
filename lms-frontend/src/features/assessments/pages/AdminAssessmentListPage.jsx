@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  Search, BookOpen, Plus, LayoutList, LayoutGrid, Code, CheckCircle
+  Search, BookOpen, Plus, LayoutList, LayoutGrid, Code, CheckCircle, Copy,
+  Clock, Award, FileText, Code2, Shield, Sparkles, BarChart2, CheckCircle2
 } from 'lucide-react';
+import adminAssessmentService from '../services/adminAssessmentService';
 import AdminButton from '../../../components/ui/AdminButton';
 import { AdminConfirmModal } from '../../../components/ui/AdminModal';
 import AdminPagination from '../../../components/ui/AdminPagination';
@@ -22,43 +24,40 @@ import {
 
 /* ── palette ── */
 function getInitials(str = '') {
-  return str.split(' ').slice(0, 2).map(w => w[0] ?? '').join('').toUpperCase() || '?';
+  return str.split(' ').slice(0, 2).map(w => w[0] ?? '').join('').toUpperCase() || 'AS';
 }
 
 /* ── status ── */
 const SC = {
-  DRAFT: { label: 'Draft', className: 'status-draft' },
-  PUBLISHED: { label: 'Published', className: 'status-published' },
-  CLOSED: { label: 'Closed', className: 'status-closed' },
-  ARCHIVED: { label: 'Archived', className: 'status-archived' },
+  DRAFT: { label: 'Draft', bg: 'rgba(255, 255, 255, 0.08)', color: '#94a3b8', border: 'rgba(255, 255, 255, 0.15)' },
+  PUBLISHED: { label: 'Published', bg: 'rgba(16, 185, 129, 0.18)', color: '#34d399', border: 'rgba(16, 185, 129, 0.35)' },
+  CLOSED: { label: 'Closed', bg: 'rgba(239, 68, 68, 0.18)', color: '#f87171', border: 'rgba(239, 68, 68, 0.35)' },
+  ARCHIVED: { label: 'Archived', bg: 'rgba(100, 116, 139, 0.18)', color: '#94a3b8', border: 'rgba(100, 116, 139, 0.35)' },
 };
 
 function StatusPill({ status }) {
   const c = SC[status] ?? SC.DRAFT;
-  const isDraft = status === 'DRAFT' || !status;
-  const bg = isDraft ? 'var(--surface-medium)' : 'rgba(37, 99, 235, 0.1)';
-  const color = isDraft ? 'var(--text-muted)' : '#3b82f6';
-  const border = isDraft ? 'var(--border-color)' : 'rgba(59, 130, 246, 0.3)';
-
   return (
     <span style={{
-      padding: '4px 12px', borderRadius: 99, fontSize: 13, fontWeight: 500,
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-      background: bg, color: color, border: `1px solid ${border}`, whiteSpace: 'nowrap'
+      padding: '4px 12px', borderRadius: 99, fontSize: 12, fontWeight: 600,
+      background: c.bg, color: c.color, border: `1px solid ${c.border}`,
+      backdropFilter: 'blur(8px)', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: 5
     }}>
+      <span style={{ width: 6, height: 6, borderRadius: '50%', background: c.color }} />
       {c.label}
     </span>
   );
 }
 
 /* ── avatar ── */
-function Avatar({ name = '', size = 36 }) {
+function Avatar({ name = '', size = 32 }) {
   return (
     <div style={{
       width: size, height: size, borderRadius: '50%', flexShrink: 0,
-      background: 'var(--text-primary)', color: 'var(--lms-background)',
+      background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)', color: '#fff',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontWeight: 600, fontSize: size * 0.4, fontFamily: 'system-ui, -apple-system, sans-serif'
+      fontWeight: 700, fontSize: size * 0.38, fontFamily: 'system-ui, -apple-system, sans-serif',
+      boxShadow: '0 2px 6px rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.15)'
     }}>
       {getInitials(name)}
     </div>
@@ -82,7 +81,7 @@ function buildActions(assessment, onAction) {
   return A;
 }
 
-/* ── Exact Match Card (Dark Mode Aware) ── */
+/* ── Modern Assessment Card (Student Panel Theme) ── */
 function AssessmentCard({ assessment, onAction, onClick }) {
   const actions = buildActions(assessment, onAction);
   const primary = actions[0] ?? null;
@@ -91,107 +90,259 @@ function AssessmentCard({ assessment, onAction, onClick }) {
     <div
       onClick={onClick}
       style={{
-        background: 'var(--lms-card)',
-        border: '1px solid var(--border-color)',
-        borderRadius: 16,
+        background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: 20,
         overflow: 'hidden',
-        display: 'flex', flexDirection: 'column',
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-        width: '100%',
-        maxWidth: 380,
+        display: 'flex',
+        flexDirection: 'column',
+        boxShadow: '0 6px 24px rgba(0,0,0,0.25)',
+        transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+        position: 'relative',
         cursor: 'pointer',
-        transition: 'transform 0.15s, box-shadow 0.15s'
+        width: '100%',
       }}
-      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.08)'; }}
-      onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)'; }}
+      onMouseEnter={e => {
+        e.currentTarget.style.transform = 'translateY(-5px)';
+        e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.4)';
+        e.currentTarget.style.boxShadow = '0 16px 36px rgba(0,0,0,0.45), 0 0 20px rgba(99,102,241,0.15)';
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+        e.currentTarget.style.boxShadow = '0 6px 24px rgba(0,0,0,0.25)';
+      }}
     >
-      {/* ── top section ── */}
-      <div style={{
-        background: 'var(--surface-medium)',
-        padding: '16px 20px',
-        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-        borderBottom: '1px solid var(--border-color)'
-      }}>
-        {/* icon */}
-        <div style={{
-          width: 48, height: 48,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: 'var(--text-primary)',
-          background: 'var(--lms-card)',
-          borderRadius: 12,
-          border: '1px solid var(--border-color)'
-        }}>
-          <Code size={24} />
+      {/* Visual Header Banner */}
+      <div
+        style={{
+          height: 120,
+          background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4338ca 100%)',
+          position: 'relative',
+          padding: '14px 16px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Ambient mesh highlight */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.18) 0%, transparent 60%)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        {/* Evaluation Watermark SVG */}
+        <div
+          style={{
+            position: 'absolute',
+            right: 12,
+            bottom: 6,
+            opacity: 0.15,
+            color: '#fff',
+            pointerEvents: 'none',
+          }}
+        >
+          <Code2 size={72} />
         </div>
 
-        {/* status pill */}
-        <StatusPill status={assessment.status} />
+        {/* Top-Left Category Badge */}
+        <div style={{ zIndex: 2, display: 'flex', gap: 6, alignItems: 'center' }}>
+          <span
+            style={{
+              padding: '3px 10px',
+              borderRadius: 99,
+              fontSize: 11,
+              fontWeight: 700,
+              background: 'rgba(99, 102, 241, 0.3)',
+              color: '#c7d2fe',
+              backdropFilter: 'blur(6px)',
+              border: '1px solid rgba(99, 102, 241, 0.4)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 5,
+            }}
+          >
+            <Code2 size={13} />
+            Coding Assessment
+          </span>
+        </div>
+
+        {/* Top-Right Status */}
+        <div style={{ zIndex: 2 }}>
+          <StatusPill status={assessment.status} />
+        </div>
+
+        {/* Floating Icon Emblem Badge */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 12,
+            left: 16,
+            width: 40,
+            height: 40,
+            borderRadius: 12,
+            background: 'rgba(0, 0, 0, 0.45)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#a5b4fc',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+            zIndex: 3,
+          }}
+        >
+          <Code size={20} />
+        </div>
       </div>
 
-      {/* ── bottom section ── */}
-      <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', flex: 1, background: 'var(--lms-card)' }}>
-
-        {/* Content top: title, meta, description */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
-          <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>
+      {/* Card Body */}
+      <div style={{ padding: '18px 20px', display: 'flex', flexDirection: 'column', flex: 1, gap: 14 }}>
+        <div>
+          <h3
+            style={{
+              margin: '0 0 6px',
+              fontSize: 16,
+              fontWeight: 700,
+              color: '#f8fafc',
+              lineHeight: 1.35,
+            }}
+          >
             {assessment.title}
           </h3>
-          <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
-            {assessment.questionCount || 0} Questions • {assessment.durationMinutes || 0} Mins
-          </p>
-          <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-            {assessment.description || "No description provided."}
+          <p
+            style={{
+              margin: 0,
+              fontSize: 13,
+              color: '#94a3b8',
+              lineHeight: 1.5,
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+            }}
+          >
+            {assessment.description || 'Comprehensive evaluation covering algorithmic reasoning, implementation correctness, and automated grading.'}
           </p>
         </div>
 
-        {/* Content bottom: extra details, creator, actions */}
-        <div style={{ marginTop: 12 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>
-            <span>Total Score</span>
-            <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{assessment.totalMarks || 0}%</span>
-          </div>
-          <div style={{ height: 6, borderRadius: 99, background: 'var(--border-color)', overflow: 'hidden' }}>
-             <div style={{ height: '100%', borderRadius: 99, width: `${Math.min(100, assessment.totalMarks || 100)}%`, background: 'var(--surface-medium)' }} />
-          </div>
+        {/* Metadata Chips */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 12, color: '#64748b', flexWrap: 'wrap' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <FileText size={13} style={{ color: '#818cf8' }} /> {assessment.questionCount || 0} Questions
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <Clock size={13} style={{ color: '#38bdf8' }} /> {assessment.durationMinutes || 0} Mins
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#fbbf24' }}>
+            <Award size={13} /> {assessment.totalMarks || 100} Marks
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#34d399' }}>
+            <Shield size={13} /> Proctored
+          </span>
+        </div>
 
-          <div style={{ height: 1, background: 'var(--border-color)', margin: '16px 0' }} />
+        {/* Score / Weightage Bar */}
+        <div style={{ marginTop: 'auto', paddingTop: 2 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+            <span style={{ color: '#64748b' }}>Weightage / Score</span>
+            <span style={{ color: '#f8fafc' }}>{assessment.totalMarks || 0}%</span>
+          </div>
+          <div style={{ height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
+            <div
+              style={{
+                height: '100%',
+                width: `${Math.min(100, assessment.totalMarks || 100)}%`,
+                background: 'linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%)',
+                borderRadius: 99,
+                boxShadow: '0 0 8px rgba(99, 102, 241, 0.4)',
+                transition: 'width 0.4s ease',
+              }}
+            />
+          </div>
+        </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Avatar name="Platform Admin" size={32} />
-              <div>
-                <p style={{ margin: 0, fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>
-                  Platform Admin
-                </p>
-              </div>
+        {/* Divider */}
+        <div style={{ height: 1, background: 'rgba(255, 255, 255, 0.08)' }} />
+
+        {/* Creator & Action Buttons */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+            <Avatar name="Platform Admin" size={32} />
+            <div style={{ minWidth: 0 }}>
+              <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: '#f8fafc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                Platform Admin
+              </p>
+              <p style={{ margin: 0, fontSize: 11, color: '#64748b' }}>Instructor</p>
             </div>
+          </div>
 
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={(e) => { e.stopPropagation(); onAction('edit', assessment); }} style={{
-              padding: '7px 14px', borderRadius: 8, fontSize: 13, fontWeight: 600,
-              fontFamily: 'inherit', cursor: 'pointer', whiteSpace: 'nowrap',
-              border: '1px solid var(--border-color)',
-              background: 'transparent',
-              color: 'var(--text-primary)',
-              transition: 'opacity 0.2s',
-            }}
-              onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
-              onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+          <div style={{ display: 'flex', gap: 8, shrink: 0 }}>
+            <button
+              onClick={(e) => { e.stopPropagation(); onAction('edit', assessment); }}
+              style={{
+                padding: '6px 13px',
+                borderRadius: 99,
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                background: 'rgba(255, 255, 255, 0.06)',
+                color: '#f8fafc',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'; }}
             >
               Edit
             </button>
-            {primary && primary.label !== 'Edit' && (
-              <button onClick={(e) => { e.stopPropagation(); primary.onClick(); }} style={{
-                padding: '7px 14px', borderRadius: 8, fontSize: 13, fontWeight: 600,
-                fontFamily: 'inherit', cursor: 'pointer', whiteSpace: 'nowrap',
-                border: primary.danger ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
-                background: primary.danger ? 'rgba(239, 68, 68, 0.1)' : 'var(--text-primary)',
-                color: primary.danger ? '#ef4444' : 'var(--lms-background)',
+            <button
+              onClick={(e) => { e.stopPropagation(); onAction('duplicate', assessment); }}
+              title="Duplicate assessment"
+              style={{
+                padding: '7px 10px',
+                borderRadius: 8,
+                fontSize: 13,
+                fontWeight: 600,
+                fontFamily: 'inherit',
+                cursor: 'pointer',
+                border: '1px solid var(--border-color)',
+                background: 'transparent',
+                color: 'var(--text-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 transition: 'opacity 0.2s',
               }}
-                onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
-                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+              onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
+              onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+            >
+              <Copy size={14} />
+            </button>
+            {primary && primary.label !== 'Edit' && (
+              <button
+                onClick={(e) => { e.stopPropagation(); primary.onClick(); }}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: 99,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  border: primary.danger ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
+                  background: primary.danger ? 'rgba(239, 68, 68, 0.15)' : 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)',
+                  color: primary.danger ? '#f87171' : '#fff',
+                  boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(99, 102, 241, 0.35)',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}
               >
                 {primary.label}
               </button>
@@ -199,13 +350,11 @@ function AssessmentCard({ assessment, onAction, onClick }) {
           </div>
         </div>
       </div>
-
-      </div>
     </div>
   );
 }
 
-/* ── List Row (Dark Mode Aware) ── */
+/* ── Modern List Row (Student Panel Theme) ── */
 function AssessmentListRow({ assessment, onAction, onClick }) {
   const actions = buildActions(assessment, onAction);
   const primary = actions[0];
@@ -214,77 +363,146 @@ function AssessmentListRow({ assessment, onAction, onClick }) {
     <div
       onClick={onClick}
       style={{
-        background: 'var(--lms-card)', border: '1px solid var(--border-color)', borderRadius: 12,
-        display: 'flex', alignItems: 'center', padding: '16px', gap: 16,
-        fontFamily: 'system-ui, -apple-system, sans-serif', cursor: 'pointer',
-        transition: 'transform 0.15s, box-shadow 0.15s'
+        background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: 16,
+        display: 'flex',
+        alignItems: 'center',
+        padding: '16px 20px',
+        gap: 16,
+        cursor: 'pointer',
+        boxShadow: '0 4px 18px rgba(0,0,0,0.2)',
+        transition: 'all 0.2s ease',
       }}
-      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.06)'; }}
-      onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+      onMouseEnter={e => {
+        e.currentTarget.style.transform = 'translateY(-2px)';
+        e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.3)';
+        e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.35)';
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.transform = 'none';
+        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+        e.currentTarget.style.boxShadow = '0 4px 18px rgba(0,0,0,0.2)';
+      }}
     >
-      <div style={{ flex: 1 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-          <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>{assessment.title}</span>
+      {/* Icon Badge */}
+      <div
+        style={{
+          width: 44,
+          height: 44,
+          borderRadius: 12,
+          background: 'linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#a5b4fc',
+          flexShrink: 0,
+          boxShadow: '0 3px 10px rgba(0,0,0,0.3)',
+        }}
+      >
+        <Code size={20} />
+      </div>
+
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 16, fontWeight: 700, color: '#f8fafc' }}>{assessment.title}</span>
           <StatusPill status={assessment.status} />
         </div>
-        <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)' }}>
-          {assessment.questionCount || 0} Questions • {assessment.durationMinutes || 0} Mins
+        <p style={{ margin: 0, fontSize: 13, color: '#94a3b8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {assessment.questionCount || 0} Questions • {assessment.durationMinutes || 0} Mins • {assessment.totalMarks || 100} Marks
         </p>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, borderLeft: '1px solid var(--border-color)', paddingLeft: 16 }}>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, borderLeft: '1px solid rgba(255,255,255,0.08)', paddingLeft: 16 }}>
         <Avatar name="Platform Admin" size={32} />
         <div>
-          <p style={{ margin: 0, fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>Platform Admin</p>
+          <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: '#f8fafc' }}>Platform Admin</p>
+          <p style={{ margin: 0, fontSize: 11, color: '#64748b' }}>Instructor</p>
         </div>
       </div>
-      <div style={{ display: 'flex', gap: 8, borderLeft: '1px solid var(--border-color)', paddingLeft: 16 }}>
-        <button onClick={(e) => { e.stopPropagation(); onAction('edit', assessment); }} style={{
-          padding: '8px 16px', borderRadius: 8, fontSize: 14, fontWeight: 600, 
-          border: '1px solid var(--border-color)', background: 'transparent',
-          color: 'var(--text-primary)', cursor: 'pointer'
-        }}>Edit</button>
+
+      <div style={{ display: 'flex', gap: 8, borderLeft: '1px solid rgba(255,255,255,0.08)', paddingLeft: 16, shrink: 0 }}>
+        <button
+          onClick={(e) => { e.stopPropagation(); onAction('edit', assessment); }}
+          style={{
+            padding: '7px 16px',
+            borderRadius: 99,
+            fontSize: 13,
+            fontWeight: 600,
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            background: 'rgba(255, 255, 255, 0.06)',
+            color: '#f8fafc',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'; }}
+        >
+          Edit
+        </button>
+        <button
+          onClick={(e) => { e.stopPropagation(); onAction('duplicate', assessment); }}
+          title="Duplicate assessment"
+          style={{
+            padding: '7px 12px',
+            borderRadius: 99,
+            fontSize: 13,
+            fontWeight: 600,
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            background: 'rgba(255, 255, 255, 0.06)',
+            color: '#f8fafc',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'; }}
+        >
+          <Copy size={15} />
+        </button>
         {primary && primary.label !== 'Edit' && (
-          <button onClick={(e) => { e.stopPropagation(); primary.onClick(); }} style={{
-            padding: '8px 16px', borderRadius: 8, fontSize: 14, fontWeight: 600, border: 'none',
-            background: primary.danger ? 'rgba(239, 68, 68, 0.1)' : 'var(--text-primary)',
-            color: primary.danger ? '#ef4444' : 'var(--lms-background)', cursor: 'pointer'
-          }}>{primary.label}</button>
+          <button
+            onClick={(e) => { e.stopPropagation(); primary.onClick(); }}
+            style={{
+              padding: '7px 16px',
+              borderRadius: 99,
+              fontSize: 13,
+              fontWeight: 700,
+              border: primary.danger ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
+              background: primary.danger ? 'rgba(239, 68, 68, 0.15)' : 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)',
+              color: primary.danger ? '#f87171' : '#fff',
+              cursor: 'pointer',
+              boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(99, 102, 241, 0.35)',
+              transition: 'all 0.2s',
+            }}
+          >
+            {primary.label}
+          </button>
         )}
       </div>
     </div>
   );
 }
 
-/* ── Skeleton ── */
+/* ── Skeleton Card ── */
 function SkeletonCard() {
-  const s = { background: 'var(--border-color)', borderRadius: 6, animation: 'pulse 1.5s ease-in-out infinite' };
+  const s = { background: 'rgba(255, 255, 255, 0.08)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' };
   return (
-    <div style={{ background: 'var(--lms-card)', border: '1px solid var(--border-color)', borderRadius: 16, overflow: 'hidden' }}>
-      <div style={{ background: 'var(--surface-medium)', padding: '20px', display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)' }}>
-        <div style={{ ...s, width: 48, height: 48, borderRadius: 12 }} />
-        <div style={{ ...s, width: 70, height: 26, borderRadius: 99 }} />
-      </div>
-      <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
-          <div style={{ ...s, height: 18, width: '60%' }} />
-          <div style={{ ...s, height: 14, width: '40%' }} />
-          <div style={{ ...s, height: 14, width: '100%', marginTop: 4 }} />
-          <div style={{ ...s, height: 14, width: '80%' }} />
-        </div>
-        <div style={{ marginTop: 12 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-            <div style={{ ...s, height: 12, width: 60 }} />
-            <div style={{ ...s, height: 12, width: 30 }} />
+    <div style={{ background: '#161922', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 20, overflow: 'hidden' }}>
+      <div style={{ ...s, height: 120, borderRadius: 0 }} />
+      <div style={{ padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ ...s, height: 18, width: '70%' }} />
+        <div style={{ ...s, height: 14, width: '90%' }} />
+        <div style={{ ...s, height: 6, borderRadius: 99, marginTop: 10 }} />
+        <div style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{ ...s, width: 32, height: 32, borderRadius: '50%' }} />
+            <div style={{ ...s, height: 14, width: 80 }} />
           </div>
-          <div style={{ ...s, height: 6, borderRadius: 99 }} />
-          <div style={{ height: 1, background: 'var(--border-color)', margin: '16px 0' }} />
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <div style={{ ...s, width: 32, height: 32, borderRadius: '50%' }} />
-              <div style={{ ...s, height: 14, width: 100 }} />
-            </div>
-            <div style={{ ...s, width: 70, height: 32, borderRadius: 8 }} />
-          </div>
+          <div style={{ ...s, width: 64, height: 28, borderRadius: 99 }} />
         </div>
       </div>
     </div>
@@ -345,6 +563,17 @@ export const AdminAssessmentListPage = () => {
       navigate(detailsRoute(assessment.id));
       return;
     }
+    if (type === 'duplicate') {
+      adminAssessmentService.duplicate(assessment.id)
+        .then(() => {
+          toastSuccess(`"${assessment.title}" duplicated into DRAFT!`);
+          refetch();
+        })
+        .catch((err) => {
+          toastError(err?.response?.data?.message || err?.message || 'Failed to duplicate assessment.');
+        });
+      return;
+    }
     const MAP = {
       publish: { mutation: publishMut, msg: 'Published!' },
       unpublish: { mutation: unpublishMut, msg: 'Unpublished.' },
@@ -377,28 +606,83 @@ export const AdminAssessmentListPage = () => {
       </div>
 
       {/* filter bar */}
-      <div style={{ background: 'var(--lms-card)', border: '1px solid var(--border-color)', borderRadius: 12, padding: 16 }}>
+      <div style={{
+        background: 'linear-gradient(180deg, rgba(22, 25, 34, 0.9) 0%, rgba(17, 19, 26, 0.95) 100%)',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: 16,
+        padding: 16,
+        boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+        backdropFilter: 'blur(10px)',
+      }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
-          <div style={{ position: 'relative', flex: '1 1 200px', minWidth: 160 }}>
-            <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
-            <input value={searchInput} onChange={e => setSearchInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && (setPage(0), setSearch(searchInput))} placeholder="Search assessments…" style={{ ...f, paddingLeft: 36, background: 'var(--lms-card)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }} />
+          <div style={{ position: 'relative', flex: '1 1 220px', minWidth: 180 }}>
+            <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', pointerEvents: 'none' }} />
+            <input
+              value={searchInput}
+              onChange={e => setSearchInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && (setPage(0), setSearch(searchInput))}
+              placeholder="Search assessments…"
+              style={{
+                width: '100%',
+                padding: '10px 14px 10px 38px',
+                borderRadius: 10,
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                background: 'rgba(0, 0, 0, 0.35)',
+                color: '#f8fafc',
+                fontSize: 14,
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+                boxSizing: 'border-box',
+                outline: 'none',
+                transition: 'border-color 0.2s',
+              }}
+              onFocus={e => { e.target.style.borderColor = '#6366f1'; }}
+              onBlur={e => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)'; }}
+            />
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {STATUS_FILTERS.map(s => (
-              <button key={s} onClick={() => { setPage(0); setStatusFilter(s); }} style={{
-                padding: '8px 16px', borderRadius: 99, fontSize: 13, fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit',
-                background: statusFilter === s ? 'var(--text-primary)' : 'transparent',
-                color: statusFilter === s ? 'var(--lms-background)' : 'var(--text-secondary)',
-                border: statusFilter === s ? '1px solid var(--text-primary)' : '1px solid var(--border-color)',
-                transition: 'all 0.2s',
-              }}>
-                {s === 'ALL' ? 'All' : SC[s]?.label ?? s}
-              </button>
-            ))}
+            {STATUS_FILTERS.map(s => {
+              const active = statusFilter === s;
+              return (
+                <button
+                  key={s}
+                  onClick={() => { setPage(0); setStatusFilter(s); }}
+                  style={{
+                    padding: '7px 16px',
+                    borderRadius: 99,
+                    fontSize: 13,
+                    fontWeight: active ? 700 : 500,
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    background: active ? 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)' : 'rgba(255, 255, 255, 0.04)',
+                    color: active ? '#ffffff' : '#94a3b8',
+                    border: active ? '1px solid transparent' : '1px solid rgba(255, 255, 255, 0.08)',
+                    boxShadow: active ? '0 2px 12px rgba(99, 102, 241, 0.4)' : 'none',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseEnter={e => { if (!active) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'; }}
+                  onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)'; }}
+                >
+                  {s === 'ALL' ? 'All' : SC[s]?.label ?? s}
+                </button>
+              );
+            })}
           </div>
-          <div style={{ display: 'flex', border: '1px solid var(--border-color)', borderRadius: 8, overflow: 'hidden', marginLeft: 'auto' }}>
+          <div style={{ display: 'flex', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: 10, overflow: 'hidden', marginLeft: 'auto', background: 'rgba(0,0,0,0.2)' }}>
             {[{ id: 'list', I: LayoutList }, { id: 'grid', I: LayoutGrid }].map(({ id, I }) => (
-              <button key={id} onClick={() => setView(id)} style={{ padding: '8px 12px', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', background: view === id ? 'var(--surface-medium)' : 'transparent', color: view === id ? 'var(--text-primary)' : 'var(--text-muted)', transition: 'all 0.2s' }}>
+              <button
+                key={id}
+                onClick={() => setView(id)}
+                style={{
+                  padding: '8px 12px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  background: view === id ? 'rgba(255, 255, 255, 0.12)' : 'transparent',
+                  color: view === id ? '#ffffff' : '#64748b',
+                  transition: 'all 0.2s',
+                }}
+              >
                 <I size={16} />
               </button>
             ))}
@@ -423,7 +707,7 @@ export const AdminAssessmentListPage = () => {
         </div>
       ) : view === 'grid' ? (
         <>
-          <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
+          <div style={{ display: 'grid', gap: 24, gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))' }}>
             {assessments.map(a => <AssessmentCard key={a.id} assessment={a} onAction={handleAction} onClick={() => navigate(detailsRoute(a.id))} />)}
           </div>
           {totalPages > 1 && <div style={{ marginTop: 24 }}><AdminPagination page={page} totalPages={totalPages} totalElements={totalElements} pageSize={pageSize} onPageChange={setPage} /></div>}

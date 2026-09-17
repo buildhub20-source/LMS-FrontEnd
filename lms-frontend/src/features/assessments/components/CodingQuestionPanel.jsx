@@ -1100,7 +1100,7 @@ export const CodingQuestionPanel = ({
                           marginLeft: 2,
                         }}
                       >
-                        Ctrl+'
+                        Ctrl+&apos;
                       </kbd>
                     </>
                   )}

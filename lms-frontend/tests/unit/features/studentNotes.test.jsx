@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import LessonNotesPanel from '../../../src/features/courses/components/LessonNotesPanel';
 import LessonResourcesPanel from '../../../src/features/courses/components/LessonResourcesPanel';

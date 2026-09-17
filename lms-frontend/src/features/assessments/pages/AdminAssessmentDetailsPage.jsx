@@ -2,7 +2,9 @@ import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Clock, BarChart2, HelpCircle, Rocket, ArchiveIcon, XCircle,
   Edit2, Trash2, Plus, FileQuestion, Timer, Cpu, ChevronRight,
-  Info, CheckCircle, RefreshCw, Eye, EyeOff, Database,
+  Info, CheckCircle, RefreshCw, Eye, EyeOff, Database, Upload, Copy,
+  CalendarClock, CalendarX2, AlarmClock, Zap, Hourglass, X,
+  Trophy
 } from 'lucide-react';
 import { useState } from 'react';
 import Spinner from '../../../components/common/Spinner';
@@ -13,6 +15,8 @@ import { AdminConfirmModal } from '../../../components/ui/AdminModal';
 import AssessmentStatusBadge from '../components/AssessmentStatusBadge';
 import AdminQuestionForm from '../components/AdminQuestionForm';
 import ImportQuestionBankModal from '../components/ImportQuestionBankModal';
+import ImportQuestionsFileModal from '../components/ImportQuestionsFileModal';
+import adminAssessmentService from '../services/adminAssessmentService';
 import { DIFFICULTY_TONE } from '../constants/assessmentConstants';
 import {
   useAdminAssessment,
@@ -36,10 +40,14 @@ import {
   useMoveQuestion,
 } from '../hooks/useAdminSections';
 import AssessmentAnalyticsTab from '../components/AssessmentAnalyticsTab';
+import AssessmentLeaderboardTab from '../components/AssessmentLeaderboardTab';
 import { useToast } from '../../../components/feedback/Toast';
 import { ROUTES } from '../../../constants/routes';
 import { formatDate } from '../../../utils/dateUtils';
 import s from './AssessmentDetails.module.css';
+import { useAssessmentTimeState } from '../hooks/useAssessmentTimeState';
+import AssessmentTimePanel from '../components/AssessmentTimePanel';
+import { useExtendAssessment } from '../hooks/useAdminAssessments';
 
 export const AdminAssessmentDetailsPage = () => {
   const { assessmentId } = useParams();
@@ -58,6 +66,8 @@ export const AdminAssessmentDetailsPage = () => {
   const [editingSection, setEditingSection] = useState(null); // section object being edited
   const [showSectionForm, setShowSectionForm] = useState(false); // for adding a new section
   const [showBankModal, setShowBankModal] = useState(false);
+  const [showImportFileModal, setShowImportFileModal] = useState(false);
+  const [isDuplicating, setIsDuplicating] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState(null);
 
   const { data: a, isLoading, error } = useAdminAssessment(assessmentId);
@@ -73,6 +83,7 @@ export const AdminAssessmentDetailsPage = () => {
   const removeQ   = useRemoveQuestion(assessmentId);
   const deleteA   = useDeleteAdminAssessment();
   const toggleAnalytics = useToggleResultAnalytics(assessmentId);
+  const extendAssessment = useExtendAssessment(assessmentId);
 
   const createSection = useCreateSection(assessmentId);
   const updateSection = useUpdateSection(assessmentId);
@@ -143,6 +154,39 @@ export const AdminAssessmentDetailsPage = () => {
       console.error('Question add failed:', e);
       toast.error(e?.response?.data?.message || e.message || 'Failed to add question');
     }
+  };
+
+  const handleDuplicateAssessment = async () => {
+    setIsDuplicating(true);
+    try {
+      const res = await adminAssessmentService.duplicate(assessmentId);
+      toast.success('Assessment duplicated into DRAFT!');
+      const newId = res.data?.data?.id || res.data?.id;
+      if (newId) {
+        navigate(isInstructor ? ROUTES.INSTRUCTOR_ASSESSMENT_DETAILS(newId) : ROUTES.ADMIN_ASSESSMENT_DETAILS(newId));
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err?.message || 'Failed to duplicate assessment');
+    } finally {
+      setIsDuplicating(false);
+    }
+  };
+
+  const handleImportFileQuestions = async (importedList) => {
+    let count = 0;
+    for (const q of importedList) {
+      try {
+        if (targetSectionId) {
+          await addSectionQ.mutateAsync({ sectionId: targetSectionId, data: q });
+        } else {
+          await addQ.mutateAsync(q);
+        }
+        count++;
+      } catch (err) {
+        console.error('Failed to import question into assessment:', err);
+      }
+    }
+    toast.success(`Successfully imported ${count} of ${importedList.length} questions into this assessment.`);
   };
 
   const handleDeleteQuestion = (q) => {
@@ -285,6 +329,13 @@ export const AdminAssessmentDetailsPage = () => {
           </div>
         </div>
         <div className={s.heroActions}>
+          <button
+            className={s.heroBtn}
+            onClick={handleDuplicateAssessment}
+            disabled={isDuplicating}
+          >
+            <Copy size={13} /> {isDuplicating ? 'Duplicating...' : 'Duplicate'}
+          </button>
           {canEditQuestions && (
             <button className={s.heroBtn}
               onClick={() => navigate(editRoute(assessmentId))}>
@@ -341,10 +392,30 @@ export const AdminAssessmentDetailsPage = () => {
             >
               <BarChart2 size={16} /> Statistics & Analytics
             </button>
+            <button
+              onClick={() => setActiveTab('leaderboard')}
+              style={{
+                padding: '10px 16px',
+                border: 'none',
+                background: 'transparent',
+                borderBottom: activeTab === 'leaderboard' ? '2px solid var(--text-primary)' : '2px solid transparent',
+                color: activeTab === 'leaderboard' ? 'var(--text-primary)' : 'var(--text-muted)',
+                fontWeight: 600,
+                fontSize: 14,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6
+              }}
+            >
+              <Trophy size={16} /> Leaderboard & Badges
+            </button>
           </div>
 
           {activeTab === 'analytics' ? (
             <AssessmentAnalyticsTab assessmentId={assessmentId} />
+          ) : activeTab === 'leaderboard' ? (
+            <AssessmentLeaderboardTab assessmentId={assessmentId} />
           ) : (
             <>
               {/* Description */}
@@ -407,6 +478,16 @@ export const AdminAssessmentDetailsPage = () => {
                       >
                         <Database size={13} style={{ marginRight: 4 }} /> Import from Bank
                       </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setTargetSectionId(null);
+                          setShowImportFileModal(true);
+                        }}
+                      >
+                        <Upload size={13} style={{ marginRight: 4 }} /> Import CSV/JSON
+                      </Button>
                       {!showSectionForm && (
                         <Button
                           variant={sections.length === 0 ? "outline" : "primary"}
@@ -422,10 +503,61 @@ export const AdminAssessmentDetailsPage = () => {
 
                 {/* Edit question modal/form if global */}
                 {editingQuestion && (
-                  <div className={s.inlineFormWrap}>
-                    <h4 className={s.inlineFormTitle}>
-                      <Edit2 size={15} /> Edit Question: {editingQuestion.title}
-                    </h4>
+                  <div
+                    style={{
+                      border: '1px solid var(--border-color)',
+                      borderRadius: 16,
+                      padding: '22px',
+                      marginBottom: 24,
+                      background: 'var(--surface-medium)',
+                      boxShadow: 'var(--shadow-sm)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, paddingBottom: 14, borderBottom: '1px solid var(--border-color)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                        <span style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          padding: '4px 10px',
+                          borderRadius: 9999,
+                          background: 'rgba(37, 99, 235, 0.12)',
+                          border: '1px solid rgba(37, 99, 235, 0.25)',
+                          color: 'var(--color-primary-500, #2563eb)',
+                          fontSize: 12,
+                          fontWeight: 700,
+                          letterSpacing: '0.02em',
+                        }}>
+                          <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-primary-500, #2563eb)', boxShadow: '0 0 8px rgba(37, 99, 235, 0.4)' }} />
+                          Editing Question
+                        </span>
+                        <h4 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+                          {editingQuestion.title}
+                        </h4>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setEditingQuestion(null)}
+                        style={{
+                          background: 'var(--surface-dark)',
+                          border: '1px solid var(--border-color)',
+                          color: 'var(--text-secondary)',
+                          padding: '6px 12px',
+                          borderRadius: 8,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          transition: 'all 0.15s ease',
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--hover-bg)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--surface-dark)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+                      >
+                        <X size={14} /> Close Editor
+                      </button>
+                    </div>
                     <AdminQuestionForm
                       defaultValues={editingQuestion}
                       sections={sections}
@@ -815,71 +947,20 @@ export const AdminAssessmentDetailsPage = () => {
         {/* ── RIGHT: Sidebar ───────────────────────────────── */}
         <div className={s.sidebar}>
 
-          {/* Stats card */}
-          <div className={s.sideCard}>
-            <div className={s.sideCardHead}>Assessment Details</div>
-            <div className={s.sideCardBody}>
-              <div className={s.statRow}>
-                <div className={s.statRowLabel}>
-                  <div className={s.statRowIcon}><Clock size={13} /></div>
-                  Duration
-                </div>
-                <span className={s.statRowValue}>{a.durationMinutes} min</span>
-              </div>
-              <div className={s.statRow}>
-                <div className={s.statRowLabel}>
-                  <div className={s.statRowIcon}><BarChart2 size={13} /></div>
-                  Total Marks
-                </div>
-                <span className={s.statRowValue}>{a.totalMarks}%</span>
-              </div>
-              <div className={s.statRow}>
-                <div className={s.statRowLabel}>
-                  <div className={s.statRowIcon}><RefreshCw size={13} /></div>
-                  Max Attempts
-                </div>
-                <span className={s.statRowValue}>{a.maxAttempts}</span>
-              </div>
-              <div className={s.statRow}>
-                <div className={s.statRowLabel}>
-                  <div className={s.statRowIcon}><HelpCircle size={13} /></div>
-                  Questions
-                </div>
-                <span className={s.statRowValue}>{a.questionCount ?? questions.length}</span>
-              </div>
-              {a.startTime && (
-                <div className={s.statRow}>
-                  <div className={s.statRowLabel}>
-                    <div className={s.statRowIcon}><CheckCircle size={13} /></div>
-                    Opens
-                  </div>
-                  <span className={s.statRowValue} style={{ fontSize: '0.75rem' }}>
-                    {formatDate(a.startTime)}
-                  </span>
-                </div>
-              )}
-              {a.endTime && (
-                <div className={s.statRow}>
-                  <div className={s.statRowLabel}>
-                    <div className={s.statRowIcon}><XCircle size={13} /></div>
-                    Closes
-                  </div>
-                  <span className={s.statRowValue} style={{ fontSize: '0.75rem' }}>
-                    {formatDate(a.endTime)}
-                  </span>
-                </div>
-              )}
-              <div className={s.statRow}>
-                <div className={s.statRowLabel}>
-                  <div className={s.statRowIcon}><Eye size={13} /></div>
-                  Student Results
-                </div>
-                <span className={s.statRowValue}>
-                  {a.showResultAnalytics ? 'Released' : 'Hidden'}
-                </span>
-              </div>
-            </div>
-          </div>
+          {/* ── Assessment Details + Time Panel ── */}
+          <AssessmentTimePanel
+            assessment={a}
+            onClose={() => run(closeA, 'Assessment closed')}
+            onExtend={async (minutes) => {
+              try {
+                await extendAssessment.mutateAsync(minutes);
+                toast.success(`Assessment window extended by ${minutes >= 60 ? `${minutes / 60} hour(s)` : `${minutes} min`}!`);
+              } catch (e) {
+                toast.error(e?.response?.data?.message || e.message || 'Failed to extend assessment window');
+              }
+            }}
+            isUpdating={extendAssessment.isPending}
+          />
 
           {/* Student Result Analytics Card */}
           <div className={s.sideCard} style={{ marginTop: 16 }}>
@@ -985,6 +1066,14 @@ export const AdminAssessmentDetailsPage = () => {
         onClose={() => setShowBankModal(false)}
         onImport={handleAddQuestion}
         targetSectionId={targetSectionId}
+      />
+
+      <ImportQuestionsFileModal
+        isOpen={showImportFileModal}
+        onClose={() => setShowImportFileModal(false)}
+        onImportSuccess={handleImportFileQuestions}
+        target="assessment"
+        targetTitle={a?.title || 'Assessment'}
       />
 
       {confirmDialog && (
