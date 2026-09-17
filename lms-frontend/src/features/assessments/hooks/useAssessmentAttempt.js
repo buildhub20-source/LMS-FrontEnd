@@ -18,7 +18,7 @@ const LOCAL_STORAGE_PREFIX = 'lms_assessment_draft_';
 export function useAssessmentAttempt(assessmentId, options = {}) {
   const { onTimeExpired } = options;
   const onTimeExpiredRef = useRef(onTimeExpired);
-  useEffect(() => { onTimeExpiredRef.current = onTimeExpired; }, [onTimeExpired]);
+  onTimeExpiredRef.current = onTimeExpired;
   const navigate = useNavigate();
 
   // ── Attempt state ────────────────────────────────────────────────────────
@@ -44,45 +44,56 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
   const debounceTimers = useRef({});
 
   // ── Update a question's code draft (Instant LocalStorage + Debounced DB Autosave)
-  const draftsRef = useRef({});
-  const pendingSaves = useRef({});
-  const expiryHandled = useRef(false);
-  const saveDraft = useCallback((questionId, draft) => {
-    if (!attempt?.id) return Promise.reject(new Error('Assessment attempt is unavailable'));
-    const previous = pendingSaves.current[questionId] ?? Promise.resolve();
-    const request = previous.catch(() => {}).then(() => assessmentService.saveSubmissionDraft(
-      attempt.id, questionId, draft.language || 'java', draft.sourceCode || '',
-    ));
-    pendingSaves.current[questionId] = request;
-    return request;
-  }, [attempt?.id]);
-
   const updateDraft = useCallback((questionId, patch) => {
-    const updated = { ...draftsRef.current[questionId], ...patch };
-    draftsRef.current = { ...draftsRef.current, [questionId]: updated };
-    setDrafts(draftsRef.current);
-    if (attempt?.id) {
-      try { localStorage.setItem(LOCAL_STORAGE_PREFIX + attempt.id + '_' + questionId, JSON.stringify(updated)); }
-      catch { /* Autosave still works when local storage is unavailable. */ }
-    }
+    setDrafts((prev) => {
+      const updated = {
+        ...prev[questionId],
+        ...patch,
+      };
+      const next = { ...prev, [questionId]: updated };
+
+      // Instant local persistence backup
+      if (attempt?.id) {
+        try {
+          const storageKey = `${LOCAL_STORAGE_PREFIX}${attempt.id}_${questionId}`;
+          localStorage.setItem(storageKey, JSON.stringify(updated));
+        } catch {
+          // ignore storage quota errors
+        }
+      }
+
+      return next;
+    });
+
+    // Debounce autosave to backend database (2 seconds)
     clearTimeout(debounceTimers.current[questionId]);
-    debounceTimers.current[questionId] = setTimeout(() => {
-      setSaveStatus(current => ({ ...current, [questionId]: 'saving' }));
-      saveDraft(questionId, draftsRef.current[questionId]).then(
-        () => setSaveStatus(current => ({ ...current, [questionId]: 'saved' })),
-        () => setSaveStatus(current => ({ ...current, [questionId]: 'error' })),
-      );
+    debounceTimers.current[questionId] = setTimeout(async () => {
+      if (!attempt?.id) return;
+
+      setSaveStatus((s) => ({ ...s, [questionId]: 'saving' }));
+      try {
+        setDrafts((current) => {
+          const draft = { ...current[questionId], ...patch };
+          assessmentService
+            .saveSubmissionDraft(
+              attempt.id,
+              questionId,
+              draft.language || 'python',
+              draft.sourceCode || '',
+            )
+            .then(() => {
+              setSaveStatus((s) => ({ ...s, [questionId]: 'saved' }));
+            })
+            .catch(() => {
+              setSaveStatus((s) => ({ ...s, [questionId]: 'error' }));
+            });
+          return current;
+        });
+      } catch {
+        setSaveStatus((s) => ({ ...s, [questionId]: 'error' }));
+      }
     }, 1500);
-  }, [attempt?.id, saveDraft]);
-
-  const flushDrafts = useCallback(async () => {
-    Object.values(debounceTimers.current).forEach(clearTimeout);
-    await Promise.all(Object.entries(draftsRef.current).map(([id, draft]) => saveDraft(id, draft)));
-  }, [saveDraft]);
-
-  useEffect(() => () => {
-    Object.values(debounceTimers.current).forEach(clearTimeout);
-  }, []);
+  }, [attempt?.id]);
 
   // ── Submit attempt ───────────────────────────────────────────────────────
   const handleSubmit = useCallback(async (isAutoSubmit = false, onBeforeSubmit = null, shouldNavigate = true) => {
@@ -98,14 +109,13 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
         }
       }
 
-      await flushDrafts();
       await assessmentService.submitAttempt(attempt.id);
 
       // Clean up localStorage drafts on successful completion
       (attempt.questions ?? []).forEach((q) => {
         try {
           localStorage.removeItem(`${LOCAL_STORAGE_PREFIX}${attempt.id}_${q.id}`);
-        } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
+        } catch {}
       });
 
       if (shouldNavigate) {
@@ -119,7 +129,7 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
     } finally {
       setSubmitting(false);
     }
-  }, [attempt, navigate, submitting, flushDrafts]);
+  }, [attempt, navigate, submitting]);
 
   // ── Refresh trigger for manual retries ──────────────────────────────────
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -205,9 +215,6 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
             }
           });
 
-          if (cancelled) return;
-          draftsRef.current = initialDrafts;
-          expiryHandled.current = false;
           setDrafts(initialDrafts);
         }
       } catch (err) {
@@ -237,13 +244,16 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
     (async () => {
       try {
         const histRes = await assessmentService.getAttemptHistory(assessmentId);
-            const histContent = histRes?.content ?? (Array.isArray(histRes) ? histRes : []);
-            if (Array.isArray(histContent) && histContent.length > 0) {
+        const histContent =
+          histRes?.data?.data?.content ||
+          histRes?.data?.content ||
+          [];
+        if (Array.isArray(histContent) && histContent.length > 0) {
           // Prefer most-recent terminal attempt
           const terminal = histContent.find(
             (a) => a.status === 'EXPIRED' || a.status === 'SUBMITTED' || a.status === 'EVALUATED'
           ) || histContent[0];
-                if (terminal?.attemptId && alive) {
+          if (terminal?.attemptId && alive) {
             setLatestAttemptId(terminal.attemptId);
           }
         }
@@ -261,13 +271,12 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
     const tick = () => {
       const diff = Math.max(0, Math.floor((new Date(attempt.expiresAt).getTime() - Date.now()) / 1000));
       setRemainingSeconds(diff);
-      if (diff === 0 && !expiryHandled.current) {
-        expiryHandled.current = true;
+      if (diff === 0) {
         // Time's up — auto-submit
         if (onTimeExpiredRef.current) {
           onTimeExpiredRef.current();
         } else {
-          handleSubmit(true).catch(() => { /* submitError is exposed for retry. */ });
+          handleSubmit(true);
         }
       }
     };
@@ -294,7 +303,6 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
     answeredCount,
     totalQuestions,
     updateDraft,
-    flushDrafts,
     handleSubmit,
     retry,
   };

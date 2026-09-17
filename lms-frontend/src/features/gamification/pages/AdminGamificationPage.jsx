@@ -41,7 +41,7 @@ export const AdminGamificationPage = () => {
     description: '',
     icon: 'trophy',
     category: 'GENERAL',
-    criteriaType: 'LESSON_COUNT',
+    criteriaType: 'LESSONS_COMPLETED',
     criteriaValue: 1,
     active: true,
   });
@@ -62,7 +62,7 @@ export const AdminGamificationPage = () => {
     name: '',
     description: '',
     icon: 'target',
-    criteriaType: 'LESSON_COUNT',
+    criteriaType: 'LESSONS_COMPLETED',
     criteriaValue: 1,
     sortOrder: 0,
     active: true,
@@ -104,7 +104,7 @@ export const AdminGamificationPage = () => {
         description: badge.description,
         icon: badge.icon || 'trophy',
         category: badge.category || 'GENERAL',
-        criteriaType: badge.criteriaType || 'LESSON_COUNT',
+        criteriaType: badge.criteriaType || 'LESSONS_COMPLETED',
         criteriaValue: badge.criteriaValue || 1,
         active: badge.active ?? true,
       });
@@ -115,7 +115,7 @@ export const AdminGamificationPage = () => {
         description: '',
         icon: 'trophy',
         category: 'GENERAL',
-        criteriaType: 'LESSON_COUNT',
+        criteriaType: 'LESSONS_COMPLETED',
         criteriaValue: 1,
         active: true,
       });
@@ -190,7 +190,7 @@ export const AdminGamificationPage = () => {
         name: milestone.name,
         description: milestone.description,
         icon: milestone.icon || 'target',
-        criteriaType: milestone.criteriaType || 'LESSON_COUNT',
+        criteriaType: milestone.criteriaType || 'LESSONS_COMPLETED',
         criteriaValue: milestone.criteriaValue || 1,
         sortOrder: milestone.sortOrder || 0,
         active: milestone.active ?? true,
@@ -202,7 +202,7 @@ export const AdminGamificationPage = () => {
         name: '',
         description: '',
         icon: 'target',
-        criteriaType: 'LESSON_COUNT',
+        criteriaType: 'LESSONS_COMPLETED',
         criteriaValue: 1,
         sortOrder: milestones.length,
         active: true,
@@ -730,10 +730,10 @@ export const AdminGamificationPage = () => {
                     onChange={(e) => setBadgeForm({ ...badgeForm, criteriaType: e.target.value })}
                     className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
                   >
-                    <option value="LESSON_COUNT">LESSON_COUNT</option>
-                    <option value="COURSE_COUNT">COURSE_COUNT</option>
-                    <option value="ASSESSMENT_PASS_COUNT">ASSESSMENT_PASS_COUNT</option>
-                    <option value="ASSESSMENT_SCORE">ASSESSMENT_SCORE</option>
+                    <option value="LESSONS_COMPLETED">LESSONS_COMPLETED</option>
+                    <option value="COURSES_COMPLETED">COURSES_COMPLETED</option>
+                    <option value="ASSESSMENTS_PASSED">ASSESSMENTS_PASSED</option>
+                    <option value="HIGH_SCORE">HIGH_SCORE</option>
                     <option value="STREAK_DAYS">STREAK_DAYS</option>
                   </select>
                 </div>
@@ -903,9 +903,10 @@ export const AdminGamificationPage = () => {
                     onChange={(e) => setMilestoneForm({ ...milestoneForm, criteriaType: e.target.value })}
                     className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
                   >
-                    <option value="LESSON_COUNT">LESSON_COUNT</option>
-                    <option value="COURSE_COUNT">COURSE_COUNT</option>
-                    <option value="ASSESSMENT_PASS_COUNT">ASSESSMENT_PASS_COUNT</option>
+                    <option value="LESSONS_COMPLETED">LESSONS_COMPLETED</option>
+                    <option value="COURSES_COMPLETED">COURSES_COMPLETED</option>
+                    <option value="ASSESSMENTS_PASSED">ASSESSMENTS_PASSED</option>
+                    <option value="HIGH_SCORE">HIGH_SCORE</option>
                     <option value="STREAK_DAYS">STREAK_DAYS</option>
                   </select>
                 </div>

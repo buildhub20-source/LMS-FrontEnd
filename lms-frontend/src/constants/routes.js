@@ -96,6 +96,8 @@ export const ROUTES = Object.freeze({
   CERTIFICATES: '/learn/certificates',
   CERTIFICATE_DETAILS: (id = ':certificateId') => `/learn/certificates/${id}`,
   GAMIFICATION: '/learn/gamification',
+  CALENDAR: '/learn/calendar',
+  NOTES_BOOKMARKS: '/learn/notes',
 
   // Public & Verification
   PUBLIC_CERTIFICATE_VERIFY: '/verify',

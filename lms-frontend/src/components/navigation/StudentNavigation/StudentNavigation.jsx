@@ -5,6 +5,8 @@ import {
   Award,
   Bell,
   Trophy,
+  CalendarDays,
+  StickyNote,
 } from 'lucide-react';
 import MainNavigation from '../MainNavigation';
 import { ROUTES } from '../../../constants/routes';
@@ -32,6 +34,18 @@ const ITEMS = [
     to: ROUTES.STUDENT_ASSESSMENTS,
     group: 'Learning',
     icon: <FileText className="h-5 w-5" />,
+  },
+  {
+    label: 'Calendar',
+    to: ROUTES.CALENDAR,
+    group: 'Learning',
+    icon: <CalendarDays className="h-5 w-5" />,
+  },
+  {
+    label: 'Notes & Bookmarks',
+    to: ROUTES.NOTES_BOOKMARKS,
+    group: 'Learning',
+    icon: <StickyNote className="h-5 w-5" />,
   },
   {
     label: 'Achievements',

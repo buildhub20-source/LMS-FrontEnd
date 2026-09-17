@@ -75,12 +75,6 @@ export default function ExportToAssessmentModal({
   }, [isOpen, selectedQuestions]);
 
   // Load existing draft/active assessments ONLY when switching to EXISTING tab
-  useEffect(() => {
-    if (isOpen && mode === 'EXISTING') {
-      loadExistingAssessments();
-    }
-  }, [isOpen, mode]);
-
   const loadExistingAssessments = async () => {
     setLoadingExisting(true);
     try {
@@ -98,6 +92,13 @@ export default function ExportToAssessmentModal({
       setLoadingExisting(false);
     }
   };
+
+  useEffect(() => {
+    if (isOpen && mode === 'EXISTING') {
+      loadExistingAssessments();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, mode]);
 
   const totalMarks = useMemo(() => {
     return questionsToExport.reduce((sum, q) => sum + (Number(q.marks) || 10), 0);

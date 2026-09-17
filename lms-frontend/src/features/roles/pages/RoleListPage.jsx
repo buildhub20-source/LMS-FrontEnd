@@ -404,10 +404,12 @@ export const RoleListPage = () => {
 
   useEffect(() => {
     loadRoles();
-  }, [loadRoles]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     loadUsers();
-  }, [loadUsers]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userSearch, userPage, roleFilter]);
 
   const openCreate = () => {
     setEditRole(null);

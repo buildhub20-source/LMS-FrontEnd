@@ -181,4 +181,21 @@ export const API_ENDPOINTS = Object.freeze({
       pointRuleById: (id) => `/admin/gamification/point-rules/${id}`,
     },
   },
+  calendar: {
+    events: '/student/calendar',
+    deadlines: '/student/calendar/deadlines',
+  },
+  studentNotes: {
+    base: '/student/notes',
+    byCourse: (courseId) => `/student/notes/course/${courseId}`,
+    forLesson: (courseId, lessonId) => `/student/notes/course/${courseId}/lesson/${lessonId}`,
+    delete: (noteId) => `/student/notes/${noteId}`,
+  },
+  studentBookmarks: {
+    base: '/student/bookmarks',
+    byCourse: (courseId) => `/student/bookmarks/course/${courseId}`,
+    check: '/student/bookmarks/check',
+    toggle: '/student/bookmarks/toggle',
+    delete: (bookmarkId) => `/student/bookmarks/${bookmarkId}`,
+  },
 });
