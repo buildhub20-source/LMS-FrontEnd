@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Reply, Pencil, Trash2, FileText, Download, Smile, Pin, PinOff, X, FileCode, FileArchive, FileSpreadsheet, Maximize2 } from 'lucide-react';
+import { Reply, Pencil, Trash2, FileText, Download, Smile, Pin, PinOff, X, FileCode, FileArchive, FileSpreadsheet, Maximize2, Clock } from 'lucide-react';
 import { formatMessageTime, getAvatarColorIndex } from '../utils/chatHelpers';
 import ImageLightbox from './ImageLightbox';
 
@@ -214,6 +214,31 @@ export default function MessageItem({
                   const fileUrl = typeof att === 'string' ? att : att.url;
                   const mimeType = typeof att === 'object' ? (att.mimeType || att.mimetype || '') : '';
                   const isImage = mimeType.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(fileName);
+                  const isExpired = typeof att === 'object' && (att.expired || !fileUrl);
+
+                  if (isExpired) {
+                    return (
+                      <div
+                        key={att.id || idx}
+                        className="chat-message__file-card chat-message__file-card--expired"
+                        style={{
+                          opacity: 0.7,
+                          borderStyle: 'dashed',
+                          cursor: 'default',
+                          background: 'rgba(255, 255, 255, 0.02)',
+                        }}
+                        title="This attachment has expired per the organization's retention policy"
+                      >
+                        <Clock size={18} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+                        <div className="chat-message__file-meta">
+                          <span className="chat-message__file-name" style={{ textDecoration: 'line-through' }}>{fileName}</span>
+                          <span className="chat-message__file-size" style={{ color: 'var(--text-muted)', fontSize: 11 }}>
+                            Expired per storage policy
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  }
 
                   return isImage && fileUrl ? (
                     <div
