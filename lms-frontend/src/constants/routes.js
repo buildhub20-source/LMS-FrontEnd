@@ -107,4 +107,8 @@ export const ROUTES = Object.freeze({
   NOTIFICATIONS: '/notifications',
   PROFILE: '/profile',
   SECURITY: '/profile/security',
+
+  // Chat
+  CHAT: '/chat',
+  CHAT_CHANNEL: (id = ':channelId') => `/chat/${id}`,
 });

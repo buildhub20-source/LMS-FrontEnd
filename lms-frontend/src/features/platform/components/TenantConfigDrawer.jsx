@@ -17,6 +17,7 @@ export const TenantConfigDrawer = ({ tenant, isOpen, onClose }) => {
     customCertificatesEnabled: true,
     codeEvaluatorEnabled: true,
     liveProctoringEnabled: false,
+    chatFileRetentionDays: 30,
   });
   const [feedback, setFeedback] = useState({ error: '', success: '' });
 
@@ -37,6 +38,7 @@ export const TenantConfigDrawer = ({ tenant, isOpen, onClose }) => {
         customCertificatesEnabled: configQuery.data.customCertificatesEnabled ?? true,
         codeEvaluatorEnabled: configQuery.data.codeEvaluatorEnabled ?? true,
         liveProctoringEnabled: configQuery.data.liveProctoringEnabled ?? false,
+        chatFileRetentionDays: configQuery.data.chatFileRetentionDays ?? 30,
       });
       setFeedback({ error: '', success: '' });
     }
@@ -73,6 +75,7 @@ export const TenantConfigDrawer = ({ tenant, isOpen, onClose }) => {
       customCertificatesEnabled: formData.customCertificatesEnabled,
       codeEvaluatorEnabled: formData.codeEvaluatorEnabled,
       liveProctoringEnabled: formData.liveProctoringEnabled,
+      chatFileRetentionDays: Number(formData.chatFileRetentionDays || 30),
     });
   };
 
@@ -227,6 +230,15 @@ export const TenantConfigDrawer = ({ tenant, isOpen, onClose }) => {
                     min="1"
                     value={formData.maxStorageGb}
                     onChange={(e) => setFormData({ ...formData, maxStorageGb: e.target.value })}
+                  />
+                  <AdminInput
+                    label="Chat File Retention (Days)"
+                    type="number"
+                    min="1"
+                    max="365"
+                    value={formData.chatFileRetentionDays}
+                    onChange={(e) => setFormData({ ...formData, chatFileRetentionDays: e.target.value })}
+                    helperText="Attachments older than this will be permanently purged from Cloudflare R2 (default: 30 days)."
                   />
                 </div>
               </div>

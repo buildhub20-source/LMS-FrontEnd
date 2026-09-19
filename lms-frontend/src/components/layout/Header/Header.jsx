@@ -1,9 +1,11 @@
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Menu, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import ThemeSlider from '../../common/ThemeSlider';
 import notificationService from '../../../features/notifications/services/notificationService';
+import { useNotificationSocket } from '../../../features/notifications/hooks/useNotificationSocket';
+import NotificationDropdown from '../../../features/notifications/components/NotificationDropdown';
 import { QUERY_KEYS } from '../../../constants/appConstants';
 import { ROUTES } from '../../../constants/routes';
 
@@ -12,19 +14,28 @@ import { ROUTES } from '../../../constants/routes';
  */
 export const Header = ({ title, onToggleSidebar, children }) => {
   const navigate = useNavigate();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { unreadCount: socketUnreadCount } = useNotificationSocket();
+
   const { data: notificationsData } = useQuery({
     queryKey: QUERY_KEYS.NOTIFICATIONS,
     queryFn: () => notificationService.list().catch(() => ({ items: [] })),
     staleTime: 60000,
   });
 
-  const unreadCount = useMemo(() => {
-    const items =
+  const notifications = useMemo(() => {
+    return (
       notificationsData?.items ||
       notificationsData?.data?.items ||
-      (Array.isArray(notificationsData) ? notificationsData : []);
-    return items.filter((n) => !n.isRead && !n.read).length;
+      (Array.isArray(notificationsData) ? notificationsData : [])
+    );
   }, [notificationsData]);
+
+  const queryUnreadCount = useMemo(() => {
+    return notifications.filter((n) => !n.isRead && !n.read && !n.readAt).length;
+  }, [notifications]);
+
+  const unreadCount = socketUnreadCount > 0 ? socketUnreadCount : queryUnreadCount;
 
   return (
     <header
@@ -97,51 +108,62 @@ export const Header = ({ title, onToggleSidebar, children }) => {
         </span>
       </div>
 
-      {/* Notification Bell */}
-      <button
-        type="button"
-        onClick={() => navigate(ROUTES.NOTIFICATIONS)}
-        style={{
-          position: 'relative',
-          background: 'var(--surface-medium)',
-          border: '1px solid var(--border-color)',
-          borderRadius: 8,
-          padding: '7px 9px',
-          cursor: 'pointer',
-          color: 'var(--text-secondary)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          transition: 'color 0.15s ease',
-        }}
-        title="Notifications"
-        aria-label="View notifications"
-      >
-        <Bell size={18} />
-        {unreadCount > 0 && (
-          <span
-            style={{
-              position: 'absolute',
-              top: -4,
-              right: -4,
-              background: '#ef4444',
-              color: '#fff',
-              fontSize: 10,
-              fontWeight: 700,
-              borderRadius: 99,
-              minWidth: 16,
-              height: 16,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '0 4px',
-              border: '2px solid var(--surface-dark)',
-            }}
-          >
-            {unreadCount > 9 ? '9+' : unreadCount}
-          </span>
-        )}
-      </button>
+      {/* Notification Bell & Dropdown */}
+      <div style={{ position: 'relative' }}>
+        <button
+          type="button"
+          onClick={() => setIsDropdownOpen((prev) => !prev)}
+          aria-expanded={isDropdownOpen}
+          aria-haspopup="true"
+          style={{
+            position: 'relative',
+            background: isDropdownOpen ? 'var(--surface-light)' : 'var(--surface-medium)',
+            border: isDropdownOpen ? '1px solid var(--primary-color)' : '1px solid var(--border-color)',
+            borderRadius: 8,
+            padding: '7px 9px',
+            cursor: 'pointer',
+            color: isDropdownOpen ? 'var(--text-primary)' : 'var(--text-secondary)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.15s ease',
+          }}
+          title="Notifications"
+          aria-label="Toggle notifications"
+        >
+          <Bell size={18} />
+          {unreadCount > 0 && (
+            <span
+              style={{
+                position: 'absolute',
+                top: -4,
+                right: -4,
+                background: '#ef4444',
+                color: '#fff',
+                fontSize: 10,
+                fontWeight: 700,
+                borderRadius: 99,
+                minWidth: 16,
+                height: 16,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0 4px',
+                border: '2px solid var(--surface-dark)',
+              }}
+            >
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          )}
+        </button>
+
+        <NotificationDropdown
+          isOpen={isDropdownOpen}
+          onClose={() => setIsDropdownOpen(false)}
+          notifications={notifications}
+          unreadCount={unreadCount}
+        />
+      </div>
 
       {/* Theme toggle slider */}
       <ThemeSlider size="md" />

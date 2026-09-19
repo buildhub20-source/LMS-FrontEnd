@@ -25,7 +25,7 @@ class RouteErrorBoundaryBase extends Component {
       return (
         <ErrorState
           title="This page could not be loaded"
-          error={{ message: 'Try again or navigate to another page.' }}
+          error={{ message: this.state.error?.message || 'Try again or navigate to another page.' }}
           onRetry={() => this.setState({ error: null })}
           retryLabel="Try again"
         />

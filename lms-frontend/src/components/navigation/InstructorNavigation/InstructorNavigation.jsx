@@ -1,4 +1,4 @@
-import { FolderDown, BookOpen, FileText, ClipboardList, LayoutDashboard, Megaphone, Database, Users, Award } from 'lucide-react';
+import { FolderDown, BookOpen, FileText, ClipboardList, LayoutDashboard, Megaphone, Database, Users, Award, MessageSquare } from 'lucide-react';
 import MainNavigation from '../MainNavigation';
 import { ROUTES } from '../../../constants/routes';
 import { PERMISSIONS } from '../../../constants/permissions';
@@ -60,6 +60,12 @@ const ITEMS = [
     to: ROUTES.INSTRUCTOR_ANNOUNCEMENTS,
     group: 'Communication',
     icon: <Megaphone className="h-5 w-5" />,
+  },
+  {
+    label: 'Chat',
+    to: ROUTES.CHAT,
+    group: 'Communication',
+    icon: <MessageSquare className="h-5 w-5" />,
   },
 ];
 
