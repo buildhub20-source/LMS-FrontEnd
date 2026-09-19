@@ -103,6 +103,7 @@ const NotesBookmarksPage = lazy(() => import('../features/notes/pages/NotesBookm
 const NotificationPage = lazy(() => import('../features/notifications/pages/NotificationPage'));
 const ProfilePage = lazy(() => import('../features/profile/pages/ProfilePage'));
 const SecurityPage = lazy(() => import('../features/profile/pages/SecurityPage'));
+const ChatPage = lazy(() => import('../features/chat/pages/ChatPage'));
 
 // Platform Control Plane
 const PlatformLayout = lazy(() => import('../features/platform/components/PlatformLayout'));
@@ -288,6 +289,8 @@ export const router = createBrowserRouter([
           { path: ROUTES.NOTIFICATIONS, element: suspend(<NotificationPage />) },
           { path: ROUTES.PROFILE, element: suspend(<ProfilePage />) },
           { path: ROUTES.SECURITY, element: suspend(<SecurityPage />) },
+          { path: ROUTES.CHAT, element: suspend(<ChatPage />) },
+          { path: ROUTES.CHAT_CHANNEL(), element: suspend(<ChatPage />) },
         ],
       },
 

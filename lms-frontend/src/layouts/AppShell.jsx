@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, User } from 'lucide-react';
@@ -12,6 +12,9 @@ import { ROUTES } from '../constants/routes';
 import RouteErrorBoundary from '../components/common/RouteErrorBoundary';
 import ImpersonationBanner from '../features/platform/components/ImpersonationBanner';
 import BroadcastBanner from '../features/platform/components/BroadcastBanner';
+import TeamsNotificationHost from '../features/notifications/components/TeamsNotificationToast';
+import chatSocketService from '../features/chat/services/chatSocketService';
+import chatUnreadService from '../features/chat/services/chatUnreadService';
 
 /**
  * Shared chrome for every authenticated area.
@@ -25,7 +28,40 @@ export const AppShell = ({ navigation, title }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Maintain active chat socket connection globally for real-time presence across all authenticated pages
+  useEffect(() => {
+    if (user) {
+      chatSocketService.connect();
+    }
+  }, [user]);
+
+  // Manage Browser Tab Unread Count: Show (3) LMS in document.title when there are unread messages
+  useEffect(() => {
+    if (!user) {
+      document.title = 'LMS';
+      return;
+    }
+
+    const userId = user.id || user.userId || user.sub;
+    chatUnreadService.init(userId);
+
+    const unsub = chatUnreadService.subscribe((totalUnread) => {
+      if (totalUnread > 0) {
+        document.title = `(${totalUnread}) LMS`;
+      } else {
+        document.title = 'LMS';
+      }
+    });
+
+    return () => {
+      unsub();
+    };
+  }, [user]);
+
   const handleSignOut = async () => {
+    chatSocketService.disconnect();
+    chatUnreadService.reset();
+    document.title = 'LMS';
     await logout();
     navigate(ROUTES.LOGIN, { replace: true, state: {} });
   };
@@ -105,6 +141,7 @@ export const AppShell = ({ navigation, title }) => {
           <Footer />
         </div>
       </div>
+      <TeamsNotificationHost />
     </ThemeProvider>
   );
 };
