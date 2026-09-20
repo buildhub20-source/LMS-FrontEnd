@@ -15,6 +15,7 @@ import {
   ScrollText,
   FolderDown,
   Trophy,
+  MessageSquare,
 } from 'lucide-react';
 import MainNavigation from '../MainNavigation';
 import { ROUTES } from '../../../constants/routes';
@@ -143,6 +144,12 @@ const ITEMS = [
     permission: PERMISSIONS.GAMIFICATION_MANAGE,
     group: 'Settings',
     icon: <Trophy className="h-5 w-5" />,
+  },
+  {
+    label: 'Chat',
+    to: ROUTES.CHAT,
+    group: 'Communication',
+    icon: <MessageSquare className="h-5 w-5" />,
   },
 ];
 
