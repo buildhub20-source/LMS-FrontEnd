@@ -72,6 +72,10 @@ export const platformService = {
   createAnnouncement: (payload) => client.post(`${endpoint}/announcements`, payload).then(unwrap),
   deleteAnnouncement: (id) => client.delete(`${endpoint}/announcements/${id}`).then(unwrap),
   toggleAnnouncement: (id, active) => client.post(`${endpoint}/announcements/${id}/toggle?active=${active}`).then(unwrap),
+
+  // Live Classes — Usage & Config (Platform Admin)
+  getTenantLiveUsage: (id) => client.get(`${endpoint}/tenants/${id}/live-usage`).then(unwrap),
+  updateTenantLiveConfig: (id, payload) => client.put(`${endpoint}/tenants/${id}/live-config`, payload).then(unwrap),
 };
 
 export default platformService;

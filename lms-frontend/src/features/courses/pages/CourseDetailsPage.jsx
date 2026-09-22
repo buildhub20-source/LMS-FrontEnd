@@ -4,7 +4,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Share2, Bookmark, CheckCircle2, PauseCircle, Play, ChevronDown, ChevronUp, Edit3, ArrowLeft,
   FileText, Presentation, FileCode, Music, HelpCircle, Download, ExternalLink, BarChart2,
-  Lock, AlertCircle, BookOpen, ChevronLeft, ChevronRight, RotateCcw, Trash2
+  Lock, AlertCircle, BookOpen, ChevronLeft, ChevronRight, RotateCcw, Trash2, Video
 } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
@@ -350,41 +350,52 @@ const CourseDetailsContent = () => {
             </h1>
           </div>
 
-          {isAdminOrInstructor && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate(editRoute)}
-              >
-                <Edit3 size={14} style={{ marginRight: 6 }} /> Edit Course
-              </Button>
-              <button
-                type="button"
-                onClick={() => setShowDeleteConfirm(true)}
-                title="Delete Course"
-                style={{
-                  padding: '7px 12px',
-                  borderRadius: 6,
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
-                  background: 'rgba(239, 68, 68, 0.08)',
-                  color: '#ef4444',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  fontSize: 13,
-                  fontWeight: 600,
-                  transition: 'all 0.15s ease',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.18)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)'; }}
-              >
-                <Trash2 size={14} />
-                <span>Delete</span>
-              </button>
-            </div>
-          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate(`/courses/${courseId}/live`)}
+              style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}
+            >
+              <Video size={14} style={{ marginRight: 6 }} /> Live Classes
+            </Button>
+
+            {isAdminOrInstructor && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate(editRoute)}
+                >
+                  <Edit3 size={14} style={{ marginRight: 6 }} /> Edit Course
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(true)}
+                  title="Delete Course"
+                  style={{
+                    padding: '7px 12px',
+                    borderRadius: 6,
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    background: 'rgba(239, 68, 68, 0.08)',
+                    color: '#ef4444',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontSize: 13,
+                    fontWeight: 600,
+                    transition: 'all 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.18)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)'; }}
+                >
+                  <Trash2 size={14} />
+                  <span>Delete</span>
+                </button>
+              </>
+            )}
+          </div>
         </div>
 
         {/* ── Glassmorphic Pill Tab Navigation (Restricted to Admin & Instructor) ── */}

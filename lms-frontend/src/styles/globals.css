@@ -176,9 +176,37 @@
   box-sizing: border-box;
 }
 
+/* Keep native scrollbars consistent with the application's dark interface. */
+* {
+  scrollbar-color: #3a3a3a #050505;
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-corner,
+*::-webkit-scrollbar-button {
+  background: #050505;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border: 2px solid #050505;
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #525252;
+}
+
 html,
 body,
 #root {
+  color-scheme: dark;
   height: 100%;
   font-family: var(--font-sans);
   font-size: 14px;

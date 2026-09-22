@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Pencil, Ban, RotateCcw } from 'lucide-react';
+import { Pencil, Ban, RotateCcw, Video } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Card from '../../../components/common/Card';
 import Button from '../../../components/common/Button';
@@ -139,7 +139,9 @@ export const InstructorDetailsPage = () => {
                   <div className={styles.contactRow} key={batch.id}>
                     <div>
                       <div className={styles.contactName}>{batch.name}</div>
-                      <div className={styles.contactMeta}>{batch.code}</div>
+                      <div className={styles.contactMeta}>
+                        {batch.code}{batch.courseTitle ? ` • ${batch.courseTitle}` : ''}
+                      </div>
                     </div>
                     <Field
                       label="Runs"
@@ -157,6 +159,18 @@ export const InstructorDetailsPage = () => {
                           : String(batch.enrolledCount)
                       }
                     />
+                    {batch.courseId && (
+                      <div className="u-flex u-items-center">
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          leftIcon={<Video className="h-4 w-4" />}
+                          onClick={() => navigate(ROUTES.COURSE_LIVE_SESSIONS(batch.courseId))}
+                        >
+                          Live Classes
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

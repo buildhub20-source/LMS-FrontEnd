@@ -1,4 +1,4 @@
-import { FolderDown, BookOpen, FileText, ClipboardList, LayoutDashboard, Megaphone, Database, Users, Award, MessageSquare } from 'lucide-react';
+import { FolderDown, BookOpen, FileText, ClipboardList, LayoutDashboard, Megaphone, Database, Users, Award, MessageSquare, Video } from 'lucide-react';
 import MainNavigation from '../MainNavigation';
 import { ROUTES } from '../../../constants/routes';
 import { PERMISSIONS } from '../../../constants/permissions';
@@ -15,6 +15,13 @@ const ITEMS = [
     permission: PERMISSIONS.COURSE_VIEW,
     group: 'Teaching',
     icon: <BookOpen className="h-5 w-5" />,
+  },
+  {
+    label: 'Live Classes',
+    to: ROUTES.INSTRUCTOR_LIVE_CLASSES,
+    permission: PERMISSIONS.COURSE_VIEW,
+    group: 'Teaching',
+    icon: <Video className="h-5 w-5" />,
   },
   {
     label: 'Cohorts & Batches',

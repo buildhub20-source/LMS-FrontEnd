@@ -13,7 +13,10 @@ import {
   UserCheck,
   Wrench,
   X,
+  Video,
+  BarChart3,
 } from 'lucide-react';
+import TenantLiveUsageDrawer from '../components/TenantLiveUsageDrawer';
 import platformAuthStorage from '../services/platformAuthStorage';
 import platformService from '../services/platformService';
 import tokenStorage from '../../../services/storage/tokenStorage';
@@ -49,6 +52,7 @@ export const PlatformTenantPage = () => {
   const [actionError, setActionError] = useState('');
   const [impersonatingTenantId, setImpersonatingTenantId] = useState(null);
   const [configTenant, setConfigTenant] = useState(null);
+  const [liveUsageTenant, setLiveUsageTenant] = useState(null);
   const [debugModalTenant, setDebugModalTenant] = useState(null);
   const [debugReason, setDebugReason] = useState('Bug Analysis & Diagnostics');
   const [customReason, setCustomReason] = useState('');
@@ -428,6 +432,17 @@ export const PlatformTenantPage = () => {
                           Config
                         </AdminButton>
 
+                        {/* Live Usage Button */}
+                        <AdminButton
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setLiveUsageTenant(tenant)}
+                          icon={<Video size={14} />}
+                          title="View live class usage statistics"
+                        >
+                          Live Usage
+                        </AdminButton>
+
                         {/* Lifecycle controls */}
                         {(tenant.status === 'PROVISIONING' || tenant.status === 'PROVISION_FAILED') && (
                           <AdminButton
@@ -514,6 +529,17 @@ export const PlatformTenantPage = () => {
         tenant={configTenant}
         isOpen={Boolean(configTenant)}
         onClose={() => setConfigTenant(null)}
+      />
+
+      {/* Live Usage Drawer */}
+      <TenantLiveUsageDrawer
+        tenant={liveUsageTenant}
+        isOpen={Boolean(liveUsageTenant)}
+        onClose={() => setLiveUsageTenant(null)}
+        onConfigureClick={() => {
+          setConfigTenant(liveUsageTenant);
+          setLiveUsageTenant(null);
+        }}
       />
 
       {/* ── 30-Minute Temporary Debug Access Modal ── */}

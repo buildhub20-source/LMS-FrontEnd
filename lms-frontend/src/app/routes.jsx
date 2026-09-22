@@ -105,6 +105,12 @@ const ProfilePage = lazy(() => import('../features/profile/pages/ProfilePage'));
 const SecurityPage = lazy(() => import('../features/profile/pages/SecurityPage'));
 const ChatPage = lazy(() => import('../features/chat/pages/ChatPage'));
 
+// Live Sessions
+const LiveSessionsPage = lazy(() => import('../features/liveSessions/pages/LiveSessionsPage'));
+const LiveSessionRoomPage = lazy(() => import('../features/liveSessions/pages/LiveSessionRoomPage'));
+const LiveAttendancePage = lazy(() => import('../features/liveSessions/pages/LiveAttendancePage'));
+const LiveClassesHubPage = lazy(() => import('../features/liveSessions/pages/LiveClassesHubPage'));
+
 // Platform Control Plane
 const PlatformLayout = lazy(() => import('../features/platform/components/PlatformLayout'));
 const PlatformDashboardPage = lazy(() => import('../features/platform/pages/PlatformDashboardPage'));
@@ -203,6 +209,7 @@ export const router = createBrowserRouter([
               { path: ROUTES.BILLING, element: suspend(<BillingPage />) },
               { path: ROUTES.AUDIT_LOGS, element: suspend(<AuditLogsPage />) },
               { path: ROUTES.ADMIN_COURSES, element: suspend(<AdminCourseListPage />) },
+              { path: ROUTES.ADMIN_LIVE_CLASSES, element: suspend(<LiveClassesHubPage />) },
               { path: ROUTES.ADMIN_COURSE_CREATE, element: suspend(<CreateCoursePage />) },
               { path: ROUTES.ADMIN_COURSE_DETAILS(), element: suspend(<CourseDetailsPage />) },
               { path: ROUTES.ADMIN_COURSE_EDIT(), element: suspend(<EditCoursePage />) },
@@ -236,6 +243,7 @@ export const router = createBrowserRouter([
               { index: true, element: <Navigate to={ROUTES.COURSES} replace /> },
               { path: ROUTES.INSTRUCTOR_ANALYTICS, element: suspend(<InstructorAnalyticsPage />) },
               { path: ROUTES.COURSES, element: suspend(<CourseListPage />) },
+              { path: ROUTES.INSTRUCTOR_LIVE_CLASSES, element: suspend(<LiveClassesHubPage />) },
               { path: ROUTES.INSTRUCTOR_BATCHES, element: suspend(<InstructorBatchListPage />) },
               { path: ROUTES.INSTRUCTOR_CERTIFICATES, element: suspend(<InstructorCertificationHubPage />) },
               { path: ROUTES.COURSE_CREATE, element: suspend(<CreateCoursePage />) },
@@ -262,12 +270,35 @@ export const router = createBrowserRouter([
         element: suspend(<StudentAssessmentTakingPage />),
       },
 
+      // Standalone Fullscreen Live Classroom Experience
+      {
+        path: ROUTES.LIVE_SESSION_ROOM(),
+        element: suspend(<LiveSessionRoomPage />),
+      },
+      {
+        path: ROUTES.LIVE_SESSION_ATTENDANCE(),
+        element: suspend(<LiveAttendancePage />),
+      },
+      {
+        path: ROUTES.COURSE_LIVE_SESSIONS(),
+        element: suspend(<LiveSessionsPage />),
+      },
+      {
+        path: '/instructor/courses/:courseId/live',
+        element: suspend(<LiveSessionsPage />),
+      },
+      {
+        path: '/learn/courses/:courseId/live',
+        element: suspend(<LiveSessionsPage />),
+      },
+
       {
         path: '/learn',
         element: <StudentLayout />,
         children: [
           { index: true, element: <Navigate to={ROUTES.MY_COURSES} replace /> },
           { path: ROUTES.MY_COURSES, element: suspend(<MyCoursesPage />) },
+          { path: ROUTES.STUDENT_LIVE_CLASSES, element: suspend(<LiveClassesHubPage />) },
           { path: ROUTES.STUDENT_PROGRESS, element: suspend(<StudentProgressPage />) },
           { path: ROUTES.STUDENT_ASSESSMENTS, element: suspend(<AssessmentListPage />) },
           { path: ROUTES.MY_ASSESSMENTS, element: suspend(<AssessmentListPage />) },

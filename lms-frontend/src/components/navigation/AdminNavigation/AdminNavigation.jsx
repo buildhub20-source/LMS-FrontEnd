@@ -16,6 +16,7 @@ import {
   FolderDown,
   Trophy,
   MessageSquare,
+  Video,
 } from 'lucide-react';
 import MainNavigation from '../MainNavigation';
 import { ROUTES } from '../../../constants/routes';
@@ -97,6 +98,13 @@ const ITEMS = [
     permission: PERMISSIONS.COURSE_VIEW,
     group: 'Learning',
     icon: <BookOpen className="h-5 w-5" />,
+  },
+  {
+    label: 'Live Classes',
+    to: ROUTES.ADMIN_LIVE_CLASSES,
+    permission: PERMISSIONS.COURSE_VIEW,
+    group: 'Learning',
+    icon: <Video className="h-5 w-5" />,
   },
   {
     label: 'Enrollments',

@@ -198,4 +198,17 @@ export const API_ENDPOINTS = Object.freeze({
     toggle: '/student/bookmarks/toggle',
     delete: (bookmarkId) => `/student/bookmarks/${bookmarkId}`,
   },
+  liveSessions: {
+    base: '/live-sessions',
+    all: '/live-sessions',
+    byCourse: (courseId) => `/courses/${courseId}/live-sessions`,
+    create: (courseId) => `/courses/${courseId}/live-sessions`,
+    byId: (sessionId) => `/live-sessions/${sessionId}`,
+    start: (sessionId) => `/live-sessions/${sessionId}/start`,
+    join: (sessionId) => `/live-sessions/${sessionId}/join`,
+    end: (sessionId) => `/live-sessions/${sessionId}/end`,
+    attendance: (sessionId) => `/live-sessions/${sessionId}/attendance`,
+    tenantUsage: (tenantId) => `/platform/tenants/${tenantId}/live-usage`,
+    tenantConfig: (tenantId) => `/platform/tenants/${tenantId}/live-config`,
+  },
 });
