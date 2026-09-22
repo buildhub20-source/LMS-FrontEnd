@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Search, BookOpen, Plus, Globe, GlobeLock, Archive,
   CheckCircle, XCircle, Trash2, LayoutList, LayoutGrid, Copy,
-  Clock, Layers, Award, Sparkles, ArrowRight
+  Clock, Layers, Award, Sparkles, ArrowRight, Video
 } from 'lucide-react';
 import AdminButton from '../../../components/ui/AdminButton';
 import { AdminModal, AdminConfirmModal } from '../../../components/ui/AdminModal';
@@ -504,6 +504,27 @@ function CourseCard({ course, onAction, onClick }) {
             </button>
 
             <button
+              onClick={(e) => { e.stopPropagation(); onAction('live', course); }}
+              title="Live Classes"
+              style={{
+                padding: '7px 10px',
+                borderRadius: 8,
+                border: '1px solid rgba(99,102,241,0.35)',
+                background: 'rgba(99,102,241,0.08)',
+                color: '#818cf8',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.18)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.08)'; }}
+            >
+              <Video size={15} />
+            </button>
+
+            <button
               onClick={() => onAction('delete', course)}
               title="Delete course"
               style={{
@@ -663,6 +684,27 @@ function CourseListRow({ course, onAction, onClick }) {
         </button>
 
         <button
+          onClick={(e) => { e.stopPropagation(); onAction('live', course); }}
+          title="Live Classes"
+          style={{
+            padding: '8px 10px',
+            borderRadius: 8,
+            border: '1px solid rgba(99,102,241,0.35)',
+            background: 'rgba(99,102,241,0.08)',
+            color: '#818cf8',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.15s ease',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.18)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.08)'; }}
+        >
+          <Video size={16} />
+        </button>
+
+        <button
           onClick={() => onAction('delete', course)}
           title="Delete course"
           style={{
@@ -769,6 +811,7 @@ export const CourseListPage = () => {
 
   const handleAction = (type, course) => {
     if (type === 'edit') { navigate(ROUTES.COURSE_EDIT(course.id)); return; }
+    if (type === 'live') { navigate(ROUTES.COURSE_LIVE_SESSIONS(course.id)); return; }
     if (type === 'duplicate') {
       doAction(course, 'duplicate', courseService.duplicate, `"${course.title}" duplicated into DRAFT!`);
       return;

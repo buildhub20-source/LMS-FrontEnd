@@ -111,4 +111,13 @@ export const ROUTES = Object.freeze({
   // Chat
   CHAT: '/chat',
   CHAT_CHANNEL: (id = ':channelId') => `/chat/${id}`,
+
+  // Live Sessions
+  LIVE_SESSION_ROOM: (id = ':sessionId') => `/live/${id}/room`,
+  LIVE_SESSION_ATTENDANCE: (id = ':sessionId') => `/live/${id}/attendance`,
+  COURSE_LIVE_SESSIONS: (id = ':courseId') => `/courses/${id}/live`,
+  LIVE_CLASSES: '/live-classes',
+  INSTRUCTOR_LIVE_CLASSES: '/instructor/live-classes',
+  ADMIN_LIVE_CLASSES: '/admin/live-classes',
+  STUDENT_LIVE_CLASSES: '/learn/live-classes',
 });

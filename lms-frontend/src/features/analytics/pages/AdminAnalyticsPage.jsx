@@ -89,11 +89,12 @@ const Legend = ({ color, label, value }) => (
 
 const ReadinessRing = ({ label, published, total, color, detail }) => {
   const readiness = total ? percent((published / total) * 100) : 0;
+  const readinessLabel = `${Math.round(readiness)}%`;
   return (
     <div className="flex min-w-0 items-center gap-4 rounded-xl border p-4" style={{ borderColor: 'var(--border-color)', background: 'var(--surface-dark)' }}>
       <div className="grid h-20 w-20 shrink-0 place-items-center rounded-full" style={{ background: `conic-gradient(${color} ${readiness}%, var(--active-bg) 0)` }}>
         <div className="grid h-14 w-14 place-items-center rounded-full" style={{ background: 'var(--surface-dark)' }}>
-          <strong className="text-sm tabular-nums" style={{ color: 'var(--text-primary)' }}>{readiness}%</strong>
+          <strong className="text-sm tabular-nums" style={{ color: 'var(--text-primary)' }}>{readinessLabel}</strong>
         </div>
       </div>
       <div className="min-w-0">

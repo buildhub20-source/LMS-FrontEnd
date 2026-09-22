@@ -8,6 +8,7 @@ import {
   CalendarDays,
   StickyNote,
   MessageSquare,
+  Video,
 } from 'lucide-react';
 import MainNavigation from '../MainNavigation';
 import { ROUTES } from '../../../constants/routes';
@@ -29,6 +30,12 @@ const ITEMS = [
     to: ROUTES.MY_COURSES,
     group: 'Learning',
     icon: <BookOpen className="h-5 w-5" />,
+  },
+  {
+    label: 'Live Classes',
+    to: ROUTES.STUDENT_LIVE_CLASSES,
+    group: 'Learning',
+    icon: <Video className="h-5 w-5" />,
   },
   {
     label: 'Assessments',

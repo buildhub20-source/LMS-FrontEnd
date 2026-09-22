@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
   LayoutList,
@@ -22,12 +23,27 @@ import {
   FileText,
   X,
   ExternalLink,
+  Video,
 } from 'lucide-react';
 import { useMyCourses } from '../hooks/useCourses';
 import { ROUTES } from '../../../constants/routes';
 import Avatar from '../../../components/common/Avatar';
 import { useResources } from '../../resources/hooks/useResources';
 import resourceService from '../../resources/services/resourceService';
+import analyticsService from '../../analytics/services/analyticsService';
+import { useStudentStreak } from '../../gamification/hooks/useGamification';
+import { QUERY_KEYS } from '../../../constants/appConstants';
+
+const WEEKLY_STUDY_TARGET_HOURS = 6;
+const WEEK_DAYS = [
+  { key: 'Mon', label: 'Mo' },
+  { key: 'Tue', label: 'Tu' },
+  { key: 'Wed', label: 'We' },
+  { key: 'Thu', label: 'Th' },
+  { key: 'Fri', label: 'Fr' },
+  { key: 'Sat', label: 'Sa' },
+  { key: 'Sun', label: 'Su' },
+];
 
 /* ─── Tech Visual Presets & SVG Emblems ─── */
 const TECH_PRESETS = {
@@ -403,7 +419,7 @@ function HeroSpotlightCard({ course, onContinue }) {
 }
 
 /* ─── Modern Grid Card ─── */
-function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark }) {
+function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark, onLive }) {
   const progress = course.progressPercent ?? 0;
   const isCompleted = progress >= 100;
   const preset = getTechPreset(course.title);
@@ -607,84 +623,97 @@ function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark }) 
           </div>
         </div>
 
-        {/* Footer: Instructor & CTA */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingTop: 14,
-            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-            gap: 12,
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 }}>
-            <Avatar name={course.createdByName || 'Instructor'} size="xs" />
-            <div style={{ minWidth: 0 }}>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: 12,
-                  fontWeight: 600,
-                  color: '#f8fafc',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                {course.createdByName || 'Platform Faculty'}
-              </p>
-              <p style={{ margin: 0, fontSize: 10, color: '#64748b' }}>Lead Instructor</p>
-            </div>
-          </div>
-
-          <button
-            onClick={() => onContinue(course)}
+          {/* Footer: Instructor & CTA */}
+          <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 6,
-              padding: '9px 18px',
-              borderRadius: 10,
-              fontSize: 13,
-              fontWeight: 700,
-              cursor: 'pointer',
-              border: 'none',
-              background: isCompleted
-                ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
-                : progress > 0
-                ? 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)'
-                : '#ffffff',
-              color: isCompleted || progress > 0 ? '#fff' : '#09090b',
-              boxShadow: progress > 0 ? '0 2px 10px rgba(59, 130, 246, 0.3)' : 'none',
-              transition: 'opacity 0.15s ease',
-              whiteSpace: 'nowrap',
+              justifyContent: 'space-between',
+              paddingTop: 14,
+              borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+              gap: 8,
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
           >
-            {isCompleted ? (
-              <>
-                <GraduationCap size={15} /> Review
-              </>
-            ) : progress > 0 ? (
-              <>
-                <Play size={14} fill="#fff" /> Continue
-              </>
-            ) : (
-              <>
-                Start Course <ArrowRight size={14} />
-              </>
-            )}
-          </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 }}>
+              <Avatar name={course.createdByName || 'Instructor'} size="xs" />
+              <div style={{ minWidth: 0 }}>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: '#f8fafc',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {course.createdByName || 'Platform Faculty'}
+                </p>
+                <p style={{ margin: 0, fontSize: 10, color: '#64748b' }}>Lead Instructor</p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexShrink: 0 }}>
+              {onLive && (
+                <button
+                  onClick={() => onLive(course)}
+                  title="Live Classes"
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 5,
+                    padding: '7px 11px', borderRadius: 9, fontSize: 12, fontWeight: 600,
+                    cursor: 'pointer', border: '1px solid rgba(99,102,241,0.4)',
+                    background: 'rgba(99,102,241,0.12)', color: '#818cf8', transition: 'all 0.15s ease',
+                    whiteSpace: 'nowrap',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.25)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.12)')}
+                >
+                  <Video size={13} /> Live
+                </button>
+              )}
+              <button
+                onClick={() => onContinue(course)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '9px 16px',
+                  borderRadius: 10,
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  border: 'none',
+                  background: isCompleted
+                    ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
+                    : progress > 0
+                    ? 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)'
+                    : '#ffffff',
+                  color: isCompleted || progress > 0 ? '#fff' : '#09090b',
+                  boxShadow: progress > 0 ? '0 2px 10px rgba(59, 130, 246, 0.3)' : 'none',
+                  transition: 'opacity 0.15s ease',
+                  whiteSpace: 'nowrap',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
+                onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+              >
+                {isCompleted ? (
+                  <><GraduationCap size={15} /> Review</>
+                ) : progress > 0 ? (
+                  <><Play size={14} fill="#fff" /> Continue</>
+                ) : (
+                  <>Start Course <ArrowRight size={14} /></>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
   );
 }
 
 /* ─── Modern List Card (Directly addresses the user's uploaded screenshot) ─── */
-function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark }) {
+function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, onLive }) {
   const progress = course.progressPercent ?? 0;
   const isCompleted = progress >= 100;
   const preset = getTechPreset(course.title);
@@ -845,6 +874,31 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark }) 
         </div>
 
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          {onLive && (
+            <button
+              onClick={() => onLive(course)}
+              title="Live Classes"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 5,
+                padding: '9px 13px',
+                borderRadius: 10,
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: 'pointer',
+                border: '1px solid rgba(99,102,241,0.4)',
+                background: 'rgba(99,102,241,0.12)',
+                color: '#818cf8',
+                transition: 'all 0.15s ease',
+                whiteSpace: 'nowrap',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.25)')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.12)')}
+            >
+              <Video size={14} /> Live
+            </button>
+          )}
           <button
             onClick={() => onContinue(course)}
             style={{
@@ -911,10 +965,27 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark }) 
 }
 
 /* ─── Right Sidebar Widgets (Fills Widescreen Space Perfectly) ─── */
-function CourseSidebar({  navigate }) {
+function CourseSidebar({ navigate }) {
   const [downloadSuccess, setDownloadSuccess] = useState('');
   const [expandedToolkit, setExpandedToolkit] = useState(false);
+  const [now] = useState(() => Date.now());
   const { data: resources = [] } = useResources();
+  const { data: streak } = useStudentStreak();
+  const { data: progressAnalytics } = useQuery({
+    queryKey: [...QUERY_KEYS.ANALYTICS, 'progress'],
+    queryFn: () => analyticsService.studentProgress(),
+    staleTime: 30000,
+  });
+
+  const currentStreak = Math.max(0, Number(streak?.currentStreak) || 0);
+  const weeklyActivity = Array.isArray(progressAnalytics?.enrollmentTrend)
+    ? progressAnalytics.enrollmentTrend
+    : [];
+  const activityByDay = new Map(
+    weeklyActivity.map((item) => [item.name, Math.max(0, Number(item.hours) || 0)])
+  );
+  const weeklyHours = WEEK_DAYS.reduce((sum, day) => sum + (activityByDay.get(day.key) || 0), 0);
+  const weeklyProgress = Math.min(100, Math.round((weeklyHours / WEEKLY_STUDY_TARGET_HOURS) * 100));
 
   const handleFakeDownload = (name) => {
     setDownloadSuccess(name);
@@ -951,7 +1022,9 @@ function CourseSidebar({  navigate }) {
             </div>
             <div>
               <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#fff' }}>Learning Streak</h4>
-              <p style={{ margin: 0, fontSize: 11, color: '#94a3b8' }}>4 Days Consecutive</p>
+              <p style={{ margin: 0, fontSize: 11, color: '#94a3b8' }}>
+                {currentStreak} consecutive {currentStreak === 1 ? 'day' : 'days'}
+              </p>
             </div>
           </div>
           <span
@@ -960,27 +1033,23 @@ function CourseSidebar({  navigate }) {
               borderRadius: 99,
               fontSize: 10,
               fontWeight: 700,
-              background: 'rgba(16, 185, 129, 0.15)',
-              color: '#34d399',
+              background: currentStreak > 0 ? 'rgba(16, 185, 129, 0.15)' : 'rgba(148, 163, 184, 0.12)',
+              color: currentStreak > 0 ? '#34d399' : '#94a3b8',
             }}
           >
-            ACTIVE
+            {currentStreak > 0 ? 'ACTIVE' : 'START TODAY'}
           </span>
         </div>
 
         {/* Days Row */}
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 4, marginBottom: 16 }}>
-          {[
-            { day: 'M', active: true },
-            { day: 'T', active: true },
-            { day: 'W', active: true },
-            { day: 'T', active: true },
-            { day: 'F', active: false },
-            { day: 'S', active: false },
-            { day: 'S', active: false },
-          ].map((item, idx) => (
+          {WEEK_DAYS.map((item) => {
+            const hours = activityByDay.get(item.key) || 0;
+            const active = hours > 0;
+            return (
             <div
-              key={idx}
+              key={item.key}
+              title={`${item.key}: ${hours.toFixed(1)} hours`}
               style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -994,30 +1063,33 @@ function CourseSidebar({  navigate }) {
                   width: 28,
                   height: 28,
                   borderRadius: '50%',
-                  background: item.active ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' : 'rgba(255,255,255,0.06)',
-                  color: item.active ? '#fff' : '#64748b',
+                  background: active ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' : 'rgba(255,255,255,0.06)',
+                  color: active ? '#fff' : '#64748b',
                   fontSize: 11,
                   fontWeight: 700,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: item.active ? '0 2px 8px rgba(249, 115, 22, 0.4)' : 'none',
+                  boxShadow: active ? '0 2px 8px rgba(249, 115, 22, 0.4)' : 'none',
                 }}
               >
-                {item.day}
+                {item.label}
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Weekly Goal Gauge */}
         <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 12, padding: '12px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, fontWeight: 600, marginBottom: 6 }}>
-            <span style={{ color: '#94a3b8' }}>Weekly Target: 4.5h / 6.0h</span>
-            <span style={{ color: '#38bdf8' }}>75%</span>
+            <span style={{ color: '#94a3b8' }}>
+              Weekly target: {weeklyHours.toFixed(1)}h / {WEEKLY_STUDY_TARGET_HOURS.toFixed(1)}h
+            </span>
+            <span style={{ color: '#38bdf8' }}>{weeklyProgress}%</span>
           </div>
           <div style={{ height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: '75%', background: '#38bdf8', borderRadius: 99 }} />
+            <div style={{ height: '100%', width: `${weeklyProgress}%`, background: '#38bdf8', borderRadius: 99 }} />
           </div>
         </div>
       </div>
@@ -1138,7 +1210,7 @@ function CourseSidebar({  navigate }) {
           ) : (
             <>
               {(expandedToolkit ? resources : resources.slice(0, 5)).map((kit) => {
-                const isNew = kit.createdAt && (Date.now() - new Date(kit.createdAt).getTime() < 7 * 24 * 3600 * 1000);
+                const isNew = kit.createdAt && (now - new Date(kit.createdAt).getTime() < 7 * 24 * 3600 * 1000);
                 const fileTypeUpper = (kit.fileType || 'PDF').toUpperCase();
                 const badgeColor =
                   fileTypeUpper === 'DOCX' || fileTypeUpper === 'DOC'
@@ -1834,6 +1906,7 @@ export const MyCoursesPage = () => {
                   onContinue={handleContinue}
                   isBookmarked={bookmarks.includes(course.id)}
                   onToggleBookmark={toggleBookmark}
+                  onLive={(c) => navigate(`/learn/courses/${c.id}/live`)}
                 />
               ))}
             </div>
@@ -1846,6 +1919,7 @@ export const MyCoursesPage = () => {
                   onContinue={handleContinue}
                   isBookmarked={bookmarks.includes(course.id)}
                   onToggleBookmark={toggleBookmark}
+                  onLive={(c) => navigate(`/learn/courses/${c.id}/live`)}
                 />
               ))}
             </div>
