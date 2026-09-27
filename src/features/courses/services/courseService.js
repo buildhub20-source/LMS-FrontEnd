@@ -16,6 +16,7 @@ export const courseService = {
   submit: (id) => http.post(API_ENDPOINTS.courses.submit(id)),
   approve: (id) => http.post(API_ENDPOINTS.courses.approve(id)),
   reject: (id, payload) => http.post(API_ENDPOINTS.courses.reject(id), payload),
+  duplicate: (id) => http.post(API_ENDPOINTS.courses.duplicate(id)),
 
   // Recordings
   getRecordings: (id) => http.get(API_ENDPOINTS.courses.recordings(id)),

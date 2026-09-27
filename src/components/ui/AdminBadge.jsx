@@ -1,35 +1,79 @@
+import { cn } from '@/utils';
+
 /**
- * Admin Dashboard Badge — Tailwind-based.
+ * AdminBadge — Pastel macaron design with soft color backgrounds.
  * @param {'default'|'success'|'warning'|'danger'|'info'|'neutral'} variant
- * @param {boolean} dot  — show a colored dot before the label
+ * @param {boolean} dot — show a colored dot before the label
  */
 const variantStyles = {
-  default: 'bg-brand-50 text-brand-700 border-brand-200',
-  success:  'bg-emerald-50 text-emerald-700 border-emerald-200',
-  warning:  'bg-amber-50 text-amber-700 border-amber-200',
-  danger:   'bg-red-50 text-red-700 border-red-200',
-  info:     'bg-sky-50 text-sky-700 border-sky-200',
-  neutral:  'bg-slate-100 text-slate-600 border-slate-200',
+  default: {
+    background: 'var(--muted)',
+    color: 'var(--muted-foreground)',
+    border: '1px solid var(--border)',
+  },
+  success: {
+    background: 'var(--color-green-50)',
+    color: 'var(--color-green-700)',
+    border: '1px solid var(--color-green-100)',
+  },
+  warning: {
+    background: 'var(--color-amber-50)',
+    color: 'var(--color-amber-700)',
+    border: '1px solid var(--color-amber-100)',
+  },
+  danger: {
+    background: 'var(--color-red-50)',
+    color: 'var(--color-red-700)',
+    border: '1px solid var(--color-red-100)',
+  },
+  info: {
+    background: 'var(--color-sky-50)',
+    color: 'var(--color-sky-700)',
+    border: '1px solid var(--color-sky-100)',
+  },
+  neutral: {
+    background: 'var(--muted)',
+    color: 'var(--muted-foreground)',
+    border: '1px solid var(--border)',
+  },
 };
 
 const dotColors = {
-  default: 'bg-brand-500',
-  success:  'bg-emerald-500',
-  warning:  'bg-amber-500',
-  danger:   'bg-red-500',
-  info:     'bg-sky-500',
-  neutral:  'bg-slate-400',
+  default: 'var(--muted-foreground)',
+  success: 'var(--color-green-500)',
+  warning: 'var(--color-amber-500)',
+  danger: 'var(--color-red-500)',
+  info: 'var(--color-sky-500)',
+  neutral: 'var(--muted-foreground)',
 };
 
-export const AdminBadge = ({ variant = 'default', children, className = '', dot = false }) => (
-  <span
-    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${variantStyles[variant] ?? variantStyles.default} ${className}`}
-  >
-    {dot && (
-      <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${dotColors[variant] ?? dotColors.default}`} />
-    )}
-    {children}
-  </span>
-);
+export const AdminBadge = ({
+  variant = 'default',
+  children,
+  style = {},
+  className = '',
+  dot = false,
+}) => {
+  const vs = variantStyles[variant] ?? variantStyles.default;
+
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5',
+        'text-[11px] font-semibold whitespace-nowrap tracking-wide',
+        className,
+      )}
+      style={{ ...vs, ...style }}
+    >
+      {dot && (
+        <span
+          className="w-1.5 h-1.5 rounded-full shrink-0"
+          style={{ background: dotColors[variant] ?? dotColors.default }}
+        />
+      )}
+      {children}
+    </span>
+  );
+};
 
 export default AdminBadge;

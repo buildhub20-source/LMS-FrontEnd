@@ -1,31 +1,51 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Share2, Bookmark, CheckCircle2, PauseCircle, Play, ChevronDown, ChevronUp, Edit3, ArrowLeft,
-  FileText, Presentation, FileCode, Music, HelpCircle, Download, ExternalLink, BarChart2
+  FileText, Presentation, FileCode, Music, HelpCircle, Download, ExternalLink, BarChart2,
+  Lock, AlertCircle, BookOpen, ChevronLeft, ChevronRight, RotateCcw, Trash2, Video
 } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
 import ErrorState from '../../../components/common/ErrorState';
 import Avatar from '../../../components/common/Avatar';
 import Button from '../../../components/common/Button';
+import ConfirmDialog from '../../../components/common/ConfirmDialog';
 import useCourse from '../hooks/useCourse';
+import { useDeleteCourse } from '../hooks/useCourses';
+import { useToast } from '../../../components/feedback/Toast';
 import { ROUTES } from '../../../constants/routes';
 import { ROLES } from '../../../constants/roles';
 import { PERMISSIONS } from '../../../constants/permissions';
 import usePermission from '../../../hooks/usePermission';
+import useAuth from '../../auth/hooks/useAuth';
+import learningService from '../../learning/services/learningService';
 import { formatSectionTitle } from '../components/CurriculumBuilder';
 import CourseAnalyticsTab from '../components/CourseAnalyticsTab';
 import courseService from '../services/courseService';
+import LessonNotesPanel from '../components/LessonNotesPanel';
+import LessonResourcesPanel from '../components/LessonResourcesPanel';
 
 export const CourseDetailsPage = () => {
   const { courseId } = useParams();
+  const { user } = useAuth();
+  return <CourseDetailsContent key={String(user?.id) + ':' + courseId} />;
+};
+
+const CourseDetailsContent = () => {
+  const { courseId, lessonId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const toast = useToast();
   const { data: course, isLoading, error, refetch } = useCourse(courseId);
+  const deleteMutation = useDeleteCourse();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { hasPermission, hasAnyRole } = usePermission();
 
   const [activeTab, setActiveTab] = useState('player'); // 'player' | 'analytics'
+  const [leftPanelTab, setLeftPanelTab] = useState('overview'); // 'overview' | 'notes' | 'resources'
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [collapsedModules, setCollapsedModules] = useState({});
@@ -52,12 +72,194 @@ export const CourseDetailsPage = () => {
   }, [course]);
 
   const [activeLessonIndex, setActiveLessonIndex] = useState(0);
-  const [completedLessonIds, setCompletedLessonIds] = useState(() => {
-    return allLessons.length > 0 ? [allLessons[0].id] : [];
+
+  useEffect(() => {
+    if (lessonId && allLessons.length > 0) {
+      const idx = allLessons.findIndex((l) => l.id === lessonId);
+      if (idx >= 0) setActiveLessonIndex(idx);
+    }
+  }, [lessonId, allLessons]);
+
+  const { user } = useAuth();
+  const userId = user?.id || 'guest';
+  const queryClient = useQueryClient();
+  const progressKey = ['learning-progress', userId, courseId];
+  const progressQuery = useQuery({
+    queryKey: progressKey,
+    queryFn: () => learningService.getProgress(courseId),
+    enabled: Boolean(courseId) && !isAdminOrInstructor,
   });
+  const progressMutation = useMutation({
+    mutationFn: (ids) => learningService.saveProgress(courseId, { completedLessonIds: ids }),
+    onSuccess: (saved) => {
+      queryClient.setQueryData(progressKey, saved);
+      queryClient.invalidateQueries({ queryKey: ['courses'] });
+    },
+  });
+  const completedLessonIds = progressQuery.data?.completedLessonIds ?? [];
+  const setCompletedLessonIds = (update) => {
+    if (isAdminOrInstructor || progressQuery.isPending || progressQuery.error || progressMutation.isPending) return;
+    const next = update(completedLessonIds);
+    if (next !== completedLessonIds) progressMutation.mutate(next);
+  };
+
   const [recordingPlaybackUrl, setRecordingPlaybackUrl] = useState(null);
   const [startedLessonId, setStartedLessonId] = useState(null);
+  const [videoNotice, setVideoNotice] = useState(null);
+  const [videoProgressPercent, setVideoProgressPercent] = useState(0);
+
+  const videoRef = useRef(null);
+  const maxWatchedTimeRef = useRef(0);
+  const videoNoticeTimeoutRef = useRef(null);
+
   const currentLesson = allLessons[activeLessonIndex] || allLessons[0] || null;
+
+  const isStudent = !isAdminOrInstructor || location.pathname.startsWith('/learn');
+  const isAdmin = location.pathname.startsWith('/admin');
+
+  const [currentVideoTime, setCurrentVideoTime] = useState(0);
+  const lastSavedPositionRef = useRef(0);
+
+  // Key for persisting resume position per student, course, and lesson
+  const resumePositionKey = currentLesson?.id
+    ? `lms_video_pos_${userId}_${courseId}_${currentLesson.id}`
+    : null;
+
+  // Restore maxWatchedTime and resume position from localStorage when switching lessons
+  useEffect(() => {
+    maxWatchedTimeRef.current = 0;
+    setVideoProgressPercent(0);
+    setVideoNotice(null);
+    setCurrentVideoTime(0);
+    lastSavedPositionRef.current = 0;
+
+    if (resumePositionKey) {
+      try {
+        const savedPos = parseFloat(localStorage.getItem(resumePositionKey) || '0');
+        if (!isNaN(savedPos) && savedPos > 0) {
+          maxWatchedTimeRef.current = savedPos;
+          lastSavedPositionRef.current = savedPos;
+        }
+      } catch (_) {}
+    }
+  }, [currentLesson?.id, resumePositionKey]);
+
+  const showNotice = (text, type = 'warning') => {
+    if (videoNoticeTimeoutRef.current) {
+      clearTimeout(videoNoticeTimeoutRef.current);
+    }
+    setVideoNotice({ text, type });
+    videoNoticeTimeoutRef.current = setTimeout(() => {
+      setVideoNotice(null);
+    }, 3500);
+  };
+
+  const markLessonCompleted = (lessonIdToComplete) => {
+    if (!lessonIdToComplete) return;
+    setCompletedLessonIds((prev) => {
+      if (prev.includes(lessonIdToComplete)) return prev;
+      return [...prev, lessonIdToComplete];
+    });
+
+  };
+
+  const handleVideoLoadedMetadata = (e) => {
+    const video = e.currentTarget;
+    if (!video || !resumePositionKey) return;
+    try {
+      const savedPos = parseFloat(localStorage.getItem(resumePositionKey) || '0');
+      if (!isNaN(savedPos) && savedPos > 2 && savedPos 
+          (video.duration - 3)) {
+        video.currentTime = savedPos;
+        maxWatchedTimeRef.current = Math.max(maxWatchedTimeRef.current, savedPos);
+        showNotice(`Resumed playback at ${Math.floor(savedPos / 60)}:${String(Math.floor(savedPos % 60)).padStart(2, '0')}`, 'success');
+      }
+    } catch (_) {}
+  };
+
+  const handleVideoTimeUpdate = (e) => {
+    const video = e.currentTarget;
+    if (!video || !video.duration) return;
+
+    const currentTime = video.currentTime;
+    const duration = video.duration;
+    const isCompleted = completedLessonIds.includes(currentLesson?.id);
+
+    setCurrentVideoTime(currentTime);
+
+    const pct = Math.min(100, Math.round((currentTime / duration) * 100));
+    setVideoProgressPercent(pct);
+
+    // Save resume position periodically (every ~3 seconds)
+    if (resumePositionKey && Math.abs(currentTime - lastSavedPositionRef.current) >= 3.0) {
+      lastSavedPositionRef.current = currentTime;
+      try {
+        localStorage.setItem(resumePositionKey, String(Math.floor(currentTime)));
+      } catch (_) {}
+    }
+
+    // Enforce watch limits for students on uncompleted lessons
+    if (isStudent && !isCompleted) {
+      // User scrubbed/skipped forward past what has been watched (+ 2s buffer for micro-skips)
+      if (currentTime > maxWatchedTimeRef.current + 2.0) {
+        video.currentTime = maxWatchedTimeRef.current;
+        showNotice('Fast-forward is locked. Please watch the full video to complete this lesson.');
+        return;
+      }
+
+      if (currentTime > maxWatchedTimeRef.current) {
+        maxWatchedTimeRef.current = currentTime;
+      }
+
+      // Check if watched through the full video (at least 98% or within 1.5s of the end)
+      if (currentTime / duration >= 0.98 || duration - currentTime <= 1.5) {
+        markLessonCompleted(currentLesson?.id);
+      }
+    }
+  };
+
+  const handleVideoSeeking = (e) => {
+    const video = e.currentTarget;
+    if (!video) return;
+    const isCompleted = completedLessonIds.includes(currentLesson?.id);
+
+    if (isStudent && !isCompleted) {
+      if (video.currentTime > maxWatchedTimeRef.current + 1.5) {
+        video.currentTime = maxWatchedTimeRef.current;
+        showNotice('Fast-forward is locked. Please watch the full video to complete this lesson.');
+      }
+    }
+  };
+
+  const handleVideoEnded = () => {
+    if (currentLesson?.id) {
+      markLessonCompleted(currentLesson.id);
+      // Clear saved resume position upon successful video completion
+      if (resumePositionKey) {
+        try { localStorage.removeItem(resumePositionKey); } catch (_) {}
+      }
+      // Auto-advance to next lesson if available
+      if (activeLessonIndex < allLessons.length - 1) {
+        showNotice('🎉 Lesson complete! Advancing to next lesson in 2s...', 'success');
+        setTimeout(() => {
+          setActiveLessonIndex((prev) => (prev < allLessons.length - 1 ? prev + 1 : prev));
+        }, 2000);
+      }
+    }
+  };
+
+  const handleSeekToTime = (seconds) => {
+    if (videoRef.current) {
+      const isCompleted = completedLessonIds.includes(currentLesson?.id);
+      // If student hasn't watched that far yet on an incomplete lesson, clamp to max watched
+      if (isStudent && !isCompleted && seconds > maxWatchedTimeRef.current + 1.5) {
+        videoRef.current.currentTime = maxWatchedTimeRef.current;
+        showNotice('Fast-forward is locked. Seek is limited to previously watched segments.');
+      } else {
+        videoRef.current.currentTime = seconds;
+      }
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -80,11 +282,23 @@ export const CourseDetailsPage = () => {
     };
   }, [currentLesson?.recordingId]);
 
-  if (isLoading) return <Spinner fullPage />;
-  if (error) return <ErrorState error={error} onRetry={refetch} />;
-
   const completedCount = completedLessonIds.length;
   const progressPercent = allLessons.length > 0 ? Math.round((completedCount / allLessons.length) * 100) : 0;
+
+  // Persist completed lessons whenever they update
+  useEffect(() => {
+    if (courseId && !isLoading) {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(completedLessonIds));
+      } catch (_) {}
+      if (isStudent) {
+        learningService.saveProgress(courseId, {
+          completedLessonIds,
+          percent: progressPercent,
+        }).catch(() => {});
+      }
+    }
+  }, [courseId, storageKey, completedLessonIds, isStudent, progressPercent, isLoading]);
 
   const toggleComplete = (id) => {
     setCompletedLessonIds(prev =>
@@ -103,19 +317,21 @@ export const CourseDetailsPage = () => {
     }
   };
 
+  if (isLoading) return <Spinner fullPage />;
+  if (error || !course) return <ErrorState error={error} onRetry={refetch} />;
+
   const rawMedia = currentLesson?.content || currentLesson?.videoUrl || recordingPlaybackUrl;
   const mediaUrl = rawMedia;
   const lessonPosterUrl = currentLesson?.thumbnailUrl || course.thumbnailUrl || null;
   const isCurrentLessonPlaying = startedLessonId === currentLesson?.id;
 
-  const isAdmin = location.pathname.startsWith('/admin');
-  const backRoute = isAdmin ? ROUTES.ADMIN_COURSES : ROUTES.COURSES;
+  const backRoute = isStudent ? ROUTES.MY_COURSES : isAdmin ? ROUTES.ADMIN_COURSES : ROUTES.COURSES;
   const editRoute = isAdmin ? ROUTES.ADMIN_COURSE_EDIT(courseId) : ROUTES.COURSE_EDIT(courseId);
 
   return (
     <PageContainer
       title={course.title}
-      breadcrumbs={[{ label: 'Courses', to: backRoute }, { label: course.title }]}
+      breadcrumbs={[{ label: isStudent ? 'My Courses' : 'Courses', to: backRoute }, { label: course.title }]}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20, fontFamily: 'system-ui, -apple-system, sans-serif' }}>
         
@@ -125,7 +341,7 @@ export const CourseDetailsPage = () => {
             <button
               onClick={() => navigate(backRoute)}
               style={iconBtnStyle}
-              title="Back to Courses"
+              title={isStudent ? 'Back to My Courses' : 'Back to Courses'}
             >
               <ArrowLeft size={18} />
             </button>
@@ -134,13 +350,52 @@ export const CourseDetailsPage = () => {
             </h1>
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate(editRoute)}
-          >
-            <Edit3 size={14} style={{ marginRight: 6 }} /> Edit Course
-          </Button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate(`/courses/${courseId}/live`)}
+              style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}
+            >
+              <Video size={14} style={{ marginRight: 6 }} /> Live Classes
+            </Button>
+
+            {isAdminOrInstructor && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate(editRoute)}
+                >
+                  <Edit3 size={14} style={{ marginRight: 6 }} /> Edit Course
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(true)}
+                  title="Delete Course"
+                  style={{
+                    padding: '7px 12px',
+                    borderRadius: 6,
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    background: 'rgba(239, 68, 68, 0.08)',
+                    color: '#ef4444',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontSize: 13,
+                    fontWeight: 600,
+                    transition: 'all 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.18)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)'; }}
+                >
+                  <Trash2 size={14} />
+                  <span>Delete</span>
+                </button>
+              </>
+            )}
+          </div>
         </div>
 
         {/* ── Glassmorphic Pill Tab Navigation (Restricted to Admin & Instructor) ── */}
@@ -308,16 +563,52 @@ export const CourseDetailsPage = () => {
                   <span style={videoPosterLabelStyle}>Play lesson</span>
                 </button>
               ) : mediaUrl ? (
-                <video
-                  autoPlay
-                  controls
-                  key={currentLesson?.id}
-                  style={{ width: '100%', height: '100%', maxHeight: 420, objectFit: 'contain' }}
-                  poster={lessonPosterUrl || undefined}
-                >
-                  <source src={mediaUrl} />
-                  Your browser does not support video playback.
-                </video>
+                <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000000' }}>
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    controls
+                    key={currentLesson?.id}
+                    style={{ width: '100%', height: '100%', maxHeight: 420, objectFit: 'contain' }}
+                    poster={lessonPosterUrl || undefined}
+                    onLoadedMetadata={handleVideoLoadedMetadata}
+                    onTimeUpdate={handleVideoTimeUpdate}
+                    onSeeking={handleVideoSeeking}
+                    onSeeked={handleVideoSeeking}
+                    onEnded={handleVideoEnded}
+                  >
+                    <source src={mediaUrl} />
+                    Your browser does not support video playback.
+                  </video>
+
+                  {/* Video Notice Banner */}
+                  {videoNotice && (
+                    <div style={{
+                      position: 'absolute',
+                      bottom: 54,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      background: videoNotice.type === 'success' ? '#10b981' : 'rgba(220, 38, 38, 0.95)',
+                      color: '#ffffff',
+                      padding: '8px 18px',
+                      borderRadius: 8,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      zIndex: 20,
+                      pointerEvents: 'none',
+                      backdropFilter: 'blur(6px)',
+                      maxWidth: '90%',
+                      textAlign: 'center'
+                    }}>
+                      {videoNotice.type === 'success' ? <CheckCircle2 size={16} /> : <Lock size={16} />}
+                      <span>{videoNotice.text}</span>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <div style={{ width: '100%', padding: 32, textAlign: 'center', color: '#ffffff' }}>
                   <Play size={56} style={{ opacity: 0.8, marginBottom: 12 }} />
@@ -327,6 +618,66 @@ export const CourseDetailsPage = () => {
                   <p style={{ margin: '6px 0 0', fontSize: 13, opacity: 0.8 }}>
                     {currentLesson?.lessonType ? `Format: ${currentLesson.lessonType}` : 'Select a lesson from the playlist on the right'}
                   </p>
+                </div>
+              )}
+
+              {/* ── Lesson Previous / Next Progression Navigation Bar ── */}
+              {allLessons.length > 1 && (
+                <div style={{
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '10px 16px',
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                  boxSizing: 'border-box',
+                }}>
+                  <button
+                    disabled={activeLessonIndex <= 0}
+                    onClick={() => setActiveLessonIndex((i) => Math.max(0, i - 1))}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      padding: '6px 12px',
+                      borderRadius: 6,
+                      background: activeLessonIndex > 0 ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      color: activeLessonIndex > 0 ? '#ffffff' : 'rgba(255, 255, 255, 0.3)',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      cursor: activeLessonIndex > 0 ? 'pointer' : 'not-allowed',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <ChevronLeft size={14} /> Previous Lesson
+                  </button>
+
+                  <span style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.6)', fontWeight: 500 }}>
+                    Lesson {activeLessonIndex + 1} of {allLessons.length}
+                  </span>
+
+                  <button
+                    disabled={activeLessonIndex >= allLessons.length - 1}
+                    onClick={() => setActiveLessonIndex((i) => Math.min(allLessons.length - 1, i + 1))}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      padding: '6px 12px',
+                      borderRadius: 6,
+                      background: activeLessonIndex < allLessons.length - 1 ? '#3b82f6' : 'transparent',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      color: activeLessonIndex < allLessons.length - 1 ? '#ffffff' : 'rgba(255, 255, 255, 0.3)',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      cursor: activeLessonIndex < allLessons.length - 1 ? 'pointer' : 'not-allowed',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    Next Lesson <ChevronRight size={14} />
+                  </button>
                 </div>
               )}
             </div>
@@ -353,7 +704,35 @@ export const CourseDetailsPage = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                {/* Watch Progress Badge for Students */}
+                {isStudent && currentLesson && (
+                  <div style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '6px 12px',
+                    borderRadius: 99,
+                    background: completedLessonIds.includes(currentLesson.id) ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                    border: `1px solid ${completedLessonIds.includes(currentLesson.id) ? '#10b981' : '#f59e0b'}`,
+                    color: completedLessonIds.includes(currentLesson.id) ? '#10b981' : '#f59e0b',
+                    fontSize: 12,
+                    fontWeight: 600
+                  }}>
+                    {completedLessonIds.includes(currentLesson.id) ? (
+                      <>
+                        <CheckCircle2 size={15} />
+                        <span>Completed</span>
+                      </>
+                    ) : (
+                      <>
+                        <Lock size={13} />
+                        <span>Watch full video to complete ({videoProgressPercent}%)</span>
+                      </>
+                    )}
+                  </div>
+                )}
+
                 <button onClick={handleShare} style={actionIconBtnStyle} title="Share Course">
                   <Share2 size={18} />
                 </button>
@@ -367,49 +746,105 @@ export const CourseDetailsPage = () => {
               </div>
             </div>
 
-            {/* About This Course Section */}
-            <div style={cardStyle}>
-              <h3 style={{ margin: '0 0 12px', fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
-                About This Course
-              </h3>
-              <p style={{
-                margin: 0,
-                fontSize: 14,
-                color: 'var(--text-secondary)',
-                lineHeight: 1.7,
-                whiteSpace: 'pre-line',
-                display: '-webkit-box',
-                WebkitLineClamp: showFullDesc ? 'none' : 4,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden'
-              }}>
-                {course.description || course.summary || 'Unlock your potential with this comprehensive course! Designed to take you from novice to confident practitioner through hands-on projects, step-by-step guidance, and expert techniques.'}
-              </p>
+            {/* ── Secondary Sub-Navigation (Overview / Notes / Resources) ── */}
+            <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--border-color)', paddingBottom: 8 }}>
+              {[
+                { id: 'overview', label: 'Overview', icon: <BookOpen size={15} /> },
+                { id: 'notes', label: 'Lesson Notes', icon: <FileText size={15} /> },
+                { id: 'resources', label: 'Resources', icon: <Download size={15} /> },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setLeftPanelTab(tab.id)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '8px 16px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    border: 'none',
+                    background: leftPanelTab === tab.id ? 'var(--surface-medium)' : 'transparent',
+                    color: leftPanelTab === tab.id ? 'var(--text-primary)' : 'var(--text-muted)',
+                    boxShadow: leftPanelTab === tab.id ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  {tab.icon}
+                  {tab.label}
+                </button>
+              ))}
+            </div>
 
-              <button
-                onClick={() => setShowFullDesc(!showFullDesc)}
-                style={{
-                  background: 'transparent', border: 'none', padding: '8px 0 0',
-                  color: 'var(--text-primary)', fontWeight: 600, fontSize: 13,
-                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4
+            {leftPanelTab === 'notes' && (
+              <LessonNotesPanel
+                courseId={courseId}
+                courseTitle={course.title}
+                currentLesson={currentLesson}
+                allLessons={allLessons}
+                onSelectLesson={(id) => {
+                  const idx = allLessons.findIndex((l) => l.id === id);
+                  if (idx >= 0) setActiveLessonIndex(idx);
                 }}
-              >
-                {showFullDesc ? <>Show less <ChevronUp size={14} /></> : <>Show more <ChevronDown size={14} /></>}
-              </button>
-            </div>
+                currentVideoTime={currentVideoTime}
+                onSeekToTime={handleSeekToTime}
+              />
+            )}
 
-            {/* This Course Suit For Section */}
-            <div style={cardStyle}>
-              <h3 style={{ margin: '0 0 14px', fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
-                This Course Suit For:
-              </h3>
-              <ul style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 10, color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.6 }}>
-                <li>Anyone who wants to start their career & get paid for their skills.</li>
-                <li>This course is for beginners, newbies & amateurs in the field.</li>
-                <li>For anyone that needs to add certified projects to their portfolio.</li>
-                <li>Aimed at people looking for structured, high-quality learning.</li>
-              </ul>
-            </div>
+            {leftPanelTab === 'resources' && (
+              <LessonResourcesPanel currentLesson={currentLesson} course={course} />
+            )}
+
+            {leftPanelTab === 'overview' && (
+              <>
+                {/* About This Course Section */}
+                <div style={cardStyle}>
+                  <h3 style={{ margin: '0 0 12px', fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
+                    About This Course
+                  </h3>
+                  <p style={{
+                    margin: 0,
+                    fontSize: 14,
+                    color: 'var(--text-secondary)',
+                    lineHeight: 1.7,
+                    whiteSpace: 'pre-line',
+                    display: '-webkit-box',
+                    WebkitLineClamp: showFullDesc ? 'none' : 4,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden'
+                  }}>
+                    {course.description || course.summary || 'Unlock your potential with this comprehensive course! Designed to take you from novice to confident practitioner through hands-on projects, step-by-step guidance, and expert techniques.'}
+                  </p>
+
+                  <button
+                    onClick={() => setShowFullDesc(!showFullDesc)}
+                    style={{
+                      background: 'transparent', border: 'none', padding: '8px 0 0',
+                      color: 'var(--text-primary)', fontWeight: 600, fontSize: 13,
+                      cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4
+                    }}
+                  >
+                    {showFullDesc ? <>Show less <ChevronUp size={14} /></> : <>Show more <ChevronDown size={14} /></>}
+                  </button>
+                </div>
+
+                {/* This Course Suit For Section */}
+                <div style={cardStyle}>
+                  <h3 style={{ margin: '0 0 14px', fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
+                    This Course Suit For:
+                  </h3>
+                  <ul style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 10, color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.6 }}>
+                    <li>Anyone who wants to start their career & get paid for their skills.</li>
+                    <li>This course is for beginners, newbies & amateurs in the field.</li>
+                    <li>For anyone that needs to add certified projects to their portfolio.</li>
+                    <li>Aimed at people looking for structured, high-quality learning.</li>
+                  </ul>
+                </div>
+              </>
+            )}
 
           </div>
 
@@ -536,9 +971,25 @@ export const CourseDetailsPage = () => {
                                 >
                                   {/* Status Icon */}
                                   <div
-                                    onClick={(e) => { e.stopPropagation(); toggleComplete(l.id); }}
-                                    style={{ cursor: 'pointer', flexShrink: 0 }}
-                                    title={isCompleted ? 'Mark incomplete' : 'Mark complete'}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (!isStudent) {
+                                        toggleComplete(l.id);
+                                      } else if (!isCompleted) {
+                                        showNotice('Please watch the full video to complete this lesson.');
+                                      }
+                                    }}
+                                    style={{
+                                      cursor: isStudent ? 'default' : 'pointer',
+                                      flexShrink: 0
+                                    }}
+                                    title={
+                                      isCompleted
+                                        ? 'Completed'
+                                        : isStudent
+                                          ? 'Watch full video to complete this lesson'
+                                          : 'Mark complete'
+                                    }
                                   >
                                     {isCompleted ? (
                                       <div style={{ width: 24, height: 24, borderRadius: '50%', background: '#10b981', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -593,6 +1044,35 @@ export const CourseDetailsPage = () => {
           </div>
         </div>
       )}
+      {/* Delete Course Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onCancel={() => setShowDeleteConfirm(false)}
+        onConfirm={async () => {
+          setIsDeleting(true);
+          try {
+            if (course?.status === 'PUBLISHED') {
+              await courseService.unpublish(courseId);
+            }
+            await deleteMutation.mutateAsync(courseId);
+            toast.success('Course deleted successfully.');
+            navigate(backRoute);
+          } catch (err) {
+            toast.error(err?.response?.data?.message || err?.message || 'Failed to delete course.');
+          } finally {
+            setIsDeleting(false);
+          }
+        }}
+        title="Delete Course"
+        message={
+          course?.status === 'PUBLISHED'
+            ? `"${course?.title}" is currently PUBLISHED. To safely delete it, it will be unpublished first and then permanently removed. Are you sure?`
+            : `Are you sure you want to delete "${course?.title}"? This action cannot be undone.`
+        }
+        confirmLabel="Delete"
+        isDestructive
+        isLoading={isDeleting}
+      />
       </div>
     </PageContainer>
   );
