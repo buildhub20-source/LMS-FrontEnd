@@ -247,27 +247,27 @@ function CourseCard({ course, onAction, onClick }) {
     <div
       onClick={onClick}
       style={{
-        background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        background: 'var(--card, #ffffff)',
+        border: '1px solid var(--border, #e2e8f0)',
         borderRadius: 20,
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: '0 6px 24px rgba(0,0,0,0.25)',
+        boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
         transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
         position: 'relative',
         cursor: 'pointer',
         width: '100%',
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.transform = 'translateY(-5px)';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.22)';
-        e.currentTarget.style.boxShadow = '0 16px 36px rgba(0,0,0,0.45)';
+        e.currentTarget.style.transform = 'translateY(-4px)';
+        e.currentTarget.style.borderColor = 'var(--primary, #22c55e)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-md, 0 8px 24px rgba(0,0,0,0.08))';
       }}
       onMouseLeave={e => {
         e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-        e.currentTarget.style.boxShadow = '0 6px 24px rgba(0,0,0,0.25)';
+        e.currentTarget.style.borderColor = 'var(--border, #e2e8f0)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))';
       }}
     >
       {/* Visual Header Banner */}
@@ -365,7 +365,7 @@ function CourseCard({ course, onAction, onClick }) {
               margin: '0 0 6px',
               fontSize: 17,
               fontWeight: 700,
-              color: '#f8fafc',
+              color: 'var(--text-primary, #1a1a2e)',
               lineHeight: 1.35,
             }}
           >
@@ -375,7 +375,7 @@ function CourseCard({ course, onAction, onClick }) {
             style={{
               margin: 0,
               fontSize: 13,
-              color: '#94a3b8',
+              color: 'var(--text-muted, #64748b)',
               display: '-webkit-box',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
@@ -395,10 +395,10 @@ function CourseCard({ course, onAction, onClick }) {
             gap: 16,
             padding: '10px 14px',
             borderRadius: 12,
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
+            background: 'var(--color-bg, #f5f7fa)',
+            border: '1px solid var(--border, #e2e8f0)',
             fontSize: 12,
-            color: '#cbd5e1',
+            color: 'var(--text-secondary, #4a5568)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -421,7 +421,7 @@ function CourseCard({ course, onAction, onClick }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            borderTop: '1px solid var(--border, #e2e8f0)',
             paddingTop: 14,
             marginTop: 'auto',
           }}
@@ -432,7 +432,7 @@ function CourseCard({ course, onAction, onClick }) {
               style={{
                 fontSize: 12,
                 fontWeight: 600,
-                color: '#e2e8f0',
+                color: 'var(--text-primary, #1a1a2e)',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -450,9 +450,9 @@ function CourseCard({ course, onAction, onClick }) {
                 borderRadius: 99,
                 fontSize: 12,
                 fontWeight: 600,
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                background: 'rgba(255, 255, 255, 0.06)',
-                color: '#f8fafc',
+                border: '1px solid var(--border, #e2e8f0)',
+                background: 'var(--muted, #f8fafc)',
+                color: 'var(--text-primary, #1a1a2e)',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
               }}
@@ -562,26 +562,26 @@ function CourseListRow({ course, onAction, onClick }) {
     <div
       onClick={onClick}
       style={{
-        background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        background: 'var(--card, #ffffff)',
+        border: '1px solid var(--border, #e2e8f0)',
         borderRadius: 16,
         display: 'flex',
         alignItems: 'center',
         padding: '16px 20px',
         gap: 16,
         cursor: 'pointer',
-        boxShadow: '0 4px 18px rgba(0,0,0,0.2)',
+        boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.04))',
         transition: 'all 0.2s ease',
       }}
       onMouseEnter={e => {
         e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-        e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.35)';
+        e.currentTarget.style.borderColor = 'var(--primary, #22c55e)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-md, 0 6px 18px rgba(0,0,0,0.06))';
       }}
       onMouseLeave={e => {
         e.currentTarget.style.transform = 'none';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-        e.currentTarget.style.boxShadow = '0 4px 18px rgba(0,0,0,0.2)';
+        e.currentTarget.style.borderColor = 'var(--border, #e2e8f0)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.04))';
       }}
     >
       <div
@@ -597,7 +597,7 @@ function CourseListRow({ course, onAction, onClick }) {
           fontSize: 15,
           color: '#fff',
           flexShrink: 0,
-          boxShadow: '0 3px 10px rgba(0,0,0,0.3)',
+          boxShadow: '0 3px 10px rgba(0,0,0,0.15)',
         }}
       >
         {initials}
@@ -605,24 +605,24 @@ function CourseListRow({ course, onAction, onClick }) {
 
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 16, fontWeight: 700, color: '#f8fafc' }}>{course.title}</span>
+          <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary, #1a1a2e)' }}>{course.title}</span>
           <LevelBadge level={course.level} />
           <StatusPill status={course.status} />
         </div>
-        <p style={{ margin: 0, fontSize: 13, color: '#94a3b8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted, #64748b)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {course.description || preset.name}
         </p>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, borderLeft: '1px solid rgba(255,255,255,0.08)', paddingLeft: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, borderLeft: '1px solid var(--border, #e2e8f0)', paddingLeft: 16 }}>
         <Avatar name={course.createdByName ?? 'Instructor'} size={32} />
         <div>
-          <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: '#f8fafc' }}>{course.createdByName ?? 'Teaching Faculty'}</p>
-          <p style={{ margin: 0, fontSize: 11, color: '#64748b' }}>Instructor</p>
+          <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: 'var(--text-primary, #1a1a2e)' }}>{course.createdByName ?? 'Teaching Faculty'}</p>
+          <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted, #94a3b8)' }}>Instructor</p>
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, borderLeft: '1px solid rgba(255,255,255,0.08)', paddingLeft: 16, flexShrink: 0 }} onClick={e => e.stopPropagation()}>
+      <div style={{ display: 'flex', gap: 8, borderLeft: '1px solid var(--border, #e2e8f0)', paddingLeft: 16, flexShrink: 0 }} onClick={e => e.stopPropagation()}>
         <button
           onClick={() => onAction('edit', course)}
           style={{
@@ -630,14 +630,14 @@ function CourseListRow({ course, onAction, onClick }) {
             borderRadius: 99,
             fontSize: 13,
             fontWeight: 600,
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-            background: 'rgba(255, 255, 255, 0.06)',
-            color: '#f8fafc',
+            border: '1px solid var(--border, #e2e8f0)',
+            background: 'var(--muted, #f8fafc)',
+            color: 'var(--text-primary, #1a1a2e)',
             cursor: 'pointer',
             transition: 'all 0.2s',
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'; }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-surface-hover, #e2e8f0)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'var(--muted, #f8fafc)'; }}
         >
           Edit
         </button>

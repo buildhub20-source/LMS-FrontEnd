@@ -249,27 +249,27 @@ function CourseCard({ course, onAction, onClick }) {
     <div
       onClick={onClick}
       style={{
-        background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        background: 'var(--card, #ffffff)',
+        border: '1px solid var(--border, #e2e8f0)',
         borderRadius: 20,
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: '0 6px 24px rgba(0,0,0,0.25)',
+        boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
         transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
         position: 'relative',
         cursor: 'pointer',
         width: '100%',
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.transform = 'translateY(-5px)';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.22)';
-        e.currentTarget.style.boxShadow = '0 16px 36px rgba(0,0,0,0.45)';
+        e.currentTarget.style.transform = 'translateY(-4px)';
+        e.currentTarget.style.borderColor = 'var(--primary, #22c55e)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-md, 0 8px 24px rgba(0,0,0,0.08))';
       }}
       onMouseLeave={e => {
         e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-        e.currentTarget.style.boxShadow = '0 6px 24px rgba(0,0,0,0.25)';
+        e.currentTarget.style.borderColor = 'var(--border, #e2e8f0)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))';
       }}
     >
       {/* Visual Header Banner */}
@@ -367,7 +367,7 @@ function CourseCard({ course, onAction, onClick }) {
               margin: '0 0 6px',
               fontSize: 17,
               fontWeight: 700,
-              color: '#f8fafc',
+              color: 'var(--text-primary, #1a1a2e)',
               lineHeight: 1.35,
             }}
           >
@@ -377,7 +377,7 @@ function CourseCard({ course, onAction, onClick }) {
             style={{
               margin: 0,
               fontSize: 13,
-              color: '#94a3b8',
+              color: 'var(--text-muted, #64748b)',
               lineHeight: 1.5,
               display: '-webkit-box',
               WebkitLineClamp: 2,
@@ -390,14 +390,14 @@ function CourseCard({ course, onAction, onClick }) {
         </div>
 
         {/* Metadata Chips */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 12, color: '#64748b', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 12, color: 'var(--text-muted, #64748b)', flexWrap: 'wrap' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <Clock size={13} style={{ color: '#60a5fa' }} /> {course.durationMinutes ? `${course.durationMinutes} min` : 'Self-paced'}
+            <Clock size={13} style={{ color: '#3b82f6' }} /> {course.durationMinutes ? `${course.durationMinutes} min` : 'Self-paced'}
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <Layers size={13} style={{ color: '#34d399' }} /> {course.modules?.length ? `${course.modules.length} modules` : 'Full curriculum'}
+            <Layers size={13} style={{ color: '#10b981' }} /> {course.modules?.length ? `${course.modules.length} modules` : 'Full curriculum'}
           </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#fbbf24' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#f59e0b' }}>
             <Award size={13} /> Certified
           </span>
         </div>
@@ -405,17 +405,17 @@ function CourseCard({ course, onAction, onClick }) {
         {/* Gradient Progress Bar */}
         <div style={{ marginTop: 'auto', paddingTop: 2 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
-            <span style={{ color: '#64748b' }}>Progress</span>
-            <span style={{ color: '#f8fafc' }}>{progressPct}%</span>
+            <span style={{ color: 'var(--text-muted, #64748b)' }}>Progress</span>
+            <span style={{ color: 'var(--text-primary, #1a1a2e)' }}>{progressPct}%</span>
           </div>
-          <div style={{ height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
+          <div style={{ height: 6, background: 'var(--muted, #f1f5f9)', borderRadius: 99, overflow: 'hidden' }}>
             <div
               style={{
                 height: '100%',
                 width: `${progressPct}%`,
                 background: 'linear-gradient(90deg, #3b82f6 0%, #10b981 100%)',
                 borderRadius: 99,
-                boxShadow: '0 0 8px rgba(59, 130, 246, 0.4)',
+                boxShadow: '0 0 8px rgba(16, 185, 129, 0.3)',
                 transition: 'width 0.4s ease',
               }}
             />
@@ -423,17 +423,17 @@ function CourseCard({ course, onAction, onClick }) {
         </div>
 
         {/* Divider */}
-        <div style={{ height: 1, background: 'rgba(255, 255, 255, 0.08)' }} />
+        <div style={{ height: 1, background: 'var(--border, #e2e8f0)' }} />
 
         {/* Creator & Action Buttons */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
             <Avatar name={course.createdByName ?? 'Administrator'} size={32} />
             <div style={{ minWidth: 0 }}>
-              <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: '#f8fafc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: 'var(--text-primary, #1a1a2e)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {course.createdByName ?? 'Platform Admin'}
               </p>
-              <p style={{ margin: 0, fontSize: 11, color: '#64748b' }}>Instructor</p>
+              <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted, #94a3b8)' }}>Instructor</p>
             </div>
           </div>
 
@@ -447,13 +447,13 @@ function CourseCard({ course, onAction, onClick }) {
                 fontWeight: 600,
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                background: 'rgba(255, 255, 255, 0.06)',
-                color: '#f8fafc',
+                border: '1px solid var(--border, #e2e8f0)',
+                background: 'var(--muted, #f8fafc)',
+                color: 'var(--text-primary, #1a1a2e)',
                 transition: 'all 0.2s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'; }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-surface-hover, #e2e8f0)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'var(--muted, #f8fafc)'; }}
             >
               Edit
             </button>
@@ -557,26 +557,26 @@ function CourseListRow({ course, onAction, onClick }) {
     <div
       onClick={onClick}
       style={{
-        background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        background: 'var(--card, #ffffff)',
+        border: '1px solid var(--border, #e2e8f0)',
         borderRadius: 16,
         display: 'flex',
         alignItems: 'center',
         padding: '16px 20px',
         gap: 16,
         cursor: 'pointer',
-        boxShadow: '0 4px 18px rgba(0,0,0,0.2)',
+        boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.04))',
         transition: 'all 0.2s ease',
       }}
       onMouseEnter={e => {
         e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-        e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.35)';
+        e.currentTarget.style.borderColor = 'var(--primary, #22c55e)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-md, 0 6px 18px rgba(0,0,0,0.06))';
       }}
       onMouseLeave={e => {
         e.currentTarget.style.transform = 'none';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-        e.currentTarget.style.boxShadow = '0 4px 18px rgba(0,0,0,0.2)';
+        e.currentTarget.style.borderColor = 'var(--border, #e2e8f0)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.04))';
       }}
     >
       {/* Tech Monogram Emblem */}
@@ -593,7 +593,7 @@ function CourseListRow({ course, onAction, onClick }) {
           fontSize: 15,
           color: '#fff',
           flexShrink: 0,
-          boxShadow: '0 3px 10px rgba(0,0,0,0.3)',
+          boxShadow: '0 3px 10px rgba(0,0,0,0.15)',
         }}
       >
         {initials}
@@ -601,23 +601,23 @@ function CourseListRow({ course, onAction, onClick }) {
 
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 16, fontWeight: 700, color: '#f8fafc' }}>{course.title}</span>
+          <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary, #1a1a2e)' }}>{course.title}</span>
           <LevelBadge level={course.level} />
           <StatusPill status={course.status} />
         </div>
-        <p style={{ margin: 0, fontSize: 13, color: '#94a3b8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted, #64748b)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {course.description || preset.name}
         </p>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, borderLeft: '1px solid rgba(255,255,255,0.08)', paddingLeft: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, borderLeft: '1px solid var(--border, #e2e8f0)', paddingLeft: 16 }}>
         <Avatar name={course.createdByName ?? 'Instructor'} size={32} />
         <div>
-          <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: '#f8fafc' }}>{course.createdByName ?? 'Platform Admin'}</p>
-          <p style={{ margin: 0, fontSize: 11, color: '#64748b' }}>Instructor</p>
+          <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: 'var(--text-primary, #1a1a2e)' }}>{course.createdByName ?? 'Platform Admin'}</p>
+          <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted, #94a3b8)' }}>Instructor</p>
         </div>
       </div>
-      <div style={{ display: 'flex', gap: 8, borderLeft: '1px solid rgba(255,255,255,0.08)', paddingLeft: 16, shrink: 0 }}>
+      <div style={{ display: 'flex', gap: 8, borderLeft: '1px solid var(--border, #e2e8f0)', paddingLeft: 16, shrink: 0 }}>
         <button
           onClick={(e) => { e.stopPropagation(); onAction('edit', course); }}
           style={{
@@ -625,14 +625,14 @@ function CourseListRow({ course, onAction, onClick }) {
             borderRadius: 99,
             fontSize: 13,
             fontWeight: 600,
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-            background: 'rgba(255, 255, 255, 0.06)',
-            color: '#f8fafc',
+            border: '1px solid var(--border, #e2e8f0)',
+            background: 'var(--muted, #f8fafc)',
+            color: 'var(--text-primary, #1a1a2e)',
             cursor: 'pointer',
             transition: 'all 0.2s',
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'; }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-surface-hover, #e2e8f0)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'var(--muted, #f8fafc)'; }}
         >
           Edit
         </button>
