@@ -330,7 +330,15 @@ export const AdminAnalyticsPage = () => {
             <Link to={ROUTES.ADMIN_COURSES} className="text-sm font-semibold no-underline" style={{ color: 'var(--dashboard-accent-text)' }}>View all</Link>
           </div>
           <div className="mt-4 divide-y" style={{ borderColor: 'var(--border-color)' }}>
-            {courses.isLoading ? Array.from({ length: 3 }).map((_, index) => <div key={index} className="h-14 animate-pulse" style={{ background: index % 2 ? 'transparent' : 'rgba(255,255,255,.02)' }} />) : null}
+            {courses.isLoading ? Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="flex items-center gap-3 py-3 animate-pulse">
+                <span className="h-9 w-9 shrink-0 rounded-lg" style={{ background: 'var(--skeleton-bg, #e2e8f0)' }} />
+                <span className="min-w-0 flex-1 space-y-2">
+                  <span className="block h-3.5 w-3/4 rounded" style={{ background: 'var(--skeleton-bg, #e2e8f0)' }} />
+                  <span className="block h-2.5 w-1/3 rounded" style={{ background: 'var(--skeleton-subtle, #f1f5f9)' }} />
+                </span>
+              </div>
+            )) : null}
             {!courses.isLoading && courseItems.map((course) => (
               <Link key={course.id} to={ROUTES.ADMIN_COURSE_DETAILS(course.id)} className="flex items-center gap-3 py-3 no-underline transition hover:opacity-80">
                 <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg" style={{ color: 'var(--dashboard-accent-text)', background: 'var(--dashboard-accent-soft)' }}><GraduationCap className="h-4 w-4" aria-hidden="true" /></span>

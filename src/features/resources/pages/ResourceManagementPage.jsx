@@ -492,17 +492,35 @@ export const ResourceManagementPage = () => {
       {/* ── Resource Cards Grid ── */}
       {isLoading ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 20 }}>
-          {Array.from({ length: 4 }).map((_, i) => (
+          {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
               style={{
-                height: 220,
                 background: 'var(--card)',
                 borderRadius: 16,
                 border: '1px solid var(--border)',
-                animation: 'pulse 1.4s infinite',
+                padding: 22,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 14,
+                boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
               }}
-            />
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ width: 42, height: 42, borderRadius: 12, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                <div style={{ width: 70, height: 24, borderRadius: 99, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              </div>
+              <div style={{ height: 18, width: '75%', borderRadius: 6, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              <div style={{ height: 14, width: '90%', borderRadius: 6, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                <div style={{ width: 60, height: 20, borderRadius: 99, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                <div style={{ width: 80, height: 20, borderRadius: 99, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              </div>
+              <div style={{ marginTop: 'auto', paddingTop: 14, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ width: 90, height: 14, borderRadius: 4, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              </div>
+            </div>
           ))}
         </div>
       ) : resources.length === 0 ? (

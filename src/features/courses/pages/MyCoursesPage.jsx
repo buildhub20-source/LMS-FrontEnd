@@ -189,6 +189,40 @@ function LevelBadge({ level }) {
   );
 }
 
+/* ─── Skeleton Card (Macaron / Pastel Loading) ─── */
+function SkeletonCard() {
+  const s = { background: 'var(--skeleton-bg, #e2e8f0)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' };
+  return (
+    <div
+      style={{
+        background: 'var(--card, #ffffff)',
+        border: '1px solid var(--border, #e2e8f0)',
+        borderRadius: 20,
+        overflow: 'hidden',
+        boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <div style={{ ...s, height: 140, borderRadius: 0, background: 'var(--skeleton-subtle, #f1f5f9)' }} />
+      <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: 14, flex: 1 }}>
+        <div style={{ ...s, height: 20, width: '70%' }} />
+        <div style={{ ...s, height: 14, width: '90%' }} />
+        <div style={{ ...s, height: 14, width: '60%' }} />
+        <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+          <div style={{ ...s, height: 12, width: 60 }} />
+          <div style={{ ...s, height: 12, width: 70 }} />
+        </div>
+        <div style={{ height: 1, background: 'var(--border, #e2e8f0)', margin: '4px 0' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ ...s, height: 8, width: '50%', borderRadius: 99 }} />
+          <div style={{ ...s, width: 80, height: 32, borderRadius: 10 }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Hero Spotlight Banner ─── */
 function HeroSpotlightCard({ course, onContinue }) {
   if (!course) return null;
@@ -202,9 +236,9 @@ function HeroSpotlightCard({ course, onContinue }) {
         position: 'relative',
         borderRadius: 20,
         overflow: 'hidden',
-        background: 'linear-gradient(135deg, rgba(20, 24, 38, 0.95) 0%, rgba(12, 14, 22, 0.98) 100%)',
-        border: '1px solid rgba(255, 255, 255, 0.12)',
-        boxShadow: '0 12px 36px rgba(0,0,0,0.4)',
+        background: 'var(--card)',
+        border: '1px solid var(--border)',
+        boxShadow: 'var(--shadow-card, 0 4px 20px rgba(0,0,0,0.05))',
         padding: '28px 32px',
         display: 'flex',
         flexWrap: 'wrap',
@@ -239,9 +273,9 @@ function HeroSpotlightCard({ course, onContinue }) {
               borderRadius: 99,
               fontSize: 11,
               fontWeight: 800,
-              background: 'rgba(16, 185, 129, 0.2)',
-              color: '#34d399',
-              border: '1px solid rgba(16, 185, 129, 0.4)',
+              background: 'rgba(16, 185, 129, 0.12)',
+              color: '#10b981',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
               letterSpacing: '0.5px',
             }}
           >
@@ -277,7 +311,7 @@ function HeroSpotlightCard({ course, onContinue }) {
             margin: '0 0 8px',
             fontSize: 26,
             fontWeight: 800,
-            color: '#fff',
+            color: 'var(--text-primary)',
             letterSpacing: '-0.5px',
             lineHeight: 1.25,
           }}
@@ -289,7 +323,7 @@ function HeroSpotlightCard({ course, onContinue }) {
           style={{
             margin: '0 0 16px',
             fontSize: 14,
-            color: 'rgba(255, 255, 255, 0.75)',
+            color: 'var(--text-secondary)',
             lineHeight: 1.6,
             maxWidth: 620,
             display: '-webkit-box',
@@ -303,17 +337,17 @@ function HeroSpotlightCard({ course, onContinue }) {
         </p>
 
         {/* Quick Meta Chips */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', fontSize: 12, color: '#94a3b8' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', fontSize: 12, color: 'var(--text-muted)' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Clock size={14} className="text-blue-400" />
+            <Clock size={14} className="text-blue-500" />
             {course.durationMinutes ? `${course.durationMinutes} min` : 'Self-paced'}
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Layers size={14} className="text-emerald-400" />
+            <Layers size={14} className="text-emerald-500" />
             {course.modulesCount ? `${course.modulesCount} Modules` : 'Full Curriculum'}
           </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Award size={14} className="text-amber-400" />
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#f59e0b' }}>
+            <Award size={14} />
             Certificate Eligible
           </span>
         </div>
@@ -329,19 +363,18 @@ function HeroSpotlightCard({ course, onContinue }) {
           alignItems: 'flex-start',
           gap: 16,
           minWidth: 260,
-          background: 'rgba(255, 255, 255, 0.04)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'var(--background)',
+          border: '1px solid var(--border)',
           borderRadius: 16,
           padding: '20px 24px',
-          backdropFilter: 'blur(10px)',
         }}
       >
         <div style={{ width: '100%' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
               Completion Progress
             </span>
-            <span style={{ fontSize: 16, fontWeight: 800, color: isCompleted ? '#34d399' : '#fff' }}>
+            <span style={{ fontSize: 16, fontWeight: 800, color: isCompleted ? '#10b981' : 'var(--text-primary)' }}>
               {progress}%
             </span>
           </div>
@@ -349,7 +382,7 @@ function HeroSpotlightCard({ course, onContinue }) {
             style={{
               height: 8,
               width: '100%',
-              background: 'rgba(255, 255, 255, 0.1)',
+              background: 'var(--border)',
               borderRadius: 99,
               overflow: 'hidden',
             }}
@@ -362,7 +395,6 @@ function HeroSpotlightCard({ course, onContinue }) {
                   ? 'linear-gradient(90deg, #10b981 0%, #34d399 100%)'
                   : 'linear-gradient(90deg, #3b82f6 0%, #10b981 100%)',
                 borderRadius: 99,
-                boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)',
                 transition: 'width 0.4s ease',
               }}
             />
@@ -387,16 +419,14 @@ function HeroSpotlightCard({ course, onContinue }) {
               ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
               : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
             color: '#fff',
-            boxShadow: '0 4px 18px rgba(37, 99, 235, 0.4)',
+            boxShadow: '0 4px 18px rgba(37, 99, 235, 0.3)',
             transition: 'all 0.2s ease',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 8px 24px rgba(37, 99, 235, 0.6)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 4px 18px rgba(37, 99, 235, 0.4)';
           }}
         >
           {isCompleted ? (
@@ -418,7 +448,6 @@ function HeroSpotlightCard({ course, onContinue }) {
   );
 }
 
-/* ─── Modern Grid Card ─── */
 function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark, onLive }) {
   const progress = course.progressPercent ?? 0;
   const isCompleted = progress >= 100;
@@ -428,25 +457,25 @@ function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark, on
   return (
     <div
       style={{
-        background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        background: 'var(--card)',
+        border: '1px solid var(--border)',
         borderRadius: 20,
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: '0 6px 24px rgba(0,0,0,0.25)',
+        boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
         transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
         position: 'relative',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-5px)';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.22)';
-        e.currentTarget.style.boxShadow = '0 16px 36px rgba(0,0,0,0.45)';
+        e.currentTarget.style.transform = 'translateY(-4px)';
+        e.currentTarget.style.borderColor = 'var(--text-primary)';
+        e.currentTarget.style.boxShadow = '0 12px 28px rgba(0,0,0,0.1)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-        e.currentTarget.style.boxShadow = '0 6px 24px rgba(0,0,0,0.25)';
+        e.currentTarget.style.borderColor = 'var(--border)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))';
       }}
     >
       {/* Visual Header Banner */}
@@ -566,7 +595,7 @@ function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark, on
               margin: '0 0 6px',
               fontSize: 18,
               fontWeight: 700,
-              color: '#f8fafc',
+              color: 'var(--text-primary)',
               lineHeight: 1.3,
             }}
           >
@@ -576,7 +605,7 @@ function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark, on
             style={{
               margin: 0,
               fontSize: 13,
-              color: '#94a3b8',
+              color: 'var(--text-secondary)',
               lineHeight: 1.5,
               display: '-webkit-box',
               WebkitLineClamp: 2,
@@ -590,7 +619,7 @@ function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark, on
         </div>
 
         {/* Metadata Chips */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontSize: 12, color: '#64748b' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontSize: 12, color: 'var(--text-muted)' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
             <Clock size={13} /> {course.durationMinutes ? `${course.durationMinutes} min` : 'Self-paced'}
           </span>
@@ -605,12 +634,12 @@ function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark, on
         {/* Gradient Progress Section */}
         <div style={{ marginTop: 'auto', paddingTop: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
-            <span style={{ color: '#64748b' }}>Course Progress</span>
-            <span style={{ color: isCompleted ? '#34d399' : '#f8fafc' }}>
+            <span style={{ color: 'var(--text-muted)' }}>Course Progress</span>
+            <span style={{ color: isCompleted ? '#10b981' : 'var(--text-primary)' }}>
               {isCompleted ? 'Completed' : `${progress}%`}
             </span>
           </div>
-          <div style={{ height: 6, background: 'rgba(255,255,255,0.06)', borderRadius: 99, overflow: 'hidden' }}>
+          <div style={{ height: 6, background: 'var(--border)', borderRadius: 99, overflow: 'hidden' }}>
             <div
               style={{
                 height: '100%',
@@ -623,92 +652,92 @@ function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark, on
           </div>
         </div>
 
-          {/* Footer: Instructor & CTA */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingTop: 14,
-              borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-              gap: 8,
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 }}>
-              <Avatar name={course.createdByName || 'Instructor'} size="xs" />
-              <div style={{ minWidth: 0 }}>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: 12,
-                    fontWeight: 600,
-                    color: '#f8fafc',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}
-                >
-                  {course.createdByName || 'Platform Faculty'}
-                </p>
-                <p style={{ margin: 0, fontSize: 10, color: '#64748b' }}>Lead Instructor</p>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexShrink: 0 }}>
-              {onLive && (
-                <button
-                  onClick={() => onLive(course)}
-                  title="Live Classes"
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 5,
-                    padding: '7px 11px', borderRadius: 9, fontSize: 12, fontWeight: 600,
-                    cursor: 'pointer', border: '1px solid rgba(99,102,241,0.4)',
-                    background: 'rgba(99,102,241,0.12)', color: '#818cf8', transition: 'all 0.15s ease',
-                    whiteSpace: 'nowrap',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.25)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.12)')}
-                >
-                  <Video size={13} /> Live
-                </button>
-              )}
-              <button
-                onClick={() => onContinue(course)}
+        {/* Footer: Instructor & CTA */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingTop: 14,
+            borderTop: '1px solid var(--border)',
+            gap: 8,
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 }}>
+            <Avatar name={course.createdByName || 'Instructor'} size="xs" />
+            <div style={{ minWidth: 0 }}>
+              <p
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '9px 16px',
-                  borderRadius: 10,
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  border: 'none',
-                  background: isCompleted
-                    ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
-                    : progress > 0
-                    ? 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)'
-                    : '#ffffff',
-                  color: isCompleted || progress > 0 ? '#fff' : '#09090b',
-                  boxShadow: progress > 0 ? '0 2px 10px rgba(59, 130, 246, 0.3)' : 'none',
-                  transition: 'opacity 0.15s ease',
+                  margin: 0,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: 'var(--text-primary)',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                {course.createdByName || 'Platform Faculty'}
+              </p>
+              <p style={{ margin: 0, fontSize: 10, color: 'var(--text-muted)' }}>Lead Instructor</p>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexShrink: 0 }}>
+            {onLive && (
+              <button
+                onClick={() => onLive(course)}
+                title="Live Classes"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 5,
+                  padding: '7px 11px', borderRadius: 9, fontSize: 12, fontWeight: 600,
+                  cursor: 'pointer', border: '1px solid rgba(99,102,241,0.3)',
+                  background: 'rgba(99,102,241,0.08)', color: '#6366f1', transition: 'all 0.15s ease',
                   whiteSpace: 'nowrap',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+                onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.18)')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.08)')}
               >
-                {isCompleted ? (
-                  <><GraduationCap size={15} /> Review</>
-                ) : progress > 0 ? (
-                  <><Play size={14} fill="#fff" /> Continue</>
-                ) : (
-                  <>Start Course <ArrowRight size={14} /></>
-                )}
+                <Video size={13} /> Live
               </button>
-            </div>
+            )}
+            <button
+              onClick={() => onContinue(course)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '8px 14px',
+                borderRadius: 10,
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: 'pointer',
+                border: 'none',
+                background: isCompleted
+                  ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
+                  : progress > 0
+                  ? 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)'
+                  : 'var(--text-primary)',
+                color: '#fff',
+                boxShadow: progress > 0 ? '0 2px 10px rgba(59, 130, 246, 0.3)' : 'none',
+                transition: 'opacity 0.15s ease',
+                whiteSpace: 'nowrap',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+            >
+              {isCompleted ? (
+                <><GraduationCap size={15} /> Review</>
+              ) : progress > 0 ? (
+                <><Play size={14} fill="#fff" /> Continue</>
+              ) : (
+                <>Start Course <ArrowRight size={14} /></>
+              )}
+            </button>
           </div>
         </div>
       </div>
+    </div>
   );
 }
 
@@ -722,27 +751,27 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, on
   return (
     <div
       style={{
-        background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        background: 'var(--card)',
+        border: '1px solid var(--border)',
         borderRadius: 18,
         padding: '18px 24px',
         display: 'grid',
         gridTemplateColumns: '120px minmax(0, 1fr) 260px',
         gap: 24,
         alignItems: 'center',
-        boxShadow: '0 4px 18px rgba(0,0,0,0.2)',
+        boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
         transition: 'all 0.2s ease',
         position: 'relative',
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-        e.currentTarget.style.boxShadow = '0 10px 28px rgba(0,0,0,0.35)';
+        e.currentTarget.style.borderColor = 'var(--text-primary)';
+        e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.08)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-        e.currentTarget.style.boxShadow = '0 4px 18px rgba(0,0,0,0.2)';
+        e.currentTarget.style.borderColor = 'var(--border)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))';
       }}
     >
       {/* Left Icon / Visual Thumbnail */}
@@ -759,7 +788,7 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, on
           position: 'relative',
           overflow: 'hidden',
           flexShrink: 0,
-          boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
+          boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
         }}
       >
         <div style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.4))' }}>{preset.emblem}</div>
@@ -794,11 +823,11 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, on
           >
             {preset.name}
           </span>
-          <span style={{ fontSize: 12, color: '#64748b' }}>•</span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: '#94a3b8' }}>
+          <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>•</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--text-muted)' }}>
             <Clock size={12} /> {course.durationMinutes ? `${course.durationMinutes} min` : 'Self-paced'}
           </span>
-          <span style={{ fontSize: 12, color: '#64748b' }}>•</span>
+          <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>•</span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: '#10b981' }}>
             <Award size={12} /> Certificate Eligible
           </span>
@@ -809,7 +838,7 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, on
             margin: 0,
             fontSize: 18,
             fontWeight: 700,
-            color: '#f8fafc',
+            color: 'var(--text-primary)',
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -822,7 +851,7 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, on
           style={{
             margin: 0,
             fontSize: 13,
-            color: '#94a3b8',
+            color: 'var(--text-secondary)',
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
@@ -837,10 +866,10 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, on
         {/* Instructor */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
           <Avatar name={course.createdByName || 'Instructor'} size="xs" />
-          <span style={{ fontSize: 12, color: '#cbd5e1', fontWeight: 600 }}>
+          <span style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: 600 }}>
             {course.createdByName || 'Platform Administrator'}
           </span>
-          <span style={{ fontSize: 11, color: '#64748b' }}>(Instructor)</span>
+          <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>(Instructor)</span>
         </div>
       </div>
 
@@ -851,17 +880,17 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, on
           flexDirection: 'column',
           gap: 12,
           paddingLeft: 20,
-          borderLeft: '1px solid rgba(255, 255, 255, 0.08)',
+          borderLeft: '1px solid var(--border)',
         }}
       >
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
-            <span style={{ color: '#64748b' }}>Course Progress</span>
-            <span style={{ color: isCompleted ? '#34d399' : '#f8fafc' }}>
+            <span style={{ color: 'var(--text-muted)' }}>Course Progress</span>
+            <span style={{ color: isCompleted ? '#10b981' : 'var(--text-primary)' }}>
               {isCompleted ? 'Completed' : `${progress}%`}
             </span>
           </div>
-          <div style={{ height: 6, background: 'rgba(255,255,255,0.06)', borderRadius: 99, overflow: 'hidden' }}>
+          <div style={{ height: 6, background: 'var(--border)', borderRadius: 99, overflow: 'hidden' }}>
             <div
               style={{
                 height: '100%',
@@ -887,14 +916,14 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, on
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: 'pointer',
-                border: '1px solid rgba(99,102,241,0.4)',
-                background: 'rgba(99,102,241,0.12)',
-                color: '#818cf8',
+                border: '1px solid rgba(99,102,241,0.3)',
+                background: 'rgba(99,102,241,0.08)',
+                color: '#6366f1',
                 transition: 'all 0.15s ease',
                 whiteSpace: 'nowrap',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.25)')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.12)')}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.18)')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.08)')}
             >
               <Video size={14} /> Live
             </button>
@@ -917,8 +946,8 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, on
                 ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
                 : progress > 0
                 ? 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)'
-                : '#ffffff',
-              color: isCompleted || progress > 0 ? '#fff' : '#09090b',
+                : 'var(--text-primary)',
+              color: '#fff',
               transition: 'opacity 0.15s ease',
             }}
             onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
@@ -997,11 +1026,11 @@ function CourseSidebar({ navigate }) {
       {/* Weekly Study Velocity Card */}
       <div
         style={{
-          background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'var(--card)',
+          border: '1px solid var(--border)',
           borderRadius: 18,
           padding: '20px',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+          boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
@@ -1011,18 +1040,18 @@ function CourseSidebar({ navigate }) {
                 width: 32,
                 height: 32,
                 borderRadius: 8,
-                background: 'rgba(249, 115, 22, 0.15)',
+                background: 'rgba(249, 115, 22, 0.12)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#fb923c',
+                color: '#f97316',
               }}
             >
               <Flame size={18} />
             </div>
             <div>
-              <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#fff' }}>Learning Streak</h4>
-              <p style={{ margin: 0, fontSize: 11, color: '#94a3b8' }}>
+              <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Learning Streak</h4>
+              <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary)' }}>
                 {currentStreak} consecutive {currentStreak === 1 ? 'day' : 'days'}
               </p>
             </div>
@@ -1033,8 +1062,9 @@ function CourseSidebar({ navigate }) {
               borderRadius: 99,
               fontSize: 10,
               fontWeight: 700,
-              background: currentStreak > 0 ? 'rgba(16, 185, 129, 0.15)' : 'rgba(148, 163, 184, 0.12)',
-              color: currentStreak > 0 ? '#34d399' : '#94a3b8',
+              background: currentStreak > 0 ? 'rgba(16, 185, 129, 0.12)' : 'var(--background)',
+              color: currentStreak > 0 ? '#10b981' : 'var(--text-muted)',
+              border: `1px solid ${currentStreak > 0 ? 'rgba(16, 185, 129, 0.25)' : 'var(--border)'}`,
             }}
           >
             {currentStreak > 0 ? 'ACTIVE' : 'START TODAY'}
@@ -1063,8 +1093,9 @@ function CourseSidebar({ navigate }) {
                   width: 28,
                   height: 28,
                   borderRadius: '50%',
-                  background: active ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' : 'rgba(255,255,255,0.06)',
-                  color: active ? '#fff' : '#64748b',
+                  background: active ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' : 'var(--background)',
+                  border: active ? 'none' : '1px solid var(--border)',
+                  color: active ? '#fff' : 'var(--text-muted)',
                   fontSize: 11,
                   fontWeight: 700,
                   display: 'flex',
@@ -1081,15 +1112,15 @@ function CourseSidebar({ navigate }) {
         </div>
 
         {/* Weekly Goal Gauge */}
-        <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 12, padding: '12px' }}>
+        <div style={{ background: 'var(--background)', borderRadius: 12, padding: '12px', border: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, fontWeight: 600, marginBottom: 6 }}>
-            <span style={{ color: '#94a3b8' }}>
+            <span style={{ color: 'var(--text-secondary)' }}>
               Weekly target: {weeklyHours.toFixed(1)}h / {WEEKLY_STUDY_TARGET_HOURS.toFixed(1)}h
             </span>
-            <span style={{ color: '#38bdf8' }}>{weeklyProgress}%</span>
+            <span style={{ color: '#3b82f6', fontWeight: 700 }}>{weeklyProgress}%</span>
           </div>
-          <div style={{ height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 99, overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${weeklyProgress}%`, background: '#38bdf8', borderRadius: 99 }} />
+          <div style={{ height: 6, background: 'var(--border)', borderRadius: 99, overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${weeklyProgress}%`, background: '#3b82f6', borderRadius: 99 }} />
           </div>
         </div>
       </div>
@@ -1097,11 +1128,11 @@ function CourseSidebar({ navigate }) {
       {/* Verified Certificates Spotlight */}
       <div
         style={{
-          background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'var(--card)',
+          border: '1px solid var(--border)',
           borderRadius: 18,
           padding: '20px',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+          boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
@@ -1110,22 +1141,22 @@ function CourseSidebar({ navigate }) {
               width: 32,
               height: 32,
               borderRadius: 8,
-              background: 'rgba(16, 185, 129, 0.15)',
+              background: 'rgba(16, 185, 129, 0.12)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#34d399',
+              color: '#10b981',
             }}
           >
             <Award size={18} />
           </div>
           <div>
-            <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#fff' }}>Official Certificates</h4>
-            <p style={{ margin: 0, fontSize: 11, color: '#94a3b8' }}>Earn verifiable credentials</p>
+            <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Official Certificates</h4>
+            <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary)' }}>Earn verifiable credentials</p>
           </div>
         </div>
 
-        <p style={{ margin: '0 0 14px', fontSize: 12, color: '#94a3b8', lineHeight: 1.5 }}>
+        <p style={{ margin: '0 0 14px', fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
           Pass all module evaluations with &ge; 70% to automatically receive encrypted, blockchain-backed certificates.
         </p>
 
@@ -1137,9 +1168,9 @@ function CourseSidebar({ navigate }) {
             borderRadius: 10,
             fontSize: 12,
             fontWeight: 700,
-            background: 'rgba(16, 185, 129, 0.12)',
-            border: '1px solid rgba(16, 185, 129, 0.3)',
-            color: '#34d399',
+            background: 'var(--card-green, #e8f5e9)',
+            border: '1px solid var(--card-green-border, #bbf7d0)',
+            color: '#16a34a',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -1147,8 +1178,8 @@ function CourseSidebar({ navigate }) {
             gap: 6,
             transition: 'background 0.15s ease',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(16, 185, 129, 0.2)')}
-          onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(16, 185, 129, 0.12)')}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
         >
           View Certificates Hub <ArrowRight size={13} />
         </button>
@@ -1157,11 +1188,11 @@ function CourseSidebar({ navigate }) {
       {/* Quick Downloadable Study Toolkit */}
       <div
         style={{
-          background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'var(--card)',
+          border: '1px solid var(--border)',
           borderRadius: 18,
           padding: '20px',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+          boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
@@ -1170,18 +1201,18 @@ function CourseSidebar({ navigate }) {
               width: 32,
               height: 32,
               borderRadius: 8,
-              background: 'rgba(59, 130, 246, 0.15)',
+              background: 'rgba(59, 130, 246, 0.12)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#60a5fa',
+              color: '#3b82f6',
             }}
           >
             <Download size={18} />
           </div>
           <div>
-            <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#fff' }}>Study Toolkit</h4>
-            <p style={{ margin: 0, fontSize: 11, color: '#94a3b8' }}>1-Click Reference Guides</p>
+            <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Study Toolkit</h4>
+            <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary)' }}>1-Click Reference Guides</p>
           </div>
         </div>
 
@@ -1190,8 +1221,8 @@ function CourseSidebar({ navigate }) {
             style={{
               padding: '6px 10px',
               borderRadius: 8,
-              background: 'rgba(16, 185, 129, 0.15)',
-              color: '#34d399',
+              background: 'rgba(16, 185, 129, 0.12)',
+              color: '#10b981',
               fontSize: 11,
               fontWeight: 600,
               marginBottom: 10,
@@ -1206,7 +1237,7 @@ function CourseSidebar({ navigate }) {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {resources.length === 0 ? (
-            <p style={{ margin: 0, fontSize: 11, color: '#64748b' }}>No guides uploaded yet.</p>
+            <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)' }}>No guides uploaded yet.</p>
           ) : (
             <>
               {(expandedToolkit ? resources : resources.slice(0, 5)).map((kit) => {
@@ -1214,10 +1245,10 @@ function CourseSidebar({ navigate }) {
                 const fileTypeUpper = (kit.fileType || 'PDF').toUpperCase();
                 const badgeColor =
                   fileTypeUpper === 'DOCX' || fileTypeUpper === 'DOC'
-                    ? { bg: 'rgba(59, 130, 246, 0.15)', text: '#60a5fa', border: 'rgba(59, 130, 246, 0.3)' }
+                    ? { bg: 'rgba(59, 130, 246, 0.12)', text: '#2563eb', border: 'rgba(59, 130, 246, 0.25)' }
                     : fileTypeUpper === 'ZIP' || fileTypeUpper === 'RAR'
-                    ? { bg: 'rgba(16, 185, 129, 0.15)', text: '#34d399', border: 'rgba(16, 185, 129, 0.3)' }
-                    : { bg: 'rgba(239, 68, 68, 0.15)', text: '#f87171', border: 'rgba(239, 68, 68, 0.3)' };
+                    ? { bg: 'rgba(16, 185, 129, 0.12)', text: '#10b981', border: 'rgba(16, 185, 129, 0.25)' }
+                    : { bg: 'rgba(239, 68, 68, 0.12)', text: '#ef4444', border: 'rgba(239, 68, 68, 0.25)' };
 
                 return (
                   <div
@@ -1232,19 +1263,17 @@ function CourseSidebar({ navigate }) {
                       justifyContent: 'space-between',
                       padding: '9px 12px',
                       borderRadius: 10,
-                      background: 'rgba(255,255,255,0.03)',
-                      border: '1px solid rgba(255,255,255,0.06)',
+                      background: 'var(--background)',
+                      border: '1px solid var(--border)',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease',
                       gap: 8,
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(255,255,255,0.07)';
-                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)';
+                      e.currentTarget.style.borderColor = 'var(--text-primary)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
-                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+                      e.currentTarget.style.borderColor = 'var(--border)';
                     }}
                   >
                     <div style={{ minWidth: 0, flex: 1 }}>
@@ -1262,7 +1291,7 @@ function CourseSidebar({ navigate }) {
                         >
                           {fileTypeUpper}
                         </span>
-                        <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: '#f1f5f9', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {kit.title}
                         </p>
                         {isNew && (
@@ -1272,18 +1301,18 @@ function CourseSidebar({ navigate }) {
                               fontWeight: 800,
                               padding: '1px 5px',
                               borderRadius: 99,
-                              background: 'rgba(249, 115, 22, 0.2)',
-                              color: '#fb923c',
-                              border: '1px solid rgba(249, 115, 22, 0.4)',
+                              background: 'rgba(249, 115, 22, 0.15)',
+                              color: '#ea580c',
+                              border: '1px solid rgba(249, 115, 22, 0.3)',
                             }}
                           >
                             NEW
                           </span>
                         )}
                       </div>
-                      <p style={{ margin: 0, fontSize: 10, color: '#64748b' }}>{kit.fileSize} • by {kit.authorRole || 'Faculty'}</p>
+                      <p style={{ margin: 0, fontSize: 10, color: 'var(--text-muted)' }}>{kit.fileSize} • by {kit.authorRole || 'Faculty'}</p>
                     </div>
-                    <Download size={14} color="#38bdf8" />
+                    <Download size={14} style={{ color: 'var(--text-muted)' }} />
                   </div>
                 );
               })}
@@ -1451,7 +1480,7 @@ export const MyCoursesPage = () => {
               style={{
                 fontSize: 12,
                 fontWeight: 700,
-                color: '#38bdf8',
+                color: 'var(--color-primary, #16a34a)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.8px',
               }}
@@ -1464,23 +1493,23 @@ export const MyCoursesPage = () => {
               margin: 0,
               fontSize: 28,
               fontWeight: 800,
-              color: '#fff',
+              color: 'var(--text-primary)',
               letterSpacing: '-0.5px',
             }}
           >
             My Courses
           </h1>
-          <p style={{ margin: '4px 0 0', fontSize: 14, color: '#94a3b8' }}>
+          <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-secondary)' }}>
             Pick up right where you left off, review lessons, and earn certified credentials.
           </p>
         </div>
 
-        {/* Quick KPI Badges */}
+        {/* Quick KPI Badges — Macaron / Pastel */}
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <div
             style={{
-              background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card-blue, #e3f2fd)',
+              border: '1px solid var(--card-blue-border, #bfdbfe)',
               borderRadius: 14,
               padding: '10px 18px',
               display: 'flex',
@@ -1493,27 +1522,27 @@ export const MyCoursesPage = () => {
                 width: 34,
                 height: 34,
                 borderRadius: 10,
-                background: 'rgba(56, 189, 248, 0.12)',
+                background: 'rgba(59, 130, 246, 0.15)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#38bdf8',
+                color: '#2563eb',
               }}
             >
               <BookOpen size={18} />
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: 10, color: '#64748b', fontWeight: 700, letterSpacing: '0.5px' }}>
+              <p style={{ margin: 0, fontSize: 10, color: 'var(--text-secondary)', fontWeight: 700, letterSpacing: '0.5px' }}>
                 ENROLLED
               </p>
-              <h4 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: '#fff' }}>{courses.length}</h4>
+              <h4 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>{courses.length}</h4>
             </div>
           </div>
 
           <div
             style={{
-              background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card-yellow, #fff8e1)',
+              border: '1px solid var(--card-yellow-border, #fde68a)',
               borderRadius: 14,
               padding: '10px 18px',
               display: 'flex',
@@ -1526,27 +1555,27 @@ export const MyCoursesPage = () => {
                 width: 34,
                 height: 34,
                 borderRadius: 10,
-                background: 'rgba(251, 146, 60, 0.12)',
+                background: 'rgba(245, 158, 11, 0.15)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#fb923c',
+                color: '#d97706',
               }}
             >
-              <Play size={16} fill="#fb923c" />
+              <Play size={16} fill="#d97706" />
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: 10, color: '#64748b', fontWeight: 700, letterSpacing: '0.5px' }}>
+              <p style={{ margin: 0, fontSize: 10, color: 'var(--text-secondary)', fontWeight: 700, letterSpacing: '0.5px' }}>
                 IN PROGRESS
               </p>
-              <h4 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: '#fff' }}>{inProgressCount}</h4>
+              <h4 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>{inProgressCount}</h4>
             </div>
           </div>
 
           <div
             style={{
-              background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card-green, #e8f5e9)',
+              border: '1px solid var(--card-green-border, #bbf7d0)',
               borderRadius: 14,
               padding: '10px 18px',
               display: 'flex',
@@ -1559,20 +1588,20 @@ export const MyCoursesPage = () => {
                 width: 34,
                 height: 34,
                 borderRadius: 10,
-                background: 'rgba(16, 185, 129, 0.12)',
+                background: 'rgba(16, 185, 129, 0.15)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#34d399',
+                color: '#059669',
               }}
             >
               <Award size={18} />
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: 10, color: '#64748b', fontWeight: 700, letterSpacing: '0.5px' }}>
+              <p style={{ margin: 0, fontSize: 10, color: 'var(--text-secondary)', fontWeight: 700, letterSpacing: '0.5px' }}>
                 COMPLETED
               </p>
-              <h4 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: '#fff' }}>{completedCount}</h4>
+              <h4 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>{completedCount}</h4>
             </div>
           </div>
         </div>
@@ -1602,11 +1631,11 @@ export const MyCoursesPage = () => {
               alignItems: 'center',
               flexWrap: 'wrap',
               gap: 14,
-              background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
               borderRadius: 16,
               padding: '12px 18px',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+              boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
             {/* Filter Tabs */}
@@ -1627,9 +1656,9 @@ export const MyCoursesPage = () => {
                     fontWeight: 600,
                     cursor: 'pointer',
                     border: 'none',
-                    background: activeTab === tab.id ? '#2563eb' : 'transparent',
-                    color: activeTab === tab.id ? '#fff' : '#94a3b8',
-                    boxShadow: activeTab === tab.id ? '0 2px 8px rgba(37, 99, 235, 0.4)' : 'none',
+                    background: activeTab === tab.id ? 'var(--text-primary)' : 'transparent',
+                    color: activeTab === tab.id ? 'var(--color-surface, #ffffff)' : 'var(--text-secondary)',
+                    boxShadow: activeTab === tab.id ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
                     transition: 'all 0.15s ease',
                   }}
                 >
@@ -1642,25 +1671,25 @@ export const MyCoursesPage = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
               {/* Search Bar */}
               <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <Search size={14} style={{ position: 'absolute', left: 12, color: '#64748b' }} />
+                <Search size={14} style={{ position: 'absolute', left: 12, color: 'var(--text-muted)' }} />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search courses..."
                   style={{
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    background: 'var(--background)',
+                    border: '1px solid var(--border)',
                     borderRadius: 10,
                     padding: '8px 12px 8px 34px',
                     fontSize: 13,
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     outline: 'none',
                     width: 170,
                     transition: 'border-color 0.15s ease',
                   }}
-                  onFocus={(e) => (e.target.style.borderColor = '#38bdf8')}
-                  onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)')}
+                  onFocus={(e) => (e.target.style.borderColor = 'var(--text-primary)')}
+                  onBlur={(e) => (e.target.style.borderColor = 'var(--border)')}
                 />
                 {searchQuery && (
                   <button
@@ -1670,7 +1699,7 @@ export const MyCoursesPage = () => {
                       right: 8,
                       background: 'none',
                       border: 'none',
-                      color: '#94a3b8',
+                      color: 'var(--text-muted)',
                       cursor: 'pointer',
                       padding: 2,
                     }}
@@ -1691,11 +1720,11 @@ export const MyCoursesPage = () => {
                     padding: '8px 14px',
                     borderRadius: 10,
                     cursor: 'pointer',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    background: 'var(--background)',
+                    border: '1px solid var(--border)',
                     fontSize: 13,
                     fontWeight: 600,
-                    color: '#cbd5e1',
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   <Filter size={13} />
@@ -1710,10 +1739,10 @@ export const MyCoursesPage = () => {
                       right: 0,
                       zIndex: 50,
                       minWidth: 160,
-                      background: '#1a1e2a',
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                      background: 'var(--card)',
+                      border: '1px solid var(--border)',
                       borderRadius: 12,
-                      boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+                      boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
                       padding: '6px 0',
                       overflow: 'hidden',
                     }}
@@ -1733,8 +1762,8 @@ export const MyCoursesPage = () => {
                           fontSize: 13,
                           border: 'none',
                           cursor: 'pointer',
-                          background: cat === categoryFilter ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
-                          color: cat === categoryFilter ? '#38bdf8' : '#cbd5e1',
+                          background: cat === categoryFilter ? 'var(--background)' : 'transparent',
+                          color: cat === categoryFilter ? 'var(--color-primary, #16a34a)' : 'var(--text-primary)',
                           fontWeight: cat === categoryFilter ? 700 : 500,
                         }}
                       >
@@ -1749,10 +1778,10 @@ export const MyCoursesPage = () => {
               <div
                 style={{
                   display: 'flex',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  border: '1px solid var(--border)',
                   borderRadius: 10,
                   overflow: 'hidden',
-                  background: 'rgba(255, 255, 255, 0.05)',
+                  background: 'var(--background)',
                 }}
               >
                 <button
@@ -1762,8 +1791,8 @@ export const MyCoursesPage = () => {
                     padding: '8px 12px',
                     border: 'none',
                     cursor: 'pointer',
-                    background: view === 'grid' ? '#2563eb' : 'transparent',
-                    color: view === 'grid' ? '#fff' : '#94a3b8',
+                    background: view === 'grid' ? 'var(--text-primary)' : 'transparent',
+                    color: view === 'grid' ? 'var(--color-surface, #ffffff)' : 'var(--text-muted)',
                     display: 'flex',
                     alignItems: 'center',
                     transition: 'all 0.15s ease',
@@ -1778,8 +1807,8 @@ export const MyCoursesPage = () => {
                     padding: '8px 12px',
                     border: 'none',
                     cursor: 'pointer',
-                    background: view === 'list' ? '#2563eb' : 'transparent',
-                    color: view === 'list' ? '#fff' : '#94a3b8',
+                    background: view === 'list' ? 'var(--text-primary)' : 'transparent',
+                    color: view === 'list' ? 'var(--color-surface, #ffffff)' : 'var(--text-muted)',
                     display: 'flex',
                     alignItems: 'center',
                     transition: 'all 0.15s ease',
@@ -1797,9 +1826,9 @@ export const MyCoursesPage = () => {
               style={{
                 padding: '16px 20px',
                 borderRadius: 14,
-                background: 'rgba(239, 68, 68, 0.1)',
-                border: '1px solid rgba(239, 68, 68, 0.25)',
-                color: '#f87171',
+                background: 'rgba(239, 68, 68, 0.08)',
+                border: '1px solid rgba(239, 68, 68, 0.2)',
+                color: '#ef4444',
                 fontSize: 13,
                 display: 'flex',
                 alignItems: 'center',
@@ -1812,7 +1841,7 @@ export const MyCoursesPage = () => {
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#f87171',
+                  color: '#ef4444',
                   cursor: 'pointer',
                   textDecoration: 'underline',
                   fontSize: 13,
@@ -1824,26 +1853,17 @@ export const MyCoursesPage = () => {
             </div>
           )}
 
-          {/* Course Listings */}
+          {/* Course Listings — With rich Pastel Skeleton Loader */}
           {isLoading ? (
             <div
               style={{
                 display: 'grid',
-                gap: 20,
+                gap: 22,
                 gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
               }}
             >
               {Array.from({ length: 4 }).map((_, i) => (
-                <div
-                  key={i}
-                  style={{
-                    height: 340,
-                    background: '#161922',
-                    borderRadius: 20,
-                    border: '1px solid rgba(255,255,255,0.06)',
-                    animation: 'pulse 1.4s ease-in-out infinite',
-                  }}
-                />
+                <SkeletonCard key={i} />
               ))}
             </div>
           ) : !error && filtered.length === 0 ? (
@@ -1851,16 +1871,16 @@ export const MyCoursesPage = () => {
               style={{
                 textAlign: 'center',
                 padding: '80px 20px',
-                background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
+                background: 'var(--card)',
                 borderRadius: 20,
-                border: '1px dashed rgba(255, 255, 255, 0.12)',
+                border: '1px dashed var(--border)',
               }}
             >
-              <BookOpen size={44} style={{ color: '#64748b', margin: '0 auto 16px' }} />
-              <h3 style={{ margin: '0 0 8px', fontSize: 18, fontWeight: 700, color: '#fff' }}>
+              <BookOpen size={44} style={{ color: 'var(--text-muted)', margin: '0 auto 16px' }} />
+              <h3 style={{ margin: '0 0 8px', fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
                 No courses found
               </h3>
-              <p style={{ margin: '0 0 20px', fontSize: 14, color: '#94a3b8' }}>
+              <p style={{ margin: '0 0 20px', fontSize: 14, color: 'var(--text-secondary)' }}>
                 {searchQuery
                   ? `No enrolled courses match "${searchQuery}".`
                   : activeTab === 'SAVED'
@@ -1879,9 +1899,9 @@ export const MyCoursesPage = () => {
                   style={{
                     padding: '8px 18px',
                     borderRadius: 10,
-                    background: 'rgba(255,255,255,0.08)',
-                    border: '1px solid rgba(255,255,255,0.15)',
-                    color: '#fff',
+                    background: 'var(--background)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--text-primary)',
                     fontSize: 13,
                     fontWeight: 600,
                     cursor: 'pointer',

@@ -37,6 +37,25 @@ import Spinner from '../../../components/common/Spinner';
 const TAB_NOTES = 'notes';
 const TAB_BOOKMARKS = 'bookmarks';
 
+function NoteSkeletonCard() {
+  const s = { background: 'var(--skeleton-bg, #e2e8f0)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' };
+  return (
+    <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, padding: 20, display: 'flex', flexDirection: 'column', gap: 14, boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ ...s, width: 90, height: 20, borderRadius: 99 }} />
+        <div style={{ ...s, width: 24, height: 24, borderRadius: 6 }} />
+      </div>
+      <div style={{ ...s, height: 18, width: '75%' }} />
+      <div style={{ ...s, height: 13, width: '90%' }} />
+      <div style={{ ...s, height: 13, width: '60%' }} />
+      <div style={{ marginTop: 'auto', paddingTop: 12, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ ...s, width: 70, height: 12 }} />
+        <div style={{ ...s, width: 50, height: 12 }} />
+      </div>
+    </div>
+  );
+}
+
 export const NotesBookmarksPage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(TAB_NOTES);
@@ -321,13 +340,14 @@ export const NotesBookmarksPage = () => {
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <div
             style={{
-              background: 'linear-gradient(180deg, #181b24 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
               borderRadius: 14,
               padding: '10px 18px',
               display: 'flex',
               alignItems: 'center',
               gap: 12,
+              boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
             <div
@@ -345,22 +365,23 @@ export const NotesBookmarksPage = () => {
               <FileText size={18} />
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: 10, color: '#94a3b8', fontWeight: 700, letterSpacing: '0.5px' }}>
+              <p style={{ margin: 0, fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.5px' }}>
                 TOTAL NOTES
               </p>
-              <h4 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: '#fff' }}>{allNotes.length}</h4>
+              <h4 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>{allNotes.length}</h4>
             </div>
           </div>
 
           <div
             style={{
-              background: 'linear-gradient(180deg, #181b24 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
               borderRadius: 14,
               padding: '10px 18px',
               display: 'flex',
               alignItems: 'center',
               gap: 12,
+              boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
             <div
@@ -372,28 +393,29 @@ export const NotesBookmarksPage = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#818cf8',
+                color: '#6366f1',
               }}
             >
               <Star size={18} />
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: 10, color: '#94a3b8', fontWeight: 700, letterSpacing: '0.5px' }}>
+              <p style={{ margin: 0, fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.5px' }}>
                 BOOKMARKS
               </p>
-              <h4 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: '#fff' }}>{allBookmarks.length}</h4>
+              <h4 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>{allBookmarks.length}</h4>
             </div>
           </div>
 
           <div
             style={{
-              background: 'linear-gradient(180deg, #181b24 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
               borderRadius: 14,
               padding: '10px 18px',
               display: 'flex',
               alignItems: 'center',
               gap: 12,
+              boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
             <div
@@ -405,16 +427,16 @@ export const NotesBookmarksPage = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#34d399',
+                color: '#10b981',
               }}
             >
               <Sparkles size={18} />
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: 10, color: '#94a3b8', fontWeight: 700, letterSpacing: '0.5px' }}>
+              <p style={{ margin: 0, fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.5px' }}>
                 WORDS CAPTURED
               </p>
-              <h4 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: '#fff' }}>{totalWords}</h4>
+              <h4 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>{totalWords}</h4>
             </div>
           </div>
         </div>
@@ -665,7 +687,7 @@ export const NotesBookmarksPage = () => {
                 padding: 24,
                 borderRadius: 16,
                 border: '2px solid #f59e0b',
-                background: 'linear-gradient(180deg, #1a1d26 0%, #12141c 100%)',
+                background: 'var(--card)',
                 boxShadow: '0 8px 32px rgba(245, 158, 11, 0.15)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -678,7 +700,7 @@ export const NotesBookmarksPage = () => {
                     margin: 0,
                     fontSize: 16,
                     fontWeight: 700,
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 8,
@@ -713,8 +735,8 @@ export const NotesBookmarksPage = () => {
                     flex: '1 1 300px',
                     padding: '12px 16px',
                     borderRadius: 10,
-                    border: '1px solid var(--border-color)',
-                    background: 'var(--surface-medium)',
+                    border: '1px solid var(--border)',
+                    background: 'var(--background)',
                     color: 'var(--text-primary)',
                     fontSize: 14,
                     fontWeight: 600,
@@ -729,8 +751,8 @@ export const NotesBookmarksPage = () => {
                     flex: '0 1 240px',
                     padding: '12px 16px',
                     borderRadius: 10,
-                    border: '1px solid var(--border-color)',
-                    background: 'var(--surface-medium)',
+                    border: '1px solid var(--border)',
+                    background: 'var(--background)',
                     color: 'var(--text-primary)',
                     fontSize: 13,
                     outline: 'none',
@@ -756,8 +778,8 @@ export const NotesBookmarksPage = () => {
                   width: '100%',
                   padding: '14px 16px',
                   borderRadius: 10,
-                  border: '1px solid var(--border-color)',
-                  background: 'var(--surface-medium)',
+                  border: '1px solid var(--border)',
+                  background: 'var(--background)',
                   color: 'var(--text-primary)',
                   fontSize: 13,
                   lineHeight: 1.6,
@@ -819,8 +841,10 @@ export const NotesBookmarksPage = () => {
 
           {/* ── Content Grid ── */}
           {isLoading ? (
-            <div style={{ padding: 80, textAlign: 'center' }}>
-              <Spinner />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 18 }}>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <NoteSkeletonCard key={i} />
+              ))}
             </div>
           ) : activeTab === TAB_NOTES ? (
             notes.length === 0 ? (
@@ -830,9 +854,9 @@ export const NotesBookmarksPage = () => {
                   textAlign: 'center',
                   padding: '70px 24px',
                   color: 'var(--text-muted)',
-                  background: 'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 100%)',
+                  background: 'var(--card)',
                   borderRadius: 18,
-                  border: '1px dashed var(--border-color)',
+                  border: '1px dashed var(--border)',
                 }}
               >
                 <div
@@ -890,14 +914,15 @@ export const NotesBookmarksPage = () => {
                   <div
                     key={note.id}
                     style={{
-                      background: 'linear-gradient(180deg, #181b24 0%, #12141c 100%)',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      background: 'var(--card)',
+                      border: '1px solid var(--border)',
                       borderRadius: 16,
                       padding: 20,
                       display: 'flex',
                       flexDirection: 'column',
                       justifyContent: 'space-between',
                       transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                      boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
                       cursor: 'pointer',
                     }}
                     onMouseEnter={(e) => {
@@ -1087,14 +1112,15 @@ export const NotesBookmarksPage = () => {
                   <div
                     key={bm.id}
                     style={{
-                      background: 'linear-gradient(180deg, #181b24 0%, #12141c 100%)',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      background: 'var(--card)',
+                      border: '1px solid var(--border)',
                       borderRadius: 16,
                       padding: 18,
                       display: 'flex',
                       flexDirection: 'column',
                       justifyContent: 'space-between',
                       gap: 14,
+                      boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
                       transition: 'all 0.2s ease',
                     }}
                     onMouseEnter={(e) => {
@@ -1201,27 +1227,28 @@ export const NotesBookmarksPage = () => {
           {/* Card 1: Study Scratchpad */}
           <div
             style={{
-              background: 'linear-gradient(180deg, #181b24 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
               borderRadius: 18,
               padding: 20,
               display: 'flex',
               flexDirection: 'column',
               gap: 12,
+              boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Sparkles size={16} color="#f59e0b" />
                 Quick Study Scratchpad
               </h3>
               {scratchpadSaved && (
-                <span style={{ fontSize: 11, color: '#34d399', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ fontSize: 11, color: '#10b981', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
                   <Check size={12} /> Saved
                 </span>
               )}
             </div>
-            <p style={{ margin: 0, fontSize: 12, color: '#94a3b8' }}>
+            <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
               Auto-saved locally. Jot quick formulas, reminders, or code snippets.
             </p>
             <textarea
@@ -1236,8 +1263,8 @@ export const NotesBookmarksPage = () => {
                 width: '100%',
                 padding: '10px 12px',
                 borderRadius: 10,
-                border: '1px solid var(--border-color)',
-                background: 'var(--surface-medium)',
+                border: '1px solid var(--border)',
+                background: 'var(--background)',
                 color: 'var(--text-primary)',
                 fontSize: 12,
                 lineHeight: 1.5,
@@ -1254,8 +1281,8 @@ export const NotesBookmarksPage = () => {
                   flex: 1,
                   padding: '7px 12px',
                   borderRadius: 8,
-                  border: '1px solid var(--border-color)',
-                  background: 'var(--surface-medium)',
+                  border: '1px solid var(--border)',
+                  background: 'var(--background)',
                   color: 'var(--text-primary)',
                   fontSize: 12,
                   fontWeight: 600,
@@ -1272,7 +1299,7 @@ export const NotesBookmarksPage = () => {
                   padding: '7px 12px',
                   borderRadius: 8,
                   border: 'none',
-                  background: 'rgba(245, 158, 11, 0.2)',
+                  background: 'rgba(245, 158, 11, 0.15)',
                   color: '#f59e0b',
                   fontSize: 12,
                   fontWeight: 700,
@@ -1288,16 +1315,17 @@ export const NotesBookmarksPage = () => {
           {/* Card 2: Filter by Enrolled Subject */}
           <div
             style={{
-              background: 'linear-gradient(180deg, #181b24 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
               borderRadius: 18,
               padding: 20,
               display: 'flex',
               flexDirection: 'column',
               gap: 12,
+              boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
-            <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
               <Folder size={16} color="#38bdf8" />
               Notes by Course
             </h3>
@@ -1380,13 +1408,14 @@ export const NotesBookmarksPage = () => {
           {/* Card 3: Markdown Quick Reference */}
           <div
             style={{
-              background: 'linear-gradient(180deg, #181b24 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
               borderRadius: 18,
               padding: 20,
               display: 'flex',
               flexDirection: 'column',
               gap: 10,
+              boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
             <h3 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: 6 }}>

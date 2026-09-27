@@ -519,12 +519,34 @@ export const InstructorCertificationHubPage = () => {
           </thead>
           <tbody>
             {isStudentsLoading ? (
-              <tr>
-                <td colSpan={6} style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
-                  <div style={{ display: 'inline-block', width: 24, height: 24, border: '2px solid var(--border)', borderTopColor: 'var(--color-primary, #6366f1)', borderRadius: '50%', animation: 'spin 0.8s linear infinite', marginBottom: 10 }} />
-                  <div>Loading cohort graduation records...</div>
-                </td>
-              </tr>
+              Array.from({ length: 5 }).map((_, i) => (
+                <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+                  <td style={{ padding: '16px 20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <div style={{ width: 110, height: 14, borderRadius: 4, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                        <div style={{ width: 140, height: 11, borderRadius: 4, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                      </div>
+                    </div>
+                  </td>
+                  <td style={{ padding: '16px 20px' }}>
+                    <div style={{ width: 90, height: 20, borderRadius: 6, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  </td>
+                  <td style={{ padding: '16px 20px' }}>
+                    <div style={{ width: 140, height: 14, borderRadius: 4, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  </td>
+                  <td style={{ padding: '16px 20px' }}>
+                    <div style={{ width: 100, height: 8, borderRadius: 99, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  </td>
+                  <td style={{ padding: '16px 20px' }}>
+                    <div style={{ width: 80, height: 22, borderRadius: 99, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  </td>
+                  <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                    <div style={{ width: 88, height: 30, borderRadius: 8, background: 'var(--skeleton-bg, #e2e8f0)', marginLeft: 'auto', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  </td>
+                </tr>
+              ))
             ) : filteredCandidates.length === 0 ? (
               <tr>
                 <td colSpan={6} style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
