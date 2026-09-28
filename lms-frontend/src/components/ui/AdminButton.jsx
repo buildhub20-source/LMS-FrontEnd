@@ -1,46 +1,42 @@
 import { Loader2 } from 'lucide-react';
+import { cn } from '@/utils';
 
 /**
- * Admin Dashboard Button — dark monochrome design.
+ * AdminButton — Pastel macaron design.
+ * Wraps inline styles with the new token system.
  * @param {'primary'|'secondary'|'outline'|'ghost'|'danger'|'success'} variant
  * @param {'sm'|'md'|'lg'} size
  */
 const variantStyles = {
-  // Primary: white bg, black text — high contrast CTA
   primary: {
-    background: '#ffffff',
-    color: '#000000',
-    border: '1px solid #ffffff',
+    background: 'var(--primary)',
+    color: 'var(--primary-foreground)',
+    border: '1px solid var(--primary)',
   },
-  // Secondary: dark surface, white text, subtle border
   secondary: {
-    background: 'var(--surface-medium)',
-    color: 'var(--text-primary)',
-    border: '1px solid var(--border-color)',
+    background: 'var(--muted)',
+    color: 'var(--foreground)',
+    border: '1px solid var(--border)',
   },
-  // Outline: transparent, white text, subtle border
   outline: {
     background: 'transparent',
-    color: 'var(--text-secondary)',
-    border: '1px solid var(--border-color)',
+    color: 'var(--foreground)',
+    border: '1px solid var(--border)',
   },
-  // Ghost: transparent, no border
   ghost: {
     background: 'transparent',
-    color: 'var(--text-secondary)',
+    color: 'var(--muted-foreground)',
     border: '1px solid transparent',
   },
-  // Danger: muted red
   danger: {
-    background: 'rgba(239,68,68,0.12)',
-    color: '#f87171',
-    border: '1px solid rgba(239,68,68,0.3)',
+    background: 'var(--color-red-50)',
+    color: 'var(--color-red-600)',
+    border: '1px solid var(--color-red-100)',
   },
-  // Success: muted green
   success: {
-    background: 'rgba(34,197,94,0.12)',
-    color: '#4ade80',
-    border: '1px solid rgba(34,197,94,0.3)',
+    background: 'var(--color-green-50)',
+    color: 'var(--color-green-600)',
+    border: '1px solid var(--color-green-100)',
   },
 };
 
@@ -56,6 +52,7 @@ export const AdminButton = ({
   loading = false,
   icon,
   children,
+  className,
   style = {},
   disabled,
   type = 'button',
@@ -68,30 +65,16 @@ export const AdminButton = ({
     <button
       type={type}
       disabled={disabled || loading}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 8,
-        fontWeight: 600,
-        fontFamily: 'Inter, sans-serif',
-        cursor: disabled || loading ? 'not-allowed' : 'pointer',
-        opacity: disabled || loading ? 0.5 : 1,
-        transition: 'opacity 0.15s ease, background 0.15s ease',
-        whiteSpace: 'nowrap',
-        ...vs,
-        ...ss,
-        ...style,
-      }}
-      onMouseEnter={(e) => {
-        if (!disabled && !loading) e.currentTarget.style.opacity = '0.85';
-      }}
-      onMouseLeave={(e) => {
-        if (!disabled && !loading) e.currentTarget.style.opacity = '1';
-      }}
+      className={cn(
+        'inline-flex items-center justify-center rounded-xl font-semibold',
+        'transition-all duration-150 whitespace-nowrap',
+        (disabled || loading) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:opacity-85 active:scale-[0.98]',
+        className,
+      )}
+      style={{ ...vs, ...ss, ...style }}
       {...props}
     >
-      {loading ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : icon}
+      {loading ? <Loader2 size={14} className="animate-spin" /> : icon}
       {children}
     </button>
   );

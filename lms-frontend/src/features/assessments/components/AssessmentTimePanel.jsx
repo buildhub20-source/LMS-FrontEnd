@@ -78,11 +78,11 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
   return (
     <div
       style={{
-        background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-        border: isClosingSoon ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)',
+        background: 'var(--card)',
+        border: isClosingSoon ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid var(--border)',
         borderRadius: 16,
         overflow: 'hidden',
-        boxShadow: isClosingSoon ? '0 0 20px rgba(239, 68, 68, 0.15)' : '0 4px 20px rgba(0, 0, 0, 0.3)',
+        boxShadow: isClosingSoon ? '0 0 20px rgba(239, 68, 68, 0.15)' : 'var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.05))',
         transition: 'all 0.3s ease',
       }}
     >
@@ -90,8 +90,8 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
       <div
         style={{
           padding: '16px 20px',
-          background: 'rgba(255, 255, 255, 0.03)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'var(--background)',
+          borderBottom: '1px solid var(--border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -99,7 +99,7 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Hourglass size={16} style={{ color: '#6366f1' }} />
-          <span style={{ fontSize: 14, fontWeight: 700, color: '#f8fafc', letterSpacing: '-0.2px' }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.2px' }}>
             Time & Details
           </span>
         </div>
@@ -138,14 +138,14 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600 }}>
+              <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 600 }}>
                 {state === 'locked' ? 'Window Opens' : state === 'expired' ? 'Window Status' : 'Remaining Time'}
               </span>
               <span
                 style={{
                   fontSize: 14,
                   fontWeight: 800,
-                  color: isClosingSoon ? '#f87171' : '#a5b4fc',
+                  color: isClosingSoon ? '#f87171' : '#6366f1',
                   fontFamily: 'monospace',
                 }}
               >
@@ -155,7 +155,7 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
 
             {/* Progress Bar for open window */}
             {state === 'open' || state === 'closing_soon' ? (
-              <div style={{ width: '100%', height: 6, background: 'rgba(255, 255, 255, 0.08)', borderRadius: 99, overflow: 'hidden' }}>
+              <div style={{ width: '100%', height: 6, background: 'var(--border)', borderRadius: 99, overflow: 'hidden' }}>
                 <div
                   style={{
                     height: '100%',
@@ -176,47 +176,47 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
         {/* Stats Grid */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#94a3b8' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)' }}>
               <Clock size={14} style={{ color: '#38bdf8' }} /> Duration
             </span>
-            <span style={{ fontWeight: 700, color: '#f8fafc' }}>
+            <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
               {assessment?.durationMinutes || 0} min
             </span>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#94a3b8' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)' }}>
               <BarChart2 size={14} style={{ color: '#818cf8' }} /> Total Marks
             </span>
-            <span style={{ fontWeight: 700, color: '#f8fafc' }}>
+            <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
               {assessment?.totalMarks || 0}%
             </span>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#94a3b8' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)' }}>
               <RefreshCw size={14} style={{ color: '#fbbf24' }} /> Max Attempts
             </span>
-            <span style={{ fontWeight: 700, color: '#f8fafc' }}>
+            <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
               {assessment?.maxAttempts || 1}
             </span>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#94a3b8' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)' }}>
               <HelpCircle size={14} style={{ color: '#34d399' }} /> Questions
             </span>
-            <span style={{ fontWeight: 700, color: '#f8fafc' }}>
+            <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
               {assessment?.questionCount ?? '—'}
             </span>
           </div>
 
           {startTime && (
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#94a3b8' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)' }}>
                 <CheckCircle size={14} style={{ color: '#34d399' }} /> Window Opens
               </span>
-              <span style={{ fontSize: 12, fontWeight: 600, color: '#cbd5e1' }}>
+              <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>
                 {formatDate(startTime)}
               </span>
             </div>
@@ -224,10 +224,10 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
 
           {endTime && (
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#94a3b8' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)' }}>
                 <XCircle size={14} style={{ color: '#f87171' }} /> Window Closes
               </span>
-              <span style={{ fontSize: 12, fontWeight: 600, color: '#cbd5e1' }}>
+              <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>
                 {formatDate(endTime)}
               </span>
             </div>
@@ -236,8 +236,8 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
 
         {/* Quick Time Triggers for Instructor/Admin */}
         {(onExtend || onClose) && (
-          <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: 14 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10, fontSize: 12, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div style={{ borderTop: '1px solid var(--border)', paddingTop: 14 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10, fontSize: 12, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               <Zap size={13} style={{ color: '#fbbf24' }} /> Time Triggers
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>

@@ -2,7 +2,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import AdminButton from './AdminButton';
 
 /**
- * Admin Dashboard Pagination.
+ * AdminPagination — Pastel macaron design.
  * Props: page (0-based), totalPages, totalElements, size, onPageChange
  */
 export const AdminPagination = ({ page, totalPages, totalElements, size, onPageChange }) => {
@@ -11,7 +11,6 @@ export const AdminPagination = ({ page, totalPages, totalElements, size, onPageC
   const startItem = page * size + 1;
   const endItem = Math.min((page + 1) * size, totalElements);
 
-  // Show up to 7 page buttons
   const maxVisible = 7;
   let pageNumbers = [];
   if (totalPages <= maxVisible) {
@@ -19,35 +18,19 @@ export const AdminPagination = ({ page, totalPages, totalElements, size, onPageC
   } else if (page < 4) {
     pageNumbers = [0, 1, 2, 3, 4, '...', totalPages - 1];
   } else if (page >= totalPages - 4) {
-    pageNumbers = [
-      0,
-      '...',
-      totalPages - 5,
-      totalPages - 4,
-      totalPages - 3,
-      totalPages - 2,
-      totalPages - 1,
-    ];
+    pageNumbers = [0, '...', totalPages - 5, totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1];
   } else {
     pageNumbers = [0, '...', page - 1, page, page + 1, '...', totalPages - 1];
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 16,
-        padding: '0 4px',
-      }}
-    >
-      <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)' }}>
-        Showing <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{startItem}</span>–
-        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{endItem}</span> of{' '}
-        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{totalElements}</span>
+    <div className="flex items-center justify-between gap-4 px-1">
+      <p className="m-0 text-sm" style={{ color: 'var(--muted-foreground)' }}>
+        Showing <span className="font-semibold" style={{ color: 'var(--foreground)' }}>{startItem}</span>–
+        <span className="font-semibold" style={{ color: 'var(--foreground)' }}>{endItem}</span> of{' '}
+        <span className="font-semibold" style={{ color: 'var(--foreground)' }}>{totalElements}</span>
       </p>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div className="flex items-center gap-2">
         <AdminButton
           variant="outline"
           size="sm"
@@ -57,20 +40,13 @@ export const AdminPagination = ({ page, totalPages, totalElements, size, onPageC
         >
           Prev
         </AdminButton>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <div className="flex items-center gap-1">
           {pageNumbers.map((n, i) =>
             n === '...' ? (
               <span
                 key={`ellipsis-${i}`}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 24,
-                  height: 32,
-                  fontSize: 14,
-                  color: 'var(--text-muted)',
-                }}
+                className="flex items-center justify-center w-6 h-8 text-sm"
+                style={{ color: 'var(--muted-foreground)' }}
               >
                 …
               </span>
@@ -78,24 +54,10 @@ export const AdminPagination = ({ page, totalPages, totalElements, size, onPageC
               <button
                 key={n}
                 onClick={() => onPageChange(n)}
+                className="h-8 min-w-[32px] rounded-lg px-2 text-sm font-semibold transition-all duration-150 border-none cursor-pointer hover:opacity-80"
                 style={{
-                  height: 32,
-                  minWidth: 32,
-                  borderRadius: 8,
-                  padding: '0 8px',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                  border: 'none',
-                  background: n === page ? 'var(--text-primary)' : 'transparent',
-                  color: n === page ? 'var(--surface-dark)' : 'var(--text-secondary)',
-                }}
-                onMouseEnter={(e) => {
-                  if (n !== page) e.currentTarget.style.background = 'var(--hover-bg)';
-                }}
-                onMouseLeave={(e) => {
-                  if (n !== page) e.currentTarget.style.background = 'transparent';
+                  background: n === page ? 'var(--primary)' : 'transparent',
+                  color: n === page ? 'var(--primary-foreground)' : 'var(--muted-foreground)',
                 }}
               >
                 {n + 1}
@@ -118,95 +80,47 @@ export const AdminPagination = ({ page, totalPages, totalElements, size, onPageC
 };
 
 /**
- * Admin Dashboard EmptyState.
- * Props: icon, title, message, action
+ * AdminEmptyState — Pastel macaron design.
  */
 export const AdminEmptyState = ({ icon, title, message, action }) => (
-  <div
-    style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '64px 16px',
-      textAlign: 'center',
-    }}
-  >
+  <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
     <div
-      style={{
-        marginBottom: 16,
-        display: 'flex',
-        width: 56,
-        height: 56,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 16,
-        background: 'var(--surface-medium)',
-        color: 'var(--text-muted)',
-      }}
+      className="mb-4 flex w-14 h-14 items-center justify-center rounded-2xl"
+      style={{ background: 'var(--accent)', color: 'var(--primary)' }}
     >
       {icon}
     </div>
-    <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>
+    <h3 className="m-0 text-base font-semibold" style={{ color: 'var(--foreground)' }}>
       {title}
     </h3>
-    <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)', maxWidth: 320 }}>
+    <p className="mt-1 text-sm max-w-xs" style={{ color: 'var(--muted-foreground)' }}>
       {message}
     </p>
-    {action && <div style={{ marginTop: 24 }}>{action}</div>}
+    {action && <div className="mt-6">{action}</div>}
   </div>
 );
 
 /**
- * Admin Dashboard ErrorState.
- * Props: message, onRetry
+ * AdminErrorState — Pastel macaron design.
  */
 export const AdminErrorState = ({ message, onRetry }) => (
-  <div
-    style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '64px 16px',
-      textAlign: 'center',
-    }}
-  >
+  <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
     <div
-      style={{
-        marginBottom: 16,
-        display: 'flex',
-        width: 56,
-        height: 56,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 16,
-        background: 'rgba(239,68,68,0.1)',
-        color: '#f87171',
-      }}
+      className="mb-4 flex w-14 h-14 items-center justify-center rounded-2xl"
+      style={{ background: 'var(--color-red-50)', color: 'var(--color-red-500)' }}
     >
-      <svg
-        style={{ width: 28, height: 28 }}
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
-        />
+      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
       </svg>
     </div>
-    <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>
+    <h3 className="m-0 text-base font-semibold" style={{ color: 'var(--foreground)' }}>
       Something went wrong
     </h3>
-    <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)', maxWidth: 320 }}>
+    <p className="mt-1 text-sm max-w-xs" style={{ color: 'var(--muted-foreground)' }}>
       {message}
     </p>
     {onRetry && (
-      <div style={{ marginTop: 24 }}>
+      <div className="mt-6">
         <AdminButton variant="outline" size="sm" onClick={onRetry}>
           Try again
         </AdminButton>

@@ -1,0 +1,87 @@
+/* ============================================================
+   Token Compatibility Layer
+   Maps old dark-theme CSS variable names → new pastel palette.
+
+   This allows all 78+ existing component files to work with the
+   new design tokens without individual file edits.
+
+   As components are migrated to use Tailwind classes, these
+   mappings can be gradually removed.
+   ============================================================ */
+
+:root {
+  /* ── Surface tokens (old → new) ────────────────────── */
+  --surface-dark: var(--card);
+  --surface-medium: var(--muted);
+  --surface-light: var(--background);
+  --surface-extra-light: var(--card);
+
+  /* ── Text tokens ───────────────────────────────────── */
+  --text-primary: var(--foreground);
+  --text-secondary: var(--muted-foreground);
+  --text-muted: var(--muted-foreground);
+
+  /* ── Border tokens ─────────────────────────────────── */
+  --border-color: var(--border);
+
+  /* ── Background ────────────────────────────────────── */
+  --bg: var(--background);
+  --lms-background: var(--background);
+  --lms-foreground: var(--foreground);
+  --lms-card: var(--card);
+  --lms-muted: var(--muted);
+  --lms-muted-foreground: var(--muted-foreground);
+  --lms-border: var(--border);
+  --lms-primary: var(--primary);
+  --lms-primary-foreground: var(--primary-foreground);
+
+  /* ── Input tokens ──────────────────────────────────── */
+  --input-bg: var(--card);
+
+  /* ── Primary / Accent ──────────────────────────────── */
+  --primary-color: var(--primary);
+  --active-bg: var(--muted);
+
+  /* ── Dashboard accent palette (old blue → new green) ── */
+  --dashboard-accent: var(--primary);
+  --dashboard-accent-text: var(--color-green-600);
+  --dashboard-accent-soft: var(--color-green-50);
+
+  --dashboard-success-text: var(--color-green-600);
+  --dashboard-success-soft: var(--color-green-50);
+
+  --dashboard-warning-text: var(--color-amber-600);
+  --dashboard-warning-soft: var(--color-amber-50);
+
+  --dashboard-pink-text: var(--color-rose-600);
+  --dashboard-pink-soft: var(--color-rose-50);
+
+  --dashboard-info-text: var(--color-sky-600);
+  --dashboard-info-soft: var(--color-sky-50);
+
+  /* ── Skeleton Loading ──────────────────────────────── */
+  --skeleton-bg: #e2e8f0;
+  --skeleton-subtle: #f1f5f9;
+}
+
+/* ── Dark theme overrides ────────────────────────────── */
+.dark,
+[data-theme='dark'] {
+  --dashboard-accent-text: var(--color-green-500);
+  --dashboard-accent-soft: rgba(34, 197, 94, 0.12);
+
+  --dashboard-success-text: var(--color-emerald-500);
+  --dashboard-success-soft: rgba(16, 185, 129, 0.12);
+
+  --dashboard-warning-text: var(--color-amber-500);
+  --dashboard-warning-soft: rgba(245, 158, 11, 0.12);
+
+  --dashboard-pink-text: var(--color-rose-500);
+  --dashboard-pink-soft: rgba(244, 63, 94, 0.12);
+
+  --dashboard-info-text: var(--color-sky-500);
+  --dashboard-info-soft: rgba(14, 165, 233, 0.12);
+
+  --skeleton-bg: #2a2c42;
+  --skeleton-subtle: #232538;
+}

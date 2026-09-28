@@ -124,13 +124,14 @@ export const CertificateDetailsPage = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
           {/* Details Card */}
           <div style={{
-            background: 'linear-gradient(180deg, #181b24 0%, #12141c 100%)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--card)',
+            border: '1px solid var(--border)',
             borderRadius: 18,
             padding: 24,
             display: 'flex',
             flexDirection: 'column',
             gap: 18,
+            boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
           }}>
             <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: 'var(--text-primary)' }}>
               Credential Verification

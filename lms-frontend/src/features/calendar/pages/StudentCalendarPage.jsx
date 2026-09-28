@@ -343,13 +343,14 @@ export const StudentCalendarPage = () => {
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <div
             style={{
-              background: 'linear-gradient(180deg, #181b24 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
               borderRadius: 14,
               padding: '10px 18px',
               display: 'flex',
               alignItems: 'center',
               gap: 12,
+              boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
             <div
@@ -363,7 +364,7 @@ export const StudentCalendarPage = () => {
                 justifyContent: 'center',
               }}
             >
-              <CalendarCheck size={18} color="#818cf8" />
+              <CalendarCheck size={18} color="#6366f1" />
             </div>
             <div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
@@ -377,13 +378,14 @@ export const StudentCalendarPage = () => {
 
           <div
             style={{
-              background: 'linear-gradient(180deg, #181b24 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
               borderRadius: 14,
               padding: '10px 18px',
               display: 'flex',
               alignItems: 'center',
               gap: 12,
+              boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
             <div
@@ -411,13 +413,14 @@ export const StudentCalendarPage = () => {
 
           <div
             style={{
-              background: 'linear-gradient(180deg, #181b24 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
               borderRadius: 14,
               padding: '10px 18px',
               display: 'flex',
               alignItems: 'center',
               gap: 12,
+              boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
             <div
@@ -631,10 +634,10 @@ export const StudentCalendarPage = () => {
           {/* ── Left Column: Expansive Full-Size Calendar Canvas ── */}
           <div
             style={{
-              background: 'linear-gradient(180deg, #181b24 0%, #12141c 100%)',
+              background: 'var(--card)',
               borderRadius: 18,
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+              border: '1px solid var(--border)',
+              boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
               overflow: 'hidden',
             }}
           >
@@ -645,8 +648,8 @@ export const StudentCalendarPage = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '18px 24px',
-                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(139, 92, 246, 0.2) 100%)',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.1) 100%)',
+                borderBottom: '1px solid var(--border)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -902,10 +905,10 @@ export const StudentCalendarPage = () => {
             {/* Card 1: Selected Date Agenda */}
             <div
               style={{
-                background: 'linear-gradient(180deg, #181b24 0%, #12141c 100%)',
+                background: 'var(--card)',
                 borderRadius: 18,
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+                border: '1px solid var(--border)',
+                boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
                 padding: 20,
               }}
             >
@@ -915,7 +918,7 @@ export const StudentCalendarPage = () => {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   marginBottom: 16,
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderBottom: '1px solid var(--border)',
                   paddingBottom: 12,
                 }}
               >
@@ -1047,10 +1050,10 @@ export const StudentCalendarPage = () => {
             {/* Card 2: Urgent Deadlines Countdown */}
             <div
               style={{
-                background: 'linear-gradient(180deg, #181b24 0%, #12141c 100%)',
+                background: 'var(--card)',
                 borderRadius: 18,
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+                border: '1px solid var(--border)',
+                boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
                 padding: 20,
               }}
             >
@@ -1060,7 +1063,7 @@ export const StudentCalendarPage = () => {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   marginBottom: 14,
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderBottom: '1px solid var(--border)',
                   paddingBottom: 12,
                 }}
               >
@@ -1076,8 +1079,16 @@ export const StudentCalendarPage = () => {
               </div>
 
               {deadlinesLoading ? (
-                <div style={{ padding: 20, textAlign: 'center' }}>
-                  <Spinner size="sm" />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', borderRadius: 10, background: 'var(--background)', border: '1px solid var(--border)' }}>
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <div style={{ width: '65%', height: 12, borderRadius: 4, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                        <div style={{ width: '40%', height: 10, borderRadius: 4, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                      </div>
+                      <div style={{ width: 44, height: 18, borderRadius: 6, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    </div>
+                  ))}
                 </div>
               ) : deadlines.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '24px 12px', color: 'var(--text-muted)' }}>
@@ -1102,8 +1113,8 @@ export const StudentCalendarPage = () => {
                           gap: 12,
                           padding: '10px 12px',
                           borderRadius: 10,
-                          background: isUrgent ? 'rgba(239, 68, 68, 0.08)' : 'rgba(255, 255, 255, 0.03)',
-                          border: `1px solid ${isUrgent ? 'rgba(239, 68, 68, 0.25)' : 'rgba(255, 255, 255, 0.06)'}`,
+                          background: isUrgent ? 'rgba(239, 68, 68, 0.08)' : 'var(--background)',
+                          border: `1px solid ${isUrgent ? 'rgba(239, 68, 68, 0.25)' : 'var(--border)'}`,
                           cursor: 'pointer',
                           transition: 'transform 0.15s ease',
                         }}
@@ -1136,7 +1147,7 @@ export const StudentCalendarPage = () => {
                             fontSize: 10,
                             fontWeight: 800,
                             background: isUrgent ? '#ef4444' : 'rgba(99, 102, 241, 0.2)',
-                            color: isUrgent ? '#fff' : '#a5b4fc',
+                            color: isUrgent ? '#fff' : '#6366f1',
                           }}
                         >
                           {daysLeft !== null ? (daysLeft <= 0 ? 'Today' : `${daysLeft}d left`) : 'Soon'}
@@ -1151,9 +1162,10 @@ export const StudentCalendarPage = () => {
             {/* Card 3: Academic Term Sync Info */}
             <div
               style={{
-                background: 'linear-gradient(180deg, #181b24 0%, #12141c 100%)',
+                background: 'var(--card)',
                 borderRadius: 18,
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                border: '1px solid var(--border)',
+                boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
                 padding: 16,
               }}
             >
@@ -1173,18 +1185,18 @@ export const StudentCalendarPage = () => {
         /* ── Deadlines List View (Spans 100% full width) ── */
         <div
           style={{
-            background: 'linear-gradient(180deg, #181b24 0%, #12141c 100%)',
+            background: 'var(--card)',
             borderRadius: 18,
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+            border: '1px solid var(--border)',
+            boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             overflow: 'hidden',
           }}
         >
           <div
             style={{
               padding: '18px 24px',
-              background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(245, 158, 11, 0.15) 100%)',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(245, 158, 11, 0.08) 100%)',
+              borderBottom: '1px solid var(--border)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
@@ -1215,8 +1227,23 @@ export const StudentCalendarPage = () => {
           </div>
 
           {deadlinesLoading ? (
-            <div style={{ padding: 60, textAlign: 'center' }}>
-              <Spinner />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 16, padding: 24 }}>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} style={{ background: 'var(--card)', borderRadius: 14, border: '1px solid var(--border)', padding: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                    <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <div style={{ width: '60%', height: 14, borderRadius: 4, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                      <div style={{ width: '40%', height: 11, borderRadius: 4, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    </div>
+                  </div>
+                  <div style={{ width: '90%', height: 12, borderRadius: 4, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  <div style={{ marginTop: 'auto', paddingTop: 12, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ width: 80, height: 12, borderRadius: 4, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    <div style={{ width: 90, height: 26, borderRadius: 6, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : deadlines.length === 0 ? (
             <div style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
@@ -1345,9 +1372,10 @@ export const StudentCalendarPage = () => {
         /* ── Monthly Timeline Schedule (Spans 100% full width) ── */
         <div
           style={{
-            background: 'linear-gradient(180deg, #181b24 0%, #12141c 100%)',
+            background: 'var(--card)',
             borderRadius: 18,
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            border: '1px solid var(--border)',
+            boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             padding: 28,
           }}
         >
@@ -1403,7 +1431,7 @@ export const StudentCalendarPage = () => {
                         height: 14,
                         borderRadius: '50%',
                         background: colors.dot,
-                        border: '3px solid #181b24',
+                        border: '3px solid var(--card)',
                       }}
                     />
 

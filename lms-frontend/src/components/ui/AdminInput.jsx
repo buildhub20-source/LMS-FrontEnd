@@ -1,74 +1,54 @@
 import { forwardRef } from 'react';
+import { cn } from '@/utils';
 
 /**
- * Admin Dashboard Input — dark monochrome design.
+ * AdminInput — Pastel macaron design.
  * Props: label, error, icon (ReactNode), hint, ...HTMLInputAttributes
  */
 export const AdminInput = forwardRef(
   ({ label, error, icon, hint, style = {}, className = '', ...props }, ref) => (
-    <div style={{ width: '100%' }}>
+    <div className="w-full">
       {label && (
         <label
-          style={{
-            display: 'block',
-            marginBottom: 6,
-            fontSize: 13,
-            fontWeight: 500,
-            color: 'var(--text-secondary)',
-            fontFamily: 'Inter, sans-serif',
-          }}
+          className="block mb-1.5 text-[13px] font-medium"
+          style={{ color: 'var(--muted-foreground)' }}
         >
           {label}
         </label>
       )}
-      <div style={{ position: 'relative' }}>
+      <div className="relative">
         {icon && (
           <span
-            style={{
-              position: 'absolute',
-              left: 12,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: 'var(--text-muted)',
-              display: 'flex',
-              alignItems: 'center',
-              pointerEvents: 'none',
-            }}
+            className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none"
+            style={{ color: 'var(--muted-foreground)' }}
           >
             {icon}
           </span>
         )}
         <input
           ref={ref}
-          className={className}
+          className={cn(
+            'w-full h-[38px] rounded-xl text-sm outline-none',
+            'transition-all duration-150',
+            'focus:ring-2 focus:ring-offset-0',
+            icon ? 'pl-9 pr-3' : 'px-3',
+            error ? 'ring-1 ring-red-300' : '',
+            className,
+          )}
           style={{
-            width: '100%',
-            height: 38,
-            padding: icon ? '0 12px 0 36px' : '0 12px',
-            background: 'var(--input-bg)',
-            border: error ? '1px solid rgba(239,68,68,0.6)' : '1px solid var(--border-color)',
-            borderRadius: 8,
-            fontSize: 14,
-            color: 'var(--text-primary)',
-            fontFamily: 'Inter, sans-serif',
-            outline: 'none',
-            transition: 'border-color 0.15s ease',
-            boxSizing: 'border-box',
+            background: 'var(--card)',
+            border: error ? '1px solid var(--color-red-300)' : '1px solid var(--border)',
+            color: 'var(--foreground)',
+            '--tw-ring-color': 'var(--primary)',
             ...style,
-          }}
-          onFocus={(e) => {
-            e.target.style.borderColor = 'var(--text-secondary)';
-          }}
-          onBlur={(e) => {
-            e.target.style.borderColor = error ? 'rgba(239,68,68,0.6)' : 'var(--border-color)';
           }}
           {...props}
         />
       </div>
       {error ? (
-        <p style={{ margin: '4px 0 0', fontSize: 12, color: '#f87171' }}>{error}</p>
+        <p className="mt-1 text-xs" style={{ color: 'var(--color-red-500)' }}>{error}</p>
       ) : hint ? (
-        <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>{hint}</p>
+        <p className="mt-1 text-xs" style={{ color: 'var(--muted-foreground)' }}>{hint}</p>
       ) : null}
     </div>
   ),
