@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
 import { cn } from '@/utils';
 import {
   Tooltip,
@@ -9,6 +9,9 @@ import {
   TooltipProvider,
 } from '@/components/ui/tooltip';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import useAuth from '@/features/auth/hooks/useAuth';
+import { ROUTES } from '@/constants/routes';
 
 /* ─── Monochrome Logo ──────────────────────────────────────── */
 const Logo = ({ size = 24 }) => (
@@ -20,20 +23,46 @@ const Logo = ({ size = 24 }) => (
   </svg>
 );
 
+const getInitials = (name) => {
+  if (!name) return '?';
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+};
+
 /**
  * Slim Icon Sidebar — Figma-inspired macaron design.
  *
- * - Collapsed: 56px icon-only with tooltips
- * - Expanded: 260px with labels + group headings
+ * - Collapsed: 56px icon-only with tooltips & logout icon
+ * - Expanded: 260px with labels, group headings & logout action
  * - Dark rounded icon buttons on both states
  */
 export const IconSidebar = ({
   items = [],
   footer = null,
+  onLogout = null,
+  user = null,
   className,
 }) => {
   const [expanded, setExpanded] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const auth = useAuth();
+
+  const currentUser = user || auth.user;
+
+  const handleSignOutAction = async () => {
+    if (onLogout) {
+      await onLogout();
+    } else {
+      await auth.logout();
+      navigate(ROUTES.LOGIN, { replace: true });
+    }
+  };
 
   // Group items by their group property
   const grouped = items.reduce((acc, item) => {
@@ -155,19 +184,107 @@ export const IconSidebar = ({
           </nav>
         </ScrollArea>
 
-        {/* Footer slot */}
+        {/* Custom Footer slot */}
         {footer && expanded && (
           <div className="p-3 border-t" style={{ borderColor: 'var(--sidebar-border)' }}>
             {footer}
           </div>
         )}
 
+        {/* User profile & Logout action */}
+        <div
+          className={cn(
+            'border-t transition-all duration-200',
+            expanded ? 'p-3' : 'py-2 px-1 flex flex-col items-center'
+          )}
+          style={{ borderColor: 'var(--sidebar-border)' }}
+        >
+          {expanded ? (
+            <div className="flex flex-col gap-2">
+              {currentUser && (
+                <div
+                  className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl"
+                  style={{
+                    background: 'var(--card)',
+                    border: '1px solid var(--sidebar-border)',
+                  }}
+                >
+                  <Avatar className="h-8 w-8 rounded-lg border flex-shrink-0" style={{ borderColor: 'var(--sidebar-border)' }}>
+                    {currentUser.avatarUrl && (
+                      <AvatarImage src={currentUser.avatarUrl} alt={currentUser.fullName || currentUser.email} />
+                    )}
+                    <AvatarFallback
+                      className="text-xs font-semibold rounded-lg"
+                      style={{ background: 'var(--sidebar-primary)', color: 'var(--sidebar-primary-foreground)' }}
+                    >
+                      {getInitials(currentUser.fullName || currentUser.name || currentUser.email)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold truncate leading-tight" style={{ color: 'var(--sidebar-foreground)' }}>
+                      {currentUser.fullName || currentUser.name || 'User'}
+                    </p>
+                    <p className="text-[11px] truncate opacity-60 leading-tight">
+                      {currentUser.email || (Array.isArray(currentUser.roles) ? currentUser.roles[0] : 'Member')}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={handleSignOutAction}
+                className={cn(
+                  'flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-xs font-medium',
+                  'transition-all duration-200 cursor-pointer',
+                  'hover:text-red-400 hover:bg-red-500/10'
+                )}
+                style={{
+                  color: 'var(--sidebar-foreground)',
+                  opacity: 0.85,
+                  border: 'none',
+                  background: 'transparent',
+                }}
+              >
+                <LogOut size={16} className="flex-shrink-0 text-red-400" />
+                <span>Sign Out</span>
+              </button>
+            </div>
+          ) : (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={handleSignOutAction}
+                  className={cn(
+                    'flex items-center justify-center w-10 h-10 rounded-xl',
+                    'transition-all duration-200 cursor-pointer',
+                    'hover:text-red-400 hover:bg-red-500/10'
+                  )}
+                  style={{
+                    color: 'var(--sidebar-foreground)',
+                    opacity: 0.85,
+                    border: 'none',
+                    background: 'transparent',
+                  }}
+                  aria-label="Sign Out"
+                >
+                  <LogOut size={18} className="text-red-400" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="font-medium text-red-400">
+                Sign Out
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </div>
+
         {/* Expand/Collapse Toggle */}
         <button
           onClick={() => setExpanded(!expanded)}
           className={cn(
             'flex items-center justify-center h-10 border-t',
-            'transition-colors duration-200 hover:opacity-80',
+            'transition-colors duration-200 hover:opacity-80 cursor-pointer',
           )}
           style={{
             borderColor: 'var(--sidebar-border)',

@@ -76,7 +76,8 @@ export const AppShell = ({ navigation, tabNav, title }) => {
         {/* Slim Icon Sidebar */}
         <IconSidebar
           items={navigation}
-          footer={null}
+          onLogout={handleSignOut}
+          user={user}
         />
 
         {/* Main content column */}

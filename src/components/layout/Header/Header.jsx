@@ -1,9 +1,16 @@
 import { useState, useMemo } from 'react';
-import { Menu, Bell, Mail, Bookmark, Search } from 'lucide-react';
+import { Menu, Bell, Mail, Bookmark, Search, LogOut, User } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { cn } from '@/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import ThemeSlider from '../../common/ThemeSlider';
 import notificationService from '../../../features/notifications/services/notificationService';
 import { useNotificationSocket } from '../../../features/notifications/hooks/useNotificationSocket';
@@ -20,7 +27,7 @@ import useAuth from '../../../features/auth/hooks/useAuth';
  */
 export const Header = ({ onToggleSidebar, children, tabNav }) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { unreadCount: socketUnreadCount } = useNotificationSocket();
 
@@ -140,16 +147,59 @@ export const Header = ({ onToggleSidebar, children, tabNav }) => {
         {/* Theme toggle */}
         <ThemeSlider size="md" />
 
-        {/* User Avatar */}
-        <Link to={ROUTES.PROFILE} title="Profile" className="ml-1">
-          <Avatar className="h-8 w-8 border-2" style={{ borderColor: 'var(--border)' }}>
-            {user?.avatarUrl && <AvatarImage src={user.avatarUrl} alt={user?.fullName} />}
-            <AvatarFallback className="text-xs font-semibold"
-              style={{ background: 'var(--primary)', color: 'var(--primary-foreground)' }}>
-              {getInitials(user?.fullName || user?.email)}
-            </AvatarFallback>
-          </Avatar>
-        </Link>
+        {/* User Avatar with Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="ml-1 rounded-full p-0.5 transition-opacity hover:opacity-80 focus:outline-none cursor-pointer"
+              title="User Account"
+            >
+              <Avatar className="h-8 w-8 border-2" style={{ borderColor: 'var(--border)' }}>
+                {user?.avatarUrl && <AvatarImage src={user.avatarUrl} alt={user?.fullName} />}
+                <AvatarFallback className="text-xs font-semibold"
+                  style={{ background: 'var(--primary)', color: 'var(--primary-foreground)' }}>
+                  {getInitials(user?.fullName || user?.email)}
+                </AvatarFallback>
+              </Avatar>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-lg">
+            <div className="px-2.5 py-2">
+              <p className="text-xs font-semibold truncate leading-tight" style={{ color: 'var(--foreground)' }}>
+                {user?.fullName || user?.name || 'User'}
+              </p>
+              <p className="text-[11px] truncate opacity-60 leading-tight">
+                {user?.email}
+              </p>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link to={ROUTES.PROFILE} className="cursor-pointer flex items-center gap-2 text-xs">
+                <User size={14} />
+                <span>Profile</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to={ROUTES.NOTES_BOOKMARKS || '#'} className="cursor-pointer flex items-center gap-2 text-xs">
+                <Bookmark size={14} />
+                <span>Saved & Notes</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={async () => {
+                document.title = 'LMS';
+                await logout();
+                navigate(ROUTES.LOGIN, { replace: true, state: {} });
+              }}
+              className="cursor-pointer text-red-500 focus:text-red-500 focus:bg-red-500/10 flex items-center gap-2 text-xs"
+            >
+              <LogOut size={14} />
+              <span>Log Out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
