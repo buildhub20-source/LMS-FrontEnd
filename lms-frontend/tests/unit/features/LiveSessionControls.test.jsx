@@ -103,14 +103,14 @@ describe('LiveSessionControls Center and Bottom Buttons', () => {
         onToggleChat={vi.fn()}
         onToggleParticipants={vi.fn()}
         onLeave={vi.fn()}
-        canPublish={true}
+        canPublish={false}
         canPublishVideo={false}
         canShareScreen={false}
       />
     );
 
-    // Audio muted label
-    expect(screen.getByRole('button', { name: /Unmute Microphone/i })).toBeInTheDocument();
+    // Receive-only students must not be offered publishing controls.
+    expect(screen.queryByRole('button', { name: /Unmute Microphone/i })).not.toBeInTheDocument();
 
     // Hand raised label
     expect(screen.getByRole('button', { name: /Lower Your Hand/i })).toBeInTheDocument();

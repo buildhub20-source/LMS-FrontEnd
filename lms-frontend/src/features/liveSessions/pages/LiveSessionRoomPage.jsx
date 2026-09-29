@@ -50,7 +50,7 @@ export const LiveSessionRoomPage = () => {
     };
   }, [sessionId]);
 
-  const handleLeave = () => {
+  const handleLeave = async () => {
     const roles = user?.roles ?? (user?.role ? [user.role] : []);
     const primaryRole = getPrimaryRole(roles);
     const destination =
@@ -64,13 +64,17 @@ export const LiveSessionRoomPage = () => {
               ? ROUTES.COURSE_LIVE_SESSIONS(session.courseId)
               : ROUTES.PROFILE;
 
-    navigate(destination, { replace: true });
+    try {
+      await liveSessionApi.leaveSession(sessionId);
+    } finally {
+      navigate(destination, { replace: true });
+    }
   };
 
   const handleEndSession = async () => {
     if (window.confirm('Are you sure you want to end this live class for all participants?')) {
       await endMutation.mutateAsync(sessionId);
-      handleLeave();
+      await handleLeave();
     }
   };
 

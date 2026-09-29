@@ -206,6 +206,7 @@ export const API_ENDPOINTS = Object.freeze({
     byId: (sessionId) => `/live-sessions/${sessionId}`,
     start: (sessionId) => `/live-sessions/${sessionId}/start`,
     join: (sessionId) => `/live-sessions/${sessionId}/join`,
+    leave: (sessionId) => `/live-sessions/${sessionId}/leave`,
     end: (sessionId) => `/live-sessions/${sessionId}/end`,
     attendance: (sessionId) => `/live-sessions/${sessionId}/attendance`,
     tenantUsage: (tenantId) => `/platform/tenants/${tenantId}/live-usage`,
