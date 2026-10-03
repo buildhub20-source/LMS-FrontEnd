@@ -164,6 +164,7 @@ export const InstructorListPage = () => {
 
   const [search, setSearch] = useState('');
   const [employmentType, setEmploymentType] = useState('');
+  const [page, setPage] = useState(0);
   const [viewMode, setViewMode] = useState(() => {
     try {
       return localStorage.getItem('lms_instructor_view_mode') || 'table';
@@ -171,6 +172,7 @@ export const InstructorListPage = () => {
       return 'table';
     }
   });
+
 
   const {
     data: pageData,

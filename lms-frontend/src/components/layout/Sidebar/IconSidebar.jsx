@@ -99,20 +99,43 @@ export const IconSidebar = ({
       >
         {/* Logo / Brand */}
         <div className={cn(
-          'flex items-center h-14 flex-shrink-0 border-b',
+          'flex items-center h-16 flex-shrink-0 border-b',
           expanded ? 'px-4 gap-3' : 'justify-center',
         )} style={{ borderColor: 'var(--sidebar-border)' }}>
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg"
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl"
             style={{ background: 'var(--sidebar-primary)', color: 'var(--sidebar-primary-foreground)' }}>
-            <Logo size={18} />
+            <Logo size={22} />
           </div>
           {expanded && (
-            <span className="text-base font-bold tracking-tight whitespace-nowrap"
+            <span className="text-lg font-bold tracking-tight whitespace-nowrap"
               style={{ color: 'var(--sidebar-foreground)' }}>
               LMS
             </span>
           )}
         </div>
+
+        {/* Expand/Collapse Toggle — dedicated row right below logo */}
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className={cn(
+            'flex items-center flex-shrink-0 border-b h-9',
+            'transition-colors duration-200 hover:opacity-80 cursor-pointer',
+            expanded ? 'justify-end px-3' : 'justify-center',
+          )}
+          style={{
+            borderColor: 'var(--sidebar-border)',
+            color: 'var(--sidebar-foreground)',
+            background: 'transparent',
+            border: 'none',
+            borderBottom: '1px solid var(--sidebar-border)',
+          }}
+          aria-label={expanded ? 'Collapse sidebar' : 'Expand sidebar'}
+        >
+          <span className="flex items-center justify-center w-7 h-7 rounded-lg"
+            style={{ background: 'var(--sidebar-accent)' }}>
+            {expanded ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
+          </span>
+        </button>
 
         {/* Navigation */}
         <ScrollArea className="flex-1 py-2">
@@ -279,24 +302,7 @@ export const IconSidebar = ({
           )}
         </div>
 
-        {/* Expand/Collapse Toggle */}
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className={cn(
-            'flex items-center justify-center h-10 border-t',
-            'transition-colors duration-200 hover:opacity-80 cursor-pointer',
-          )}
-          style={{
-            borderColor: 'var(--sidebar-border)',
-            color: 'var(--sidebar-foreground)',
-            background: 'transparent',
-            border: 'none',
-            borderTop: '1px solid var(--sidebar-border)',
-          }}
-          aria-label={expanded ? 'Collapse sidebar' : 'Expand sidebar'}
-        >
-          {expanded ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
-        </button>
+
       </aside>
     </TooltipProvider>
   );
