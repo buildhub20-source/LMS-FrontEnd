@@ -29,6 +29,8 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
 
   // ── Per-question code: { [questionId]: { language, sourceCode } }
   const [drafts, setDrafts] = useState({});
+  const draftsRef = useRef({});
+  draftsRef.current = drafts;
 
   // ── Autosave state: { [questionId]: 'saving' | 'saved' | 'error' }
   const [saveStatus, setSaveStatus] = useState({});
@@ -51,11 +53,13 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
         ...patch,
       };
       const next = { ...prev, [questionId]: updated };
+      draftsRef.current = next;
 
       // Instant local persistence backup
-      if (attempt?.id) {
+      const attemptId = attempt?.id || attempt?.attemptId;
+      if (attemptId) {
         try {
-          const storageKey = `${LOCAL_STORAGE_PREFIX}${attempt.id}_${questionId}`;
+          const storageKey = `${LOCAL_STORAGE_PREFIX}${attemptId}_${questionId}`;
           localStorage.setItem(storageKey, JSON.stringify(updated));
         } catch {
           // ignore storage quota errors
@@ -68,7 +72,8 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
     // Debounce autosave to backend database (2 seconds)
     clearTimeout(debounceTimers.current[questionId]);
     debounceTimers.current[questionId] = setTimeout(async () => {
-      if (!attempt?.id) return;
+      const attemptId = attempt?.id || attempt?.attemptId;
+      if (!attemptId) return;
 
       setSaveStatus((s) => ({ ...s, [questionId]: 'saving' }));
       try {
@@ -76,7 +81,7 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
           const draft = { ...current[questionId], ...patch };
           assessmentService
             .saveSubmissionDraft(
-              attempt.id,
+              attemptId,
               questionId,
               draft.language || 'python',
               draft.sourceCode || '',
@@ -93,7 +98,29 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
         setSaveStatus((s) => ({ ...s, [questionId]: 'error' }));
       }
     }, 1500);
-  }, [attempt?.id]);
+  }, [attempt?.id, attempt?.attemptId]);
+
+  // ── Flush all pending drafts immediately
+  const flushDrafts = useCallback(async () => {
+    const attemptId = attempt?.id || attempt?.attemptId;
+    if (!attemptId) return;
+
+    // Clear all pending debounce timers
+    Object.keys(debounceTimers.current).forEach((qid) => {
+      clearTimeout(debounceTimers.current[qid]);
+      delete debounceTimers.current[qid];
+    });
+
+    const entries = Object.entries(draftsRef.current);
+    for (const [questionId, draft] of entries) {
+      await assessmentService.saveSubmissionDraft(
+        attemptId,
+        questionId,
+        draft.language || 'python',
+        draft.sourceCode || '',
+      );
+    }
+  }, [attempt?.id, attempt?.attemptId]);
 
   // ── Submit attempt ───────────────────────────────────────────────────────
   const handleSubmit = useCallback(async (isAutoSubmit = false, onBeforeSubmit = null, shouldNavigate = true) => {
@@ -303,6 +330,7 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
     answeredCount,
     totalQuestions,
     updateDraft,
+    flushDrafts,
     handleSubmit,
     retry,
   };

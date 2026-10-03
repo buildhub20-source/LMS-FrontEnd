@@ -68,7 +68,7 @@ const MetricRow = ({ icon: Icon, label, value, tone = 'blue' }) => {
   );
 };
 
-const Bar = ({ value, tone = '#3b6fe0' }) => (
+const Bar = ({ value, tone = 'var(--chart-accent)' }) => (
   <div className="h-2 overflow-hidden rounded-full" style={{ background: 'var(--active-bg)' }}>
     <div
       className="h-full rounded-full transition-[width] duration-500"
@@ -167,7 +167,7 @@ export const AdminAnalyticsPage = () => {
   ];
 
   return (
-    <div className="mx-auto max-w-[1540px] space-y-5 pb-8">
+    <div className="w-full space-y-5 pb-8">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm font-medium" style={{ color: 'var(--dashboard-accent-text)' }}>ACADEMY OVERVIEW</p>
@@ -247,7 +247,7 @@ export const AdminAnalyticsPage = () => {
             <div className="mt-7 grid place-items-center">
               <div
                 className="grid h-36 w-36 place-items-center rounded-full"
-                style={{ background: `conic-gradient(#3b6fe0 ${completionRate}%, var(--active-bg) 0)` }}
+                style={{ background: `conic-gradient(var(--chart-accent) ${completionRate}%, var(--active-bg) 0)` }}
               >
                 <div className="grid h-24 w-24 place-items-center rounded-full" style={{ background: 'var(--surface-medium)' }}>
                   <strong className="text-2xl tabular-nums" style={{ color: 'var(--text-primary)' }}>{completionRate}%</strong>
@@ -305,7 +305,7 @@ export const AdminAnalyticsPage = () => {
                 <span style={{ color: 'var(--text-secondary)' }}>Completed enrollment</span>
                 <strong style={{ color: 'var(--text-primary)' }}>{completionRate}%</strong>
               </div>
-              <Bar value={completionRate} tone="#3b6fe0" />
+              <Bar value={completionRate} tone="var(--chart-accent)" />
             </div>
             <div>
               <div className="mb-2 flex items-center justify-between text-sm">
@@ -330,7 +330,15 @@ export const AdminAnalyticsPage = () => {
             <Link to={ROUTES.ADMIN_COURSES} className="text-sm font-semibold no-underline" style={{ color: 'var(--dashboard-accent-text)' }}>View all</Link>
           </div>
           <div className="mt-4 divide-y" style={{ borderColor: 'var(--border-color)' }}>
-            {courses.isLoading ? Array.from({ length: 3 }).map((_, index) => <div key={index} className="h-14 animate-pulse" style={{ background: index % 2 ? 'transparent' : 'rgba(255,255,255,.02)' }} />) : null}
+            {courses.isLoading ? Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="flex items-center gap-3 py-3 animate-pulse">
+                <span className="h-9 w-9 shrink-0 rounded-lg" style={{ background: 'var(--skeleton-bg, #e2e8f0)' }} />
+                <span className="min-w-0 flex-1 space-y-2">
+                  <span className="block h-3.5 w-3/4 rounded" style={{ background: 'var(--skeleton-bg, #e2e8f0)' }} />
+                  <span className="block h-2.5 w-1/3 rounded" style={{ background: 'var(--skeleton-subtle, #f1f5f9)' }} />
+                </span>
+              </div>
+            )) : null}
             {!courses.isLoading && courseItems.map((course) => (
               <Link key={course.id} to={ROUTES.ADMIN_COURSE_DETAILS(course.id)} className="flex items-center gap-3 py-3 no-underline transition hover:opacity-80">
                 <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg" style={{ color: 'var(--dashboard-accent-text)', background: 'var(--dashboard-accent-soft)' }}><GraduationCap className="h-4 w-4" aria-hidden="true" /></span>
@@ -489,7 +497,7 @@ export const AdminAnalyticsPage = () => {
             <div className="grid place-items-center">
               <div
                 className="grid h-36 w-36 place-items-center rounded-full"
-                style={{ background: `conic-gradient(#3b6fe0 ${completionRate}%, #f59e0b ${completionRate}% 100%)` }}
+                style={{ background: `conic-gradient(var(--chart-accent) ${completionRate}%, var(--chart-amber) ${completionRate}% 100%)` }}
               >
                 <div className="grid h-24 w-24 place-items-center rounded-full text-center" style={{ background: 'var(--surface-medium)' }}>
                   <strong className="text-2xl leading-none" style={{ color: 'var(--text-primary)' }}>{number(totalEnrollments)}</strong>
@@ -498,7 +506,7 @@ export const AdminAnalyticsPage = () => {
               </div>
             </div>
             <div className="space-y-4">
-              <Legend color="#3b6fe0" label="Completed" value={Math.round((totalEnrollments * completionRate) / 100)} />
+              <Legend color="var(--chart-accent)" label="Completed" value={Math.round((totalEnrollments * completionRate) / 100)} />
               <Legend color="#f59e0b" label="In progress" value={Math.max(0, totalEnrollments - Math.round((totalEnrollments * completionRate) / 100))} />
               <div className="border-t pt-4" style={{ borderColor: 'var(--border-color)' }}>
                 <p className="text-xs leading-5" style={{ color: 'var(--text-muted)' }}>The chart uses the current completion rate from the analytics API.</p>
@@ -516,8 +524,8 @@ export const AdminAnalyticsPage = () => {
             <Link to={ROUTES.ADMIN_ASSESSMENTS} className="text-sm font-semibold no-underline" style={{ color: 'var(--dashboard-accent-text)' }}>Manage assessments</Link>
           </div>
           <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <ReadinessRing label="Course catalog" published={publishedCourses} total={totalCourses} color="#3b6fe0" detail="Courses available to learners" />
-            <ReadinessRing label="Assessment catalog" published={publishedAssessments} total={assessmentCount} color="#10b981" detail="Assessments available to learners" />
+            <ReadinessRing label="Course catalog" published={publishedCourses} total={totalCourses} color="var(--chart-accent)" detail="Courses available to learners" />
+            <ReadinessRing label="Assessment catalog" published={publishedAssessments} total={assessmentCount} color="var(--chart-emerald)" detail="Assessments available to learners" />
           </div>
         </Card>
       </div>

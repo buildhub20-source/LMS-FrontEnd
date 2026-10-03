@@ -230,13 +230,13 @@ export const ResourceManagementPage = () => {
               margin: 0,
               fontSize: 26,
               fontWeight: 800,
-              color: '#fff',
+              color: 'var(--text-primary)',
               letterSpacing: '-0.5px',
             }}
           >
             {isAdminRoute ? 'Campus Toolkit & Resources' : 'Study Toolkits & Reference Guides'}
           </h1>
-          <p style={{ margin: '4px 0 0', fontSize: 13, color: '#94a3b8' }}>
+          <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
             {isAdminRoute
               ? 'Upload, publish, and govern institution-wide reference guides, exam policies, and student cheatsheets.'
               : 'Publish and manage supplementary learning kits, cheatsheets, and offline resources for your learners.'}
@@ -258,7 +258,7 @@ export const ResourceManagementPage = () => {
             border: 'none',
             background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
             color: '#fff',
-            boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)',
+            boxShadow: '0 4px 14px rgba(37, 99, 235, 0.25)',
             transition: 'transform 0.15s ease',
           }}
           onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
@@ -278,13 +278,14 @@ export const ResourceManagementPage = () => {
       >
         <div
           style={{
-            background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--card-blue)',
+            border: '1px solid var(--card-blue-border)',
             borderRadius: 16,
             padding: '16px 20px',
             display: 'flex',
             alignItems: 'center',
             gap: 14,
+            boxShadow: 'var(--shadow-sm)',
           }}
         >
           <div
@@ -292,30 +293,32 @@ export const ResourceManagementPage = () => {
               width: 40,
               height: 40,
               borderRadius: 10,
-              background: 'rgba(56, 189, 248, 0.15)',
+              background: 'rgba(255, 255, 255, 0.6)',
+              border: '1px solid var(--card-blue-border)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#38bdf8',
+              color: '#3b82f6',
             }}
           >
             <FolderDown size={20} />
           </div>
           <div>
-            <p style={{ margin: 0, fontSize: 11, color: '#64748b', fontWeight: 700 }}>TOTAL RESOURCES</p>
-            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: '#fff' }}>{metrics.total}</h3>
+            <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary)', fontWeight: 700 }}>TOTAL RESOURCES</p>
+            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>{metrics.total}</h3>
           </div>
         </div>
 
         <div
           style={{
-            background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--card-green)',
+            border: '1px solid var(--card-green-border)',
             borderRadius: 16,
             padding: '16px 20px',
             display: 'flex',
             alignItems: 'center',
             gap: 14,
+            boxShadow: 'var(--shadow-sm)',
           }}
         >
           <div
@@ -323,30 +326,32 @@ export const ResourceManagementPage = () => {
               width: 40,
               height: 40,
               borderRadius: 10,
-              background: 'rgba(16, 185, 129, 0.15)',
+              background: 'rgba(255, 255, 255, 0.6)',
+              border: '1px solid var(--card-green-border)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#34d399',
+              color: '#10b981',
             }}
           >
             <BookOpen size={20} />
           </div>
           <div>
-            <p style={{ margin: 0, fontSize: 11, color: '#64748b', fontWeight: 700 }}>STUDENT CHEATSHEETS</p>
-            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: '#fff' }}>{metrics.cheatsheets}</h3>
+            <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary)', fontWeight: 700 }}>STUDENT CHEATSHEETS</p>
+            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>{metrics.cheatsheets}</h3>
           </div>
         </div>
 
         <div
           style={{
-            background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--card-yellow)',
+            border: '1px solid var(--card-yellow-border)',
             borderRadius: 16,
             padding: '16px 20px',
             display: 'flex',
             alignItems: 'center',
             gap: 14,
+            boxShadow: 'var(--shadow-sm)',
           }}
         >
           <div
@@ -354,30 +359,32 @@ export const ResourceManagementPage = () => {
               width: 40,
               height: 40,
               borderRadius: 10,
-              background: 'rgba(245, 158, 11, 0.15)',
+              background: 'rgba(255, 255, 255, 0.6)',
+              border: '1px solid var(--card-yellow-border)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#fbbf24',
+              color: '#f59e0b',
             }}
           >
             <Shield size={20} />
           </div>
           <div>
-            <p style={{ margin: 0, fontSize: 11, color: '#64748b', fontWeight: 700 }}>EXAM & CAMPUS POLICIES</p>
-            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: '#fff' }}>{metrics.policies}</h3>
+            <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary)', fontWeight: 700 }}>EXAM & CAMPUS POLICIES</p>
+            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>{metrics.policies}</h3>
           </div>
         </div>
 
         <div
           style={{
-            background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--card-purple)',
+            border: '1px solid var(--card-purple-border)',
             borderRadius: 16,
             padding: '16px 20px',
             display: 'flex',
             alignItems: 'center',
             gap: 14,
+            boxShadow: 'var(--shadow-sm)',
           }}
         >
           <div
@@ -385,18 +392,19 @@ export const ResourceManagementPage = () => {
               width: 40,
               height: 40,
               borderRadius: 10,
-              background: 'rgba(168, 85, 247, 0.15)',
+              background: 'rgba(255, 255, 255, 0.6)',
+              border: '1px solid var(--card-purple-border)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#c084fc',
+              color: '#8b5cf6',
             }}
           >
             <Download size={20} />
           </div>
           <div>
-            <p style={{ margin: 0, fontSize: 11, color: '#64748b', fontWeight: 700 }}>TOTAL STUDENT DOWNLOADS</p>
-            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: '#fff' }}>{metrics.totalDownloads}</h3>
+            <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary)', fontWeight: 700 }}>TOTAL STUDENT DOWNLOADS</p>
+            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>{metrics.totalDownloads}</h3>
           </div>
         </div>
       </div>
@@ -409,50 +417,55 @@ export const ResourceManagementPage = () => {
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: 14,
-          background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'var(--card)',
+          border: '1px solid var(--border)',
           borderRadius: 16,
           padding: '12px 18px',
+          boxShadow: 'var(--shadow-sm)',
         }}
       >
         {/* Category Pills */}
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-          {Object.entries(CATEGORY_MAP).map(([key, cat]) => (
-            <button
-              key={key}
-              onClick={() => setSelectedCategory(key)}
-              style={{
-                padding: '7px 14px',
-                borderRadius: 8,
-                fontSize: 12,
-                fontWeight: 600,
-                cursor: 'pointer',
-                border: 'none',
-                background: selectedCategory === key ? '#2563eb' : 'transparent',
-                color: selectedCategory === key ? '#fff' : '#94a3b8',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              {cat.label}
-            </button>
-          ))}
+          {Object.entries(CATEGORY_MAP).map(([key, cat]) => {
+            const active = selectedCategory === key;
+            return (
+              <button
+                key={key}
+                onClick={() => setSelectedCategory(key)}
+                style={{
+                  padding: '7px 16px',
+                  borderRadius: 99,
+                  fontSize: 12,
+                  fontWeight: active ? 700 : 500,
+                  cursor: 'pointer',
+                  border: active ? '1px solid transparent' : '1px solid var(--border)',
+                  background: active ? 'var(--text-primary)' : 'var(--background)',
+                  color: active ? 'var(--color-surface)' : 'var(--text-secondary)',
+                  boxShadow: active ? '0 2px 8px rgba(0, 0, 0, 0.12)' : 'none',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {cat.label}
+              </button>
+            );
+          })}
         </div>
 
         {/* Search */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-          <Search size={14} style={{ position: 'absolute', left: 12, color: '#64748b' }} />
+          <Search size={14} style={{ position: 'absolute', left: 12, color: 'var(--text-muted)' }} />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search guides & toolkits..."
             style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              background: 'var(--background)',
+              border: '1px solid var(--border)',
               borderRadius: 8,
               padding: '7px 12px 7px 34px',
               fontSize: 12,
-              color: '#fff',
+              color: 'var(--text-primary)',
               outline: 'none',
               width: 220,
             }}
@@ -465,7 +478,7 @@ export const ResourceManagementPage = () => {
                 right: 8,
                 background: 'none',
                 border: 'none',
-                color: '#94a3b8',
+                color: 'var(--text-muted)',
                 cursor: 'pointer',
                 padding: 2,
               }}
@@ -479,17 +492,35 @@ export const ResourceManagementPage = () => {
       {/* ── Resource Cards Grid ── */}
       {isLoading ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 20 }}>
-          {Array.from({ length: 4 }).map((_, i) => (
+          {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
               style={{
-                height: 220,
-                background: '#161922',
+                background: 'var(--card)',
                 borderRadius: 16,
-                border: '1px solid rgba(255,255,255,0.06)',
-                animation: 'pulse 1.4s infinite',
+                border: '1px solid var(--border)',
+                padding: 22,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 14,
+                boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
               }}
-            />
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ width: 42, height: 42, borderRadius: 12, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                <div style={{ width: 70, height: 24, borderRadius: 99, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              </div>
+              <div style={{ height: 18, width: '75%', borderRadius: 6, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              <div style={{ height: 14, width: '90%', borderRadius: 6, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                <div style={{ width: 60, height: 20, borderRadius: 99, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                <div style={{ width: 80, height: 20, borderRadius: 99, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              </div>
+              <div style={{ marginTop: 'auto', paddingTop: 14, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ width: 90, height: 14, borderRadius: 4, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              </div>
+            </div>
           ))}
         </div>
       ) : resources.length === 0 ? (
@@ -497,14 +528,14 @@ export const ResourceManagementPage = () => {
           style={{
             textAlign: 'center',
             padding: '70px 20px',
-            background: '#161922',
+            background: 'var(--card)',
             borderRadius: 16,
-            border: '1px dashed rgba(255, 255, 255, 0.12)',
+            border: '1px dashed var(--border)',
           }}
         >
-          <FolderDown size={40} style={{ color: '#64748b', margin: '0 auto 14px' }} />
-          <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 700, color: '#fff' }}>No resources found</h3>
-          <p style={{ margin: '0 0 16px', fontSize: 13, color: '#94a3b8' }}>
+          <FolderDown size={40} style={{ color: 'var(--text-muted)', margin: '0 auto 14px' }} />
+          <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>No resources found</h3>
+          <p style={{ margin: '0 0 16px', fontSize: 13, color: 'var(--text-secondary)' }}>
             Upload reference guides or cheatsheets to make them available for students.
           </p>
           <button
@@ -537,24 +568,24 @@ export const ResourceManagementPage = () => {
               <div
                 key={res.id}
                 style={{
-                  background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  background: 'var(--card)',
+                  border: '1px solid var(--border)',
                   borderRadius: 16,
                   padding: '20px',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
                   transition: 'all 0.2s ease',
                   position: 'relative',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                  e.currentTarget.style.borderColor = 'var(--text-primary)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                  e.currentTarget.style.borderColor = 'var(--border)';
                 }}
               >
                 <div>
@@ -578,8 +609,9 @@ export const ResourceManagementPage = () => {
                       style={{
                         fontSize: 11,
                         fontWeight: 700,
-                        color: '#94a3b8',
-                        background: 'rgba(255, 255, 255, 0.06)',
+                        color: 'var(--text-secondary)',
+                        background: 'var(--background)',
+                        border: '1px solid var(--border)',
                         padding: '2px 8px',
                         borderRadius: 6,
                       }}
@@ -589,14 +621,14 @@ export const ResourceManagementPage = () => {
                   </div>
 
                   {/* Title & Description */}
-                  <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 700, color: '#fff', lineHeight: 1.3 }}>
+                  <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.3 }}>
                     {res.title}
                   </h3>
                   <p
                     style={{
                       margin: '0 0 16px',
                       fontSize: 13,
-                      color: '#94a3b8',
+                      color: 'var(--text-secondary)',
                       lineHeight: 1.5,
                       display: '-webkit-box',
                       WebkitLineClamp: 2,
@@ -609,16 +641,16 @@ export const ResourceManagementPage = () => {
                 </div>
 
                 {/* Footer Section */}
-                <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: 14 }}>
+                <div style={{ borderTop: '1px solid var(--border)', paddingTop: 14 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <Avatar name={res.author || 'Admin'} size="xs" />
                       <div>
-                        <p style={{ margin: 0, fontSize: 11, fontWeight: 600, color: '#fff' }}>{res.author}</p>
-                        <p style={{ margin: 0, fontSize: 10, color: '#64748b' }}>{res.authorRole || 'Author'}</p>
+                        <p style={{ margin: 0, fontSize: 11, fontWeight: 600, color: 'var(--text-primary)' }}>{res.author}</p>
+                        <p style={{ margin: 0, fontSize: 10, color: 'var(--text-muted)' }}>{res.authorRole || 'Author'}</p>
                       </div>
                     </div>
-                    <span style={{ fontSize: 11, color: '#64748b', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ fontSize: 11, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
                       <Download size={12} /> {res.downloadsCount || 0} downloads
                     </span>
                   </div>
@@ -636,9 +668,9 @@ export const ResourceManagementPage = () => {
                         gap: 6,
                         padding: '8px 12px',
                         borderRadius: 8,
-                        background: 'rgba(56, 189, 248, 0.12)',
-                        border: '1px solid rgba(56, 189, 248, 0.3)',
-                        color: '#38bdf8',
+                        background: 'rgba(59, 130, 246, 0.08)',
+                        border: '1px solid rgba(59, 130, 246, 0.25)',
+                        color: 'var(--color-primary, #2563eb)',
                         fontSize: 12,
                         fontWeight: 700,
                         cursor: 'pointer',
@@ -654,9 +686,9 @@ export const ResourceManagementPage = () => {
                         width: 34,
                         height: 34,
                         borderRadius: 8,
-                        background: 'rgba(255, 255, 255, 0.06)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        color: '#cbd5e1',
+                        background: 'var(--background)',
+                        border: '1px solid var(--border)',
+                        color: 'var(--text-secondary)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -673,9 +705,9 @@ export const ResourceManagementPage = () => {
                         width: 34,
                         height: 34,
                         borderRadius: 8,
-                        background: 'rgba(239, 68, 68, 0.12)',
-                        border: '1px solid rgba(239, 68, 68, 0.25)',
-                        color: '#f87171',
+                        background: 'rgba(239, 68, 68, 0.08)',
+                        border: '1px solid rgba(239, 68, 68, 0.2)',
+                        color: '#ef4444',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -699,8 +731,8 @@ export const ResourceManagementPage = () => {
             position: 'fixed',
             inset: 0,
             zIndex: 100,
-            background: 'rgba(0,0,0,0.7)',
-            backdropFilter: 'blur(8px)',
+            background: 'rgba(0,0,0,0.6)',
+            backdropFilter: 'blur(6px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -710,12 +742,12 @@ export const ResourceManagementPage = () => {
         >
           <div
             style={{
-              background: '#161922',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
               borderRadius: 20,
               width: '100%',
               maxWidth: 540,
-              boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.25)',
               overflow: 'hidden',
             }}
             onClick={(e) => e.stopPropagation()}
@@ -724,17 +756,17 @@ export const ResourceManagementPage = () => {
             <div
               style={{
                 padding: '20px 24px',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                borderBottom: '1px solid var(--border)',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
               }}
             >
               <div>
-                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: '#fff' }}>
+                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>
                   {editingResource ? 'Edit Resource' : 'Upload Resource to Campus Toolkit'}
                 </h3>
-                <p style={{ margin: '2px 0 0', fontSize: 12, color: '#94a3b8' }}>
+                <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-secondary)' }}>
                   Files uploaded here become immediately available for student downloads.
                 </p>
               </div>
@@ -743,7 +775,7 @@ export const ResourceManagementPage = () => {
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#94a3b8',
+                  color: 'var(--text-muted)',
                   cursor: 'pointer',
                   padding: 4,
                 }}
@@ -756,7 +788,7 @@ export const ResourceManagementPage = () => {
             <form onSubmit={handleSubmit} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
               {/* Title */}
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>
                   Resource Title *
                 </label>
                 <input
@@ -767,12 +799,12 @@ export const ResourceManagementPage = () => {
                   placeholder="e.g. React 19 Architecture Patterns"
                   style={{
                     width: '100%',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    background: 'var(--background)',
+                    border: '1px solid var(--border)',
                     borderRadius: 10,
                     padding: '10px 14px',
                     fontSize: 13,
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
@@ -782,7 +814,7 @@ export const ResourceManagementPage = () => {
               {/* Category & Audience */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>
                     Category
                   </label>
                   <select
@@ -790,12 +822,12 @@ export const ResourceManagementPage = () => {
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     style={{
                       width: '100%',
-                      background: '#1e2230',
-                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      background: 'var(--background)',
+                      border: '1px solid var(--border)',
                       borderRadius: 10,
                       padding: '10px 14px',
                       fontSize: 13,
-                      color: '#fff',
+                      color: 'var(--text-primary)',
                       outline: 'none',
                       boxSizing: 'border-box',
                     }}
@@ -808,7 +840,7 @@ export const ResourceManagementPage = () => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>
                     Target Audience
                   </label>
                   <select
@@ -816,12 +848,12 @@ export const ResourceManagementPage = () => {
                     onChange={(e) => setFormData({ ...formData, targetAudience: e.target.value })}
                     style={{
                       width: '100%',
-                      background: '#1e2230',
-                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      background: 'var(--background)',
+                      border: '1px solid var(--border)',
                       borderRadius: 10,
                       padding: '10px 14px',
                       fontSize: 13,
-                      color: '#fff',
+                      color: 'var(--text-primary)',
                       outline: 'none',
                       boxSizing: 'border-box',
                     }}
@@ -834,7 +866,7 @@ export const ResourceManagementPage = () => {
 
               {/* Description */}
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>
                   Description / Topic Summary *
                 </label>
                 <textarea
@@ -845,12 +877,12 @@ export const ResourceManagementPage = () => {
                   placeholder="Provide a concise summary of what topics or tools this guide covers..."
                   style={{
                     width: '100%',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    background: 'var(--background)',
+                    border: '1px solid var(--border)',
                     borderRadius: 10,
                     padding: '10px 14px',
                     fontSize: 13,
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     outline: 'none',
                     resize: 'none',
                     boxSizing: 'border-box',
@@ -860,16 +892,16 @@ export const ResourceManagementPage = () => {
 
               {/* File Attachment Picker */}
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#cbd5e1', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>
                   Upload Document or Toolkit File (.pdf, .zip, .docx, .md)
                 </label>
                 <div
                   style={{
-                    border: '2px dashed rgba(255, 255, 255, 0.15)',
+                    border: '2px dashed var(--border)',
                     borderRadius: 12,
                     padding: '20px',
                     textAlign: 'center',
-                    background: 'rgba(255, 255, 255, 0.02)',
+                    background: 'var(--background)',
                     cursor: 'pointer',
                     position: 'relative',
                   }}
@@ -887,11 +919,11 @@ export const ResourceManagementPage = () => {
                       height: '100%',
                     }}
                   />
-                  <UploadCloud size={28} style={{ color: '#38bdf8', margin: '0 auto 8px' }} />
-                  <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 600, color: '#fff' }}>
+                  <UploadCloud size={28} style={{ color: '#3b82f6', margin: '0 auto 8px' }} />
+                  <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
                     {uploadedFileName ? uploadedFileName : 'Click or drag a file to upload'}
                   </p>
-                  <p style={{ margin: 0, fontSize: 11, color: '#64748b' }}>
+                  <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)' }}>
                     {uploadedFileName
                       ? `Detected ${formData.fileType} (${formData.fileSize})`
                       : 'PDF, ZIP, DOCX, or Markdown up to 50 MB'}
@@ -902,11 +934,11 @@ export const ResourceManagementPage = () => {
               {/* Upload Progress Indicator */}
               {uploadProgress > 0 && uploadProgress < 100 && (
                 <div style={{ marginTop: 4, padding: '10px 14px', background: 'rgba(37, 99, 235, 0.08)', borderRadius: 10, border: '1px solid rgba(37, 99, 235, 0.2)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, fontWeight: 600, color: '#38bdf8', marginBottom: 6 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, fontWeight: 600, color: '#3b82f6', marginBottom: 6 }}>
                     <span>Uploading directly to Cloudflare R2...</span>
                     <span>{uploadProgress}%</span>
                   </div>
-                  <div style={{ width: '100%', height: 6, background: 'rgba(255, 255, 255, 0.1)', borderRadius: 3, overflow: 'hidden' }}>
+                  <div style={{ width: '100%', height: 6, background: 'var(--border)', borderRadius: 3, overflow: 'hidden' }}>
                     <div
                       style={{
                         width: `${uploadProgress}%`,
@@ -926,7 +958,7 @@ export const ResourceManagementPage = () => {
                   justifyContent: 'flex-end',
                   gap: 12,
                   marginTop: 10,
-                  borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderTop: '1px solid var(--border)',
                   paddingTop: 16,
                 }}
               >
@@ -936,9 +968,9 @@ export const ResourceManagementPage = () => {
                   style={{
                     padding: '9px 18px',
                     borderRadius: 10,
-                    background: 'rgba(255, 255, 255, 0.06)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    color: '#94a3b8',
+                    background: 'var(--background)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--text-secondary)',
                     cursor: 'pointer',
                     fontSize: 13,
                     fontWeight: 600,
@@ -959,7 +991,7 @@ export const ResourceManagementPage = () => {
                     cursor: 'pointer',
                     fontSize: 13,
                     fontWeight: 700,
-                    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)',
+                    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
                   }}
                 >
                   {createMutation.isPending || updateMutation.isPending

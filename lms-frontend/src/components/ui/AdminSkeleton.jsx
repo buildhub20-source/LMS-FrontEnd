@@ -1,23 +1,21 @@
 /**
- * Admin Dashboard Skeleton components.
+ * Admin Skeleton components — Pastel macaron design.
+ * Uses the new token system via compat layer.
  */
 
 /**
  * Table skeleton — renders rows × cols skeleton cells.
  */
 export const AdminTableSkeleton = ({ rows = 5, cols = 5 }) => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+  <div className="flex flex-col gap-3">
     {Array.from({ length: rows }).map((_, i) => (
-      <div key={i} style={{ display: 'flex', gap: 16 }}>
+      <div key={i} className="flex gap-4">
         {Array.from({ length: cols }).map((_, j) => (
           <div
             key={j}
-            className="animate-pulse"
+            className="animate-pulse h-10 flex-1 rounded-xl"
             style={{
-              height: 40,
-              flex: 1,
-              borderRadius: 8,
-              background: 'var(--surface-medium)',
+              background: 'var(--skeleton-bg, var(--muted))',
               animationDelay: `${i * 100 + j * 50}ms`,
             }}
           />
@@ -32,27 +30,15 @@ export const AdminTableSkeleton = ({ rows = 5, cols = 5 }) => (
  */
 export const AdminCardSkeleton = () => (
   <div
+    className="rounded-2xl p-6 flex flex-col gap-4"
     style={{
-      background: 'var(--surface-dark)',
-      borderRadius: 8,
-      padding: 24,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 16,
+      background: 'var(--card)',
+      border: '1px solid var(--border)',
     }}
   >
-    <div
-      className="animate-pulse"
-      style={{ height: 16, width: 96, borderRadius: 4, background: 'var(--surface-medium)' }}
-    />
-    <div
-      className="animate-pulse"
-      style={{ height: 32, width: 64, borderRadius: 4, background: 'var(--surface-medium)' }}
-    />
-    <div
-      className="animate-pulse"
-      style={{ height: 12, width: 128, borderRadius: 4, background: 'var(--surface-medium)' }}
-    />
+    <div className="animate-pulse h-4 w-24 rounded" style={{ background: 'var(--skeleton-bg, var(--muted))' }} />
+    <div className="animate-pulse h-8 w-16 rounded" style={{ background: 'var(--skeleton-bg, var(--muted))' }} />
+    <div className="animate-pulse h-3 w-32 rounded" style={{ background: 'var(--skeleton-bg, var(--muted))' }} />
   </div>
 );
 

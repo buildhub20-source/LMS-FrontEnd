@@ -1,50 +1,50 @@
+import { cn } from '@/utils';
+
 /**
- * Admin Dashboard Badge — dark monochrome design.
+ * AdminBadge — Pastel macaron design with soft color backgrounds.
  * @param {'default'|'success'|'warning'|'danger'|'info'|'neutral'} variant
- * @param {boolean} dot  — show a colored dot before the label
- *
- * Semantic colors are muted (low saturation) so they don't break the dark aesthetic.
+ * @param {boolean} dot — show a colored dot before the label
  */
 const variantStyles = {
   default: {
-    background: 'rgba(255,255,255,0.08)',
-    color: '#c8c8c8',
-    border: '1px solid rgba(255,255,255,0.12)',
+    background: 'var(--muted)',
+    color: 'var(--muted-foreground)',
+    border: '1px solid var(--border)',
   },
   success: {
-    background: 'rgba(34,197,94,0.12)',
-    color: '#4ade80',
-    border: '1px solid rgba(34,197,94,0.25)',
+    background: 'var(--color-green-50)',
+    color: 'var(--color-green-700)',
+    border: '1px solid var(--color-green-100)',
   },
   warning: {
-    background: 'rgba(234,179,8,0.12)',
-    color: '#facc15',
-    border: '1px solid rgba(234,179,8,0.25)',
+    background: 'var(--color-amber-50)',
+    color: 'var(--color-amber-700)',
+    border: '1px solid var(--color-amber-100)',
   },
   danger: {
-    background: 'rgba(239,68,68,0.12)',
-    color: '#f87171',
-    border: '1px solid rgba(239,68,68,0.25)',
+    background: 'var(--color-red-50)',
+    color: 'var(--color-red-700)',
+    border: '1px solid var(--color-red-100)',
   },
   info: {
-    background: 'rgba(56,189,248,0.12)',
-    color: '#67e8f9',
-    border: '1px solid rgba(56,189,248,0.25)',
+    background: 'var(--color-sky-50)',
+    color: 'var(--color-sky-700)',
+    border: '1px solid var(--color-sky-100)',
   },
   neutral: {
-    background: 'var(--surface-medium)',
-    color: 'var(--text-muted)',
-    border: '1px solid var(--border-color)',
+    background: 'var(--muted)',
+    color: 'var(--muted-foreground)',
+    border: '1px solid var(--border)',
   },
 };
 
 const dotColors = {
-  default: '#a8a8a8',
-  success: '#4ade80',
-  warning: '#facc15',
-  danger: '#f87171',
-  info: '#67e8f9',
-  neutral: '#6b6b6b',
+  default: 'var(--muted-foreground)',
+  success: 'var(--color-green-500)',
+  warning: 'var(--color-amber-500)',
+  danger: 'var(--color-red-500)',
+  info: 'var(--color-sky-500)',
+  neutral: 'var(--muted-foreground)',
 };
 
 export const AdminBadge = ({
@@ -58,31 +58,17 @@ export const AdminBadge = ({
 
   return (
     <span
-      className={className}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 5,
-        borderRadius: 20,
-        padding: '2px 10px',
-        fontSize: 11,
-        fontWeight: 600,
-        fontFamily: 'Inter, sans-serif',
-        whiteSpace: 'nowrap',
-        letterSpacing: '0.2px',
-        ...vs,
-        ...style,
-      }}
+      className={cn(
+        'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5',
+        'text-[11px] font-semibold whitespace-nowrap tracking-wide',
+        className,
+      )}
+      style={{ ...vs, ...style }}
     >
       {dot && (
         <span
-          style={{
-            width: 6,
-            height: 6,
-            borderRadius: '50%',
-            flexShrink: 0,
-            background: dotColors[variant] ?? dotColors.default,
-          }}
+          className="w-1.5 h-1.5 rounded-full shrink-0"
+          style={{ background: dotColors[variant] ?? dotColors.default }}
         />
       )}
       {children}

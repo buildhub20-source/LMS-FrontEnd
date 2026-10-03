@@ -129,9 +129,9 @@ function AccountBadge({ row }) {
 
 /* ── Skeleton Card ── */
 function SkeletonCard() {
-  const s = { background: 'rgba(255, 255, 255, 0.08)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' };
+  const s = { background: 'var(--skeleton-bg, #e2e8f0)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' };
   return (
-    <div style={{ background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 22, display: 'flex', flexDirection: 'column', gap: 14 }}>
+    <div style={{ background: 'var(--card, #ffffff)', border: '1px solid var(--border, #e2e8f0)', borderRadius: 16, padding: 22, display: 'flex', flexDirection: 'column', gap: 14, boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ ...s, width: 80, height: 24, borderRadius: 6 }} />
         <div style={{ ...s, width: 80, height: 24, borderRadius: 99 }} />
@@ -164,6 +164,7 @@ export const InstructorListPage = () => {
 
   const [search, setSearch] = useState('');
   const [employmentType, setEmploymentType] = useState('');
+  const [page, setPage] = useState(0);
   const [viewMode, setViewMode] = useState(() => {
     try {
       return localStorage.getItem('lms_instructor_view_mode') || 'table';
@@ -171,6 +172,7 @@ export const InstructorListPage = () => {
       return 'table';
     }
   });
+
 
   const {
     data: pageData,
@@ -233,34 +235,34 @@ export const InstructorListPage = () => {
         }}
       >
         {[
-          { label: 'Total Faculty', val: stats.total, sub: 'Registered institution educators', icon: Users, tone: '#38bdf8' },
-          { label: 'Full-Time Staff', val: stats.fullTime, sub: 'Core curriculum instructors', icon: Award, tone: '#10b981' },
-          { label: 'Active Faculty', val: stats.active, sub: 'Teaching & evaluating cohorts', icon: TrendingUp, tone: '#f59e0b' },
-          { label: 'Avg Experience', val: `${stats.avgExp} yrs`, sub: 'Cumulative technical depth', icon: Clock, tone: '#a855f7' },
+          { label: 'Total Faculty', val: stats.total, sub: 'Registered institution educators', icon: Users, tone: '#3b82f6', bg: 'var(--card-blue)', border: 'var(--card-blue-border)' },
+          { label: 'Full-Time Staff', val: stats.fullTime, sub: 'Core curriculum instructors', icon: Award, tone: '#10b981', bg: 'var(--card-green)', border: 'var(--card-green-border)' },
+          { label: 'Active Faculty', val: stats.active, sub: 'Teaching & evaluating cohorts', icon: TrendingUp, tone: '#f59e0b', bg: 'var(--card-yellow)', border: 'var(--card-yellow-border)' },
+          { label: 'Avg Experience', val: `${stats.avgExp} yrs`, sub: 'Cumulative technical depth', icon: Clock, tone: '#8b5cf6', bg: 'var(--card-purple)', border: 'var(--card-purple-border)' },
         ].map((m, idx) => {
           const Icon = m.icon;
           return (
             <div
               key={idx}
               style={{
-                background: 'linear-gradient(180deg, rgba(22, 25, 34, 0.9) 0%, rgba(17, 19, 26, 0.95) 100%)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: m.bg,
+                border: `1px solid ${m.border}`,
                 borderRadius: 16,
                 padding: '18px 20px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                boxShadow: '0 4px 18px rgba(0,0,0,0.2)',
+                boxShadow: 'var(--shadow-sm)',
               }}
             >
               <div>
-                <p style={{ margin: 0, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#94a3b8' }}>
+                <p style={{ margin: 0, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)' }}>
                   {m.label}
                 </p>
-                <div style={{ fontSize: 26, fontWeight: 800, color: '#f8fafc', marginTop: 4, letterSpacing: '-0.02em' }}>
+                <div style={{ fontSize: 26, fontWeight: 800, color: 'var(--text-primary)', marginTop: 4, letterSpacing: '-0.02em' }}>
                   {m.val}
                 </div>
-                <p style={{ margin: '4px 0 0', fontSize: 11, color: '#64748b' }}>
+                <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
                   {m.sub}
                 </p>
               </div>
@@ -269,13 +271,14 @@ export const InstructorListPage = () => {
                   width: 44,
                   height: 44,
                   borderRadius: 12,
-                  background: `${m.tone}15`,
-                  border: `1px solid ${m.tone}30`,
+                  background: 'rgba(255, 255, 255, 0.6)',
+                  border: `1px solid ${m.border}`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: m.tone,
                   flexShrink: 0,
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
                 }}
               >
                 <Icon size={20} />
@@ -288,12 +291,11 @@ export const InstructorListPage = () => {
       {/* Filter Toolbar */}
       <div
         style={{
-          background: 'linear-gradient(180deg, rgba(22, 25, 34, 0.9) 0%, rgba(17, 19, 26, 0.95) 100%)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'var(--card, #ffffff)',
+          border: '1px solid var(--border, #e2e8f0)',
           borderRadius: 16,
-          padding: 16,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
-          backdropFilter: 'blur(10px)',
+          padding: '12px 16px',
+          boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.04))',
         }}
       >
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
@@ -306,7 +308,7 @@ export const InstructorListPage = () => {
                 left: 14,
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#94a3b8',
+                color: 'var(--text-muted, #94a3b8)',
                 pointerEvents: 'none',
               }}
             />
@@ -319,24 +321,24 @@ export const InstructorListPage = () => {
               placeholder="Search by name, email, code or specialization…"
               style={{
                 width: '100%',
-                padding: '10px 14px 10px 38px',
+                padding: '9px 14px 9px 38px',
                 borderRadius: 10,
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                background: 'rgba(0, 0, 0, 0.35)',
-                color: '#f8fafc',
+                border: '1px solid var(--border, #e2e8f0)',
+                background: 'var(--color-bg, #f5f7fa)',
+                color: 'var(--text-primary, #1a1a2e)',
                 fontSize: 14,
                 fontFamily: 'system-ui, -apple-system, sans-serif',
                 boxSizing: 'border-box',
                 outline: 'none',
-                transition: 'border-color 0.2s',
+                transition: 'border-color 0.2s, background 0.2s',
               }}
-              onFocus={(e) => { e.target.style.borderColor = '#3b82f6'; }}
-              onBlur={(e) => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)'; }}
+              onFocus={(e) => { e.target.style.borderColor = 'var(--primary, #22c55e)'; e.target.style.background = 'var(--card, #ffffff)'; }}
+              onBlur={(e) => { e.target.style.borderColor = 'var(--border, #e2e8f0)'; e.target.style.background = 'var(--color-bg, #f5f7fa)'; }}
             />
           </div>
 
           {/* Engagement Status Pills */}
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', background: 'var(--color-bg, #f5f7fa)', padding: 4, borderRadius: 99, border: '1px solid var(--border, #e2e8f0)' }}>
             {ENGAGEMENT_FILTERS.map((f) => {
               const active = employmentType === f.id;
               return (
@@ -347,22 +349,20 @@ export const InstructorListPage = () => {
                     setPage(0);
                   }}
                   style={{
-                    padding: '7px 16px',
+                    padding: '6px 14px',
                     borderRadius: 99,
                     fontSize: 13,
-                    fontWeight: active ? 700 : 500,
+                    fontWeight: active ? 600 : 500,
                     cursor: 'pointer',
                     fontFamily: 'inherit',
-                    background: active
-                      ? 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)'
-                      : 'rgba(255, 255, 255, 0.04)',
-                    color: active ? '#ffffff' : '#94a3b8',
-                    border: active ? '1px solid transparent' : '1px solid rgba(255, 255, 255, 0.08)',
-                    boxShadow: active ? '0 2px 12px rgba(37, 99, 235, 0.4)' : 'none',
-                    transition: 'all 0.2s ease',
+                    background: active ? 'var(--text-primary, #1a1a2e)' : 'transparent',
+                    color: active ? 'var(--color-surface, #ffffff)' : 'var(--text-secondary, #64748b)',
+                    border: 'none',
+                    boxShadow: active ? '0 1px 4px rgba(0,0,0,0.12)' : 'none',
+                    transition: 'all 0.15s ease',
                   }}
-                  onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'; }}
-                  onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)'; }}
+                  onMouseEnter={(e) => { if (!active) e.currentTarget.style.color = 'var(--text-primary, #1a1a2e)'; }}
+                  onMouseLeave={(e) => { if (!active) e.currentTarget.style.color = 'var(--text-secondary, #64748b)'; }}
                 >
                   {f.label}
                 </button>
@@ -375,10 +375,11 @@ export const InstructorListPage = () => {
             <div
               style={{
                 display: 'flex',
-                background: 'rgba(0, 0, 0, 0.3)',
-                borderRadius: 8,
-                padding: 2,
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--color-bg, #f5f7fa)',
+                borderRadius: 10,
+                padding: 3,
+                gap: 2,
+                border: '1px solid var(--border, #e2e8f0)',
               }}
             >
               {[
@@ -393,15 +394,16 @@ export const InstructorListPage = () => {
                   }}
                   title={title}
                   style={{
-                    padding: '8px 12px',
+                    padding: '7px 10px',
                     border: 'none',
-                    borderRadius: 6,
+                    borderRadius: 8,
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    background: viewMode === id ? 'rgba(255, 255, 255, 0.12)' : 'transparent',
-                    color: viewMode === id ? '#ffffff' : '#64748b',
-                    transition: 'all 0.2s',
+                    background: viewMode === id ? 'var(--card, #ffffff)' : 'transparent',
+                    color: viewMode === id ? 'var(--text-primary, #1a1a2e)' : 'var(--text-muted, #94a3b8)',
+                    boxShadow: viewMode === id ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                    transition: 'all 0.15s',
                   }}
                 >
                   <I size={16} />
@@ -444,26 +446,26 @@ export const InstructorListPage = () => {
               key={row.id}
               onClick={() => navigate(ROUTES.INSTRUCTOR_DETAILS(row.id))}
               style={{
-                background: 'linear-gradient(180deg, rgba(22, 25, 34, 0.85) 0%, rgba(17, 19, 26, 0.95) 100%)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--card)',
+                border: '1px solid var(--border)',
                 borderRadius: 16,
                 padding: 22,
                 display: 'flex',
                 flexDirection: 'column',
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
+                boxShadow: 'var(--shadow-sm)',
                 transition: 'all 0.2s ease',
                 cursor: 'pointer',
                 position: 'relative',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-3px)';
-                e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.35)';
-                e.currentTarget.style.boxShadow = '0 12px 28px rgba(0, 0, 0, 0.35)';
+                e.currentTarget.style.borderColor = 'var(--color-primary, #6366f1)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-md)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-                e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.25)';
+                e.currentTarget.style.borderColor = 'var(--border)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
               }}
             >
               {/* Header: Employee Code & Engagement */}
@@ -475,9 +477,9 @@ export const InstructorListPage = () => {
                     fontSize: 11,
                     fontFamily: 'monospace',
                     fontWeight: 700,
-                    background: 'rgba(59, 130, 246, 0.12)',
-                    color: '#60a5fa',
-                    border: '1px solid rgba(59, 130, 246, 0.25)',
+                    background: 'rgba(99, 102, 241, 0.1)',
+                    color: 'var(--color-primary, #6366f1)',
+                    border: '1px solid rgba(99, 102, 241, 0.2)',
                   }}
                 >
                   {row.employeeCode}
@@ -498,7 +500,7 @@ export const InstructorListPage = () => {
                       margin: 0,
                       fontSize: 17,
                       fontWeight: 700,
-                      color: '#f8fafc',
+                      color: 'var(--text-primary)',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
@@ -506,8 +508,8 @@ export const InstructorListPage = () => {
                   >
                     {row.fullName}
                   </h3>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#94a3b8', marginTop: 2 }}>
-                    <Mail size={12} color="#64748b" />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
+                    <Mail size={12} color="var(--text-muted)" />
                     <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {row.email}
                     </span>
@@ -520,8 +522,8 @@ export const InstructorListPage = () => {
                 style={{
                   padding: '12px 14px',
                   borderRadius: 12,
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  background: 'var(--background)',
+                  border: '1px solid var(--border)',
                   fontSize: 12,
                   marginBottom: 16,
                   display: 'flex',
@@ -529,26 +531,26 @@ export const InstructorListPage = () => {
                   gap: 6,
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#38bdf8', fontWeight: 600 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--color-primary, #6366f1)', fontWeight: 600 }}>
                   <BookOpen size={13} />
                   <span>{row.specialization || 'Technical Instructor'}</span>
                 </div>
                 {row.institution && (
-                  <div style={{ color: '#94a3b8', fontSize: 11 }}>
+                  <div style={{ color: 'var(--text-muted)', fontSize: 11 }}>
                     {row.highestQualification ? `${row.highestQualification} • ` : ''}{row.institution}
                   </div>
                 )}
               </div>
 
               {/* Metadata row */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: '#94a3b8', marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-secondary)', marginBottom: 16 }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <Clock size={13} color="#60a5fa" />
+                  <Clock size={13} color="var(--color-primary, #6366f1)" />
                   <span>{row.yearsOfExperience != null ? `${row.yearsOfExperience} yrs exp.` : 'Senior'}</span>
                 </span>
                 {row.phone && (
                   <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <Phone size={13} color="#34d399" />
+                    <Phone size={13} color="#10b981" />
                     <span>{row.phone}</span>
                   </span>
                 )}
@@ -560,7 +562,7 @@ export const InstructorListPage = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 8,
-                  borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderTop: '1px solid var(--border)',
                   paddingTop: 14,
                   marginTop: 'auto',
                 }}
@@ -584,7 +586,7 @@ export const InstructorListPage = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 6,
-                    boxShadow: '0 2px 10px rgba(37, 99, 235, 0.35)',
+                    boxShadow: '0 2px 10px rgba(37, 99, 235, 0.25)',
                     transition: 'all 0.2s',
                   }}
                 >
@@ -602,17 +604,17 @@ export const InstructorListPage = () => {
                     borderRadius: 99,
                     fontSize: 12,
                     fontWeight: 600,
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                    background: 'rgba(255, 255, 255, 0.06)',
-                    color: '#f8fafc',
+                    border: '1px solid var(--border)',
+                    background: 'var(--background)',
+                    color: 'var(--text-secondary)',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 5,
                     transition: 'all 0.2s',
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'; }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--background)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
                 >
                   <Edit2 size={13} />
                   <span>Edit</span>
@@ -625,24 +627,24 @@ export const InstructorListPage = () => {
         /* Enterprise Data Table / List View */
         <div
           style={{
-            background: 'linear-gradient(180deg, rgba(22, 25, 34, 0.9) 0%, rgba(17, 19, 26, 0.95) 100%)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--card)',
+            border: '1px solid var(--border)',
             borderRadius: 16,
             overflow: 'hidden',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
+            boxShadow: 'var(--shadow-sm)',
           }}
         >
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', backgroundColor: 'rgba(255, 255, 255, 0.02)' }}>
-                  <th style={{ padding: '14px 20px', fontWeight: 600, color: '#94a3b8' }}>Faculty Member</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 600, color: '#94a3b8' }}>Employee ID</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 600, color: '#94a3b8' }}>Specialization & Background</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 600, color: '#94a3b8' }}>Engagement</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 600, color: '#94a3b8' }}>Experience & Contact</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 600, color: '#94a3b8' }}>Status</th>
-                  <th style={{ padding: '14px 20px', fontWeight: 600, color: '#94a3b8', textAlign: 'right' }}>Actions</th>
+                <tr style={{ borderBottom: '1px solid var(--border)', backgroundColor: 'var(--background)' }}>
+                  <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>Faculty Member</th>
+                  <th style={{ padding: '14px 18px', fontWeight: 600, color: 'var(--text-secondary)' }}>Employee ID</th>
+                  <th style={{ padding: '14px 18px', fontWeight: 600, color: 'var(--text-secondary)' }}>Specialization & Background</th>
+                  <th style={{ padding: '14px 18px', fontWeight: 600, color: 'var(--text-secondary)' }}>Engagement</th>
+                  <th style={{ padding: '14px 18px', fontWeight: 600, color: 'var(--text-secondary)' }}>Experience & Contact</th>
+                  <th style={{ padding: '14px 18px', fontWeight: 600, color: 'var(--text-secondary)' }}>Status</th>
+                  <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)', textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -653,11 +655,11 @@ export const InstructorListPage = () => {
                       key={row.id}
                       onClick={() => navigate(ROUTES.INSTRUCTOR_DETAILS(row.id))}
                       style={{
-                        borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+                        borderBottom: '1px solid var(--border)',
                         transition: 'background-color 0.15s ease',
                         cursor: 'pointer',
                       }}
-                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.03)'; }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--background)'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
                     >
                       {/* Faculty Member */}
@@ -665,9 +667,9 @@ export const InstructorListPage = () => {
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                           <InstructorAvatar name={row.fullName} size={38} />
                           <div>
-                            <div style={{ fontWeight: 600, color: '#f8fafc', fontSize: 14 }}>{row.fullName}</div>
-                            <div style={{ fontSize: 12, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
-                              <Mail size={12} style={{ color: '#64748b' }} />
+                            <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: 14 }}>{row.fullName}</div>
+                            <div style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
+                              <Mail size={12} style={{ color: 'var(--text-muted)' }} />
                               <span>{row.email}</span>
                             </div>
                           </div>
@@ -683,9 +685,9 @@ export const InstructorListPage = () => {
                             fontSize: 11,
                             fontFamily: 'monospace',
                             fontWeight: 700,
-                            background: 'rgba(59, 130, 246, 0.12)',
-                            color: '#60a5fa',
-                            border: '1px solid rgba(59, 130, 246, 0.25)',
+                            background: 'var(--background)',
+                            color: 'var(--text-secondary)',
+                            border: '1px solid var(--border)',
                             display: 'inline-block',
                           }}
                         >
@@ -695,14 +697,14 @@ export const InstructorListPage = () => {
 
                       {/* Specialization & Background */}
                       <td style={{ padding: '14px 18px', maxWidth: 280 }}>
-                        <div style={{ fontWeight: 600, color: '#38bdf8', fontSize: 13 }}>
+                        <div style={{ fontWeight: 600, color: 'var(--color-primary, #6366f1)', fontSize: 13 }}>
                           {row.specialization || 'Technical Instructor'}
                         </div>
                         {backgroundSubtitle && (
                           <div
                             style={{
                               fontSize: 11,
-                              color: '#94a3b8',
+                              color: 'var(--text-muted)',
                               marginTop: 2,
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
@@ -724,13 +726,13 @@ export const InstructorListPage = () => {
                       <td style={{ padding: '14px 18px' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                           {row.yearsOfExperience != null && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#f8fafc' }}>
-                              <Clock size={12} style={{ color: '#a855f7' }} />
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-primary)' }}>
+                              <Clock size={12} style={{ color: 'var(--color-primary, #6366f1)' }} />
                               <span>{row.yearsOfExperience} yrs exp.</span>
                             </div>
                           )}
                           {row.phone && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#94a3b8' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--text-muted)' }}>
                               <Phone size={11} style={{ color: '#10b981' }} />
                               <span>{row.phone}</span>
                             </div>
@@ -757,7 +759,7 @@ export const InstructorListPage = () => {
                               background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
                               color: '#fff',
                               cursor: 'pointer',
-                              boxShadow: '0 2px 8px rgba(37, 99, 235, 0.3)',
+                              boxShadow: '0 2px 8px rgba(37, 99, 235, 0.25)',
                               transition: 'all 0.15s',
                             }}
                           >
@@ -771,17 +773,17 @@ export const InstructorListPage = () => {
                               borderRadius: 99,
                               fontSize: 12,
                               fontWeight: 600,
-                              border: '1px solid rgba(255, 255, 255, 0.15)',
-                              background: 'rgba(255, 255, 255, 0.06)',
-                              color: '#f8fafc',
+                              border: '1px solid var(--border)',
+                              background: 'var(--background)',
+                              color: 'var(--text-secondary)',
                               cursor: 'pointer',
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: 4,
                               transition: 'all 0.15s',
                             }}
-                            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'; }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--background)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
                           >
                             <Edit2 size={12} />
                             <span>Edit</span>

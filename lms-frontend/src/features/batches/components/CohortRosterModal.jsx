@@ -186,8 +186,8 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.65)',
-        backdropFilter: 'blur(6px)',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backdropFilter: 'blur(4px)',
         zIndex: 999,
         display: 'flex',
         justifyContent: 'flex-end',
@@ -200,11 +200,11 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
           width: '100%',
           maxWidth: '740px',
           height: '100%',
-          backgroundColor: '#161922',
-          borderLeft: '1px solid rgba(255, 255, 255, 0.08)',
+          backgroundColor: 'var(--card)',
+          borderLeft: '1px solid var(--border)',
           display: 'flex',
           flexDirection: 'column',
-          boxShadow: '-8px 0 32px rgba(0, 0, 0, 0.6)',
+          boxShadow: 'var(--shadow-xl, -8px 0 32px rgba(0, 0, 0, 0.2))',
           overflow: 'hidden',
         }}
         onClick={(e) => e.stopPropagation()}
@@ -213,8 +213,8 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
         <div
           style={{
             padding: '24px 28px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-            background: 'linear-gradient(180deg, #1c1f2b 0%, #161922 100%)',
+            borderBottom: '1px solid var(--border)',
+            background: 'var(--card)',
             position: 'relative',
           }}
         >
@@ -229,9 +229,9 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                     letterSpacing: '0.05em',
                     padding: '3px 8px',
                     borderRadius: '6px',
-                    backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                    color: '#60a5fa',
-                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    color: 'var(--color-primary, #6366f1)',
+                    border: '1px solid rgba(99, 102, 241, 0.2)',
                   }}
                 >
                   {batch.code}
@@ -244,16 +244,16 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                     borderRadius: '6px',
                     backgroundColor:
                       batch.status === 'IN_PROGRESS' || batch.status === 'ONGOING'
-                        ? 'rgba(16, 185, 129, 0.18)'
-                        : 'rgba(255, 255, 255, 0.08)',
+                        ? 'rgba(16, 185, 129, 0.12)'
+                        : 'var(--background)',
                     color:
                       batch.status === 'IN_PROGRESS' || batch.status === 'ONGOING'
-                        ? '#34d399'
-                        : '#94a3b8',
+                        ? '#059669'
+                        : 'var(--text-muted)',
                     border: `1px solid ${
                       batch.status === 'IN_PROGRESS' || batch.status === 'ONGOING'
-                        ? 'rgba(16, 185, 129, 0.3)'
-                        : 'rgba(255, 255, 255, 0.1)'
+                        ? 'rgba(16, 185, 129, 0.25)'
+                        : 'var(--border)'
                     }`,
                   }}
                 >
@@ -266,38 +266,38 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                       fontWeight: 600,
                       padding: '3px 8px',
                       borderRadius: '6px',
-                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                      color: '#cbd5e1',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      backgroundColor: 'var(--background)',
+                      color: 'var(--text-secondary)',
+                      border: '1px solid var(--border)',
                     }}
                   >
                     {batch.deliveryMode}
                   </span>
                 )}
               </div>
-              <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
+              <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                 {batch.name}
               </h2>
               {batch.courseTitle && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, color: '#94a3b8', fontSize: '13px' }}>
-                  <BookOpen size={14} color="#38bdf8" />
-                  <span>Curriculum: <strong style={{ color: '#e2e8f0' }}>{batch.courseTitle}</strong></span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6, color: 'var(--text-secondary)', fontSize: '13px' }}>
+                  <BookOpen size={14} color="var(--color-primary, #6366f1)" />
+                  <span>Curriculum: <strong style={{ color: 'var(--text-primary)' }}>{batch.courseTitle}</strong></span>
                 </div>
               )}
             </div>
             <button
               onClick={onClose}
               style={{
-                background: 'rgba(255, 255, 255, 0.06)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--background)',
+                border: '1px solid var(--border)',
                 borderRadius: '8px',
                 padding: '8px',
-                color: '#94a3b8',
+                color: 'var(--text-muted)',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = '#94a3b8'; e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'; }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.background = 'var(--border)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'var(--background)'; }}
             >
               <X size={18} />
             </button>
@@ -312,25 +312,25 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
               marginTop: 18,
               padding: '12px 14px',
               borderRadius: '10px',
-              backgroundColor: 'rgba(0, 0, 0, 0.3)',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
+              backgroundColor: 'var(--background)',
+              border: '1px solid var(--border)',
             }}
           >
             <div>
-              <div style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600 }}>Enrolled Learners</div>
-              <div style={{ fontSize: '16px', fontWeight: 700, color: '#f8fafc', marginTop: 2 }}>
+              <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>Enrolled Learners</div>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginTop: 2 }}>
                 {students.length} {capacity ? `/ ${capacity}` : ''}
               </div>
             </div>
             <div>
-              <div style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600 }}>Capacity Fill Rate</div>
-              <div style={{ fontSize: '16px', fontWeight: 700, color: '#38bdf8', marginTop: 2 }}>
+              <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>Capacity Fill Rate</div>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--color-primary, #6366f1)', marginTop: 2 }}>
                 {fillPercentage !== null ? `${fillPercentage}%` : 'Flexible'}
               </div>
             </div>
             <div>
-              <div style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600 }}>Completed Learners</div>
-              <div style={{ fontSize: '16px', fontWeight: 700, color: '#34d399', marginTop: 2 }}>
+              <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>Completed Learners</div>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: '#059669', marginTop: 2 }}>
                 {students.filter((s) => s.enrolments?.find((e) => e.batchId === batch.id)?.status === 'COMPLETED').length}
               </div>
             </div>
@@ -341,18 +341,18 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
         <div
           style={{
             padding: '14px 28px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+            borderBottom: '1px solid var(--border)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: 12,
             flexWrap: 'wrap',
-            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            backgroundColor: 'var(--card)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 260 }}>
             <div style={{ position: 'relative', flex: 1, maxWidth: '280px' }}>
-              <Search size={15} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+              <Search size={15} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input
                 type="text"
                 placeholder="Search candidates..."
@@ -362,16 +362,16 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                   width: '100%',
                   padding: '8px 12px 8px 34px',
                   borderRadius: '8px',
-                  backgroundColor: 'rgba(0, 0, 0, 0.35)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
-                  color: '#f8fafc',
+                  backgroundColor: 'var(--background)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--text-primary)',
                   fontSize: '13px',
                   outline: 'none',
                   transition: 'border-color 0.2s',
                   boxSizing: 'border-box',
                 }}
-                onFocus={(e) => { e.target.style.borderColor = '#3b82f6'; }}
-                onBlur={(e) => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)'; }}
+                onFocus={(e) => { e.target.style.borderColor = 'var(--color-primary, #6366f1)'; }}
+                onBlur={(e) => { e.target.style.borderColor = 'var(--border)'; }}
               />
             </div>
 
@@ -381,18 +381,18 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
               style={{
                 padding: '8px 12px',
                 borderRadius: '8px',
-                backgroundColor: '#161922',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                color: '#cbd5e1',
+                backgroundColor: 'var(--background)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-primary)',
                 fontSize: '13px',
                 outline: 'none',
                 cursor: 'pointer',
               }}
             >
-              <option value="ALL" style={{ backgroundColor: '#161922', color: '#cbd5e1' }}>All Statuses</option>
-              <option value="ACTIVE" style={{ backgroundColor: '#161922', color: '#cbd5e1' }}>Active</option>
-              <option value="COMPLETED" style={{ backgroundColor: '#161922', color: '#cbd5e1' }}>Completed</option>
-              <option value="SUSPENDED" style={{ backgroundColor: '#161922', color: '#cbd5e1' }}>Suspended</option>
+              <option value="ALL">All Statuses</option>
+              <option value="ACTIVE">Active</option>
+              <option value="COMPLETED">Completed</option>
+              <option value="SUSPENDED">Suspended</option>
             </select>
           </div>
 
@@ -405,13 +405,13 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                 gap: 6,
                 padding: '8px 14px',
                 borderRadius: 99,
-                background: isAddMode ? 'rgba(255, 255, 255, 0.12)' : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-                border: 'none',
-                color: '#fff',
+                background: isAddMode ? 'var(--background)' : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+                border: isAddMode ? '1px solid var(--border)' : 'none',
+                color: isAddMode ? 'var(--text-secondary)' : '#fff',
                 fontSize: '12px',
                 fontWeight: 700,
                 cursor: 'pointer',
-                boxShadow: isAddMode ? 'none' : '0 2px 8px rgba(37, 99, 235, 0.35)',
+                boxShadow: isAddMode ? 'none' : '0 2px 8px rgba(37, 99, 235, 0.25)',
                 transition: 'all 0.15s ease',
               }}
             >
@@ -428,17 +428,17 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                 gap: 6,
                 padding: '8px 14px',
                 borderRadius: 99,
-                backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                color: '#e2e8f0',
+                backgroundColor: 'var(--background)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-secondary)',
                 fontSize: '12px',
                 fontWeight: 600,
                 cursor: filteredStudents.length ? 'pointer' : 'not-allowed',
                 opacity: filteredStudents.length ? 1 : 0.5,
                 transition: 'all 0.15s ease',
               }}
-              onMouseEnter={(e) => { if (filteredStudents.length) e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'; }}
-              onMouseLeave={(e) => { if (filteredStudents.length) e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.06)'; }}
+              onMouseEnter={(e) => { if (filteredStudents.length) e.currentTarget.style.backgroundColor = 'var(--border)'; }}
+              onMouseLeave={(e) => { if (filteredStudents.length) e.currentTarget.style.backgroundColor = 'var(--background)'; }}
             >
               <Download size={14} />
               Export
@@ -451,16 +451,16 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
           <div
             style={{
               padding: '16px 28px',
-              backgroundColor: 'rgba(37, 99, 235, 0.08)',
-              borderBottom: '1px solid rgba(59, 130, 246, 0.25)',
+              backgroundColor: 'var(--background)',
+              borderBottom: '1px solid var(--border)',
               display: 'flex',
               flexDirection: 'column',
               gap: 12,
               animation: 'fadeIn 0.2s ease-out',
             }}
           >
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: 6 }}>
-              <UserPlus size={15} color="#38bdf8" />
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <UserPlus size={15} color="var(--color-primary, #6366f1)" />
               Enroll Existing Student from Institution Database into {batch.code}
             </div>
 
@@ -472,9 +472,9 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                   flex: '1 1 240px',
                   padding: '9px 12px',
                   borderRadius: 8,
-                  backgroundColor: '#161922',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  color: '#f8fafc',
+                  backgroundColor: 'var(--card)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--text-primary)',
                   fontSize: 13,
                   outline: 'none',
                 }}
@@ -493,9 +493,9 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                 style={{
                   padding: '9px 12px',
                   borderRadius: 8,
-                  backgroundColor: '#161922',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  color: '#f8fafc',
+                  backgroundColor: 'var(--card)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--text-primary)',
                   fontSize: 13,
                   outline: 'none',
                 }}
@@ -517,7 +517,7 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                   fontWeight: 700,
                   cursor: !selectedStudentToEnroll || isSubmittingEnroll ? 'not-allowed' : 'pointer',
                   opacity: !selectedStudentToEnroll || isSubmittingEnroll ? 0.6 : 1,
-                  boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
+                  boxShadow: '0 2px 8px rgba(16, 185, 129, 0.25)',
                 }}
               >
                 {isSubmittingEnroll ? 'Enrolling...' : 'Confirm Enrollment'}
@@ -529,8 +529,8 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
         {/* Student Roster List */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '20px 28px' }}>
           {isLoading ? (
-            <div style={{ textAlign: 'center', padding: '40px 0', color: '#94a3b8' }}>
-              <div style={{ display: 'inline-block', width: 24, height: 24, border: '2px solid rgba(255,255,255,0.2)', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 0.8s linear infinite', marginBottom: 12 }} />
+            <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>
+              <div style={{ display: 'inline-block', width: 24, height: 24, border: '2px solid var(--border)', borderTopColor: 'var(--color-primary, #6366f1)', borderRadius: '50%', animation: 'spin 0.8s linear infinite', marginBottom: 12 }} />
               <div>Fetching enrolled cohort roster...</div>
             </div>
           ) : filteredStudents.length === 0 ? (
@@ -539,13 +539,13 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                 textAlign: 'center',
                 padding: '50px 20px',
                 borderRadius: '12px',
-                border: '1px dashed rgba(255, 255, 255, 0.1)',
-                backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                border: '1px dashed var(--border)',
+                backgroundColor: 'var(--background)',
               }}
             >
-              <Users size={36} color="#64748b" style={{ margin: '0 auto 12px auto' }} />
-              <div style={{ fontSize: '15px', fontWeight: 600, color: '#e2e8f0' }}>No Students Found</div>
-              <div style={{ fontSize: '13px', color: '#94a3b8', marginTop: 4 }}>
+              <Users size={36} color="var(--text-muted)" style={{ margin: '0 auto 12px auto' }} />
+              <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>No Students Found</div>
+              <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: 4 }}>
                 {search || statusFilter !== 'ALL'
                   ? 'No enrolled students match the active search or status filter.'
                   : 'No learners have been enrolled into this batch yet.'}
@@ -575,24 +575,22 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                       justifyContent: 'space-between',
                       padding: '14px 18px',
                       borderRadius: '12px',
-                      backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                      border: '1px solid rgba(255, 255, 255, 0.06)',
+                      backgroundColor: 'var(--background)',
+                      border: '1px solid var(--border)',
                       transition: 'all 0.15s ease',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.06)';
-                      e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.35)';
+                      e.currentTarget.style.borderColor = 'var(--color-primary, #6366f1)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.03)';
-                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.06)';
+                      e.currentTarget.style.borderColor = 'var(--border)';
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                       <CandidateAvatar name={fullName} size={40} />
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ fontSize: '14px', fontWeight: 600, color: '#f8fafc' }}>
+                          <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
                             {fullName}
                           </span>
                           {registrationNo && (
@@ -600,11 +598,11 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                               style={{
                                 fontSize: '11px',
                                 fontFamily: 'monospace',
-                                color: '#94a3b8',
-                                backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                                color: 'var(--text-secondary)',
+                                backgroundColor: 'var(--card)',
                                 padding: '1px 6px',
                                 borderRadius: '4px',
-                                border: '1px solid rgba(255, 255, 255, 0.08)',
+                                border: '1px solid var(--border)',
                               }}
                             >
                               {registrationNo}
@@ -613,20 +611,20 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 4, flexWrap: 'wrap' }}>
                           {email && (
-                            <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '12px', color: '#94a3b8' }}>
-                              <Mail size={12} color="#64748b" />
+                            <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '12px', color: 'var(--text-muted)' }}>
+                              <Mail size={12} color="var(--text-muted)" />
                               {email}
                             </span>
                           )}
                           {phone && (
-                            <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '12px', color: '#64748b' }}>
-                              <Phone size={12} color="#64748b" />
+                            <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '12px', color: 'var(--text-muted)' }}>
+                              <Phone size={12} color="var(--text-muted)" />
                               {phone}
                             </span>
                           )}
                           {enrolment?.enrolledOn && (
-                            <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '12px', color: '#64748b' }}>
-                              <Calendar size={12} color="#64748b" />
+                            <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '12px', color: 'var(--text-muted)' }}>
+                              <Calendar size={12} color="var(--text-muted)" />
                               Enrolled {enrolment.enrolledOn}
                             </span>
                           )}
@@ -645,16 +643,16 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                           borderRadius: '6px',
                           backgroundColor:
                             status === 'ACTIVE'
-                              ? 'rgba(16, 185, 129, 0.15)'
+                              ? 'rgba(16, 185, 129, 0.12)'
                               : status === 'COMPLETED'
-                              ? 'rgba(168, 85, 247, 0.15)'
-                              : 'rgba(239, 68, 68, 0.15)',
+                              ? 'rgba(168, 85, 247, 0.12)'
+                              : 'rgba(239, 68, 68, 0.12)',
                           color:
                             status === 'ACTIVE'
-                              ? '#34d399'
+                              ? '#059669'
                               : status === 'COMPLETED'
-                              ? '#c084fc'
-                              : '#f87171',
+                              ? '#7c3aed'
+                              : '#dc2626',
                           border: `1px solid ${
                             status === 'ACTIVE'
                               ? 'rgba(16, 185, 129, 0.3)'
@@ -666,9 +664,9 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                           cursor: 'pointer',
                         }}
                       >
-                        <option value="ACTIVE" style={{ backgroundColor: '#161922', color: '#34d399' }}>ACTIVE</option>
-                        <option value="COMPLETED" style={{ backgroundColor: '#161922', color: '#c084fc' }}>COMPLETED</option>
-                        <option value="SUSPENDED" style={{ backgroundColor: '#161922', color: '#f87171' }}>SUSPENDED</option>
+                        <option value="ACTIVE">ACTIVE</option>
+                        <option value="COMPLETED">COMPLETED</option>
+                        <option value="SUSPENDED">SUSPENDED</option>
                       </select>
                     </div>
                   </div>
@@ -682,14 +680,14 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
         <div
           style={{
             padding: '16px 28px',
-            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-            backgroundColor: '#13151c',
+            borderTop: '1px solid var(--border)',
+            backgroundColor: 'var(--card)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
-          <div style={{ fontSize: '12px', color: '#94a3b8' }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
             Showing {filteredStudents.length} of {students.length} enrolled candidates
           </div>
           <button
@@ -697,16 +695,16 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
             style={{
               padding: '8px 20px',
               borderRadius: 99,
-              background: 'rgba(255, 255, 255, 0.08)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              color: '#f8fafc',
+              background: 'var(--background)',
+              border: '1px solid var(--border)',
+              color: 'var(--text-secondary)',
               fontSize: '13px',
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.15s ease',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.14)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.borderColor = 'var(--color-primary, #6366f1)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
           >
             Close Roster
           </button>

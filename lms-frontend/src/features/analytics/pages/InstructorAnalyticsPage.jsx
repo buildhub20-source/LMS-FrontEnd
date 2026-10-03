@@ -255,11 +255,11 @@ export const InstructorAnalyticsPage = () => {
         ═══════════════════════════════════════════════════════════════════ */}
         <div
           style={{
-            background: 'linear-gradient(135deg, rgba(24, 24, 27, 0.95) 0%, rgba(9, 9, 11, 0.98) 100%)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--surface-dark)',
+            border: '1px solid var(--border-color)',
             borderRadius: 18,
             padding: '20px 24px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.35)',
+            boxShadow: 'var(--shadow-md)',
             display: 'flex',
             flexDirection: 'column',
             gap: 16,
@@ -382,13 +382,13 @@ export const InstructorAnalyticsPage = () => {
                   gap: 6,
                   padding: '8px 16px',
                   borderRadius: 10,
-                  background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+                  background: 'var(--primary)',
                   border: 'none',
-                  color: '#ffffff',
+                  color: 'var(--primary-foreground)',
                   fontSize: 12,
                   fontWeight: 700,
                   textDecoration: 'none',
-                  boxShadow: '0 2px 10px rgba(37, 99, 235, 0.25)',
+                  boxShadow: '0 2px 10px rgba(34, 197, 94, 0.25)',
                   transition: 'all 0.15s',
                 }}
               >
@@ -431,8 +431,8 @@ export const InstructorAnalyticsPage = () => {
           {/* 1. Active Courses */}
           <div
             style={{
-              background: 'linear-gradient(180deg, rgba(24, 24, 27, 0.85) 0%, rgba(18, 18, 20, 0.9) 100%)',
-              border: '1px solid var(--border-color, #e2e8f0)',
+              background: 'var(--card)',
+              border: '1px solid var(--border-color)',
               borderRadius: 14,
               padding: '16px 18px',
               display: 'flex',
@@ -474,8 +474,8 @@ export const InstructorAnalyticsPage = () => {
           {/* 2. Total Learners */}
           <div
             style={{
-              background: 'linear-gradient(180deg, rgba(24, 24, 27, 0.85) 0%, rgba(18, 18, 20, 0.9) 100%)',
-              border: '1px solid var(--border-color, #e2e8f0)',
+              background: 'var(--card)',
+              border: '1px solid var(--border-color)',
               borderRadius: 14,
               padding: '16px 18px',
               display: 'flex',
@@ -519,8 +519,8 @@ export const InstructorAnalyticsPage = () => {
           {/* 3. Avg. Completion Rate */}
           <div
             style={{
-              background: 'linear-gradient(180deg, rgba(24, 24, 27, 0.85) 0%, rgba(18, 18, 20, 0.9) 100%)',
-              border: '1px solid var(--border-color, #e2e8f0)',
+              background: 'var(--card)',
+              border: '1px solid var(--border-color)',
               borderRadius: 14,
               padding: '16px 18px',
               display: 'flex',
@@ -562,8 +562,8 @@ export const InstructorAnalyticsPage = () => {
           {/* 4. Avg Score & Pass Rate */}
           <div
             style={{
-              background: 'linear-gradient(180deg, rgba(24, 24, 27, 0.85) 0%, rgba(18, 18, 20, 0.9) 100%)',
-              border: '1px solid var(--border-color, #e2e8f0)',
+              background: 'var(--card)',
+              border: '1px solid var(--border-color)',
               borderRadius: 14,
               padding: '16px 18px',
               display: 'flex',
@@ -669,11 +669,11 @@ export const InstructorAnalyticsPage = () => {
             {/* Interactive Telemetry Visualizer Card */}
             <div
               style={{
-                background: 'linear-gradient(180deg, rgba(24, 24, 27, 0.9) 0%, rgba(15, 15, 18, 0.95) 100%)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--card)',
+                border: '1px solid var(--border-color)',
                 borderRadius: 16,
                 padding: '20px 22px',
-                boxShadow: '0 8px 30px rgba(0,0,0,0.25)',
+                boxShadow: 'var(--shadow-md)',
               }}
             >
               {/* Telemetry Header with Tabs */}
@@ -724,9 +724,9 @@ export const InstructorAnalyticsPage = () => {
                   position: 'relative',
                   height: 200,
                   width: '100%',
-                  background: 'rgba(0, 0, 0, 0.25)',
+                  background: 'var(--muted)',
                   borderRadius: 12,
-                  border: '1px solid rgba(255,255,255,0.04)',
+                  border: '1px solid var(--border-color)',
                   padding: '16px 20px 24px',
                   display: 'flex',
                   flexDirection: 'column',
@@ -734,9 +734,9 @@ export const InstructorAnalyticsPage = () => {
                 }}
               >
                 {/* Horizontal Gridlines */}
-                <div style={{ position: 'absolute', top: 30, left: 20, right: 20, height: 1, background: 'rgba(255,255,255,0.04)' }} />
-                <div style={{ position: 'absolute', top: 90, left: 20, right: 20, height: 1, background: 'rgba(255,255,255,0.04)' }} />
-                <div style={{ position: 'absolute', top: 150, left: 20, right: 20, height: 1, background: 'rgba(255,255,255,0.04)' }} />
+                <div style={{ position: 'absolute', top: 30, left: 20, right: 20, height: 1, background: 'var(--border-color)' }} />
+                <div style={{ position: 'absolute', top: 90, left: 20, right: 20, height: 1, background: 'var(--border-color)' }} />
+                <div style={{ position: 'absolute', top: 150, left: 20, right: 20, height: 1, background: 'var(--border-color)' }} />
 
                 {/* Bars & Glow Points Container */}
                 <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: 140, position: 'relative', zIndex: 2 }}>
@@ -764,9 +764,9 @@ export const InstructorAnalyticsPage = () => {
                             style={{
                               position: 'absolute',
                               bottom: `${heightPct + 15}%`,
-                              background: '#18181b',
-                              border: '1px solid #06b6d4',
-                              color: '#fff',
+                              background: 'var(--card)',
+                              border: '1px solid var(--primary)',
+                              color: 'var(--foreground)',
                               fontSize: 11,
                               fontWeight: 700,
                               padding: '3px 8px',
@@ -788,11 +788,11 @@ export const InstructorAnalyticsPage = () => {
                             minWidth: 10,
                             height: `${heightPct}%`,
                             background: isHovered
-                              ? 'linear-gradient(180deg, #38bdf8 0%, #06b6d4 100%)'
-                              : 'linear-gradient(180deg, rgba(6, 182, 212, 0.8) 0%, rgba(6, 182, 212, 0.25) 100%)',
+                              ? 'var(--primary)'
+                              : 'rgba(34, 197, 94, 0.5)',
                             borderRadius: '6px 6px 0 0',
                             transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                            boxShadow: isHovered ? '0 0 15px rgba(6, 182, 212, 0.6)' : 'none',
+                            boxShadow: isHovered ? '0 0 12px rgba(34, 197, 94, 0.5)' : 'none',
                           }}
                         />
 
@@ -808,17 +808,17 @@ export const InstructorAnalyticsPage = () => {
 
               {/* Telemetry Micro Stats Bar */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 10, marginTop: 14 }}>
-                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: 8, padding: '8px 12px' }}>
+                <div style={{ background: 'var(--muted)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '8px 12px' }}>
                   <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Peak Velocity</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#06b6d4', marginTop: 2 }}>Thursday (+28 pts)</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--primary)', marginTop: 2 }}>Thursday (+28 pts)</div>
                 </div>
-                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: 8, padding: '8px 12px' }}>
+                <div style={{ background: 'var(--muted)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '8px 12px' }}>
                   <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Retention Index</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#10b981', marginTop: 2 }}>96.8% Stable</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--chart-emerald)', marginTop: 2 }}>96.8% Stable</div>
                 </div>
-                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: 8, padding: '8px 12px' }}>
+                <div style={{ background: 'var(--muted)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '8px 12px' }}>
                   <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Sync Rate</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#a855f7', marginTop: 2 }}>0.2s Response</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--chart-accent)', marginTop: 2 }}>0.2s Response</div>
                 </div>
               </div>
             </div>
@@ -836,7 +836,7 @@ export const InstructorAnalyticsPage = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <Layers size={17} style={{ color: '#a855f7' }} />
+                    <Layers size={17} style={{ color: 'var(--primary)' }} />
                     <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
                       Active Curriculum Health Matrix
                     </h3>
@@ -876,7 +876,7 @@ export const InstructorAnalyticsPage = () => {
                       gap: 4,
                       fontSize: 12,
                       fontWeight: 600,
-                      color: '#a855f7',
+                      color: 'var(--dashboard-accent-text)',
                       textDecoration: 'none',
                     }}
                   >
@@ -895,8 +895,8 @@ export const InstructorAnalyticsPage = () => {
                     <div
                       key={c.id}
                       style={{
-                        background: isExpanded ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.015)',
-                        border: isExpanded ? '1px solid rgba(168, 85, 247, 0.4)' : '1px solid rgba(255,255,255,0.05)',
+                        background: isExpanded ? 'var(--muted)' : 'var(--card)',
+                        border: isExpanded ? '1px solid var(--primary)' : '1px solid var(--border-color)',
                         borderRadius: 12,
                         padding: '12px 16px',
                         transition: 'all 0.2s ease',
@@ -976,7 +976,7 @@ export const InstructorAnalyticsPage = () => {
                           style={{
                             marginTop: 12,
                             paddingTop: 12,
-                            borderTop: '1px solid rgba(255,255,255,0.06)',
+                            borderTop: '1px solid var(--border-color)',
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
@@ -996,10 +996,10 @@ export const InstructorAnalyticsPage = () => {
                                 borderRadius: 6,
                                 fontSize: 11,
                                 fontWeight: 600,
-                                background: 'rgba(255,255,255,0.05)',
+                                background: 'var(--muted)',
                                 color: 'var(--text-primary)',
                                 textDecoration: 'none',
-                                border: '1px solid rgba(255,255,255,0.1)',
+                                border: '1px solid var(--border-color)',
                               }}
                             >
                               Edit Modules
@@ -1012,10 +1012,10 @@ export const InstructorAnalyticsPage = () => {
                                 borderRadius: 6,
                                 fontSize: 11,
                                 fontWeight: 600,
-                                background: 'rgba(168, 85, 247, 0.15)',
-                                color: '#c084fc',
+                                background: 'var(--dashboard-accent-soft)',
+                                color: 'var(--dashboard-accent-text)',
                                 textDecoration: 'none',
-                                border: '1px solid rgba(168, 85, 247, 0.3)',
+                                border: '1px solid transparent',
                               }}
                             >
                               Course Studio
@@ -1106,19 +1106,19 @@ export const InstructorAnalyticsPage = () => {
                         gap: 6,
                         padding: '12px 14px',
                         borderRadius: 10,
-                        background: 'rgba(255,255,255,0.02)',
-                        border: '1px solid rgba(255,255,255,0.06)',
+                        background: 'var(--muted)',
+                        border: '1px solid var(--border-color)',
                         textDecoration: 'none',
                         transition: 'all 0.15s ease',
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
-                        e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.35)';
+                        e.currentTarget.style.background = 'var(--accent)';
+                        e.currentTarget.style.borderColor = 'var(--primary)';
                         e.currentTarget.style.transform = 'translateY(-2px)';
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
-                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+                        e.currentTarget.style.background = 'var(--muted)';
+                        e.currentTarget.style.borderColor = 'var(--border-color)';
                         e.currentTarget.style.transform = 'none';
                       }}
                     >
@@ -1127,7 +1127,7 @@ export const InstructorAnalyticsPage = () => {
                           width: 30,
                           height: 30,
                           borderRadius: 8,
-                          background: 'rgba(255, 255, 255, 0.04)', border: '1px solid var(--border-color, #e2e8f0)', color: 'var(--text-muted)',
+                          background: 'var(--muted)', border: '1px solid var(--border-color)', color: 'var(--text-muted)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -1152,11 +1152,11 @@ export const InstructorAnalyticsPage = () => {
             {/* Live Operations Terminal (Event Stream) */}
             <div
               style={{
-                background: 'linear-gradient(180deg, #09090b 0%, #0d0e12 100%)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--card)',
+                border: '1px solid var(--border-color)',
                 borderRadius: 16,
                 padding: '18px 20px',
-                boxShadow: '0 8px 30px rgba(0,0,0,0.3)',
+                boxShadow: 'var(--shadow-md)',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 14,
@@ -1208,8 +1208,8 @@ export const InstructorAnalyticsPage = () => {
                   <div
                     key={ev.id}
                     style={{
-                      background: 'rgba(255,255,255,0.02)',
-                      border: '1px solid rgba(255,255,255,0.04)',
+                      background: 'var(--muted)',
+                      border: '1px solid var(--border-color)',
                       borderRadius: 8,
                       padding: '8px 10px',
                       display: 'flex',
@@ -1245,7 +1245,7 @@ export const InstructorAnalyticsPage = () => {
                   gap: 6,
                   fontSize: 10,
                   color: 'var(--text-muted)',
-                  borderTop: '1px solid rgba(255,255,255,0.05)',
+                  borderTop: '1px solid var(--border-color)',
                   paddingTop: 8,
                 }}
               >

@@ -60,9 +60,9 @@ function StatusPill({ status }) {
 
 /* ── Clean Skeleton Card ── */
 function SkeletonCard() {
-  const s = { background: 'rgba(255, 255, 255, 0.08)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' };
+  const s = { background: 'var(--skeleton-bg, #e2e8f0)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' };
   return (
-    <div style={{ background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 22, display: 'flex', flexDirection: 'column', gap: 14 }}>
+    <div style={{ background: 'var(--card, #ffffff)', border: '1px solid var(--border, #e2e8f0)', borderRadius: 16, padding: 22, display: 'flex', flexDirection: 'column', gap: 14, boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ ...s, width: 90, height: 24, borderRadius: 6 }} />
         <div style={{ ...s, width: 80, height: 24, borderRadius: 99 }} />
@@ -205,34 +205,34 @@ export const BatchListPage = () => {
         }}
       >
         {[
-          { label: 'Total Cohorts', val: stats.total, sub: 'Registered institutional batches', icon: Layers, tone: '#38bdf8' },
-          { label: 'Enrolled Learners', val: stats.totalEnrolled, sub: 'Active candidates across cohorts', icon: Users, tone: '#10b981' },
-          { label: 'Active Batches', val: stats.inProgress, sub: 'Currently in-progress schedules', icon: TrendingUp, tone: '#f59e0b' },
-          { label: 'Capacity Fill Rate', val: `${stats.avgFillRate}%`, sub: 'Seat allocation efficiency', icon: Award, tone: '#a855f7' },
+          { label: 'Total Cohorts', val: stats.total, sub: 'Registered institutional batches', icon: Layers, tone: '#3b82f6', bg: 'var(--card-blue, #e3f2fd)' },
+          { label: 'Enrolled Learners', val: stats.totalEnrolled, sub: 'Active candidates across cohorts', icon: Users, tone: '#16a34a', bg: 'var(--card-green, #e8f5e9)' },
+          { label: 'Active Batches', val: stats.inProgress, sub: 'Currently in-progress schedules', icon: TrendingUp, tone: '#d97706', bg: 'var(--card-yellow, #fff8e1)' },
+          { label: 'Capacity Fill Rate', val: `${stats.avgFillRate}%`, sub: 'Seat allocation efficiency', icon: Award, tone: '#7c3aed', bg: 'var(--card-purple, #f3e5f5)' },
         ].map((m, idx) => {
           const Icon = m.icon;
           return (
             <div
               key={idx}
               style={{
-                background: 'linear-gradient(180deg, rgba(22, 25, 34, 0.9) 0%, rgba(17, 19, 26, 0.95) 100%)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--card, #ffffff)',
+                border: '1px solid var(--border, #e2e8f0)',
                 borderRadius: 16,
                 padding: '18px 20px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                boxShadow: '0 4px 18px rgba(0,0,0,0.2)',
+                boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.04))',
               }}
             >
               <div>
-                <p style={{ margin: 0, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#94a3b8' }}>
+                <p style={{ margin: 0, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted, #64748b)' }}>
                   {m.label}
                 </p>
-                <div style={{ fontSize: 26, fontWeight: 800, color: '#f8fafc', marginTop: 4, letterSpacing: '-0.02em' }}>
+                <div style={{ fontSize: 26, fontWeight: 800, color: 'var(--text-primary, #1a1a2e)', marginTop: 4, letterSpacing: '-0.02em' }}>
                   {m.val}
                 </div>
-                <p style={{ margin: '4px 0 0', fontSize: 11, color: '#64748b' }}>
+                <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--text-muted, #94a3b8)' }}>
                   {m.sub}
                 </p>
               </div>
@@ -241,8 +241,8 @@ export const BatchListPage = () => {
                   width: 44,
                   height: 44,
                   borderRadius: 12,
-                  background: `${m.tone}15`,
-                  border: `1px solid ${m.tone}30`,
+                  background: m.bg,
+                  border: `1px solid ${m.tone}25`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -260,12 +260,11 @@ export const BatchListPage = () => {
       {/* Filter Toolbar */}
       <div
         style={{
-          background: 'linear-gradient(180deg, rgba(22, 25, 34, 0.9) 0%, rgba(17, 19, 26, 0.95) 100%)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'var(--card, #ffffff)',
+          border: '1px solid var(--border, #e2e8f0)',
           borderRadius: 16,
-          padding: 16,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
-          backdropFilter: 'blur(10px)',
+          padding: '12px 16px',
+          boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.04))',
         }}
       >
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
@@ -278,7 +277,7 @@ export const BatchListPage = () => {
                 left: 14,
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#94a3b8',
+                color: 'var(--text-muted, #94a3b8)',
                 pointerEvents: 'none',
               }}
             />
@@ -291,24 +290,24 @@ export const BatchListPage = () => {
               placeholder="Search code, batch, curriculum…"
               style={{
                 width: '100%',
-                padding: '10px 14px 10px 38px',
+                padding: '9px 14px 9px 38px',
                 borderRadius: 10,
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                background: 'rgba(0, 0, 0, 0.35)',
-                color: '#f8fafc',
+                border: '1px solid var(--border, #e2e8f0)',
+                background: 'var(--color-bg, #f5f7fa)',
+                color: 'var(--text-primary, #1a1a2e)',
                 fontSize: 14,
                 fontFamily: 'system-ui, -apple-system, sans-serif',
                 boxSizing: 'border-box',
                 outline: 'none',
-                transition: 'border-color 0.2s',
+                transition: 'border-color 0.2s, background 0.2s',
               }}
-              onFocus={(e) => { e.target.style.borderColor = '#3b82f6'; }}
-              onBlur={(e) => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)'; }}
+              onFocus={(e) => { e.target.style.borderColor = 'var(--primary, #22c55e)'; e.target.style.background = 'var(--card, #ffffff)'; }}
+              onBlur={(e) => { e.target.style.borderColor = 'var(--border, #e2e8f0)'; e.target.style.background = 'var(--color-bg, #f5f7fa)'; }}
             />
           </div>
 
           {/* Status Pills */}
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', background: 'var(--color-bg, #f5f7fa)', padding: 4, borderRadius: 99, border: '1px solid var(--border, #e2e8f0)' }}>
             {STATUS_FILTERS.map((s) => {
               const active = statusFilter === s;
               return (
@@ -319,22 +318,20 @@ export const BatchListPage = () => {
                     setPage(0);
                   }}
                   style={{
-                    padding: '7px 16px',
+                    padding: '6px 14px',
                     borderRadius: 99,
                     fontSize: 13,
-                    fontWeight: active ? 700 : 500,
+                    fontWeight: active ? 600 : 500,
                     cursor: 'pointer',
                     fontFamily: 'inherit',
-                    background: active
-                      ? 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)'
-                      : 'rgba(255, 255, 255, 0.04)',
-                    color: active ? '#ffffff' : '#94a3b8',
-                    border: active ? '1px solid transparent' : '1px solid rgba(255, 255, 255, 0.08)',
-                    boxShadow: active ? '0 2px 12px rgba(37, 99, 235, 0.4)' : 'none',
-                    transition: 'all 0.2s ease',
+                    background: active ? 'var(--text-primary, #1a1a2e)' : 'transparent',
+                    color: active ? 'var(--color-surface, #ffffff)' : 'var(--text-secondary, #64748b)',
+                    border: 'none',
+                    boxShadow: active ? '0 1px 4px rgba(0,0,0,0.12)' : 'none',
+                    transition: 'all 0.15s ease',
                   }}
-                  onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'; }}
-                  onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)'; }}
+                  onMouseEnter={(e) => { if (!active) e.currentTarget.style.color = 'var(--text-primary, #1a1a2e)'; }}
+                  onMouseLeave={(e) => { if (!active) e.currentTarget.style.color = 'var(--text-secondary, #64748b)'; }}
                 >
                   {s === 'ALL' ? 'All Batches' : BATCH_STATUS_CONFIG[s]?.label ?? s}
                 </button>
@@ -347,10 +344,11 @@ export const BatchListPage = () => {
             <div
               style={{
                 display: 'flex',
-                background: 'rgba(0, 0, 0, 0.3)',
-                borderRadius: 8,
-                padding: 2,
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--color-bg, #f5f7fa)',
+                borderRadius: 10,
+                padding: 3,
+                gap: 2,
+                border: '1px solid var(--border, #e2e8f0)',
               }}
             >
               {[
@@ -361,14 +359,16 @@ export const BatchListPage = () => {
                   key={id}
                   onClick={() => setViewMode(id)}
                   style={{
-                    padding: '8px 12px',
+                    padding: '7px 10px',
                     border: 'none',
+                    borderRadius: 8,
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    background: viewMode === id ? 'rgba(255, 255, 255, 0.12)' : 'transparent',
-                    color: viewMode === id ? '#ffffff' : '#64748b',
-                    transition: 'all 0.2s',
+                    background: viewMode === id ? 'var(--card, #ffffff)' : 'transparent',
+                    color: viewMode === id ? 'var(--text-primary, #1a1a2e)' : 'var(--text-muted, #94a3b8)',
+                    boxShadow: viewMode === id ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                    transition: 'all 0.15s',
                   }}
                 >
                   <I size={16} />
@@ -415,25 +415,25 @@ export const BatchListPage = () => {
               <div
                 key={batch.id}
                 style={{
-                  background: 'linear-gradient(180deg, rgba(22, 25, 34, 0.85) 0%, rgba(17, 19, 26, 0.95) 100%)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  background: 'var(--card, #ffffff)',
+                  border: '1px solid var(--border, #e2e8f0)',
                   borderRadius: 16,
                   padding: 22,
                   display: 'flex',
                   flexDirection: 'column',
-                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
+                  boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.04))',
                   transition: 'all 0.2s ease',
                   position: 'relative',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-3px)';
-                  e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.35)';
-                  e.currentTarget.style.boxShadow = '0 12px 28px rgba(0, 0, 0, 0.35)';
+                  e.currentTarget.style.borderColor = 'var(--primary, #22c55e)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08))';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-                  e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.25)';
+                  e.currentTarget.style.borderColor = 'var(--border, #e2e8f0)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.04))';
                 }}
               >
                 {/* Header: Batch Code & Status */}
@@ -445,9 +445,9 @@ export const BatchListPage = () => {
                       fontSize: 11,
                       fontFamily: 'monospace',
                       fontWeight: 700,
-                      background: 'rgba(59, 130, 246, 0.12)',
-                      color: '#60a5fa',
-                      border: '1px solid rgba(59, 130, 246, 0.25)',
+                      background: 'var(--color-bg, #f5f7fa)',
+                      color: 'var(--text-secondary, #4a5568)',
+                      border: '1px solid var(--border, #e2e8f0)',
                       letterSpacing: '0.04em',
                     }}
                   >
@@ -463,7 +463,7 @@ export const BatchListPage = () => {
                     margin: '0 0 6px 0',
                     fontSize: 18,
                     fontWeight: 700,
-                    color: '#f8fafc',
+                    color: 'var(--text-primary, #1a1a2e)',
                     lineHeight: 1.35,
                   }}
                 >
@@ -477,15 +477,15 @@ export const BatchListPage = () => {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: 6,
-                    color: '#94a3b8',
+                    color: 'var(--text-muted, #64748b)',
                     fontSize: 13,
                     cursor: batch.courseId ? 'pointer' : 'default',
                     marginBottom: 14,
                     textDecoration: 'none',
                   }}
                 >
-                  <BookOpen size={14} style={{ color: '#38bdf8', flexShrink: 0 }} />
-                  <span style={{ color: '#cbd5e1', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <BookOpen size={14} style={{ color: '#3b82f6', flexShrink: 0 }} />
+                  <span style={{ color: 'var(--text-secondary, #4a5568)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {batch.courseTitle || 'Core Curriculum'}
                   </span>
                 </div>
@@ -498,28 +498,28 @@ export const BatchListPage = () => {
                     gap: 8,
                     padding: '12px 14px',
                     borderRadius: 12,
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid rgba(255, 255, 255, 0.06)',
+                    background: 'var(--color-bg, #f5f7fa)',
+                    border: '1px solid var(--border, #e2e8f0)',
                     fontSize: 12,
                     marginBottom: 16,
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#cbd5e1' }}>
-                    <Calendar size={13} style={{ color: '#94a3b8', flexShrink: 0 }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary, #4a5568)' }}>
+                    <Calendar size={13} style={{ color: 'var(--text-muted, #94a3b8)', flexShrink: 0 }} />
                     <span>
-                      Runs: <strong style={{ color: '#f8fafc' }}>{batch.startDate || 'TBD'}</strong> → <strong style={{ color: '#f8fafc' }}>{batch.endDate || 'TBD'}</strong>
+                      Runs: <strong style={{ color: 'var(--text-primary, #1a1a2e)' }}>{batch.startDate || 'TBD'}</strong> → <strong style={{ color: 'var(--text-primary, #1a1a2e)' }}>{batch.endDate || 'TBD'}</strong>
                     </span>
                   </div>
                   {batch.schedule && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#94a3b8' }}>
-                      <Clock size={13} style={{ color: '#94a3b8', flexShrink: 0 }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-muted, #64748b)' }}>
+                      <Clock size={13} style={{ color: 'var(--text-muted, #94a3b8)', flexShrink: 0 }} />
                       <span>{batch.schedule}</span>
                     </div>
                   )}
                   {batch.instructorName && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#94a3b8' }}>
-                      <Users size={13} style={{ color: '#94a3b8', flexShrink: 0 }} />
-                      <span>Instructor: <strong style={{ color: '#f8fafc' }}>{batch.instructorName}</strong></span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-muted, #64748b)' }}>
+                      <Users size={13} style={{ color: 'var(--text-muted, #94a3b8)', flexShrink: 0 }} />
+                      <span>Instructor: <strong style={{ color: 'var(--text-primary, #1a1a2e)' }}>{batch.instructorName}</strong></span>
                     </div>
                   )}
                 </div>
@@ -527,8 +527,8 @@ export const BatchListPage = () => {
                 {/* Capacity Progress Bar */}
                 <div style={{ marginBottom: 18 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 6 }}>
-                    <span style={{ color: '#94a3b8', fontWeight: 500 }}>Cohort Enrolment</span>
-                    <span style={{ color: '#f8fafc', fontWeight: 700 }}>
+                    <span style={{ color: 'var(--text-muted, #64748b)', fontWeight: 500 }}>Cohort Enrolment</span>
+                    <span style={{ color: 'var(--text-primary, #1a1a2e)', fontWeight: 700 }}>
                       {enrolled} / {capacity || '—'} Seats ({pct}%)
                     </span>
                   </div>
@@ -537,7 +537,7 @@ export const BatchListPage = () => {
                       width: '100%',
                       height: 6,
                       borderRadius: 99,
-                      background: 'rgba(255, 255, 255, 0.08)',
+                      background: 'var(--muted, #f1f5f9)',
                       overflow: 'hidden',
                     }}
                   >
@@ -655,25 +655,25 @@ export const BatchListPage = () => {
               <div
                 key={batch.id}
                 style={{
-                  background: 'linear-gradient(180deg, rgba(22, 25, 34, 0.85) 0%, rgba(17, 19, 26, 0.95) 100%)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  background: 'var(--card, #ffffff)',
+                  border: '1px solid var(--border, #e2e8f0)',
                   borderRadius: 14,
                   display: 'flex',
                   alignItems: 'center',
                   padding: '16px 20px',
                   gap: 16,
-                  boxShadow: '0 4px 18px rgba(0,0,0,0.2)',
+                  boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.04))',
                   transition: 'all 0.2s ease',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.3)';
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)';
+                  e.currentTarget.style.borderColor = 'var(--primary, #22c55e)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-md, 0 6px 18px rgba(0,0,0,0.06))';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'none';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-                  e.currentTarget.style.boxShadow = '0 4px 18px rgba(0,0,0,0.2)';
+                  e.currentTarget.style.borderColor = 'var(--border, #e2e8f0)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.04))';
                 }}
               >
                 {/* Cohort Icon Box */}
@@ -682,12 +682,12 @@ export const BatchListPage = () => {
                     width: 42,
                     height: 42,
                     borderRadius: 10,
-                    background: 'rgba(59, 130, 246, 0.12)',
+                    background: 'var(--card-blue, #e3f2fd)',
                     border: '1px solid rgba(59, 130, 246, 0.25)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#60a5fa',
+                    color: '#3b82f6',
                     flexShrink: 0,
                   }}
                 >
@@ -697,7 +697,7 @@ export const BatchListPage = () => {
                 {/* Batch Name & Details */}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: 16, fontWeight: 700, color: '#f8fafc' }}>{batch.name}</span>
+                    <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary, #1a1a2e)' }}>{batch.name}</span>
                     <span
                       style={{
                         padding: '2px 8px',
@@ -705,17 +705,17 @@ export const BatchListPage = () => {
                         fontSize: 11,
                         fontFamily: 'monospace',
                         fontWeight: 700,
-                        background: 'rgba(255, 255, 255, 0.06)',
-                        color: '#94a3b8',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        background: 'var(--color-bg, #f5f7fa)',
+                        color: 'var(--text-secondary, #4a5568)',
+                        border: '1px solid var(--border, #e2e8f0)',
                       }}
                     >
                       {batch.code}
                     </span>
                     <StatusPill status={batch.status} />
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 12, color: '#94a3b8', flexWrap: 'wrap' }}>
-                    <span style={{ color: '#38bdf8', fontWeight: 600 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 12, color: 'var(--text-muted, #64748b)', flexWrap: 'wrap' }}>
+                    <span style={{ color: '#3b82f6', fontWeight: 600 }}>
                       {batch.courseTitle || 'General Curriculum'}
                     </span>
                     <span>•</span>
@@ -729,7 +729,7 @@ export const BatchListPage = () => {
                     {batch.instructorName && (
                       <>
                         <span>•</span>
-                        <span>Instructor: <strong style={{ color: '#cbd5e1' }}>{batch.instructorName}</strong></span>
+                        <span>Instructor: <strong style={{ color: 'var(--text-primary, #1a1a2e)' }}>{batch.instructorName}</strong></span>
                       </>
                     )}
                   </div>
@@ -738,16 +738,16 @@ export const BatchListPage = () => {
                 {/* Capacity Meter */}
                 <div style={{ width: 140, flexShrink: 0 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
-                    <span style={{ color: '#94a3b8' }}>Capacity</span>
-                    <span style={{ color: '#f8fafc', fontWeight: 700 }}>{enrolled}/{capacity}</span>
+                    <span style={{ color: 'var(--text-muted, #64748b)' }}>Capacity</span>
+                    <span style={{ color: 'var(--text-primary, #1a1a2e)', fontWeight: 700 }}>{enrolled}/{capacity}</span>
                   </div>
-                  <div style={{ width: '100%', height: 5, borderRadius: 99, background: 'rgba(255,255,255,0.08)', overflow: 'hidden' }}>
+                  <div style={{ width: '100%', height: 5, borderRadius: 99, background: 'var(--muted, #f1f5f9)', overflow: 'hidden' }}>
                     <div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, #3b82f6, #10b981)' }} />
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div style={{ display: 'flex', gap: 8, borderLeft: '1px solid rgba(255,255,255,0.08)', paddingLeft: 16, flexShrink: 0 }}>
+                <div style={{ display: 'flex', gap: 8, borderLeft: '1px solid var(--border, #e2e8f0)', paddingLeft: 16, flexShrink: 0 }}>
                   <button
                     onClick={() => setSelectedBatchForRoster(batch)}
                     style={{
