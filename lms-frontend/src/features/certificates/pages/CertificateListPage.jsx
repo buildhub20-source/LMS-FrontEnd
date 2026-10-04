@@ -37,6 +37,27 @@ const handleDownload = async (id, courseName) => {
   }
 };
 
+function CertificateSkeletonCard() {
+  const s = { background: 'var(--skeleton-bg, #e2e8f0)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' };
+  return (
+    <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24, display: 'flex', flexDirection: 'column', gap: 16, boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ ...s, width: 44, height: 44, borderRadius: 12 }} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
+          <div style={{ ...s, width: 90, height: 12 }} />
+          <div style={{ ...s, width: '70%', height: 16 }} />
+        </div>
+      </div>
+      <div style={{ ...s, height: 14, width: '90%' }} />
+      <div style={{ ...s, height: 14, width: '50%' }} />
+      <div style={{ borderTop: '1px solid var(--border)', paddingTop: 14, display: 'flex', gap: 10, marginTop: 'auto' }}>
+        <div style={{ ...s, height: 34, flex: 1, borderRadius: 8 }} />
+        <div style={{ ...s, height: 34, width: 38, borderRadius: 8 }} />
+      </div>
+    </div>
+  );
+}
+
 /**
  * Fully wired certificate gallery page.
  * Displays both LMS-earned certificates and imported external credentials.
@@ -60,7 +81,6 @@ export const CertificateListPage = () => {
     queryFn: () => certificateService.list(),
   });
 
-  if (isLoading) return <Spinner fullPage />;
   if (error) return <ErrorState error={error} onRetry={refetch} />;
 
   const lmsCerts = raw?.data?.data?.content ?? raw?.data?.content ?? raw?.data ?? [];
@@ -123,42 +143,45 @@ export const CertificateListPage = () => {
           <div
             style={{
               flex: '1 1 200px',
-              background: 'linear-gradient(180deg, #181b24 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
               borderRadius: 14,
               padding: '16px 20px',
+              boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
             <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
               Total Credentials
             </div>
             <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-primary)', marginTop: 4 }}>
-              {totalCount}
+              {isLoading ? '—' : totalCount}
             </div>
           </div>
           <div
             style={{
               flex: '1 1 200px',
-              background: 'linear-gradient(180deg, #181b24 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
               borderRadius: 14,
               padding: '16px 20px',
+              boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
             <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
               Imported External
             </div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: '#818cf8', marginTop: 4 }}>
-              {importedCerts.length}
+            <div style={{ fontSize: 24, fontWeight: 800, color: '#6366f1', marginTop: 4 }}>
+              {isLoading ? '—' : importedCerts.length}
             </div>
           </div>
           <div
             style={{
               flex: '1 1 200px',
-              background: 'linear-gradient(180deg, #181b24 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
               borderRadius: 14,
               padding: '16px 20px',
+              boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
             <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
@@ -171,16 +194,17 @@ export const CertificateListPage = () => {
           <div
             style={{
               flex: '1 1 200px',
-              background: 'linear-gradient(180deg, #181b24 0%, #11131a 100%)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--card)',
+              border: '1px solid var(--border)',
               borderRadius: 14,
               padding: '16px 20px',
+              boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
             <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
               Verification Protocol
             </div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: '#34d399', marginTop: 4 }}>
+            <div style={{ fontSize: 24, fontWeight: 800, color: '#10b981', marginTop: 4 }}>
               Blockchain
             </div>
           </div>
@@ -245,7 +269,13 @@ export const CertificateListPage = () => {
         </div>
 
         {/* Credentials Grid or Empty Pathway */}
-        {filteredCerts.length > 0 ? (
+        {isLoading ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <CertificateSkeletonCard key={i} />
+            ))}
+          </div>
+        ) : filteredCerts.length > 0 ? (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>
             {filteredCerts.map((cert) => {
               const isImported = Boolean(cert.isImported);
@@ -255,27 +285,27 @@ export const CertificateListPage = () => {
                   <div
                     key={cert.id}
                     style={{
-                      background: 'linear-gradient(135deg, #131722 0%, #1a2030 100%)',
+                      background: 'var(--card)',
                       border: '1px solid rgba(99, 102, 241, 0.35)',
                       borderRadius: 16,
                       padding: 24,
-                      color: '#ffffff',
+                      color: 'var(--text-primary)',
                       display: 'flex',
                       flexDirection: 'column',
                       justifyContent: 'space-between',
                       gap: 16,
-                      boxShadow: '0 10px 28px rgba(0,0,0,0.3)',
+                      boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
                       position: 'relative',
                       overflow: 'hidden',
                       transition: 'transform 0.15s ease, box-shadow 0.15s ease',
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'translateY(-3px)';
-                      e.currentTarget.style.boxShadow = '0 16px 36px rgba(99,102,241,0.25)';
+                      e.currentTarget.style.boxShadow = '0 12px 28px rgba(99,102,241,0.2)';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.transform = '';
-                      e.currentTarget.style.boxShadow = '0 10px 28px rgba(0,0,0,0.3)';
+                      e.currentTarget.style.boxShadow = 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))';
                     }}
                   >
                     {/* Top Badges */}
@@ -286,11 +316,11 @@ export const CertificateListPage = () => {
                             width: 42,
                             height: 42,
                             borderRadius: 12,
-                            background: 'rgba(99, 102, 241, 0.2)',
+                            background: 'rgba(99, 102, 241, 0.12)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: '#818cf8',
+                            color: '#6366f1',
                           }}
                         >
                           <Award size={22} />
@@ -300,7 +330,7 @@ export const CertificateListPage = () => {
                             style={{
                               fontSize: 10,
                               fontWeight: 800,
-                              color: '#818cf8',
+                              color: '#6366f1',
                               textTransform: 'uppercase',
                               letterSpacing: '0.8px',
                               display: 'inline-flex',
@@ -310,7 +340,7 @@ export const CertificateListPage = () => {
                           >
                             <ShieldCheck size={11} /> {cert.issuer || 'External Credential'}
                           </span>
-                          <h4 style={{ margin: '2px 0 0', fontSize: 16, fontWeight: 700, color: '#f8fafc' }}>
+                          <h4 style={{ margin: '2px 0 0', fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
                             {cert.title}
                           </h4>
                         </div>
@@ -676,14 +706,15 @@ export const CertificateListPage = () => {
                   <div
                     key={i}
                     style={{
-                      background: 'linear-gradient(180deg, #181b24 0%, #11131a 100%)',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      background: 'var(--card)',
+                      border: '1px solid var(--border)',
                       borderRadius: 16,
                       padding: 20,
                       display: 'flex',
                       flexDirection: 'column',
                       justifyContent: 'space-between',
                       gap: 16,
+                      boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
                     }}
                   >
                     <div>
@@ -740,13 +771,14 @@ export const CertificateListPage = () => {
             {/* Right: Verification Information */}
             <div
               style={{
-                background: 'linear-gradient(180deg, #181b24 0%, #11131a 100%)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--card)',
+                border: '1px solid var(--border)',
                 borderRadius: 18,
                 padding: 24,
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 16,
+                boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
               }}
             >
               <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: 'var(--text-primary)' }}>

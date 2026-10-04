@@ -276,34 +276,34 @@ export const InstructorCertificationHubPage = () => {
         }}
       >
         {[
-          { label: 'Cohort Candidates', val: stats.total, sub: 'Learners in active scope', icon: Users, tone: '#38bdf8' },
-          { label: 'Course Completed', val: stats.completed, sub: '100% curriculum completed', icon: CheckCircle2, tone: '#10b981' },
-          { label: 'Graduation Rate', val: `${stats.rate}%`, sub: 'Cohort pass-through ratio', icon: GraduationCap, tone: '#f59e0b' },
-          { label: 'Certificates Issued', val: stats.certified, sub: 'Minted credentials', icon: Award, tone: '#3b82f6' },
+          { label: 'Cohort Candidates', val: stats.total, sub: 'Learners in active scope', icon: Users, tone: '#3b82f6', bg: 'var(--card-blue)', border: 'var(--card-blue-border)' },
+          { label: 'Course Completed', val: stats.completed, sub: '100% curriculum completed', icon: CheckCircle2, tone: '#10b981', bg: 'var(--card-green)', border: 'var(--card-green-border)' },
+          { label: 'Graduation Rate', val: `${stats.rate}%`, sub: 'Cohort pass-through ratio', icon: GraduationCap, tone: '#f59e0b', bg: 'var(--card-yellow)', border: 'var(--card-yellow-border)' },
+          { label: 'Certificates Issued', val: stats.certified, sub: 'Minted credentials', icon: Award, tone: '#8b5cf6', bg: 'var(--card-purple)', border: 'var(--card-purple-border)' },
         ].map((m, idx) => {
           const Icon = m.icon;
           return (
             <div
               key={idx}
               style={{
-                background: 'linear-gradient(180deg, rgba(22, 25, 34, 0.9) 0%, rgba(17, 19, 26, 0.95) 100%)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: m.bg,
+                border: `1px solid ${m.border}`,
                 borderRadius: 16,
                 padding: '18px 20px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                boxShadow: '0 4px 18px rgba(0,0,0,0.2)',
+                boxShadow: 'var(--shadow-sm)',
               }}
             >
               <div>
-                <p style={{ margin: 0, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#94a3b8' }}>
+                <p style={{ margin: 0, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)' }}>
                   {m.label}
                 </p>
-                <div style={{ fontSize: 26, fontWeight: 800, color: '#f8fafc', marginTop: 4, letterSpacing: '-0.02em' }}>
+                <div style={{ fontSize: 26, fontWeight: 800, color: 'var(--text-primary)', marginTop: 4, letterSpacing: '-0.02em' }}>
                   {m.val}
                 </div>
-                <p style={{ margin: '4px 0 0', fontSize: 11, color: '#64748b' }}>
+                <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
                   {m.sub}
                 </p>
               </div>
@@ -312,13 +312,14 @@ export const InstructorCertificationHubPage = () => {
                   width: 44,
                   height: 44,
                   borderRadius: 12,
-                  background: `${m.tone}15`,
-                  border: `1px solid ${m.tone}30`,
+                  background: 'rgba(255, 255, 255, 0.6)',
+                  border: `1px solid ${m.border}`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: m.tone,
                   flexShrink: 0,
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
                 }}
               >
                 <Icon size={20} />
@@ -331,12 +332,11 @@ export const InstructorCertificationHubPage = () => {
       {/* Filters & Actions Bar */}
       <div
         style={{
-          background: 'linear-gradient(180deg, rgba(22, 25, 34, 0.9) 0%, rgba(17, 19, 26, 0.95) 100%)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'var(--card)',
+          border: '1px solid var(--border)',
           borderRadius: 16,
           padding: 16,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
-          backdropFilter: 'blur(10px)',
+          boxShadow: 'var(--shadow-sm)',
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -350,7 +350,7 @@ export const InstructorCertificationHubPage = () => {
                   left: 14,
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  color: '#94a3b8',
+                  color: 'var(--text-muted)',
                   pointerEvents: 'none',
                 }}
               />
@@ -360,19 +360,19 @@ export const InstructorCertificationHubPage = () => {
                 placeholder="Search candidate by name, email, or admission…"
                 style={{
                   width: '100%',
-                  padding: '10px 14px 10px 38px',
+                  padding: '9px 14px 9px 38px',
                   borderRadius: 10,
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
-                  background: 'rgba(0, 0, 0, 0.35)',
-                  color: '#f8fafc',
+                  border: '1px solid var(--border)',
+                  background: 'var(--background)',
+                  color: 'var(--text-primary)',
                   fontSize: 14,
                   fontFamily: 'system-ui, -apple-system, sans-serif',
                   boxSizing: 'border-box',
                   outline: 'none',
                   transition: 'border-color 0.2s',
                 }}
-                onFocus={(e) => { e.target.style.borderColor = '#3b82f6'; }}
-                onBlur={(e) => { e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)'; }}
+                onFocus={(e) => { e.target.style.borderColor = 'var(--color-primary, #6366f1)'; }}
+                onBlur={(e) => { e.target.style.borderColor = 'var(--border)'; }}
               />
             </div>
 
@@ -395,16 +395,14 @@ export const InstructorCertificationHubPage = () => {
                       fontWeight: active ? 700 : 500,
                       cursor: 'pointer',
                       fontFamily: 'inherit',
-                      background: active
-                        ? 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)'
-                        : 'rgba(255, 255, 255, 0.04)',
-                      color: active ? '#ffffff' : '#94a3b8',
-                      border: active ? '1px solid transparent' : '1px solid rgba(255, 255, 255, 0.08)',
-                      boxShadow: active ? '0 2px 12px rgba(37, 99, 235, 0.4)' : 'none',
+                      background: active ? 'var(--text-primary)' : 'var(--background)',
+                      color: active ? 'var(--color-surface)' : 'var(--text-secondary)',
+                      border: active ? '1px solid transparent' : '1px solid var(--border)',
+                      boxShadow: active ? '0 2px 8px rgba(0, 0, 0, 0.12)' : 'none',
                       transition: 'all 0.2s ease',
                     }}
-                    onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'; }}
-                    onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)'; }}
+                    onMouseEnter={(e) => { if (!active) e.currentTarget.style.borderColor = 'var(--color-primary, #6366f1)'; }}
+                    onMouseLeave={(e) => { if (!active) e.currentTarget.style.borderColor = 'var(--border)'; }}
                   >
                     {p.label}
                   </button>
@@ -414,7 +412,7 @@ export const InstructorCertificationHubPage = () => {
           </div>
 
           {/* Bottom Row: Cohort Focus, Course Filter, and Action Buttons */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(255, 255, 255, 0.06)', paddingTop: 12 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border)', paddingTop: 12 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', flex: 1 }}>
               {/* Batch Selector */}
               <div style={{ minWidth: 200, flex: '1 1 180px' }}>
@@ -425,19 +423,19 @@ export const InstructorCertificationHubPage = () => {
                     width: '100%',
                     padding: '8px 12px',
                     borderRadius: 8,
-                    backgroundColor: '#161922',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                    color: '#f8fafc',
+                    backgroundColor: 'var(--background)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--text-primary)',
                     fontSize: 13,
                     outline: 'none',
                     cursor: 'pointer',
                   }}
                 >
-                  <option value="" style={{ backgroundColor: '#161922', color: '#f8fafc' }}>
+                  <option value="" style={{ backgroundColor: 'var(--card)', color: 'var(--text-primary)' }}>
                     All Cohorts & Batches
                   </option>
                   {batches.map((b) => (
-                    <option key={b.id} value={b.id} style={{ backgroundColor: '#161922', color: '#f8fafc' }}>
+                    <option key={b.id} value={b.id} style={{ backgroundColor: 'var(--card)', color: 'var(--text-primary)' }}>
                       {b.code} — {b.name}
                     </option>
                   ))}
@@ -453,19 +451,19 @@ export const InstructorCertificationHubPage = () => {
                     width: '100%',
                     padding: '8px 12px',
                     borderRadius: 8,
-                    backgroundColor: '#161922',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                    color: '#f8fafc',
+                    backgroundColor: 'var(--background)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--text-primary)',
                     fontSize: 13,
                     outline: 'none',
                     cursor: 'pointer',
                   }}
                 >
-                  <option value="" style={{ backgroundColor: '#161922', color: '#f8fafc' }}>
+                  <option value="" style={{ backgroundColor: 'var(--card)', color: 'var(--text-primary)' }}>
                     All Curriculum Courses
                   </option>
                   {courses.map((c) => (
-                    <option key={c.id} value={c.id} style={{ backgroundColor: '#161922', color: '#f8fafc' }}>
+                    <option key={c.id} value={c.id} style={{ backgroundColor: 'var(--card)', color: 'var(--text-primary)' }}>
                       {c.title}
                     </option>
                   ))}
@@ -502,37 +500,59 @@ export const InstructorCertificationHubPage = () => {
       <div
         style={{
           borderRadius: 16,
-          background: 'linear-gradient(180deg, #161922 0%, #11131a 100%)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'var(--card)',
+          border: '1px solid var(--border)',
           overflow: 'hidden',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
+          boxShadow: 'var(--shadow-sm)',
         }}
       >
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}>
           <thead>
-            <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', backgroundColor: 'rgba(255, 255, 255, 0.02)' }}>
-              <th style={{ padding: '14px 20px', fontWeight: 600, color: '#94a3b8' }}>Candidate</th>
-              <th style={{ padding: '14px 20px', fontWeight: 600, color: '#94a3b8' }}>Cohort</th>
-              <th style={{ padding: '14px 20px', fontWeight: 600, color: '#94a3b8' }}>Course Curriculum</th>
-              <th style={{ padding: '14px 20px', fontWeight: 600, color: '#94a3b8' }}>Completion Progress</th>
-              <th style={{ padding: '14px 20px', fontWeight: 600, color: '#94a3b8' }}>Credential Status</th>
-              <th style={{ padding: '14px 20px', fontWeight: 600, color: '#94a3b8', textAlign: 'right' }}>Actions</th>
+            <tr style={{ borderBottom: '1px solid var(--border)', backgroundColor: 'var(--background)' }}>
+              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>Candidate</th>
+              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>Cohort</th>
+              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>Course Curriculum</th>
+              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>Completion Progress</th>
+              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>Credential Status</th>
+              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)', textAlign: 'right' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {isStudentsLoading ? (
-              <tr>
-                <td colSpan={6} style={{ padding: '60px 20px', textAlign: 'center', color: '#94a3b8' }}>
-                  <div style={{ display: 'inline-block', width: 24, height: 24, border: '2px solid rgba(255,255,255,0.2)', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 0.8s linear infinite', marginBottom: 10 }} />
-                  <div>Loading cohort graduation records...</div>
-                </td>
-              </tr>
+              Array.from({ length: 5 }).map((_, i) => (
+                <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+                  <td style={{ padding: '16px 20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <div style={{ width: 110, height: 14, borderRadius: 4, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                        <div style={{ width: 140, height: 11, borderRadius: 4, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                      </div>
+                    </div>
+                  </td>
+                  <td style={{ padding: '16px 20px' }}>
+                    <div style={{ width: 90, height: 20, borderRadius: 6, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  </td>
+                  <td style={{ padding: '16px 20px' }}>
+                    <div style={{ width: 140, height: 14, borderRadius: 4, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  </td>
+                  <td style={{ padding: '16px 20px' }}>
+                    <div style={{ width: 100, height: 8, borderRadius: 99, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  </td>
+                  <td style={{ padding: '16px 20px' }}>
+                    <div style={{ width: 80, height: 22, borderRadius: 99, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  </td>
+                  <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                    <div style={{ width: 88, height: 30, borderRadius: 8, background: 'var(--skeleton-bg, #e2e8f0)', marginLeft: 'auto', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  </td>
+                </tr>
+              ))
             ) : filteredCandidates.length === 0 ? (
               <tr>
-                <td colSpan={6} style={{ padding: '60px 20px', textAlign: 'center', color: '#94a3b8' }}>
-                  <GraduationCap size={36} color="#64748b" style={{ margin: '0 auto 10px auto' }} />
-                  <div style={{ fontSize: 15, fontWeight: 600, color: '#f8fafc' }}>No Candidates Found</div>
-                  <div style={{ fontSize: 13, color: '#94a3b8', marginTop: 4 }}>
+                <td colSpan={6} style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                  <GraduationCap size={36} color="var(--text-muted)" style={{ margin: '0 auto 10px auto' }} />
+                  <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>No Candidates Found</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
                     No learners match the selected cohort or filter criteria.
                   </div>
                 </td>
@@ -543,10 +563,10 @@ export const InstructorCertificationHubPage = () => {
                   <tr
                     key={c.id}
                     style={{
-                      borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+                      borderBottom: '1px solid var(--border)',
                       transition: 'background-color 0.15s ease',
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.03)'; }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--background)'; }}
                     onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
                   >
                     {/* Candidate */}
@@ -554,10 +574,10 @@ export const InstructorCertificationHubPage = () => {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         <CandidateAvatar name={c.fullName} size={36} />
                         <div>
-                          <div style={{ fontWeight: 600, color: '#f8fafc' }}>{c.fullName}</div>
-                          <div style={{ fontSize: 12, color: '#94a3b8' }}>{c.email}</div>
+                          <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{c.fullName}</div>
+                          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{c.email}</div>
                           {c.registrationNo && (
-                            <div style={{ fontSize: 11, color: '#64748b', fontFamily: 'monospace' }}>
+                            <div style={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
                               Reg: {c.registrationNo}
                             </div>
                           )}
@@ -575,29 +595,29 @@ export const InstructorCertificationHubPage = () => {
                             fontWeight: 700,
                             padding: '3px 8px',
                             borderRadius: 6,
-                            backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                            color: '#cbd5e1',
-                            border: '1px solid rgba(255, 255, 255, 0.12)',
+                            backgroundColor: 'var(--background)',
+                            color: 'var(--text-secondary)',
+                            border: '1px solid var(--border)',
                           }}
                         >
                           {c.batchCode}
                         </span>
                       ) : (
-                        <span style={{ fontSize: 12, color: '#64748b' }}>Unassigned</span>
+                        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Unassigned</span>
                       )}
                     </td>
 
                     {/* Course */}
-                    <td style={{ padding: '14px 20px', color: '#cbd5e1', maxWidth: 220 }}>
+                    <td style={{ padding: '14px 20px', color: 'var(--text-secondary)', maxWidth: 220 }}>
                       <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {c.courseTitle || <span style={{ color: '#64748b' }}>—</span>}
+                        {c.courseTitle || <span style={{ color: 'var(--text-muted)' }}>—</span>}
                       </div>
                     </td>
 
                     {/* Progress */}
                     <td style={{ padding: '14px 20px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ width: 80, height: 6, borderRadius: 99, backgroundColor: 'rgba(255, 255, 255, 0.08)', overflow: 'hidden' }}>
+                        <div style={{ width: 80, height: 6, borderRadius: 99, backgroundColor: 'var(--border)', overflow: 'hidden' }}>
                           <div
                             style={{
                               width: `${c.progressPercent}%`,
@@ -609,7 +629,7 @@ export const InstructorCertificationHubPage = () => {
                             }}
                           />
                         </div>
-                        <span style={{ fontSize: 12, fontWeight: 600, color: c.isCompleted ? '#34d399' : '#94a3b8' }}>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: c.isCompleted ? '#059669' : 'var(--text-secondary)' }}>
                           {c.progressPercent}%
                         </span>
                       </div>
@@ -629,9 +649,9 @@ export const InstructorCertificationHubPage = () => {
                               fontWeight: 700,
                               padding: '3px 8px',
                               borderRadius: 6,
-                              backgroundColor: 'rgba(16, 185, 129, 0.15)',
-                              color: '#34d399',
-                              border: '1px solid rgba(16, 185, 129, 0.3)',
+                              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                              color: '#059669',
+                              border: '1px solid rgba(16, 185, 129, 0.25)',
                             }}
                           >
                             <CheckCircle2 size={12} />
@@ -645,15 +665,15 @@ export const InstructorCertificationHubPage = () => {
                             fontWeight: 600,
                             padding: '3px 8px',
                             borderRadius: 6,
-                            backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                            color: '#60a5fa',
-                            border: '1px solid rgba(59, 130, 246, 0.3)',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            color: 'var(--color-primary, #6366f1)',
+                            border: '1px solid rgba(99, 102, 241, 0.25)',
                           }}
                         >
                           Eligible for Minting
                         </span>
                       ) : (
-                        <span style={{ fontSize: 12, color: '#64748b' }}>
+                        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                           In Progress
                         </span>
                       )}
@@ -671,9 +691,9 @@ export const InstructorCertificationHubPage = () => {
                               gap: 4,
                               padding: '6px 12px',
                               borderRadius: 99,
-                              backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                              border: '1px solid rgba(59, 130, 246, 0.3)',
-                              color: '#60a5fa',
+                              backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                              border: '1px solid rgba(99, 102, 241, 0.25)',
+                              color: 'var(--color-primary, #6366f1)',
                               fontSize: 12,
                               fontWeight: 600,
                               cursor: 'pointer',
@@ -688,9 +708,9 @@ export const InstructorCertificationHubPage = () => {
                             style={{
                               padding: '6px 8px',
                               borderRadius: 8,
-                              backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                              border: '1px solid rgba(255, 255, 255, 0.1)',
-                              color: '#cbd5e1',
+                              backgroundColor: 'var(--background)',
+                              border: '1px solid var(--border)',
+                              color: 'var(--text-secondary)',
                               cursor: 'pointer',
                             }}
                             title="Public Certificate Link"
@@ -713,14 +733,14 @@ export const InstructorCertificationHubPage = () => {
                             fontSize: 12,
                             fontWeight: 700,
                             cursor: 'pointer',
-                            boxShadow: '0 2px 10px rgba(37, 99, 235, 0.35)',
+                            boxShadow: '0 2px 10px rgba(37, 99, 235, 0.25)',
                           }}
                         >
                           <Award size={13} />
                           Mint
                         </button>
                       ) : (
-                        <span style={{ fontSize: 12, color: '#64748b' }}>—</span>
+                        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>—</span>
                       )}
                     </td>
                   </tr>
@@ -737,8 +757,8 @@ export const InstructorCertificationHubPage = () => {
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.75)',
-            backdropFilter: 'blur(6px)',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(4px)',
             zIndex: 999,
             display: 'flex',
             alignItems: 'center',
@@ -752,10 +772,10 @@ export const InstructorCertificationHubPage = () => {
               width: '100%',
               maxWidth: 520,
               borderRadius: 16,
-              backgroundColor: '#161922',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              backgroundColor: 'var(--card)',
+              border: '1px solid var(--border)',
               padding: 28,
-              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6)',
+              boxShadow: 'var(--shadow-lg)',
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -764,10 +784,10 @@ export const InstructorCertificationHubPage = () => {
                 <CheckCircle2 size={20} color="#fff" />
               </div>
               <div>
-                <h3 style={{ fontSize: 18, fontWeight: 700, color: '#f8fafc', margin: 0 }}>
+                <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                   Verified Credential
                 </h3>
-                <div style={{ fontSize: 12, color: '#94a3b8' }}>Cryptographic authenticity confirmed</div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Cryptographic authenticity confirmed</div>
               </div>
             </div>
 
@@ -775,8 +795,8 @@ export const InstructorCertificationHubPage = () => {
               style={{
                 padding: 16,
                 borderRadius: 10,
-                backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.06)',
+                backgroundColor: 'var(--background)',
+                border: '1px solid var(--border)',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 10,
@@ -785,18 +805,18 @@ export const InstructorCertificationHubPage = () => {
               }}
             >
               <div>
-                <span style={{ color: '#94a3b8' }}>Serial Number: </span>
-                <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#60a5fa' }}>
+                <span style={{ color: 'var(--text-muted)' }}>Serial Number: </span>
+                <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--color-primary, #6366f1)' }}>
                   {activeVerifyCert.serialNumber}
                 </span>
               </div>
               <div>
-                <span style={{ color: '#94a3b8' }}>Status: </span>
-                <span style={{ fontWeight: 700, color: '#34d399' }}>VALID & ACTIVE</span>
+                <span style={{ color: 'var(--text-muted)' }}>Status: </span>
+                <span style={{ fontWeight: 700, color: '#059669' }}>VALID & ACTIVE</span>
               </div>
               <div>
-                <span style={{ color: '#94a3b8' }}>Issue Date: </span>
-                <span style={{ color: '#f8fafc' }}>
+                <span style={{ color: 'var(--text-muted)' }}>Issue Date: </span>
+                <span style={{ color: 'var(--text-primary)' }}>
                   {activeVerifyCert.issuedAt || '2026-09-14'}
                 </span>
               </div>

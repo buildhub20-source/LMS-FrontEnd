@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, renderHook, act, waitFor } from '@testing-library/react';
+import { render, fireEvent, renderHook, act, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SubmitConfirmModal } from '../../src/features/assessments/components/SubmitConfirmModal';

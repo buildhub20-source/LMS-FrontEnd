@@ -2,7 +2,7 @@ import { X, AlertTriangle } from 'lucide-react';
 import AdminButton from './AdminButton';
 
 /**
- * Admin Dashboard Modal — Tailwind-based.
+ * AdminModal — Pastel macaron design.
  * Props: open, onClose, title, description, children, footer, size ('sm'|'md'|'lg'|'xl')
  */
 const sizeMap = {
@@ -29,67 +29,45 @@ export const AdminModal = ({
       {/* Backdrop */}
       <div
         className="absolute inset-0 backdrop-blur-sm"
-        style={{ background: 'rgba(0,0,0,0.6)' }}
+        style={{ background: 'rgba(0,0,0,0.4)' }}
         onClick={onClose}
       />
       {/* Panel */}
       <div
-        className={`relative w-full ${sizeMap[size] ?? sizeMap.md} max-h-[90vh] ${overflowVisible ? 'overflow-visible' : 'overflow-hidden'} rounded-2xl shadow-2xl animate-scale-in flex flex-col`}
-        style={{ background: 'var(--surface-dark)', boxShadow: 'var(--shadow-dark)' }}
+        className={`relative w-full ${sizeMap[size] ?? sizeMap.md} max-h-[90vh] ${overflowVisible ? 'overflow-visible' : 'overflow-hidden'} rounded-2xl shadow-lg animate-scale-in flex flex-col`}
+        style={{
+          background: 'var(--card)',
+          border: '1px solid var(--border)',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)',
+        }}
       >
         {/* Header */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'space-between',
-            gap: 16,
-            padding: '20px 24px',
-            borderBottom: '1px solid var(--border-color)',
-          }}
-        >
+        <div className="flex items-start justify-between gap-4 px-6 py-5"
+          style={{ borderBottom: '1px solid var(--border)' }}>
           <div>
-            <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
+            <h2 className="m-0 text-lg font-bold" style={{ color: 'var(--foreground)' }}>
               {title}
             </h2>
             {description && (
-              <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)' }}>
+              <p className="mt-1 text-sm" style={{ color: 'var(--muted-foreground)' }}>
                 {description}
               </p>
             )}
           </div>
           <button
             onClick={onClose}
-            style={{
-              flexShrink: 0,
-              borderRadius: 8,
-              padding: 6,
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              color: 'var(--text-muted)',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+            className="shrink-0 rounded-lg p-1.5 transition-colors hover:bg-[var(--muted)]"
+            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--muted-foreground)' }}
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
         {/* Body */}
         <div className={`flex-1 ${overflowVisible ? 'overflow-visible' : 'overflow-y-auto'} px-6 py-5`}>{children}</div>
         {/* Footer */}
         {footer && (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              gap: 12,
-              padding: '16px 24px',
-              borderTop: '1px solid var(--border-color)',
-              background: 'var(--surface-medium)',
-            }}
-          >
+          <div className="flex items-center justify-end gap-3 px-6 py-4"
+            style={{ borderTop: '1px solid var(--border)', background: 'var(--muted)' }}>
             {footer}
           </div>
         )}
@@ -99,8 +77,7 @@ export const AdminModal = ({
 };
 
 /**
- * Admin Dashboard Confirm Modal.
- * Props: open, onClose, onCancel, onConfirm, title, message, description, confirmLabel, variant ('primary'|'danger'), danger, loading
+ * AdminConfirmModal — Pastel-styled confirmation dialog.
  */
 export const AdminConfirmModal = ({
   open,
@@ -137,25 +114,16 @@ export const AdminConfirmModal = ({
         </>
       }
     >
-      <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+      <div className="flex gap-3.5 items-start">
         {isDestructive && (
           <div
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: '50%',
-              background: 'rgba(239, 68, 68, 0.15)',
-              color: '#ef4444',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}
+            className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+            style={{ background: 'var(--color-red-50)', color: 'var(--color-red-500)' }}
           >
             <AlertTriangle size={18} />
           </div>
         )}
-        <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6, flex: 1, whiteSpace: 'pre-line' }}>
+        <p className="m-0 text-sm flex-1 whitespace-pre-line" style={{ color: 'var(--muted-foreground)', lineHeight: 1.6 }}>
           {displayMessage}
         </p>
       </div>
