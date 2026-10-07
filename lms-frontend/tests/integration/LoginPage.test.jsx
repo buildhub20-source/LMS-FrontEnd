@@ -77,7 +77,7 @@ describe('LoginPage Comprehensive Test Cases', () => {
 
   it('TestCase 2: Blocks submission when password is empty', async () => {
     renderLoginPage();
-    const emailInput = screen.getByPlaceholderText(/enter your email address/i);
+    const emailInput = screen.getByLabelText('Email');
     await userEvent.type(emailInput, 'admin@lms.local');
 
     const submitBtn = screen.getByRole('button', { name: /sign in/i });
@@ -90,8 +90,8 @@ describe('LoginPage Comprehensive Test Cases', () => {
 
   it('TestCase 3: Blocks submission when email is whitespace-only', async () => {
     renderLoginPage();
-    const emailInput = screen.getByPlaceholderText(/enter your email address/i);
-    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
+    const emailInput = screen.getByLabelText('Email');
+    const passwordInput = screen.getByLabelText('Password');
     await userEvent.type(emailInput, '   ');
     await userEvent.type(passwordInput, 'SomePassword123!');
 
@@ -109,8 +109,8 @@ describe('LoginPage Comprehensive Test Cases', () => {
     tenantHostname.tenantSlugFromHostname.mockReturnValue(null);
     renderLoginPage();
 
-    const emailInput = screen.getByPlaceholderText(/enter your email address/i);
-    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
+    const emailInput = screen.getByLabelText('Email');
+    const passwordInput = screen.getByLabelText('Password');
     await userEvent.type(emailInput, 'user@example.com');
     await userEvent.type(passwordInput, 'Password123!');
 
@@ -132,8 +132,8 @@ describe('LoginPage Comprehensive Test Cases', () => {
     });
 
     renderLoginPage();
-    await userEvent.type(screen.getByPlaceholderText(/enter your email address/i), 'user@unknown.com');
-    await userEvent.type(screen.getByPlaceholderText(/enter your password/i), 'Password123!');
+    await userEvent.type(screen.getByLabelText('Email'), 'user@unknown.com');
+    await userEvent.type(screen.getByLabelText('Password'), 'Password123!');
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
@@ -152,8 +152,8 @@ describe('LoginPage Comprehensive Test Cases', () => {
     });
 
     renderLoginPage();
-    await userEvent.type(screen.getByPlaceholderText(/enter your email address/i), 'admin@lms.local');
-    await userEvent.type(screen.getByPlaceholderText(/enter your password/i), 'Password123!');
+    await userEvent.type(screen.getByLabelText('Email'), 'admin@lms.local');
+    await userEvent.type(screen.getByLabelText('Password'), 'Password123!');
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
@@ -174,8 +174,8 @@ describe('LoginPage Comprehensive Test Cases', () => {
     });
 
     renderLoginPage();
-    const emailInput = screen.getByPlaceholderText(/enter your email address/i);
-    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
+    const emailInput = screen.getByLabelText('Email');
+    const passwordInput = screen.getByLabelText('Password');
     await userEvent.type(emailInput, 'wrong@lms.local');
     await userEvent.type(passwordInput, 'WrongPass123!');
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
@@ -199,8 +199,8 @@ describe('LoginPage Comprehensive Test Cases', () => {
     });
 
     renderLoginPage();
-    await userEvent.type(screen.getByPlaceholderText(/enter your email address/i), 'locked@lms.local');
-    await userEvent.type(screen.getByPlaceholderText(/enter your password/i), 'SecretPass!');
+    await userEvent.type(screen.getByLabelText('Email'), 'locked@lms.local');
+    await userEvent.type(screen.getByLabelText('Password'), 'SecretPass!');
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
@@ -221,8 +221,8 @@ describe('LoginPage Comprehensive Test Cases', () => {
     });
 
     renderLoginPage();
-    await userEvent.type(screen.getByPlaceholderText(/enter your email address/i), 'admin@lms.local');
-    await userEvent.type(screen.getByPlaceholderText(/enter your password/i), 'Admin123!');
+    await userEvent.type(screen.getByLabelText('Email'), 'admin@lms.local');
+    await userEvent.type(screen.getByLabelText('Password'), 'Admin123!');
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
@@ -241,8 +241,8 @@ describe('LoginPage Comprehensive Test Cases', () => {
     });
 
     renderLoginPage();
-    await userEvent.type(screen.getByPlaceholderText(/enter your email address/i), 'admin@lms.local');
-    await userEvent.type(screen.getByPlaceholderText(/enter your password/i), 'Admin123!');
+    await userEvent.type(screen.getByLabelText('Email'), 'admin@lms.local');
+    await userEvent.type(screen.getByLabelText('Password'), 'Admin123!');
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
@@ -259,8 +259,8 @@ describe('LoginPage Comprehensive Test Cases', () => {
     });
 
     renderLoginPage();
-    await userEvent.type(screen.getByPlaceholderText(/enter your email address/i), 'admin@lms.local');
-    await userEvent.type(screen.getByPlaceholderText(/enter your password/i), 'Admin123!');
+    await userEvent.type(screen.getByLabelText('Email'), 'admin@lms.local');
+    await userEvent.type(screen.getByLabelText('Password'), 'Admin123!');
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
@@ -279,8 +279,8 @@ describe('LoginPage Comprehensive Test Cases', () => {
     });
 
     renderLoginPage();
-    await userEvent.type(screen.getByPlaceholderText(/enter your email address/i), 'admin@lms.local');
-    await userEvent.type(screen.getByPlaceholderText(/enter your password/i), 'Admin123!');
+    await userEvent.type(screen.getByLabelText('Email'), 'admin@lms.local');
+    await userEvent.type(screen.getByLabelText('Password'), 'Admin123!');
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
@@ -294,7 +294,7 @@ describe('LoginPage Comprehensive Test Cases', () => {
 
   it('TestCase 13: Toggles password visibility when eye icon is clicked', async () => {
     renderLoginPage();
-    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
+    const passwordInput = screen.getByLabelText('Password');
     expect(passwordInput).toHaveAttribute('type', 'password');
 
     const toggleBtn = screen.getByRole('button', { name: /show password/i });
@@ -322,7 +322,7 @@ describe('LoginPage Comprehensive Test Cases', () => {
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
     expect(screen.getByRole('alert')).toBeInTheDocument();
 
-    const emailInput = screen.getByPlaceholderText(/enter your email address/i);
+    const emailInput = screen.getByLabelText('Email');
     await userEvent.type(emailInput, 'a');
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
@@ -351,8 +351,8 @@ describe('LoginPage Comprehensive Test Cases', () => {
     });
 
     renderLoginPage();
-    await userEvent.type(screen.getByPlaceholderText(/enter your email address/i), 'admin@lms.local');
-    await userEvent.type(screen.getByPlaceholderText(/enter your password/i), 'Admin123!');
+    await userEvent.type(screen.getByLabelText('Email'), 'admin@lms.local');
+    await userEvent.type(screen.getByLabelText('Password'), 'Admin123!');
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
@@ -373,8 +373,8 @@ describe('LoginPage Comprehensive Test Cases', () => {
     });
 
     renderLoginPage();
-    await userEvent.type(screen.getByPlaceholderText(/enter your email address/i), 'student@lms.local');
-    await userEvent.type(screen.getByPlaceholderText(/enter your password/i), 'Student123!');
+    await userEvent.type(screen.getByLabelText('Email'), 'student@lms.local');
+    await userEvent.type(screen.getByLabelText('Password'), 'Student123!');
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
@@ -390,8 +390,8 @@ describe('LoginPage Comprehensive Test Cases', () => {
     });
 
     renderLoginPage();
-    await userEvent.type(screen.getByPlaceholderText(/enter your email address/i), 'platform@admin.local');
-    await userEvent.type(screen.getByPlaceholderText(/enter your password/i), 'Platform123!');
+    await userEvent.type(screen.getByLabelText('Email'), 'platform@admin.local');
+    await userEvent.type(screen.getByLabelText('Password'), 'Platform123!');
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {

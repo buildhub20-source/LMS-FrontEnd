@@ -576,7 +576,7 @@ export const SignInPage = ({
   tenantSlugHint = 'Select the learning workspace you want to access.',
 }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const brandName = (appConfig.name || 'LMS').replace(/\s*\(dev\)/i, '').trim();
 
@@ -1141,6 +1141,7 @@ export const SignInPage = ({
                   <button
                     type="button"
                     onClick={onDismissError}
+                    aria-label="Dismiss error"
                     style={{
                       background: 'none',
                       border: 'none',
@@ -1172,7 +1173,6 @@ export const SignInPage = ({
                   autoComplete="email"
                   required
                   placeholder="student@learning.edu"
-                  defaultValue="michaelobelix2025@mail.com"
                   onChange={() => onDismissError?.()}
                   style={{
                     width: '100%',
@@ -1211,6 +1211,7 @@ export const SignInPage = ({
                     <button
                       type="button"
                       onClick={onResetPassword}
+                      aria-label="Reset password"
                       style={{
                         background: 'none',
                         border: 'none',
@@ -1236,7 +1237,6 @@ export const SignInPage = ({
                     autoComplete="current-password"
                     required
                     placeholder="••••••••••••"
-                    defaultValue="••••••••••••"
                     onChange={() => onDismissError?.()}
                     style={{
                       width: '100%',
@@ -1281,6 +1281,7 @@ export const SignInPage = ({
                     onMouseEnter={e => e.currentTarget.style.color = '#f0f0f5'}
                     onMouseLeave={e => e.currentTarget.style.color = '#94a3b8'}
                     title={showPassword ? 'Hide password' : 'Show password'}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
