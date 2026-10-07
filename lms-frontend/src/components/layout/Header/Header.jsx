@@ -28,6 +28,9 @@ import useAuth from '../../../features/auth/hooks/useAuth';
 export const Header = ({ onToggleSidebar, children, tabNav }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const isStudent = (user?.roles ?? []).some(
+    (r) => (typeof r === 'string' ? r : r?.name) === 'STUDENT'
+  );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { unreadCount: socketUnreadCount } = useNotificationSocket();
 
@@ -134,15 +137,17 @@ export const Header = ({ onToggleSidebar, children, tabNav }) => {
           />
         </div>
 
-        {/* Bookmark icon */}
-        <Link
-          to={ROUTES.NOTES_BOOKMARKS || '#'}
-          className="p-2 rounded-lg transition-colors duration-150 hover:opacity-70"
-          style={{ color: 'var(--muted-foreground)' }}
-          title="Bookmarks"
-        >
-          <Bookmark size={18} />
-        </Link>
+        {/* Bookmark icon — student learning workspace only */}
+        {isStudent && (
+          <Link
+            to={ROUTES.NOTES_BOOKMARKS || '#'}
+            className="p-2 rounded-lg transition-colors duration-150 hover:opacity-70"
+            style={{ color: 'var(--muted-foreground)' }}
+            title="Bookmarks & Notes"
+          >
+            <Bookmark size={18} />
+          </Link>
+        )}
 
         {/* Theme toggle */}
         <ThemeSlider size="md" />
@@ -180,12 +185,14 @@ export const Header = ({ onToggleSidebar, children, tabNav }) => {
                 <span>Profile</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link to={ROUTES.NOTES_BOOKMARKS || '#'} className="cursor-pointer flex items-center gap-2 text-xs">
-                <Bookmark size={14} />
-                <span>Saved & Notes</span>
-              </Link>
-            </DropdownMenuItem>
+            {isStudent && (
+              <DropdownMenuItem asChild>
+                <Link to={ROUTES.NOTES_BOOKMARKS || '#'} className="cursor-pointer flex items-center gap-2 text-xs">
+                  <Bookmark size={14} />
+                  <span>Saved & Notes</span>
+                </Link>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={async () => {

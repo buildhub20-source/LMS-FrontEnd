@@ -47,7 +47,7 @@ export const ScheduleLiveSessionModal = ({
       <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 animate-scale-in">
         <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400">
+            <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400">
               <Video className="w-5 h-5" />
             </div>
             <div>
@@ -73,7 +73,7 @@ export const ScheduleLiveSessionModal = ({
                 required
                 value={courseId}
                 onChange={(e) => setCourseId(e.target.value)}
-                className="w-full px-3.5 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3.5 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               >
                 <option value="" disabled>Select course...</option>
                 {courses.map((c) => (
@@ -95,7 +95,7 @@ export const ScheduleLiveSessionModal = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g., Live Q&A and Architecture Walkthrough"
-              className="w-full px-3.5 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3.5 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
             />
           </div>
 
@@ -108,7 +108,7 @@ export const ScheduleLiveSessionModal = ({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Topics covered, prerequisite reading, or instructions for students..."
-              className="w-full px-3.5 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3.5 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
             />
           </div>
 
@@ -122,7 +122,7 @@ export const ScheduleLiveSessionModal = ({
                 required
                 value={startDateTime}
                 onChange={(e) => setStartDateTime(e.target.value)}
-                className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500"
               />
             </div>
 
@@ -133,7 +133,7 @@ export const ScheduleLiveSessionModal = ({
               <select
                 value={durationMinutes}
                 onChange={(e) => setDurationMinutes(Number(e.target.value))}
-                className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500"
               >
                 <option value={30}>30 Minutes</option>
                 <option value={45}>45 Minutes</option>
@@ -157,7 +157,7 @@ export const ScheduleLiveSessionModal = ({
               type="submit"
               variant="primary"
               disabled={isSubmitting || !title.trim()}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-600/30"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm shadow-emerald-600/30"
             >
               {isSubmitting ? 'Scheduling...' : 'Schedule Class'}
             </Button>

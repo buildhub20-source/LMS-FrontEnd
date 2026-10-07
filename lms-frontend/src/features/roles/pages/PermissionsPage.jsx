@@ -23,13 +23,13 @@ const M = {
 
 /* ─── Pastel badge palette keyed by role name ───────────────────────── */
 const ROLE_BADGE = [
-  { bg: 'rgba(115, 103, 240, 0.15)', color: '#7367f0' },
-  { bg: 'rgba(255, 159, 67, 0.15)', color: '#ff9f43' },
-  { bg: 'rgba(0, 207, 232, 0.15)', color: '#00cfe8' },
-  { bg: 'rgba(40, 199, 111, 0.15)', color: '#28c76f' },
-  { bg: 'rgba(234, 84, 85, 0.15)', color: '#ea5455' },
-  { bg: 'rgba(33, 150, 243, 0.15)', color: '#2196f3' },
-  { bg: 'rgba(156, 39, 176, 0.15)', color: '#d05ce3' },
+  { bg: 'rgba(59, 130, 246, 0.12)', color: '#3b82f6' },   /* blue (info) */
+  { bg: 'rgba(245, 158, 11, 0.12)', color: '#f59e0b' },   /* amber (warning) */
+  { bg: 'rgba(6, 182, 212, 0.12)', color: '#06b6d4' },    /* cyan (chart) */
+  { bg: 'rgba(34, 197, 94, 0.12)', color: '#22c55e' },    /* green (primary/success) */
+  { bg: 'rgba(239, 68, 68, 0.12)', color: '#ef4444' },    /* red (destructive) */
+  { bg: 'rgba(139, 92, 246, 0.12)', color: '#8b5cf6' },   /* violet (chart-5) */
+  { bg: 'rgba(236, 72, 153, 0.12)', color: '#ec4899' },   /* pink (chart-4) */
 ];
 
 function roleBadgeStyle(name = '') {
@@ -62,8 +62,9 @@ export const PermissionsPage = () => {
   const [editPerm, setEditPerm] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [permName, setPermName] = useState('');
+  const [permResource, setPermResource] = useState('');
+  const [permAction, setPermAction] = useState('');
   const [permDescription, setPermDescription] = useState('');
-  const [permAuthority, setPermAuthority] = useState('');
   const [saving, setSaving] = useState(false);
   const [modalError, setModalError] = useState('');
 
@@ -108,7 +109,8 @@ export const PermissionsPage = () => {
         const q = search.toLowerCase();
         return (
           p.name?.toLowerCase().includes(q) ||
-          p.authority?.toLowerCase().includes(q) ||
+          p.resource?.toLowerCase().includes(q) ||
+          p.action?.toLowerCase().includes(q) ||
           p.description?.toLowerCase().includes(q)
         );
       })
@@ -121,10 +123,9 @@ export const PermissionsPage = () => {
   const permRolesMap = {};
   roles.forEach((role) => {
     (role.permissions ?? []).forEach((p) => {
-      // p can be either a string (authority name) or an object with an authority/name/id
       const authorityStr = typeof p === 'string' ? p : (p.name ?? p.authority);
       const permObj = permissions.find(
-        (x) => x.name === authorityStr || x.authority === authorityStr || x.id === (p.id ?? p),
+        (x) => x.name === authorityStr || x.id === (p.id ?? p),
       );
       if (permObj) {
         if (!permRolesMap[permObj.id]) permRolesMap[permObj.id] = [];
@@ -137,51 +138,63 @@ export const PermissionsPage = () => {
   const openCreate = () => {
     setEditPerm(null);
     setPermName('');
+    setPermResource('');
+    setPermAction('');
     setPermDescription('');
-    setPermAuthority('');
     setModalError('');
     setModalOpen(true);
   };
   const openEdit = (perm) => {
     setEditPerm(perm);
     setPermName(perm.name ?? '');
+    setPermResource(perm.resource ?? '');
+    setPermAction(perm.action ?? '');
     setPermDescription(perm.description ?? '');
-    setPermAuthority(perm.authority ?? '');
     setModalError('');
     setModalOpen(true);
   };
 
   const handleSave = async () => {
     setModalError('');
-    if (!permName.trim()) {
-      setModalError('Permission name is required.');
-      return;
-    }
     if (!permDescription.trim()) {
       setModalError('Description is required.');
       return;
     }
-    if (!permAuthority.trim()) {
-      setModalError('Authority identifier is required.');
-      return;
-    }
-    const authority = permAuthority.trim().toUpperCase().replace(/\s+/g, '_');
+
     setSaving(true);
     try {
       if (editPerm) {
+        // Backend UpdatePermissionRequest only accepts description
         await roleService.updatePermission(editPerm.id, {
-          name: permName.trim(),
           description: permDescription.trim(),
-          authority,
         });
-        toastSuccess(`Permission "${permName}" updated.`);
+        toastSuccess(`Permission "${editPerm.name}" updated.`);
       } else {
+        const resource = permResource.trim().toUpperCase().replace(/\s+/g, '_');
+        const action = permAction.trim().toUpperCase().replace(/\s+/g, '_');
+        const name = (permName.trim() || `${resource}_${action}`)
+          .toUpperCase()
+          .replace(/\s+/g, '_');
+
+        if (!resource) {
+          setModalError('Resource is required (e.g. COURSE, USER).');
+          setSaving(false);
+          return;
+        }
+        if (!action) {
+          setModalError('Action is required (e.g. VIEW, CREATE).');
+          setSaving(false);
+          return;
+        }
+
+        // Backend CreatePermissionRequest requires name, resource, action
         await roleService.createPermission({
-          name: permName.trim(),
+          name,
+          resource,
+          action,
           description: permDescription.trim(),
-          authority,
         });
-        toastSuccess(`Permission "${permName}" created.`);
+        toastSuccess(`Permission "${name}" created.`);
       }
       setModalOpen(false);
       loadData();
@@ -334,7 +347,7 @@ export const PermissionsPage = () => {
                     style={{
                       padding: '40px 20px',
                       textAlign: 'center',
-                      color: '#ea5455',
+                      color: 'var(--destructive, #ef4444)',
                       fontSize: 13,
                     }}
                   >
@@ -594,31 +607,52 @@ export const PermissionsPage = () => {
                 padding: '12px 16px',
               }}
             >
-              <p style={{ margin: 0, fontSize: 14, fontWeight: 500, color: '#f87171' }}>
+              <p style={{ margin: 0, fontSize: 14, fontWeight: 500, color: 'var(--destructive, #ef4444)' }}>
                 {modalError}
               </p>
             </div>
           )}
           <div className="space-y-5">
-            <AdminInput
-              label="Permission name"
-              value={permName}
-              onChange={(e) => setPermName(e.target.value)}
-              placeholder="e.g. Create Course"
-              autoFocus
-            />
+            {!editPerm ? (
+              <>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <AdminInput
+                    label="Resource"
+                    value={permResource}
+                    onChange={(e) => setPermResource(e.target.value.toUpperCase().replace(/\s+/g, '_'))}
+                    placeholder="e.g. COURSE"
+                    hint="UPPER_SNAKE_CASE (e.g. USER, COURSE)"
+                    autoFocus
+                  />
+                  <AdminInput
+                    label="Action"
+                    value={permAction}
+                    onChange={(e) => setPermAction(e.target.value.toUpperCase().replace(/\s+/g, '_'))}
+                    placeholder="e.g. VIEW"
+                    hint="UPPER_SNAKE_CASE (e.g. VIEW, CREATE)"
+                  />
+                </div>
+                <AdminInput
+                  label="Permission identifier (Optional)"
+                  value={permName}
+                  onChange={(e) => setPermName(e.target.value.toUpperCase().replace(/\s+/g, '_'))}
+                  placeholder={permResource && permAction ? `${permResource}_${permAction}` : 'e.g. COURSE_VIEW'}
+                  hint="Defaults to {RESOURCE}_{ACTION}"
+                />
+              </>
+            ) : (
+              <div>
+                <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>
+                  Identifier: <strong style={{ color: 'var(--text-primary)' }}>{permName}</strong> ({permResource} · {permAction})
+                </p>
+              </div>
+            )}
             <AdminInput
               label="Description"
               value={permDescription}
               onChange={(e) => setPermDescription(e.target.value)}
               placeholder="What this permission allows users to do"
-            />
-            <AdminInput
-              label="Authority identifier"
-              value={permAuthority}
-              onChange={(e) => setPermAuthority(e.target.value)}
-              placeholder="e.g. COURSE_CREATE"
-              hint="Uppercase with underscores. Used in role-based access checks."
+              autoFocus={!!editPerm}
             />
           </div>
         </AdminModal>

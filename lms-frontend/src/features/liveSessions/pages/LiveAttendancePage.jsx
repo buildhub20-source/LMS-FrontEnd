@@ -40,7 +40,7 @@ export const LiveAttendancePage = () => {
                 <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                   Session Attendance
                 </h1>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">
                   Official Roster
                 </span>
               </div>

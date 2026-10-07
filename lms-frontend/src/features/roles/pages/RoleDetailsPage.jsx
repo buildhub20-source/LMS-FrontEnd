@@ -202,7 +202,7 @@ export const RoleDetailsPage = () => {
               <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
                 Permissions
               </span>
-              <p style={{ margin: '2px 0 0', fontSize: 20, fontWeight: 800, color: '#6366f1' }}>
+              <p style={{ margin: '2px 0 0', fontSize: 20, fontWeight: 800, color: 'var(--primary)' }}>
                 {permissions.length}
               </p>
             </div>
@@ -242,7 +242,7 @@ export const RoleDetailsPage = () => {
           }}>
             <div>
               <h2 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <KeyRound size={18} style={{ color: '#6366f1' }} />
+                <KeyRound size={18} style={{ color: 'var(--primary)' }} />
                 Granted Permissions ({permissions.length})
               </h2>
               <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
@@ -338,8 +338,8 @@ export const RoleDetailsPage = () => {
                       gap: 4,
                       fontSize: 11,
                       fontWeight: 600,
-                      color: '#10b981',
-                      background: 'rgba(16,185,129,0.1)',
+                      color: 'var(--color-success, #22c55e)',
+                      background: 'var(--color-success-light, rgba(34,197,94,0.1))',
                       padding: '2px 8px',
                       borderRadius: 12,
                     }}>

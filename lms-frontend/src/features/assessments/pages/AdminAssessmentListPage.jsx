@@ -22,9 +22,214 @@ import {
   useDeleteAdminAssessment,
 } from '../hooks/useAdminAssessments';
 
-/* ── palette ── */
+/* ── Tech Visual Presets & SVG Emblems (matching Courses aesthetic) ── */
+const TECH_PRESETS = {
+  react: {
+    name: 'Frontend & React',
+    accent: '#38bdf8',
+    gradient: 'linear-gradient(135deg, #0c2340 0%, #0369a1 60%, #0284c7 100%)',
+    glow: 'rgba(56, 189, 248, 0.25)',
+    border: 'rgba(56, 189, 248, 0.3)',
+    pillBg: 'rgba(56, 189, 248, 0.15)',
+    pillColor: '#7dd3fc',
+    emblem: (
+      <svg width="40" height="40" viewBox="-11.5 -10.23174 23 20.46348" fill="none">
+        <circle cx="0" cy="0" r="2.05" fill="#38bdf8" />
+        <g stroke="#38bdf8" strokeWidth="1" fill="none">
+          <ellipse rx="11" ry="4.2" />
+          <ellipse rx="11" ry="4.2" transform="rotate(60)" />
+          <ellipse rx="11" ry="4.2" transform="rotate(120)" />
+        </g>
+      </svg>
+    ),
+  },
+  angular: {
+    name: 'Angular Framework',
+    accent: '#f43f5e',
+    gradient: 'linear-gradient(135deg, #4c0519 0%, #be123c 60%, #e11d48 100%)',
+    glow: 'rgba(244, 63, 94, 0.25)',
+    border: 'rgba(244, 63, 94, 0.3)',
+    pillBg: 'rgba(244, 63, 94, 0.15)',
+    pillColor: '#fda4af',
+    emblem: (
+      <svg width="40" height="40" viewBox="0 0 250 250" fill="none">
+        <polygon points="125,30 125,30 125,30 31.9,63.2 46.1,186.3 125,230 125,230 125,230 203.9,186.3 218.1,63.2" fill="rgba(244,63,94,0.3)" stroke="#f43f5e" strokeWidth="14" />
+        <polygon points="125,52.1 125,153.4 125,153.4 125,207 182.2,175.2 193.3,79.1" fill="rgba(244,63,94,0.5)" />
+        <path d="M125 78.5L84.2 173.3h18.8l8.2-20.7h27.6v-15.4h-21.4l12.6-31.5L125 78.5z" fill="#fff" />
+      </svg>
+    ),
+  },
+  fullstack: {
+    name: 'Full-Stack Architecture',
+    accent: '#10b981',
+    gradient: 'linear-gradient(135deg, #022c22 0%, #047857 60%, #059669 100%)',
+    glow: 'rgba(16, 185, 129, 0.25)',
+    border: 'rgba(16, 185, 129, 0.3)',
+    pillBg: 'rgba(16, 185, 129, 0.15)',
+    pillColor: '#6ee7b7',
+    emblem: (
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="12 2 2 7 12 12 22 7 12 2" />
+        <polyline points="2 17 12 22 22 17" />
+        <polyline points="2 12 12 17 22 12" />
+      </svg>
+    ),
+  },
+  java: {
+    name: 'Data Structures & Algorithms',
+    accent: '#f97316',
+    gradient: 'linear-gradient(135deg, #431407 0%, #c2410c 60%, #ea580c 100%)',
+    glow: 'rgba(249, 115, 22, 0.25)',
+    border: 'rgba(249, 115, 22, 0.3)',
+    pillBg: 'rgba(249, 115, 22, 0.15)',
+    pillColor: '#fdba74',
+    emblem: (
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="5" r="3" />
+        <circle cx="5" cy="19" r="3" />
+        <circle cx="19" cy="19" r="3" />
+        <line x1="12" y1="8" x2="5" y2="16" />
+        <line x1="12" y1="8" x2="19" y2="16" />
+      </svg>
+    ),
+  },
+  database: {
+    name: 'Database & SQL',
+    accent: '#06b6d4',
+    gradient: 'linear-gradient(135deg, #082f49 0%, #0369a1 60%, #0891b2 100%)',
+    glow: 'rgba(6, 182, 212, 0.25)',
+    border: 'rgba(6, 182, 212, 0.3)',
+    pillBg: 'rgba(6, 182, 212, 0.15)',
+    pillColor: '#67e8f9',
+    emblem: (
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <ellipse cx="12" cy="5" rx="9" ry="3" />
+        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+      </svg>
+    ),
+  },
+  cloud: {
+    name: 'Cloud & DevOps',
+    accent: '#06b6d4',
+    gradient: 'linear-gradient(135deg, #083344 0%, #0e7490 60%, #06b6d4 100%)',
+    glow: 'rgba(6, 182, 212, 0.25)',
+    border: 'rgba(6, 182, 212, 0.3)',
+    pillBg: 'rgba(6, 182, 212, 0.15)',
+    pillColor: '#67e8f9',
+    emblem: (
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
+      </svg>
+    ),
+  },
+  ai: {
+    name: 'AI & Data Science',
+    accent: '#14b8a6',
+    gradient: 'linear-gradient(135deg, #042f2e 0%, #0f766e 60%, #0d9488 100%)',
+    glow: 'rgba(20, 184, 166, 0.25)',
+    border: 'rgba(20, 184, 166, 0.3)',
+    pillBg: 'rgba(20, 184, 166, 0.15)',
+    pillColor: '#5eead4',
+    emblem: (
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="4" y="4" width="16" height="16" rx="2" />
+        <rect x="9" y="9" width="6" height="6" />
+        <line x1="9" y1="1" x2="9" y2="4" />
+        <line x1="15" y1="1" x2="15" y2="4" />
+        <line x1="9" y1="20" x2="9" y2="23" />
+        <line x1="15" y1="20" x2="15" y2="23" />
+      </svg>
+    ),
+  },
+  math: {
+    name: 'Mathematics & Calculus',
+    accent: '#10b981',
+    gradient: 'linear-gradient(135deg, #064e3b 0%, #059669 60%, #10b981 100%)',
+    glow: 'rgba(16, 185, 129, 0.25)',
+    border: 'rgba(16, 185, 129, 0.3)',
+    pillBg: 'rgba(16, 185, 129, 0.15)',
+    pillColor: '#6ee7b7',
+    emblem: (
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 4h16v3L10 17h10v3H4v-3l10-10H4V4z" />
+      </svg>
+    ),
+  },
+  qa: {
+    name: 'Verification & QA',
+    accent: '#059669',
+    gradient: 'linear-gradient(135deg, #022c22 0%, #065f46 60%, #047857 100%)',
+    glow: 'rgba(5, 150, 105, 0.25)',
+    border: 'rgba(5, 150, 105, 0.3)',
+    pillBg: 'rgba(5, 150, 105, 0.15)',
+    pillColor: '#6ee7b7',
+    emblem: (
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        <path d="m9 12 2 2 4-4" />
+      </svg>
+    ),
+  },
+  generic: {
+    name: 'Core Assessment',
+    accent: '#10b981',
+    gradient: 'linear-gradient(135deg, #022c22 0%, #047857 60%, #059669 100%)',
+    glow: 'rgba(16, 185, 129, 0.25)',
+    border: 'rgba(16, 185, 129, 0.3)',
+    pillBg: 'rgba(16, 185, 129, 0.15)',
+    pillColor: '#6ee7b7',
+    emblem: (
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="16 18 22 12 16 6" />
+        <polyline points="8 6 2 12 8 18" />
+      </svg>
+    ),
+  },
+};
+
+function getTechPreset(title = '', type = '') {
+  const t = (title + ' ' + type).toLowerCase();
+  if (t.includes('react') || t.includes('frontend') || t.includes('javascript') || t.includes('js')) return TECH_PRESETS.react;
+  if (t.includes('angular') || t.includes('vue')) return TECH_PRESETS.angular;
+  if (t.includes('sql') || t.includes('database') || t.includes('db') || t.includes('postgres') || t.includes('mongo')) return TECH_PRESETS.database;
+  if (t.includes('tree') || t.includes('graph') || t.includes('algorithm') || t.includes('dsa') || t.includes('data structure') || t.includes('java')) return TECH_PRESETS.java;
+  if (t.includes('cloud') || t.includes('devops') || t.includes('aws') || t.includes('docker') || t.includes('kubernetes')) return TECH_PRESETS.cloud;
+  if (t.includes('ai') || t.includes('python') || t.includes('machine') || t.includes('learning')) return TECH_PRESETS.ai;
+  if (t.includes('calculus') || t.includes('math') || t.includes('exam')) return TECH_PRESETS.math;
+  if (t.includes('verif') || t.includes('test') || t.includes('qa')) return TECH_PRESETS.qa;
+  if (t.includes('full') || t.includes('stack') || t.includes('backend') || t.includes('web') || t.includes('coding')) return TECH_PRESETS.fullstack;
+  return TECH_PRESETS.generic;
+}
+
 function getInitials(str = '') {
   return str.split(' ').slice(0, 2).map(w => w[0] ?? '').join('').toUpperCase() || 'AS';
+}
+
+function TypeBadge({ type }) {
+  const t = (type || 'CODING').toUpperCase();
+  const label = t.replace('_', ' ');
+  return (
+    <span
+      style={{
+        padding: '3px 10px',
+        borderRadius: 99,
+        fontSize: 11,
+        fontWeight: 700,
+        background: 'rgba(255, 255, 255, 0.2)',
+        color: '#ffffff',
+        border: '1px solid rgba(255, 255, 255, 0.3)',
+        letterSpacing: '0.3px',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 5,
+        backdropFilter: 'blur(6px)',
+      }}
+    >
+      <Code2 size={12} />
+      {label.charAt(0) + label.slice(1).toLowerCase()}
+    </span>
+  );
 }
 
 /* ── status ── */
@@ -54,10 +259,10 @@ function Avatar({ name = '', size = 32 }) {
   return (
     <div style={{
       width: size, height: size, borderRadius: '50%', flexShrink: 0,
-      background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)', color: '#fff',
+      background: 'linear-gradient(135deg, #059669 0%, #047857 100%)', color: '#fff',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontWeight: 700, fontSize: size * 0.38, fontFamily: 'system-ui, -apple-system, sans-serif',
-      boxShadow: '0 2px 6px rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.15)'
+      boxShadow: '0 2px 6px rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.15)'
     }}>
       {getInitials(name)}
     </div>
@@ -81,22 +286,24 @@ function buildActions(assessment, onAction) {
   return A;
 }
 
-/* ── Modern Assessment Card (Figma Theme) ── */
+/* ── Modern Assessment Card (Matching Course Card Design) ── */
 function AssessmentCard({ assessment, onAction, onClick }) {
   const actions = buildActions(assessment, onAction);
   const primary = actions[0] ?? null;
+  const preset = getTechPreset(assessment.title, assessment.type);
+  const initials = getInitials(assessment.title);
 
   return (
     <div
       onClick={onClick}
       style={{
-        background: 'var(--card)',
-        border: '1px solid var(--border)',
+        background: 'var(--card, #ffffff)',
+        border: '1px solid var(--border, #e2e8f0)',
         borderRadius: 20,
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: 'var(--shadow-sm)',
+        boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
         transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
         position: 'relative',
         cursor: 'pointer',
@@ -104,20 +311,20 @@ function AssessmentCard({ assessment, onAction, onClick }) {
       }}
       onMouseEnter={e => {
         e.currentTarget.style.transform = 'translateY(-4px)';
-        e.currentTarget.style.borderColor = 'var(--color-primary, #6366f1)';
-        e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+        e.currentTarget.style.borderColor = 'var(--primary, #10b981)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-md, 0 8px 24px rgba(0,0,0,0.08))';
       }}
       onMouseLeave={e => {
         e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.borderColor = 'var(--border)';
-        e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+        e.currentTarget.style.borderColor = 'var(--border, #e2e8f0)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))';
       }}
     >
       {/* Visual Header Banner */}
       <div
         style={{
-          height: 110,
-          background: 'linear-gradient(135deg, #4338ca 0%, #6366f1 60%, #818cf8 100%)',
+          height: 135,
+          background: assessment.thumbnailUrl ? `url(${assessment.thumbnailUrl}) center/cover` : preset.gradient,
           position: 'relative',
           padding: '14px 16px',
           display: 'flex',
@@ -126,78 +333,77 @@ function AssessmentCard({ assessment, onAction, onClick }) {
           overflow: 'hidden',
         }}
       >
-        {/* Ambient mesh highlight */}
+        {/* Subtle mesh overlay */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.22) 0%, transparent 60%)',
+            background: 'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)',
             pointerEvents: 'none',
           }}
         />
 
-        {/* Evaluation Watermark SVG */}
+        {/* Tech Emblem Background Graphic */}
         <div
           style={{
             position: 'absolute',
-            right: 12,
-            bottom: 6,
-            opacity: 0.15,
-            color: '#fff',
+            right: 14,
+            bottom: 8,
+            opacity: 0.85,
+            filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.3))',
             pointerEvents: 'none',
           }}
         >
-          <Code2 size={72} />
+          {preset.emblem}
         </div>
 
-        {/* Top-Left Category Badge */}
-        <div style={{ zIndex: 2, display: 'flex', gap: 6, alignItems: 'center' }}>
+        {/* Top Badges */}
+        <div style={{ zIndex: 2, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          <TypeBadge type={assessment.type} />
           <span
             style={{
-              padding: '3px 10px',
+              padding: '3px 9px',
               borderRadius: 99,
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: 700,
-              background: 'rgba(255, 255, 255, 0.25)',
-              color: '#ffffff',
+              background: 'rgba(0,0,0,0.5)',
+              color: '#f1f5f9',
               backdropFilter: 'blur(6px)',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 5,
+              border: '1px solid rgba(255,255,255,0.15)',
             }}
           >
-            <Code2 size={13} />
-            Coding Assessment
+            {preset.name}
           </span>
         </div>
 
-        {/* Top-Right Status */}
+        {/* Top-Right Status Pill */}
         <div style={{ zIndex: 2 }}>
           <StatusPill status={assessment.status} />
         </div>
 
-        {/* Floating Icon Emblem Badge */}
+        {/* Logo Monogram inside Banner */}
         <div
           style={{
             position: 'absolute',
             bottom: 12,
             left: 16,
-            width: 38,
-            height: 38,
+            width: 40,
+            height: 40,
             borderRadius: 12,
-            background: 'rgba(255, 255, 255, 0.9)',
+            background: 'rgba(0, 0, 0, 0.45)',
             backdropFilter: 'blur(8px)',
-            border: '1px solid rgba(255, 255, 255, 0.4)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: 'var(--color-primary, #6366f1)',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
+            fontWeight: 800,
+            fontSize: 15,
+            color: '#fff',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
             zIndex: 3,
           }}
         >
-          <Code size={18} />
+          {initials}
         </div>
       </div>
 
@@ -207,9 +413,9 @@ function AssessmentCard({ assessment, onAction, onClick }) {
           <h3
             style={{
               margin: '0 0 6px',
-              fontSize: 16,
+              fontSize: 17,
               fontWeight: 700,
-              color: 'var(--text-primary)',
+              color: 'var(--text-primary, #1a1a2e)',
               lineHeight: 1.35,
             }}
           >
@@ -219,32 +425,51 @@ function AssessmentCard({ assessment, onAction, onClick }) {
             style={{
               margin: 0,
               fontSize: 13,
-              color: 'var(--text-secondary)',
-              lineHeight: 1.5,
+              color: 'var(--text-muted, #64748b)',
               display: '-webkit-box',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
+              lineHeight: 1.5,
             }}
           >
             {assessment.description || 'Comprehensive evaluation covering algorithmic reasoning, implementation correctness, and automated grading.'}
           </p>
         </div>
 
-        {/* Metadata Chips */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 12, color: 'var(--text-muted)', flexWrap: 'wrap' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <FileText size={13} style={{ color: 'var(--color-primary, #6366f1)' }} /> {assessment.questionCount || 0} Questions
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <Clock size={13} style={{ color: '#0ea5e9' }} /> {assessment.durationMinutes || 0} Mins
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#f59e0b' }}>
-            <Award size={13} /> {assessment.totalMarks || 100} Marks
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#10b981' }}>
-            <Shield size={13} /> Proctored
-          </span>
+        {/* Stats strip matching Courses */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 14,
+            padding: '10px 14px',
+            borderRadius: 12,
+            background: 'var(--color-bg, #f5f7fa)',
+            border: '1px solid var(--border, #e2e8f0)',
+            fontSize: 12,
+            color: 'var(--text-secondary, #4a5568)',
+            flexWrap: 'wrap',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <FileText size={14} style={{ color: preset.accent }} />
+            <span>{assessment.questionCount || 0} Questions</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Clock size={14} style={{ color: preset.accent }} />
+            <span>{assessment.durationMinutes || 0} Mins</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Award size={14} style={{ color: '#f59e0b' }} />
+            <span>{assessment.totalMarks || 100} Marks</span>
+          </div>
+          {assessment.proctored !== false && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginLeft: 'auto', color: '#10b981', fontWeight: 600 }}>
+              <Shield size={14} />
+              <span>Proctored</span>
+            </div>
+          )}
         </div>
 
         {/* Score / Weightage Bar */}
@@ -253,12 +478,12 @@ function AssessmentCard({ assessment, onAction, onClick }) {
             <span style={{ color: 'var(--text-muted)' }}>Weightage / Score</span>
             <span style={{ color: 'var(--text-primary)' }}>{assessment.totalMarks || 0}%</span>
           </div>
-          <div style={{ height: 6, background: 'var(--border)', borderRadius: 99, overflow: 'hidden' }}>
+          <div style={{ height: 6, background: 'var(--border, #e2e8f0)', borderRadius: 99, overflow: 'hidden' }}>
             <div
               style={{
                 height: '100%',
                 width: `${Math.min(100, assessment.totalMarks || 100)}%`,
-                background: 'linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%)',
+                background: `linear-gradient(90deg, ${preset.accent} 0%, var(--primary, #10b981) 100%)`,
                 borderRadius: 99,
                 transition: 'width 0.4s ease',
               }}
@@ -267,81 +492,74 @@ function AssessmentCard({ assessment, onAction, onClick }) {
         </div>
 
         {/* Divider */}
-        <div style={{ height: 1, background: 'var(--border)' }} />
+        <div style={{ height: 1, background: 'var(--border, #e2e8f0)' }} />
 
-        {/* Creator & Action Buttons */}
+        {/* Creator & Action Buttons matching Courses */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
-            <Avatar name="Platform Admin" size={32} />
+            <Avatar name={assessment.createdByName ?? 'Platform Admin'} size={32} />
             <div style={{ minWidth: 0 }}>
               <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                Platform Admin
+                {assessment.createdByName ?? 'Platform Admin'}
               </p>
               <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)' }}>Instructor</p>
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 8, shrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }} onClick={e => e.stopPropagation()}>
             <button
-              onClick={(e) => { e.stopPropagation(); onAction('edit', assessment); }}
+              onClick={() => onAction('edit', assessment)}
               style={{
-                padding: '6px 13px',
+                padding: '6px 14px',
                 borderRadius: 99,
                 fontSize: 12,
                 fontWeight: 600,
+                border: '1px solid var(--border, #e2e8f0)',
+                background: 'var(--muted, #f8fafc)',
+                color: 'var(--text-primary, #1a1a2e)',
                 cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                border: '1px solid var(--border)',
-                background: 'var(--background)',
-                color: 'var(--text-secondary)',
                 transition: 'all 0.2s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'var(--card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'var(--background)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--card, #ffffff)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'var(--muted, #f8fafc)'; }}
             >
               Edit
             </button>
             <button
-              onClick={(e) => { e.stopPropagation(); onAction('duplicate', assessment); }}
+              onClick={() => onAction('duplicate', assessment)}
               title="Duplicate assessment"
               style={{
                 padding: '7px 10px',
                 borderRadius: 8,
-                fontSize: 13,
-                fontWeight: 600,
-                fontFamily: 'inherit',
+                border: '1px solid var(--border, #e2e8f0)',
+                background: 'var(--background, #f8fafc)',
+                color: 'var(--text-secondary, #64748b)',
                 cursor: 'pointer',
-                border: '1px solid var(--border)',
-                background: 'var(--background)',
-                color: 'var(--text-secondary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                transition: 'all 0.2s',
+                transition: 'all 0.15s ease',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'var(--card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'var(--background)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--card, #ffffff)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'var(--background, #f8fafc)'; }}
             >
-              <Copy size={14} />
+              <Copy size={15} />
             </button>
-            {primary && primary.label !== 'Edit' && (
+            {primary && (
               <button
-                onClick={(e) => { e.stopPropagation(); primary.onClick(); }}
+                onClick={primary.onClick}
                 style={{
                   padding: '6px 14px',
                   borderRadius: 99,
                   fontSize: 12,
                   fontWeight: 700,
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
                   border: primary.danger ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
-                  background: primary.danger ? 'rgba(239, 68, 68, 0.15)' : 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)',
+                  background: primary.danger ? 'rgba(239, 68, 68, 0.15)' : 'linear-gradient(135deg, var(--primary, #10b981) 0%, #059669 100%)',
                   color: primary.danger ? '#f87171' : '#fff',
-                  boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(99, 102, 241, 0.35)',
+                  cursor: 'pointer',
+                  boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(16, 185, 129, 0.35)',
                   transition: 'all 0.2s',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}
               >
                 {primary.label}
               </button>
@@ -353,35 +571,36 @@ function AssessmentCard({ assessment, onAction, onClick }) {
   );
 }
 
-/* ── Modern List Row (Figma Theme) ── */
+/* ── Modern List Row (Matching Course List View) ── */
 function AssessmentListRow({ assessment, onAction, onClick }) {
   const actions = buildActions(assessment, onAction);
   const primary = actions[0];
+  const preset = getTechPreset(assessment.title, assessment.type);
 
   return (
     <div
       onClick={onClick}
       style={{
-        background: 'var(--card)',
-        border: '1px solid var(--border)',
+        background: 'var(--card, #ffffff)',
+        border: '1px solid var(--border, #e2e8f0)',
         borderRadius: 16,
         display: 'flex',
         alignItems: 'center',
         padding: '16px 20px',
         gap: 16,
         cursor: 'pointer',
-        boxShadow: 'var(--shadow-sm)',
+        boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.05))',
         transition: 'all 0.2s ease',
       }}
       onMouseEnter={e => {
         e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.borderColor = 'var(--color-primary, #6366f1)';
-        e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+        e.currentTarget.style.borderColor = 'var(--primary, #10b981)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-md, 0 6px 18px rgba(0,0,0,0.08))';
       }}
       onMouseLeave={e => {
         e.currentTarget.style.transform = 'none';
-        e.currentTarget.style.borderColor = 'var(--border)';
-        e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+        e.currentTarget.style.borderColor = 'var(--border, #e2e8f0)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.05))';
       }}
     >
       {/* Icon Badge */}
@@ -390,90 +609,103 @@ function AssessmentListRow({ assessment, onAction, onClick }) {
           width: 44,
           height: 44,
           borderRadius: 12,
-          background: 'rgba(99, 102, 241, 0.1)',
-          border: '1px solid rgba(99, 102, 241, 0.2)',
+          background: preset.pillBg,
+          border: `1px solid ${preset.border}`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: 'var(--color-primary, #6366f1)',
+          color: preset.accent,
           flexShrink: 0,
         }}
       >
-        <Code size={20} />
+        <Code2 size={20} />
       </div>
 
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
           <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{assessment.title}</span>
           <StatusPill status={assessment.status} />
+          <span
+            style={{
+              padding: '2px 8px',
+              borderRadius: 99,
+              fontSize: 10,
+              fontWeight: 700,
+              background: preset.pillBg,
+              color: preset.pillColor,
+              border: `1px solid ${preset.border}`,
+            }}
+          >
+            {preset.name}
+          </span>
         </div>
         <p style={{ margin: 0, fontSize: 13, color: 'var(--text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-          {assessment.questionCount || 0} Questions • {assessment.durationMinutes || 0} Mins • {assessment.totalMarks || 100} Marks
+          {assessment.questionCount || 0} Questions • {assessment.durationMinutes || 0} Mins • {assessment.totalMarks || 100} Marks • Proctored
         </p>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, borderLeft: '1px solid var(--border)', paddingLeft: 16 }}>
-        <Avatar name="Platform Admin" size={32} />
+        <Avatar name={assessment.createdByName ?? 'Platform Admin'} size={32} />
         <div>
-          <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>Platform Admin</p>
+          <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{assessment.createdByName ?? 'Platform Admin'}</p>
           <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)' }}>Instructor</p>
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, borderLeft: '1px solid var(--border)', paddingLeft: 16, shrink: 0 }}>
+      <div style={{ display: 'flex', gap: 8, borderLeft: '1px solid var(--border)', paddingLeft: 16, shrink: 0 }} onClick={e => e.stopPropagation()}>
         <button
-          onClick={(e) => { e.stopPropagation(); onAction('edit', assessment); }}
+          onClick={() => onAction('edit', assessment)}
           style={{
             padding: '7px 16px',
             borderRadius: 99,
             fontSize: 13,
             fontWeight: 600,
-            border: '1px solid var(--border)',
-            background: 'var(--background)',
-            color: 'var(--text-secondary)',
+            border: '1px solid var(--border, #e2e8f0)',
+            background: 'var(--muted, #f8fafc)',
+            color: 'var(--text-primary, #1a1a2e)',
             cursor: 'pointer',
             transition: 'all 0.2s',
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'var(--card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'var(--background)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'var(--card, #ffffff)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'var(--muted, #f8fafc)'; }}
         >
           Edit
         </button>
         <button
-          onClick={(e) => { e.stopPropagation(); onAction('duplicate', assessment); }}
+          onClick={() => onAction('duplicate', assessment)}
           title="Duplicate assessment"
           style={{
             padding: '7px 12px',
             borderRadius: 99,
             fontSize: 13,
             fontWeight: 600,
-            border: '1px solid var(--border)',
-            background: 'var(--background)',
-            color: 'var(--text-secondary)',
+            border: '1px solid var(--border, #e2e8f0)',
+            background: 'var(--background, #f8fafc)',
+            color: 'var(--text-secondary, #64748b)',
             cursor: 'pointer',
             transition: 'all 0.2s',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'var(--card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'var(--background)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'var(--card, #ffffff)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'var(--background, #f8fafc)'; }}
         >
           <Copy size={15} />
         </button>
-        {primary && primary.label !== 'Edit' && (
+        {primary && (
           <button
-            onClick={(e) => { e.stopPropagation(); primary.onClick(); }}
+            onClick={primary.onClick}
             style={{
               padding: '7px 16px',
               borderRadius: 99,
               fontSize: 13,
               fontWeight: 700,
               border: primary.danger ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
-              background: primary.danger ? 'rgba(239, 68, 68, 0.15)' : 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)',
+              background: primary.danger ? 'rgba(239, 68, 68, 0.15)' : 'linear-gradient(135deg, var(--primary, #10b981) 0%, #059669 100%)',
               color: primary.danger ? '#f87171' : '#fff',
               cursor: 'pointer',
-              boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(99, 102, 241, 0.35)',
+              boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(16, 185, 129, 0.35)',
               transition: 'all 0.2s',
             }}
           >
@@ -490,7 +722,7 @@ function SkeletonCard() {
   const s = { background: 'var(--skeleton-bg, #e2e8f0)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' };
   return (
     <div style={{ background: 'var(--card, #ffffff)', border: '1px solid var(--border, #e2e8f0)', borderRadius: 20, overflow: 'hidden', boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))' }}>
-      <div style={{ ...s, height: 120, borderRadius: 0, background: 'var(--skeleton-subtle, #f1f5f9)' }} />
+      <div style={{ ...s, height: 135, borderRadius: 0, background: 'var(--skeleton-subtle, #f1f5f9)' }} />
       <div style={{ padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div style={{ ...s, height: 18, width: '70%' }} />
         <div style={{ ...s, height: 14, width: '90%' }} />
@@ -598,6 +830,9 @@ export const AdminAssessmentListPage = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>Assessments</h1>
+          <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)' }}>
+            Create, manage, and evaluate student assessments and tests.
+          </p>
         </div>
         <PermissionGuard required={[PERMISSIONS.ASSESSMENT_CREATE]} fallback={null}>
           <AdminButton icon={<Plus className="h-4 w-4" />} onClick={() => navigate(createRoute)}>New Assessment</AdminButton>

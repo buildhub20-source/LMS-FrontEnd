@@ -20,26 +20,30 @@ export const AuthLayout = () => {
     <div
       className="relative min-h-screen"
       style={{
-        background: 'linear-gradient(135deg, #f0fdf4 0%, #f5f7fa 40%, #fef3f2 100%)',
+        background: isFullScreen
+          ? '#0f1117'
+          : 'var(--background, #0f1117)',
       }}
     >
-      {/* Decorative floating circles */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="absolute w-32 h-32 rounded-full opacity-30" style={{ top: '8%', left: '5%', background: '#bbf7d0' }} />
-        <div className="absolute w-20 h-20 rounded-full opacity-25" style={{ top: '15%', right: '10%', background: '#fde68a' }} />
-        <div className="absolute w-16 h-16 rounded-full opacity-20" style={{ bottom: '20%', left: '8%', background: '#f8bbd0' }} />
-        <div className="absolute w-24 h-24 rounded-full opacity-20" style={{ bottom: '10%', right: '15%', background: '#bbdefb' }} />
-        <div className="absolute w-12 h-12 rounded-full opacity-25" style={{ top: '50%', left: '20%', background: '#fde68a' }} />
-        <div className="absolute w-10 h-10 rounded-full opacity-30" style={{ top: '30%', right: '25%', background: '#f8bbd0' }} />
-        {/* Decorative leaves/shapes */}
-        <svg className="absolute opacity-15" style={{ top: '5%', right: '8%', width: 120, height: 120 }} viewBox="0 0 100 100">
-          <ellipse cx="50" cy="50" rx="20" ry="45" fill="#86efac" transform="rotate(-30 50 50)" />
-          <ellipse cx="60" cy="40" rx="15" ry="35" fill="#a7f3d0" transform="rotate(15 60 40)" />
-        </svg>
-        <svg className="absolute opacity-15" style={{ bottom: '8%', left: '5%', width: 80, height: 80 }} viewBox="0 0 100 100">
-          <ellipse cx="50" cy="50" rx="18" ry="40" fill="#86efac" transform="rotate(20 50 50)" />
-        </svg>
-      </div>
+      {/* Decorative floating circles (only on standard non-fullscreen auth cards) */}
+      {!isFullScreen && (
+        <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+          <div className="absolute w-32 h-32 rounded-full opacity-30" style={{ top: '8%', left: '5%', background: '#bbf7d0' }} />
+          <div className="absolute w-20 h-20 rounded-full opacity-25" style={{ top: '15%', right: '10%', background: '#fde68a' }} />
+          <div className="absolute w-16 h-16 rounded-full opacity-20" style={{ bottom: '20%', left: '8%', background: '#f8bbd0' }} />
+          <div className="absolute w-24 h-24 rounded-full opacity-20" style={{ bottom: '10%', right: '15%', background: '#bbdefb' }} />
+          <div className="absolute w-12 h-12 rounded-full opacity-25" style={{ top: '50%', left: '20%', background: '#fde68a' }} />
+          <div className="absolute w-10 h-10 rounded-full opacity-30" style={{ top: '30%', right: '25%', background: '#f8bbd0' }} />
+          {/* Decorative leaves/shapes */}
+          <svg className="absolute opacity-15" style={{ top: '5%', right: '8%', width: 120, height: 120 }} viewBox="0 0 100 100">
+            <ellipse cx="50" cy="50" rx="20" ry="45" fill="#86efac" transform="rotate(-30 50 50)" />
+            <ellipse cx="60" cy="40" rx="15" ry="35" fill="#a7f3d0" transform="rotate(15 60 40)" />
+          </svg>
+          <svg className="absolute opacity-15" style={{ bottom: '8%', left: '5%', width: 80, height: 80 }} viewBox="0 0 100 100">
+            <ellipse cx="50" cy="50" rx="18" ry="40" fill="#86efac" transform="rotate(20 50 50)" />
+          </svg>
+        </div>
+      )}
 
       {/* Theme Switcher */}
       <div className="fixed top-5 right-6 z-50">

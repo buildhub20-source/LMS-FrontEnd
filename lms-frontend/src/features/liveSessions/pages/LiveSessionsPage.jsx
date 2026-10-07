@@ -100,7 +100,7 @@ export const LiveSessionsPage = () => {
             <Button
               variant="primary"
               onClick={() => setIsModalOpen(true)}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-600/30"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm shadow-emerald-600/30"
             >
               <Plus className="w-4 h-4 mr-1.5" />
               Schedule Live Class
@@ -138,7 +138,7 @@ export const LiveSessionsPage = () => {
           </div>
         ) : filteredSessions.length === 0 ? (
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-12 text-center max-w-lg mx-auto shadow-xs">
-            <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-4">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-4">
               <Video className="w-7 h-7" />
             </div>
             <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-1">
@@ -155,7 +155,7 @@ export const LiveSessionsPage = () => {
               <Button
                 variant="primary"
                 onClick={() => setIsModalOpen(true)}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white"
               >
                 <Plus className="w-4 h-4 mr-1.5" />
                 Schedule Class Now

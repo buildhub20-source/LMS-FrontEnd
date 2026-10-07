@@ -58,11 +58,11 @@ export const OrganizationPage = () => {
       <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
         {/* ── Organization Hero Card ── */}
         <div style={{
-          background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%)',
+          background: 'linear-gradient(135deg, #064e3b 0%, #047857 50%, #059669 100%)',
           borderRadius: 20,
           padding: '32px 36px',
           color: '#ffffff',
-          boxShadow: '0 20px 40px rgba(99,102,241,0.25)',
+          boxShadow: '0 20px 40px rgba(5, 150, 105, 0.2)',
           position: 'relative',
           overflow: 'hidden',
           display: 'flex',
@@ -165,7 +165,7 @@ export const OrganizationPage = () => {
           }}>
             <div style={{
               width: 46, height: 46, borderRadius: 12,
-              background: 'rgba(99,102,241,0.12)', color: '#6366f1',
+              background: 'var(--color-info-light, rgba(59,130,246,0.12))', color: 'var(--color-info, #3b82f6)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               <GraduationCap size={22} />
@@ -262,7 +262,7 @@ export const OrganizationPage = () => {
             <div style={{ height: 6, background: 'var(--surface-medium)', borderRadius: 4, overflow: 'hidden' }}>
               <div style={{
                 height: '100%', width: `${storagePct}%`,
-                background: 'linear-gradient(90deg, #0ea5e9, #6366f1)',
+                background: 'linear-gradient(90deg, #0ea5e9, #3b82f6)',
                 borderRadius: 4,
               }} />
             </div>
@@ -296,7 +296,7 @@ export const OrganizationPage = () => {
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
               <div style={{
                 width: 44, height: 44, borderRadius: 12,
-                background: 'rgba(99,102,241,0.12)', color: '#6366f1',
+                background: 'var(--color-info-light, rgba(59,130,246,0.12))', color: 'var(--color-info, #3b82f6)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 <Settings size={22} />

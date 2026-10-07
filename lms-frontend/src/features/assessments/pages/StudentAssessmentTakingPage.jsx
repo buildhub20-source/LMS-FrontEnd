@@ -297,8 +297,8 @@ export const StudentAssessmentTakingPage = () => {
               width: 58,
               height: 58,
               borderRadius: '50%',
-              background: isLimitReached ? 'rgba(99, 102, 241, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-              color: isLimitReached ? '#818cf8' : '#f87171',
+              background: isLimitReached ? 'color-mix(in srgb, var(--primary) 15%, transparent)' : 'rgba(239, 68, 68, 0.15)',
+              color: isLimitReached ? 'var(--primary)' : 'var(--destructive)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -311,7 +311,7 @@ export const StudentAssessmentTakingPage = () => {
           <h2 style={{ margin: '0 0 8px', fontSize: 20, fontWeight: 800 }}>
             {isLimitReached ? 'Assessment Already Completed' : 'Unable to Start Assessment'}
           </h2>
-          <p style={{ margin: '0 0 26px', fontSize: 14, color: '#94a3b8', lineHeight: 1.6 }}>
+          <p style={{ margin: '0 0 26px', fontSize: 14, color: 'var(--muted-foreground, #94a3b8)', lineHeight: 1.6 }}>
             {error}
           </p>
 
@@ -340,7 +340,7 @@ export const StudentAssessmentTakingPage = () => {
                 onClick={retry}
                 iconLeft={<RefreshCw size={16} />}
                 style={{
-                  background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                  background: 'var(--primary)',
                   width: '100%',
                   justifyContent: 'center',
                   padding: '11px 0',
@@ -360,9 +360,9 @@ export const StudentAssessmentTakingPage = () => {
                 justifyContent: 'center',
                 padding: '11px 0',
                 fontWeight: 600,
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                color: '#cbd5e1',
+                background: 'var(--muted)',
+                border: '1px solid var(--border)',
+                color: 'var(--muted-foreground)',
               }}
             >
               Return to Assessments
