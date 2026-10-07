@@ -18,7 +18,7 @@ export const BillingPage = () => {
   const toast = useToast();
   const [search, setSearch] = useState('');
 
-  const { data: rawData } = useQuery({
+  const { data: rawData, isLoading } = useQuery({
     queryKey: ['subscription', 'billing'],
     queryFn: () => subscriptionService.billingHistory().catch(() => null),
   });

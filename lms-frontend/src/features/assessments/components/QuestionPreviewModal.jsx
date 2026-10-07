@@ -16,8 +16,13 @@ export default function QuestionPreviewModal({
   onClose,
   questionData,
 }) {
+  // Hooks live in the inner component: an early return before them changes the hook
+  // count between renders, which React rejects when the modal opens or closes.
   if (!isOpen || !questionData) return null;
+  return <QuestionPreviewContent onClose={onClose} questionData={questionData} />;
+}
 
+function QuestionPreviewContent({ onClose, questionData }) {
   const isCoding = (questionData.questionType || 'CODING') === 'CODING';
 
   // Normalize question data into student taking view model

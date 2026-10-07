@@ -168,8 +168,7 @@ const CourseDetailsContent = () => {
     if (!video || !resumePositionKey) return;
     try {
       const savedPos = parseFloat(localStorage.getItem(resumePositionKey) || '0');
-      if (!isNaN(savedPos) && savedPos > 2 && savedPos 
-          (video.duration - 3)) {
+      if (!isNaN(savedPos) && savedPos > 2 && savedPos < video.duration - 3) {
         video.currentTime = savedPos;
         maxWatchedTimeRef.current = Math.max(maxWatchedTimeRef.current, savedPos);
         showNotice(`Resumed playback at ${Math.floor(savedPos / 60)}:${String(Math.floor(savedPos % 60)).padStart(2, '0')}`, 'success');
@@ -284,21 +283,6 @@ const CourseDetailsContent = () => {
 
   const completedCount = completedLessonIds.length;
   const progressPercent = allLessons.length > 0 ? Math.round((completedCount / allLessons.length) * 100) : 0;
-
-  // Persist completed lessons whenever they update
-  useEffect(() => {
-    if (courseId && !isLoading) {
-      try {
-        localStorage.setItem(storageKey, JSON.stringify(completedLessonIds));
-      } catch (_) {}
-      if (isStudent) {
-        learningService.saveProgress(courseId, {
-          completedLessonIds,
-          percent: progressPercent,
-        }).catch(() => {});
-      }
-    }
-  }, [courseId, storageKey, completedLessonIds, isStudent, progressPercent, isLoading]);
 
   const toggleComplete = (id) => {
     setCompletedLessonIds(prev =>

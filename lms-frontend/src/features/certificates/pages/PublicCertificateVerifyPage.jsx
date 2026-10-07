@@ -17,13 +17,6 @@ export const PublicCertificateVerifyPage = () => {
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    if (urlSerial) {
-      setSerialInput(urlSerial);
-      verifyCertificate(urlSerial);
-    }
-  }, [urlSerial]);
-
   const verifyCertificate = async (serial) => {
     const query = (serial || serialInput).trim();
     if (!query) return;
@@ -47,6 +40,13 @@ export const PublicCertificateVerifyPage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (urlSerial) {
+      setSerialInput(urlSerial);
+      verifyCertificate(urlSerial);
+    }
+  }, [urlSerial]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -124,7 +124,7 @@ export const PublicCertificateVerifyPage = () => {
           >
             Certificate Verification Portal
           </h1>
-          <p style={{ color: '#94A3B8', fontSize: '15px', margin: 0, maxWidth: '520px', margin: '0 auto' }}>
+          <p style={{ color: '#94A3B8', fontSize: '15px', maxWidth: '520px', margin: '0 auto' }}>
             Verify the cryptographic validity and academic authenticity of credentials issued by our learning platform.
           </p>
         </div>
