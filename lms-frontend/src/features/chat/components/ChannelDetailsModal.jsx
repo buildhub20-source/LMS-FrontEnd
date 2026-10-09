@@ -181,7 +181,7 @@ export default function ChannelDetailsModal({
           <div className="chat-details-section">
             <div className="chat-details-section__header">
               <h4>Channel Info</h4>
-              {canManage && !isEditingInfo && (
+              {isOwnerOrAdmin && !isEditingInfo && (
                 <button
                   type="button"
                   className="chat-details-btn--text"
@@ -247,7 +247,7 @@ export default function ChannelDetailsModal({
                   <Users size={15} />
                   <span>Members ({members.length})</span>
                 </h4>
-                {canManage && !isAddingMember && (
+                {isOwnerOrAdmin && !isAddingMember && (
                   <button
                     type="button"
                     className="chat-details-btn--text"
@@ -359,7 +359,7 @@ export default function ChannelDetailsModal({
                           )}
                         </div>
 
-                        {canManage && !isOwner && !isSelf && (
+                        {isOwnerOrAdmin && !isOwner && !isSelf && (
                           <button
                             type="button"
                             className="chat-details-btn--remove"
@@ -378,7 +378,7 @@ export default function ChannelDetailsModal({
           )}
 
           {/* Archive Action (Owner / Admin only) */}
-          {canManage && (
+          {isOwnerOrAdmin && (
             <div className="chat-details-section chat-details-section--danger">
               <button
                 type="button"
