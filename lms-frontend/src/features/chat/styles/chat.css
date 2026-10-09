@@ -8,24 +8,25 @@
 /* ─── Variables & Tokens ────────────────────────────────── */
 
 .chat-page {
-  --chat-bg: #1b1b1f;
-  --chat-surface-dark: #141417;
-  --chat-surface-card: #1e1e22;
-  --chat-surface-light: #252529;
-  --chat-border: #2e2e34;
-  --chat-border-subtle: #232328;
-  --chat-text-primary: #f4f4f5;
-  --chat-text-secondary: #d4d4d8;
-  --chat-text-muted: #8b8b96;
-  --chat-accent: #5b5fc7;
-  --chat-accent-hover: #4f46e5;
-  --chat-accent-soft: rgba(91, 95, 199, 0.15);
-  --chat-input-bg: #1e1e22;
-  --chat-hover-bg: #252529;
-  --chat-active-bg: #2e2e34;
-  --chat-bubble-incoming: #252529;
-  --chat-bubble-outgoing: #5b5fc7;
-  --chat-bubble-outgoing-hover: #4f46e5;
+  /* Theme-aware tokens — derive from the global design system */
+  --chat-bg: var(--card);
+  --chat-surface-dark: var(--background);
+  --chat-surface-card: var(--card);
+  --chat-surface-light: var(--muted);
+  --chat-border: var(--border);
+  --chat-border-subtle: var(--border);
+  --chat-text-primary: var(--foreground);
+  --chat-text-secondary: var(--foreground);
+  --chat-text-muted: var(--muted-foreground);
+  --chat-accent: var(--primary);
+  --chat-accent-hover: var(--ring);
+  --chat-accent-soft: color-mix(in srgb, var(--primary) 12%, transparent);
+  --chat-input-bg: var(--card);
+  --chat-hover-bg: var(--muted);
+  --chat-active-bg: var(--accent);
+  --chat-bubble-incoming: var(--muted);
+  --chat-bubble-outgoing: var(--primary);
+  --chat-bubble-outgoing-hover: var(--ring);
 
   display: flex;
   flex-direction: column;

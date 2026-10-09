@@ -1254,7 +1254,7 @@ export const LiveRoom = ({
           </div>
 
           <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800/90 border border-slate-700/70 text-slate-300 text-xs font-mono">
-            <Clock className="w-3.5 h-3.5 text-indigo-400" />
+            <Clock className="w-3.5 h-3.5 text-emerald-400" />
             <span>{formattedTime}</span>
           </div>
 
@@ -1271,7 +1271,7 @@ export const LiveRoom = ({
           </div>
 
           <div className="hidden md:flex items-center gap-1.5">
-            <Shield className="w-3.5 h-3.5 text-indigo-400" />
+            <Shield className="w-3.5 h-3.5 text-emerald-400" />
             <span>Tenant Authorized</span>
           </div>
 
@@ -1307,7 +1307,7 @@ export const LiveRoom = ({
               {toastNotification.type === 'error' && <AlertTriangle className="w-4 h-4 text-rose-400" />}
               {toastNotification.type === 'warning' && <Hand className="w-4 h-4 text-amber-400" />}
               {toastNotification.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
-              {toastNotification.type === 'info' && <Info className="w-4 h-4 text-indigo-400" />}
+              {toastNotification.type === 'info' && <Info className="w-4 h-4 text-sky-400" />}
               <span>{toastNotification.message}</span>
             </div>
           )}
@@ -1321,7 +1321,7 @@ export const LiveRoom = ({
           )}
 
           {isScreenSharing && (
-            <div className="absolute top-4 z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-600/90 text-white font-semibold text-xs shadow-lg shadow-indigo-600/30 backdrop-blur-md border border-indigo-400/40">
+            <div className="absolute top-4 z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-600/90 text-white font-semibold text-xs shadow-lg shadow-emerald-600/30 backdrop-blur-md border border-emerald-400/40">
               <ScreenShare className="w-4 h-4 animate-pulse" />
               <span>Screen Sharing Live</span>
             </div>
@@ -1384,7 +1384,7 @@ export const LiveRoom = ({
               {/* Avatar Placeholder: show when video is off OR when student is waiting for video stream */}
               {(!isPresenterVideoActive || (!isInstructor && !remoteStreamActive)) && (
                 <div className="flex flex-col items-center justify-center gap-3 text-center p-8 z-10">
-                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-3xl font-bold text-white shadow-2xl ring-4 ring-slate-800">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-3xl font-bold text-white shadow-2xl ring-4 ring-slate-800">
                     {activePresenter.name?.charAt(0)?.toUpperCase() || 'H'}
                   </div>
                   <div>
@@ -1424,7 +1424,7 @@ export const LiveRoom = ({
               {/* Stage bottom badge */}
               <div className="absolute bottom-4 left-4 flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-800 text-xs text-slate-200 shadow-md z-20">
                 <span className="font-semibold">{activePresenter.name}</span>
-                {activePresenter.isInstructor && <span className="text-indigo-400 font-bold">• Host</span>}
+                {activePresenter.isInstructor && <span className="text-emerald-400 font-bold">• Host</span>}
                 {isInstructor && !isAudioEnabled && (
                   <span className="flex items-center text-rose-400 gap-1 ml-1 font-medium">
                     <MicOff className="w-3.5 h-3.5" /> Muted
@@ -1457,7 +1457,7 @@ export const LiveRoom = ({
                 }}
                 className={`flex-1 py-3 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 cursor-pointer transition-colors ${
                   activeSidebar === 'chat' 
-                    ? 'border-indigo-500 text-indigo-400 bg-slate-800/40' 
+                    ? 'border-emerald-500 text-emerald-400 bg-slate-800/40' 
                     : 'border-transparent text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -1475,7 +1475,7 @@ export const LiveRoom = ({
                 onClick={() => setActiveSidebar('participants')}
                 className={`flex-1 py-3 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 cursor-pointer transition-colors ${
                   activeSidebar === 'participants' 
-                    ? 'border-indigo-500 text-indigo-400 bg-slate-800/40' 
+                    ? 'border-emerald-500 text-emerald-400 bg-slate-800/40' 
                     : 'border-transparent text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -1508,7 +1508,7 @@ export const LiveRoom = ({
                     >
                       {!msg.isSystem && (
                         <div className="flex items-center justify-between text-slate-400">
-                          <span className="font-semibold text-indigo-400">{msg.sender}</span>
+                          <span className="font-semibold text-emerald-400">{msg.sender}</span>
                           <span className="text-[10px]">{msg.time}</span>
                         </div>
                       )}
@@ -1529,11 +1529,11 @@ export const LiveRoom = ({
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     placeholder="Ask a question or comment..."
-                    className="flex-1 px-3 py-2 text-xs rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="flex-1 px-3 py-2 text-xs rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                   <button
                     type="submit"
-                    className="p-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition-colors cursor-pointer"
+                    className="p-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition-colors cursor-pointer"
                   >
                     <Send className="w-4 h-4" />
                   </button>
@@ -1566,7 +1566,7 @@ export const LiveRoom = ({
                       className="flex items-center justify-between p-2.5 rounded-xl bg-slate-800/50 hover:bg-slate-800 transition-colors"
                     >
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 text-white font-bold text-xs flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-600 to-teal-700 text-white font-bold text-xs flex items-center justify-center">
                           {p.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
@@ -1578,7 +1578,7 @@ export const LiveRoom = ({
                               </span>
                             )}
                           </div>
-                          {p.isInstructor && <p className="text-[10px] text-indigo-400 font-bold">Host / Instructor</p>}
+                          {p.isInstructor && <p className="text-[10px] text-emerald-400 font-bold">Host / Instructor</p>}
                         </div>
                       </div>
 

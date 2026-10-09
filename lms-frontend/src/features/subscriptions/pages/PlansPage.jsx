@@ -162,7 +162,7 @@ export const PlansPage = () => {
               fontSize: 11,
               fontWeight: 700,
               background: 'rgba(34, 197, 94, 0.15)',
-              color: '#10b981',
+              color: 'var(--color-success, #22c55e)',
               padding: '2px 8px',
               borderRadius: 12,
               letterSpacing: '0.02em',
@@ -188,9 +188,9 @@ export const PlansPage = () => {
                 style={{
                   background: 'var(--bg-primary)',
                   border: plan.isPopular
-                    ? '2px solid #6366f1'
+                    ? '2px solid var(--primary)'
                     : plan.isCurrent
-                    ? '2px solid #10b981'
+                    ? '2px solid var(--color-success, #22c55e)'
                     : '1px solid var(--border-color)',
                   borderRadius: 18,
                   padding: 30,
@@ -198,7 +198,7 @@ export const PlansPage = () => {
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                   gap: 24,
-                  boxShadow: plan.isPopular ? '0 12px 30px rgba(99,102,241,0.15)' : '0 4px 16px rgba(0,0,0,0.03)',
+                  boxShadow: plan.isPopular ? '0 12px 30px color-mix(in srgb, var(--primary) 15%, transparent)' : '0 4px 16px rgba(0,0,0,0.03)',
                   position: 'relative',
                 }}
               >
@@ -206,7 +206,7 @@ export const PlansPage = () => {
                 {plan.isPopular && (
                   <div style={{
                     position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)',
-                    background: '#6366f1', color: '#ffffff', fontSize: 11, fontWeight: 800,
+                    background: 'var(--primary)', color: 'var(--primary-foreground, #ffffff)', fontSize: 11, fontWeight: 800,
                     padding: '3px 14px', borderRadius: 20, letterSpacing: '0.06em', textTransform: 'uppercase',
                     display: 'flex', alignItems: 'center', gap: 4,
                   }}>
@@ -216,7 +216,7 @@ export const PlansPage = () => {
                 {plan.isCurrent && (
                   <div style={{
                     position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)',
-                    background: '#10b981', color: '#ffffff', fontSize: 11, fontWeight: 800,
+                    background: 'var(--color-success, #22c55e)', color: '#ffffff', fontSize: 11, fontWeight: 800,
                     padding: '3px 14px', borderRadius: 20, letterSpacing: '0.06em', textTransform: 'uppercase',
                     display: 'flex', alignItems: 'center', gap: 4,
                   }}>
@@ -250,7 +250,7 @@ export const PlansPage = () => {
                     </p>
                     {plan.features.map((feat, idx) => (
                       <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13, color: 'var(--text-primary)' }}>
-                        <Check size={16} style={{ color: '#10b981', flexShrink: 0, marginTop: 2 }} />
+                        <Check size={16} style={{ color: 'var(--color-success, #22c55e)', flexShrink: 0, marginTop: 2 }} />
                         <span>{feat}</span>
                       </div>
                     ))}

@@ -149,12 +149,12 @@ export const LiveClassesHubPage = () => {
                 width: 48,
                 height: 48,
                 borderRadius: 14,
-                background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+                background: 'linear-gradient(135deg, var(--primary) 0%, #059669 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#fff',
-                boxShadow: '0 8px 24px rgba(99,102,241,0.35)',
+                boxShadow: '0 8px 24px rgba(16, 185, 129, 0.3)',
               }}
             >
               <Video size={24} />
@@ -215,22 +215,22 @@ export const LiveClassesHubPage = () => {
                 gap: 8,
                 padding: '11px 20px',
                 borderRadius: 12,
-                background: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)',
+                background: 'linear-gradient(135deg, var(--primary) 0%, #059669 100%)',
                 color: '#fff',
                 fontWeight: 700,
                 fontSize: 14,
                 border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 4px 16px rgba(99,102,241,0.4)',
+                boxShadow: '0 4px 16px rgba(16, 185, 129, 0.3)',
                 transition: 'transform 0.15s ease, box-shadow 0.15s ease',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(99,102,241,0.5)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(16, 185, 129, 0.4)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'none';
-                e.currentTarget.style.boxShadow = '0 4px 16px rgba(99,102,241,0.4)';
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(16, 185, 129, 0.3)';
               }}
             >
               <Plus size={17} /> Schedule Live Class
@@ -288,8 +288,8 @@ export const LiveClassesHubPage = () => {
             style={{
               padding: '16px 20px',
               borderRadius: 14,
-              background: activeTab === 'SCHEDULED' ? 'rgba(99,102,241,0.12)' : 'var(--surface-medium)',
-              border: `1px solid ${activeTab === 'SCHEDULED' ? 'rgba(99,102,241,0.4)' : 'var(--border-color)'}`,
+              background: activeTab === 'SCHEDULED' ? 'rgba(59,130,246,0.12)' : 'var(--surface-medium)',
+              border: `1px solid ${activeTab === 'SCHEDULED' ? 'rgba(59,130,246,0.4)' : 'var(--border-color)'}`,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -302,11 +302,11 @@ export const LiveClassesHubPage = () => {
                 width: 42,
                 height: 42,
                 borderRadius: 10,
-                background: 'rgba(99,102,241,0.15)',
+                background: 'rgba(59,130,246,0.15)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#818cf8',
+                color: '#3b82f6',
               }}
             >
               <Calendar size={20} />
@@ -392,8 +392,8 @@ export const LiveClassesHubPage = () => {
                   fontWeight: active ? 700 : 500,
                   cursor: 'pointer',
                   border: 'none',
-                  background: active ? '#6366f1' : 'transparent',
-                  color: active ? '#ffffff' : 'var(--text-muted)',
+                  background: active ? 'var(--primary)' : 'transparent',
+                  color: active ? 'var(--primary-foreground, #ffffff)' : 'var(--text-muted)',
                   transition: 'all 0.15s ease',
                 }}
               >
@@ -483,7 +483,7 @@ export const LiveClassesHubPage = () => {
             color: 'var(--text-muted)',
           }}
         >
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mb-3" />
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-3" />
           <p>Loading live classrooms...</p>
         </div>
       ) : filteredSessions.length === 0 ? (
@@ -505,11 +505,11 @@ export const LiveClassesHubPage = () => {
               width: 56,
               height: 56,
               borderRadius: 16,
-              background: 'rgba(99,102,241,0.12)',
+              background: 'rgba(16,185,129,0.12)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#818cf8',
+              color: 'var(--primary)',
             }}
           >
             <Video size={28} />
@@ -533,8 +533,8 @@ export const LiveClassesHubPage = () => {
                 marginTop: 6,
                 padding: '9px 18px',
                 borderRadius: 10,
-                background: '#6366f1',
-                color: '#fff',
+                background: 'var(--primary)',
+                color: 'var(--primary-foreground, #fff)',
                 fontWeight: 600,
                 fontSize: 13,
                 border: 'none',
@@ -569,7 +569,7 @@ export const LiveClassesHubPage = () => {
                   gap: 6,
                   fontSize: 11,
                   fontWeight: 700,
-                  color: '#818cf8',
+                  color: 'var(--primary)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.04em',
                   marginBottom: 8,

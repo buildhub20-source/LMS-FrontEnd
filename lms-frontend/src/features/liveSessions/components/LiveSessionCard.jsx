@@ -106,7 +106,7 @@ export const LiveSessionCard = ({ session, isInstructor, onStart, onEnd, isStart
               href={session.recordingUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:underline"
             >
               <Film className="w-3.5 h-3.5" />
               Watch Recording

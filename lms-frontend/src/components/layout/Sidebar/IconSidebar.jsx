@@ -228,7 +228,7 @@ export const IconSidebar = ({
                 <div
                   className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl"
                   style={{
-                    background: 'var(--card)',
+                    background: 'var(--sidebar-accent)',
                     border: '1px solid var(--sidebar-border)',
                   }}
                 >

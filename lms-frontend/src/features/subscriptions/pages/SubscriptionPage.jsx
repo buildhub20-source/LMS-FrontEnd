@@ -74,11 +74,11 @@ export const SubscriptionPage = () => {
       <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
         {/* ── Active Plan Banner ── */}
         <div style={{
-          background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4338ca 100%)',
+          background: 'linear-gradient(135deg, #064e3b 0%, #047857 60%, #059669 100%)',
           borderRadius: 20,
           padding: '32px 36px',
           color: '#ffffff',
-          boxShadow: '0 20px 40px rgba(99,102,241,0.25)',
+          boxShadow: '0 20px 40px rgba(5, 150, 105, 0.2)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -123,7 +123,7 @@ export const SubscriptionPage = () => {
           boxShadow: '0 4px 20px -2px rgba(0,0,0,0.04)',
         }}>
           <h2 style={{ margin: '0 0 20px', fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <TrendingUp size={18} style={{ color: '#6366f1' }} />
+            <TrendingUp size={18} style={{ color: 'var(--primary)' }} />
             Resource Usage & Quotas
           </h2>
 
@@ -140,13 +140,13 @@ export const SubscriptionPage = () => {
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Users size={16} style={{ color: '#6366f1' }} />
+                  <Users size={16} style={{ color: 'var(--color-info, #3b82f6)' }} />
                   <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>Learner Seats</span>
                 </div>
-                <span style={{ fontSize: 13, fontWeight: 700, color: '#6366f1' }}>{seatsPct}%</span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-info, #3b82f6)' }}>{seatsPct}%</span>
               </div>
               <div style={{ height: 6, background: 'var(--border-color)', borderRadius: 4, overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: `${seatsPct}%`, background: '#6366f1', borderRadius: 4 }} />
+                <div style={{ height: '100%', width: `${seatsPct}%`, background: 'var(--color-info, #3b82f6)', borderRadius: 4 }} />
               </div>
               <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                 {(sub?.seatsUsed ?? 0).toLocaleString()} of {(sub?.seatsLimit ?? 0).toLocaleString()} seats allocated
@@ -220,7 +220,7 @@ export const SubscriptionPage = () => {
           }}>
             <div>
               <h3 style={{ margin: '0 0 12px', fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <CreditCard size={17} style={{ color: '#6366f1' }} />
+                <CreditCard size={17} style={{ color: 'var(--primary)' }} />
                 Payment Method
               </h3>
               {sub?.paymentMethod ? (
@@ -235,7 +235,7 @@ export const SubscriptionPage = () => {
                 }}>
                   <div style={{
                     width: 38, height: 26, borderRadius: 4,
-                    background: '#1e293b', color: '#ffffff',
+                    background: 'var(--secondary)', color: 'var(--foreground)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 10, fontWeight: 800,
                   }}>

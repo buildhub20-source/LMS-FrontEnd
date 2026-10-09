@@ -17,6 +17,18 @@
   --surface-extra-light: var(--card);
   --surface-card: var(--card);
 
+  /* ── Background tokens (old → new) ─────────────────── */
+  /* These were missing and caused silent rendering failures
+     in 50+ component files that referenced these old tokens */
+  --bg-primary: var(--card);
+  --bg-secondary: var(--muted);
+  --bg-tertiary: var(--background);
+  --bg-hover: var(--muted);
+  --bg-active: var(--accent);
+  --surface-hover: var(--muted);
+  --card-bg: var(--card);
+  --hover-bg: var(--muted);
+
   /* ── Text tokens ───────────────────────────────────── */
   --text-primary: var(--foreground);
   --text-secondary: var(--muted-foreground);
@@ -80,6 +92,35 @@
   --surface-card: var(--card);
   --active-bg: var(--muted);
 
+  /* ── Pastel color scale dark-mode adapters ───────────
+     These tokens are used by AdminBadge, status chips, etc.
+     Without overrides they render as bright patches on dark cards. */
+  --color-green-50: rgba(34, 197, 94, 0.12);
+  --color-green-100: rgba(34, 197, 94, 0.2);
+  --color-green-200: rgba(34, 197, 94, 0.28);
+
+  --color-red-50: rgba(239, 68, 68, 0.12);
+  --color-red-100: rgba(239, 68, 68, 0.2);
+  --color-red-200: rgba(239, 68, 68, 0.28);
+
+  --color-amber-50: rgba(245, 158, 11, 0.12);
+  --color-amber-100: rgba(245, 158, 11, 0.2);
+  --color-amber-200: rgba(245, 158, 11, 0.28);
+
+  --color-sky-50: rgba(14, 165, 233, 0.12);
+  --color-sky-100: rgba(14, 165, 233, 0.2);
+  --color-sky-200: rgba(14, 165, 233, 0.28);
+
+  --color-rose-50: rgba(244, 63, 94, 0.12);
+  --color-rose-100: rgba(244, 63, 94, 0.2);
+
+  --color-violet-50: rgba(139, 92, 246, 0.12);
+  --color-violet-100: rgba(139, 92, 246, 0.2);
+
+  --color-emerald-50: rgba(16, 185, 129, 0.12);
+  --color-emerald-100: rgba(16, 185, 129, 0.2);
+
+  /* ── Dashboard palette dark overrides ───────────────── */
   --dashboard-accent-text: var(--color-green-500);
   --dashboard-accent-soft: rgba(34, 197, 94, 0.12);
 

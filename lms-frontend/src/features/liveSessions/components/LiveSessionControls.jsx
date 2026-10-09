@@ -65,7 +65,7 @@ export const LiveSessionControls = ({
           aria-label={`Participants (${participantCount})`}
           className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-all duration-150 active:scale-95 ${
             showParticipants 
-              ? 'bg-indigo-600 text-white ring-2 ring-indigo-400/50 shadow-md shadow-indigo-600/30' 
+              ? 'bg-emerald-600 text-white ring-2 ring-emerald-400/50 shadow-md shadow-emerald-600/30' 
               : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/80 hover:text-white'
           }`}
         >
@@ -145,13 +145,13 @@ export const LiveSessionControls = ({
             aria-label={isScreenSharing ? 'Stop Screen Sharing' : 'Share Screen'}
             className={`p-3 rounded-full cursor-pointer transition-all duration-150 active:scale-95 relative ${
               isScreenSharing
-                ? 'bg-indigo-600 hover:bg-indigo-700 text-white ring-2 ring-indigo-400 shadow-lg shadow-indigo-600/40'
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white ring-2 ring-emerald-400 shadow-lg shadow-emerald-600/40'
                 : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/80 hover:text-white'
             }`}
           >
             <ScreenShare className="w-5 h-5" />
             {isScreenSharing && (
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-indigo-300 animate-ping opacity-75" />
+              <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-emerald-300 animate-ping opacity-75" />
             )}
           </button>
         )}
@@ -165,7 +165,7 @@ export const LiveSessionControls = ({
             aria-label="Send Reaction"
             className={`p-3 rounded-full cursor-pointer transition-all duration-150 active:scale-95 border border-slate-700/80 ${
               showReactionsMenu 
-                ? 'bg-indigo-600 text-white ring-2 ring-indigo-400' 
+                ? 'bg-emerald-600 text-white ring-2 ring-emerald-400' 
                 : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-amber-400'
             }`}
           >
@@ -212,7 +212,7 @@ export const LiveSessionControls = ({
           aria-label={showChat ? 'Close Classroom Chat' : 'Open Classroom Chat'}
           className={`p-3 rounded-full cursor-pointer transition-all duration-150 active:scale-95 relative ${
             showChat
-              ? 'bg-indigo-600 hover:bg-indigo-700 text-white ring-2 ring-indigo-400 shadow-lg shadow-indigo-600/40'
+              ? 'bg-emerald-600 hover:bg-emerald-700 text-white ring-2 ring-emerald-400 shadow-lg shadow-emerald-600/40'
               : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/80 hover:text-white'
           }`}
         >
@@ -233,7 +233,7 @@ export const LiveSessionControls = ({
             aria-label={layoutMode === 'grid' ? 'Switch to Speaker View' : 'Switch to Gallery View'}
             className={`p-3 rounded-full cursor-pointer transition-all duration-150 active:scale-95 border border-slate-700/80 ${
               layoutMode === 'grid'
-                ? 'bg-indigo-600 text-white ring-2 ring-indigo-400 shadow-md'
+                ? 'bg-emerald-600 text-white ring-2 ring-emerald-400 shadow-md'
                 : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'
             }`}
           >
@@ -250,7 +250,7 @@ export const LiveSessionControls = ({
             aria-label="Toggle Video Aspect Ratio"
             className={`p-3 rounded-full cursor-pointer transition-all duration-150 active:scale-95 border border-slate-700/80 ${
               aspectFitMode === 'cover'
-                ? 'bg-slate-800 hover:bg-slate-700 text-indigo-400 hover:text-indigo-300'
+                ? 'bg-slate-800 hover:bg-slate-700 text-emerald-400 hover:text-emerald-300'
                 : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'
             }`}
           >

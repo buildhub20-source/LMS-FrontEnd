@@ -100,7 +100,7 @@ export const LiveSessionRoomPage = () => {
           <p className="text-xs text-slate-400 mb-6 leading-relaxed">
             {joinError || sessionError?.message || 'Unable to join session.'}
           </p>
-          <Button variant="primary" onClick={handleLeave} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
+          <Button variant="primary" onClick={handleLeave} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white">
             <ArrowLeft className="w-4 h-4 mr-1.5" />
             Back to Course
           </Button>

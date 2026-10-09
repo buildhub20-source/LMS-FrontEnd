@@ -221,17 +221,10 @@ function Avatar({ name = '', size = 34 }) {
 /* ── Action Builder ── */
 function buildActions(course, onAction) {
   const s = course.status, A = [];
-  if (s === 'PENDING_REVIEW') {
-    A.push({ label: 'Approve', danger: false, onClick: () => onAction('approve', course) });
-  }
-  if (s === 'DRAFT' || s === 'UNPUBLISHED')
-    A.push({ label: 'Publish', danger: false, onClick: () => onAction('publish', course) });
-  if (s === 'PUBLISHED')
-    A.push({ label: 'Unpublish', danger: false, onClick: () => onAction('unpublish', course) });
-  if (s === 'PUBLISHED' || s === 'UNPUBLISHED')
-    A.push({ label: 'Archive', danger: true, onClick: () => onAction('archive', course) });
-  if (s === 'DRAFT')
+  if (s === 'DRAFT' || s === 'UNPUBLISHED') {
+    A.push({ label: 'Submit for Review', danger: false, onClick: () => onAction('submit', course) });
     A.push({ label: 'Delete', danger: true, onClick: () => onAction('delete', course) });
+  }
   return A;
 }
 
@@ -509,17 +502,17 @@ function CourseCard({ course, onAction, onClick }) {
               style={{
                 padding: '7px 10px',
                 borderRadius: 8,
-                border: '1px solid rgba(99,102,241,0.35)',
-                background: 'rgba(99,102,241,0.08)',
-                color: '#818cf8',
+                border: '1px solid color-mix(in srgb, var(--color-info, #3b82f6) 35%, transparent)',
+                background: 'color-mix(in srgb, var(--color-info, #3b82f6) 8%, transparent)',
+                color: 'var(--color-info, #3b82f6)',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 transition: 'all 0.15s ease',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.18)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.08)'; }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'color-mix(in srgb, var(--color-info, #3b82f6) 18%, transparent)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'color-mix(in srgb, var(--color-info, #3b82f6) 8%, transparent)'; }}
             >
               <Video size={15} />
             </button>
@@ -817,6 +810,7 @@ export const CourseListPage = () => {
       return;
     }
     const MAP = {
+      submit: { fn: courseService.submit, msg: 'Course submitted for review!' },
       publish: { fn: courseService.publish, msg: 'Published!' },
       unpublish: { fn: courseService.unpublish, msg: 'Unpublished.' },
       archive: { fn: courseService.archive, msg: 'Archived.' },
