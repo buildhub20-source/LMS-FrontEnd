@@ -27,7 +27,7 @@ import chatUnreadService from '../features/chat/services/chatUnreadService';
  * │                 │  [Footer]                      │
  * └──────────────────────────────────────────────────┘
  */
-export const AppShell = ({ navigation, tabNav, title }) => {
+export const AppShell = ({ navigation, tabNav }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();

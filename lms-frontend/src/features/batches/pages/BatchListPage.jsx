@@ -99,7 +99,6 @@ export const BatchListPage = () => {
   const {
     data: pageData,
     isLoading,
-    error,
     refetch,
   } = useBatches({
     search: search || undefined,

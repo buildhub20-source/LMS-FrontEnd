@@ -31,7 +31,7 @@ export default function ChannelDetailsModal({
   const [isSearchingUsers, setIsSearchingUsers] = useState(false);
   const [error, setError] = useState(null);
 
-  const { isOnline, formatPresence } = presence;
+  const { isOnline } = presence;
 
   // Load members when modal opens
   useEffect(() => {
@@ -325,7 +325,6 @@ export default function ChannelDetailsModal({
                     const isSelf = String(memberId) === String(currentUser?.id);
                     const name = member.name || member.display_name || member.email || 'Member';
                     const initial = name[0]?.toUpperCase() || '?';
-                    const presenceText = formatPresence ? formatPresence(memberId) : (online ? 'Online' : 'Offline');
 
                     return (
                       <div key={memberId} className="chat-details-member-item">

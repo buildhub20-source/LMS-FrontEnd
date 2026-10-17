@@ -148,7 +148,7 @@ export default function ChatPage() {
           const p = JSON.parse(msg.attachments);
           if (Array.isArray(p)) atts = p;
           else if (p && typeof p === 'object') atts = [p];
-        } catch {}
+        } catch { /* not JSON: treat as no attachments */ }
       } else if (msg?.attachments && typeof msg?.attachments === 'object') {
         atts = [msg.attachments];
       }
@@ -517,13 +517,7 @@ export default function ChatPage() {
                 channel={activeChannel}
                 currentUser={currentUser}
                 presence={presence}
-                onChannelUpdated={(updated) => {
-                  updateChannel(updated);
-                  if (updated.name || updated.description) {
-                    activeChannel.name = updated.name;
-                    activeChannel.description = updated.description;
-                  }
-                }}
+                onChannelUpdated={updateChannel}
               />
 
               {/* Message & Conversation Search Modal */}

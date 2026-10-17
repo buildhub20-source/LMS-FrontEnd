@@ -571,7 +571,7 @@ export default function ExportToAssessmentModal({
                           fontSize: 13,
                         }}
                       >
-                        No existing assessments found. Please choose "Create New Assessment".
+                        No existing assessments found. Please choose &ldquo;Create New Assessment&rdquo;.
                       </div>
                     ) : (
                       <select

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Clock, BarChart2, HelpCircle, RefreshCw, CheckCircle, XCircle,
   CalendarClock, AlarmClock, Zap, Hourglass, PlusCircle, ShieldAlert,
@@ -16,12 +15,10 @@ import Badge from '../../../components/common/Badge';
  * and quick-action triggers for Admins and Instructors (e.g. Extend by 1h, 1d, or Close Now).
  */
 export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating = false }) => {
-  const [showExtendModal, setShowExtendModal] = useState(false);
-  const [customMinutes, setCustomMinutes] = useState(60);
 
   const startTime = assessment?.startTime;
   const endTime = assessment?.endTime;
-  const { state, countdown, secondsLeft, windowPct, isClosingSoon } = useAssessmentTimeState(startTime, endTime);
+  const { state, countdown, windowPct, isClosingSoon } = useAssessmentTimeState(startTime, endTime);
 
   // Status configuration
   const STATE_CONFIG = {

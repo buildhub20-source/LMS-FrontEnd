@@ -57,7 +57,7 @@ export const LessonNotesPanel = ({
       } else {
         setNoteContent('');
       }
-    } catch (_) {
+    } catch {
       setNoteContent('');
     }
   }, [storageKey]);
@@ -68,7 +68,7 @@ export const LessonNotesPanel = ({
       try {
         localStorage.setItem(storageKey, noteContent);
         setLastSaved(new Date());
-      } catch (_) { /* Best-effort browser cleanup; failure must not block the workflow. */ }
+      } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
     }, 600);
     return () => clearTimeout(timer);
   }, [noteContent, storageKey]);
@@ -98,7 +98,7 @@ export const LessonNotesPanel = ({
       setNoteContent('');
       try {
         localStorage.removeItem(storageKey);
-      } catch (_) { /* Best-effort browser cleanup; failure must not block the workflow. */ }
+      } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
     }
   }, [storageKey]);
 
@@ -117,7 +117,7 @@ export const LessonNotesPanel = ({
               content,
             };
           }
-        } catch (_) { /* Best-effort browser cleanup; failure must not block the workflow. */ }
+        } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
         return null;
       })
       .filter(Boolean);

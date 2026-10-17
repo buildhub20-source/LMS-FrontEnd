@@ -657,7 +657,7 @@ function parseCsvLines(text) {
 }
 
 /** Validate single question object & normalize properties */
-function validateAndNormalizeQuestion(item, rowNum) {
+function validateAndNormalizeQuestion(item) {
   if (!item.title || !String(item.title).trim()) {
     return { valid: false, reason: 'Missing question title' };
   }

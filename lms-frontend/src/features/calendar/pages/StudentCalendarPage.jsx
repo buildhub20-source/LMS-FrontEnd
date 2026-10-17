@@ -248,7 +248,6 @@ export const StudentCalendarPage = () => {
   const totalEventsCount = events.length;
   const activeDeadlinesCount = deadlines.length;
   const completedCount = events.filter((e) => e.status === 'completed').length;
-  const nextDeadline = deadlines[0];
 
   if (eventsLoading) return <Spinner fullPage />;
 

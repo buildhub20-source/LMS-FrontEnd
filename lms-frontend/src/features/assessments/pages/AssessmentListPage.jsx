@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Clock, Award, Search, ArrowRight, RotateCcw,
@@ -82,7 +82,6 @@ const analyticsBtn = {
 /* ── AssessmentCard ─────────────────────────────────────────────────────── */
 function AssessmentCard({ item, info, onStart, onResume, onResult, onRetake }) {
   const ts = useAssessmentTimeState(item.startTime, item.endTime);
-  const cfg = TIME_STATE_CONFIG[ts.state] ?? TIME_STATE_CONFIG.open_ended;
 
   const isLocked = ts.state === "locked";
   const isExpired = ts.state === "expired";

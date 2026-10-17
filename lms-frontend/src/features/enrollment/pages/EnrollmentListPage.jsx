@@ -383,27 +383,27 @@ export const EnrollmentListPage = () => {
   const renderRowCells = (row) => {
     if (topTab === 'COURSES' && subTab === 'STUDENTS') return [
       renderUserCell(row),
-      <span style={{ fontSize: 13, color: T.textSub }}>{row.courseTitle}</span>,
-      <StatusPill status={row.status} />,
-      <span style={{ fontSize: 13, color: T.textMuted }}>{fmt(row.enrolledAt)}</span>,
+      <span key="cell-386" style={{ fontSize: 13, color: T.textSub }}>{row.courseTitle}</span>,
+      <StatusPill key="cell-387" status={row.status} />,
+      <span key="cell-388" style={{ fontSize: 13, color: T.textMuted }}>{fmt(row.enrolledAt)}</span>,
     ];
     if (topTab === 'COURSES' && subTab === 'INSTRUCTORS') return [
       renderUserCell(row),
-      <span style={{ fontSize: 13, color: T.textSub }}>{row.courses}</span>,
-      <StatusPill status={row.status} />,
-      <span style={{ fontSize: 13, color: T.textMuted }}>{fmt(row.since)}</span>,
+      <span key="cell-392" style={{ fontSize: 13, color: T.textSub }}>{row.courses}</span>,
+      <StatusPill key="cell-393" status={row.status} />,
+      <span key="cell-394" style={{ fontSize: 13, color: T.textMuted }}>{fmt(row.since)}</span>,
     ];
     if (topTab === 'ASSESSMENTS' && subTab === 'STUDENTS') return [
       renderUserCell(row),
-      <span style={{ fontSize: 13, color: T.textSub }}>{row.assessmentTitle}</span>,
-      <span style={{ fontSize: 13, fontWeight: 700, color: T.primary }}>{row.totalMarks}</span>,
-      <StatusPill status={row.status} />,
+      <span key="cell-398" style={{ fontSize: 13, color: T.textSub }}>{row.assessmentTitle}</span>,
+      <span key="cell-399" style={{ fontSize: 13, fontWeight: 700, color: T.primary }}>{row.totalMarks}</span>,
+      <StatusPill key="cell-400" status={row.status} />,
     ];
     return [
       renderUserCell(row),
-      <span style={{ fontSize: 13, color: T.textSub }}>{row.assessmentTitle}</span>,
-      <StatusPill status={row.status} />,
-      <span style={{ fontSize: 13, color: T.textMuted }}>{fmt(row.since)}</span>,
+      <span key="cell-404" style={{ fontSize: 13, color: T.textSub }}>{row.assessmentTitle}</span>,
+      <StatusPill key="cell-405" status={row.status} />,
+      <span key="cell-406" style={{ fontSize: 13, color: T.textMuted }}>{fmt(row.since)}</span>,
     ];
   };
 

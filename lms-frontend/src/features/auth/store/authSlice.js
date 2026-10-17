@@ -83,7 +83,7 @@ export const logout = createAsyncThunk('auth/logout', async (_) => {
   try {
     const refreshToken = tokenStorage.getRefreshToken();
     await authService.logout(refreshToken ? { refreshToken } : undefined);
-  } catch (error) {
+  } catch {
     if (import.meta.env.DEV) {
       console.warn('Backend offline during logout. Cleared session client-side.');
     }

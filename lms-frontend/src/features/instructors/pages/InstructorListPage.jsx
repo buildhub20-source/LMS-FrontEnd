@@ -168,7 +168,7 @@ export const InstructorListPage = () => {
   const [viewMode, setViewMode] = useState(() => {
     try {
       return localStorage.getItem('lms_instructor_view_mode') || 'table';
-    } catch (_) {
+    } catch {
       return 'table';
     }
   });
@@ -177,7 +177,6 @@ export const InstructorListPage = () => {
   const {
     data: pageData,
     isLoading,
-    error,
     refetch,
   } = useInstructors({ search, employmentType: employmentType || undefined, page, size: PAGE_SIZE });
 
@@ -390,7 +389,7 @@ export const InstructorListPage = () => {
                   key={id}
                   onClick={() => {
                     setViewMode(id);
-                    try { localStorage.setItem('lms_instructor_view_mode', id); } catch (_) {}
+                    try { localStorage.setItem('lms_instructor_view_mode', id); } catch { /* storage may be unavailable */ }
                   }}
                   title={title}
                   style={{

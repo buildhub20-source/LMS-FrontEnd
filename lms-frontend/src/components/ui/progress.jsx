@@ -1,8 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { cn } from "@/utils"
 import { Progress as ProgressPrimitive } from "radix-ui"
+import { cn } from "@/utils"
 
 function Progress({
   className,

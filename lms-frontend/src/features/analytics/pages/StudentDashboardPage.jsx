@@ -214,46 +214,6 @@ export const StudentDashboardPage = () => {
   ];
 
   // Gamification Badges
-  const badges = [
-    {
-      id: 'streak',
-      title: 'Streak Titan',
-      desc: '4 continuous days of learning',
-      status: 'UNLOCKED',
-      icon: <Flame size={18} fill="#ef4444" color="#ef4444" />,
-      badgeColor: '#ef4444',
-      badgeBg: 'rgba(239, 68, 68, 0.15)',
-    },
-    {
-      id: 'code',
-      title: 'Code Pioneer',
-      desc: 'First coding question submitted',
-      status: 'UNLOCKED',
-      icon: <Zap size={18} color="#eab308" />,
-      badgeColor: '#eab308',
-      badgeBg: 'rgba(234, 179, 8, 0.15)',
-    },
-    {
-      id: 'ace',
-      title: 'Assessment Ace',
-      desc: 'Score 85%+ on a proctored exam',
-      status: 'IN_PROGRESS',
-      progress: 78,
-      icon: <Target size={18} color="#3b82f6" />,
-      badgeColor: '#3b82f6',
-      badgeBg: 'rgba(59, 130, 246, 0.15)',
-    },
-    {
-      id: 'finisher',
-      title: 'Course Master',
-      desc: 'Reach 100% completion in any course',
-      status: 'LOCKED',
-      icon: <Trophy size={18} color="#a1a1aa" />,
-      badgeColor: '#a1a1aa',
-      badgeBg: 'rgba(255, 255, 255, 0.05)',
-    },
-  ];
-
   return (
     <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 20, paddingBottom: 40 }}>
       {/* ── Hero Greeting Banner ── */}

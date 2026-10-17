@@ -56,7 +56,7 @@ export const InstructorCertificationHubPage = () => {
   const [issuedNotification, setIssuedNotification] = useState('');
 
   // 1. Fetch Batches
-  const { data: batchPageData, refetch: refetchBatches } = useBatches({ size: 100 });
+  const { data: batchPageData } = useBatches({ size: 100 });
   const batches = useMemo(() => batchPageData?.content || [], [batchPageData]);
 
   // 2. Fetch Courses

@@ -162,7 +162,7 @@ export const ResourceManagementPage = () => {
       }
       setIsModalOpen(false);
       refetch();
-    } catch (err) {
+    } catch {
       toast.error('Failed to save resource.');
     }
   };
@@ -175,7 +175,7 @@ export const ResourceManagementPage = () => {
       await deleteMutation.mutateAsync(id);
       toast.success('Resource deleted.');
       refetch();
-    } catch (err) {
+    } catch {
       toast.error('Failed to delete resource.');
     }
   };

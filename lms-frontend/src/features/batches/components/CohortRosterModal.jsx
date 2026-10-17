@@ -144,7 +144,7 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
       toast.success(`Updated status to ${newStatus}`);
       refetchCohortStudents();
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STUDENTS });
-    } catch (err) {
+    } catch {
       toast.error('Failed to update enrolment status');
     }
   };

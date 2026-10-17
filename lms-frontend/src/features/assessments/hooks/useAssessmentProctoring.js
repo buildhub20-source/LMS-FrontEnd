@@ -188,7 +188,7 @@ export function useAssessmentProctoring({
             : null;
           doResolve(blob);
         }
-      } catch (e) {
+      } catch {
         clearTimeout(timeoutId);
         const blob = recordedChunksRef.current.length > 0
           ? new Blob(recordedChunksRef.current, { type: 'video/webm' })

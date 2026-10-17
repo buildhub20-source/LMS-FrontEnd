@@ -43,7 +43,7 @@ export const EnrollmentFormModal = ({ isOpen, onClose }) => {
       setStudentId('');
       setCourseId('');
       onClose();
-    } catch (err) {
+    } catch {
       // Error handled in hook toast
     }
   };

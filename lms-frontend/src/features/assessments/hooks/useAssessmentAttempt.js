@@ -142,7 +142,7 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
       (attempt.questions ?? []).forEach((q) => {
         try {
           localStorage.removeItem(`${LOCAL_STORAGE_PREFIX}${attempt.id}_${q.id}`);
-        } catch {}
+        } catch { /* storage may be unavailable; nothing to clean up */ }
       });
 
       if (shouldNavigate) {

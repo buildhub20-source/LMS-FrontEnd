@@ -140,7 +140,7 @@ const CourseDetailsContent = () => {
           maxWatchedTimeRef.current = savedPos;
           lastSavedPositionRef.current = savedPos;
         }
-      } catch (_) {}
+      } catch { /* storage may be unavailable */ }
     }
   }, [currentLesson?.id, resumePositionKey]);
 
@@ -173,7 +173,7 @@ const CourseDetailsContent = () => {
         maxWatchedTimeRef.current = Math.max(maxWatchedTimeRef.current, savedPos);
         showNotice(`Resumed playback at ${Math.floor(savedPos / 60)}:${String(Math.floor(savedPos % 60)).padStart(2, '0')}`, 'success');
       }
-    } catch (_) {}
+    } catch { /* storage may be unavailable */ }
   };
 
   const handleVideoTimeUpdate = (e) => {
@@ -194,7 +194,7 @@ const CourseDetailsContent = () => {
       lastSavedPositionRef.current = currentTime;
       try {
         localStorage.setItem(resumePositionKey, String(Math.floor(currentTime)));
-      } catch (_) {}
+      } catch { /* storage may be unavailable */ }
     }
 
     // Enforce watch limits for students on uncompleted lessons
@@ -235,7 +235,7 @@ const CourseDetailsContent = () => {
       markLessonCompleted(currentLesson.id);
       // Clear saved resume position upon successful video completion
       if (resumePositionKey) {
-        try { localStorage.removeItem(resumePositionKey); } catch (_) {}
+        try { localStorage.removeItem(resumePositionKey); } catch { /* storage may be unavailable */ }
       }
       // Auto-advance to next lesson if available
       if (activeLessonIndex < allLessons.length - 1) {

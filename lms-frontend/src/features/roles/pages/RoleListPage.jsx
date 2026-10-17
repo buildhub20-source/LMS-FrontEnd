@@ -156,15 +156,6 @@ function initials(name = '') {
   );
 }
 
-function roleBadge(name = '') {
-  return (
-    ROLE_BADGE_COLORS[name.toLowerCase().replace(/[^a-z]/g, '')] ?? {
-      bg: M.primarySoft,
-      color: M.primary,
-    }
-  );
-}
-
 /* ─── 3D avatar image pool (cycles deterministically per user) ─────── */
 const AVATAR_IMAGES = [
   '/avatars/avatar-1.jpg',

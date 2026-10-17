@@ -13,9 +13,9 @@ import {
   Settings,
 } from 'lucide-react';
 import RouteErrorBoundary from '../components/common/RouteErrorBoundary';
-import AppShell from './AppShell';
 import TopTabNav from '../components/layout/TopTabNav/TopTabNav';
 import { ROUTES } from '../constants/routes';
+import AppShell from './AppShell';
 
 /* ── Sidebar icon items ─────────────────────────────── */
 const SIDEBAR_ITEMS = [

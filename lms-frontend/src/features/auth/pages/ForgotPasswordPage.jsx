@@ -13,7 +13,7 @@ export const ForgotPasswordPage = () => (
       Reset your password
     </h3>
     <p className="text-sm text-center mb-5" style={{ color: 'var(--muted-foreground)' }}>
-      Enter your email and we'll send you a reset link
+      Enter your email and we&apos;ll send you a reset link
     </p>
     <ForgotPasswordForm />
     <p className="mt-5 text-center">

@@ -132,7 +132,7 @@ function QuestionPreviewContent({ onClose, questionData }) {
               </span>
             </div>
             <span style={{ fontSize: 12, color: 'var(--text-muted, #94a3b8)' }}>
-              Testing "{normalizedQuestion.title}" ({normalizedQuestion.difficulty} · {normalizedQuestion.marks} marks)
+              Testing &ldquo;{normalizedQuestion.title}&rdquo; ({normalizedQuestion.difficulty} · {normalizedQuestion.marks} marks)
             </span>
           </div>
         </div>

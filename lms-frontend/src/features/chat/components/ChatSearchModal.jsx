@@ -224,7 +224,7 @@ export default function ChatSearchModal({
             <div className="chat-search-modal__empty">
               <MessageSquare size={36} className="chat-search-modal__empty-icon" />
               <h4>No messages found</h4>
-              <p>No results matching "{query}" {scope === 'channel' ? `in #${currentChannelName}` : 'across all channels'}.</p>
+              <p>No results matching &ldquo;{query}&rdquo; {scope === 'channel' ? `in #${currentChannelName}` : 'across all channels'}.</p>
             </div>
           ) : (
             <div className="chat-search-modal__hint">

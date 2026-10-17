@@ -3,15 +3,15 @@ import { Link } from 'react-router-dom';
 import { Trophy, Award, Sparkles, ArrowRight, Swords, Database, Zap, Crown } from 'lucide-react';
 import { useAdminAssessments, useAdminAssessmentAnalytics } from '../hooks/useAdminAssessments';
 import { generateLeaderboard, LEETCODE_BADGES } from '../utils/badgeDefinitions';
+import { ROUTES } from '../../../constants/routes';
 import LeetCodeBadge from './LeetCodeBadge';
 import BadgeDetailModal from './BadgeDetailModal';
-import { ROUTES } from '../../../constants/routes';
 
 export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
   const [selectedBadge, setSelectedBadge] = useState(null);
 
   // Fetch assessments to find the active or most recent one
-  const { data: assessmentsData, isLoading: listLoading } = useAdminAssessments({ page: 0, size: 5 });
+  const { data: assessmentsData } = useAdminAssessments({ page: 0, size: 5 });
   const assessments =
     assessmentsData?.content ||
     assessmentsData?.data?.content ||
@@ -20,7 +20,7 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
   const firstAssessment = assessments.find((a) => a.status === 'PUBLISHED') || assessments[0];
   const assessmentId = firstAssessment?.id;
 
-  const { data: analytics, isLoading: analyticsLoading } = useAdminAssessmentAnalytics(assessmentId);
+  const { data: analytics } = useAdminAssessmentAnalytics(assessmentId);
   const studentStats = analytics?.studentStats || [];
 
   const leaderboard = React.useMemo(() => {
@@ -29,8 +29,6 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
   }, [studentStats]);
 
   const top1 = leaderboard[0];
-  const top2 = leaderboard[1];
-  const top3 = leaderboard[2];
 
   const codingChampion = React.useMemo(() => {
     if (!studentStats.length) return null;

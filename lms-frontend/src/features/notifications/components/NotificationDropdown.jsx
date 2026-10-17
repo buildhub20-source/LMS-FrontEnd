@@ -261,7 +261,7 @@ export default function NotificationDropdown({
             >
               <Bell size={28} style={{ margin: '0 auto 10px', opacity: 0.4, color: 'var(--muted-foreground)' }} />
               <p style={{ margin: 0, fontWeight: 500, color: 'var(--foreground)' }}>No notifications found</p>
-              <span style={{ fontSize: '0.76rem', color: 'var(--muted-foreground)' }}>You're all caught up!</span>
+              <span style={{ fontSize: '0.76rem', color: 'var(--muted-foreground)' }}>You&apos;re all caught up!</span>
             </div>
           ) : (
             filteredItems.map((item) => {

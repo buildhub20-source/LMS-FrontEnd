@@ -98,6 +98,10 @@ export default defineConfig(({ mode }) => {
       pool: 'threads',
       globals: true,
       setupFiles: ['./tests/setup.js'],
+      // The first render of the large sign-in, live-room and notification
+      // components takes several seconds under coverage with the suite running
+      // in parallel; the 5s default fails them on timing alone.
+      testTimeout: 30000,
       include: ['tests/unit/**/*.test.{js,jsx}', 'tests/integration/**/*.test.{js,jsx}'],
       coverage: {
         provider: 'v8',

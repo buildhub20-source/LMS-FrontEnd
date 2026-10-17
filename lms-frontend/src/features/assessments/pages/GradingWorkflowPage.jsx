@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Check, X, Award, FileText, Send, ChevronRight, ChevronLeft,
   MessageSquare, Trash2, CornerDownRight, Plus, Sparkles, ExternalLink

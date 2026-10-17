@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import chatSocketService from '../services/chatSocketService';
 import chatService from '../services/chatService';
 import { SERVER_EVENTS, MESSAGES_PER_PAGE } from '../constants/chatConstants';
-import { v4 as uuidv4 } from 'uuid';
 import useAuth from '../../auth/hooks/useAuth';
 
 /**

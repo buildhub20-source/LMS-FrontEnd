@@ -2,15 +2,6 @@ import { useState, useMemo } from 'react';
 import { Menu, Bell, Mail, Bookmark, Search, LogOut, User } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { cn } from '@/utils';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import ThemeSlider from '../../common/ThemeSlider';
 import notificationService from '../../../features/notifications/services/notificationService';
 import { useNotificationSocket } from '../../../features/notifications/hooks/useNotificationSocket';
@@ -18,6 +9,15 @@ import NotificationDropdown from '../../../features/notifications/components/Not
 import { QUERY_KEYS } from '../../../constants/appConstants';
 import { ROUTES } from '../../../constants/routes';
 import useAuth from '../../../features/auth/hooks/useAuth';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cn } from '@/utils';
 
 /**
  * Header — Figma-inspired top bar.
@@ -25,7 +25,7 @@ import useAuth from '../../../features/auth/hooks/useAuth';
  * Features: hamburger (mobile), top tab nav slot, right-side action icons
  * (mail, notification bell, bookmarks, theme toggle, user avatar).
  */
-export const Header = ({ onToggleSidebar, children, tabNav }) => {
+export const Header = ({ onToggleSidebar, tabNav }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const isStudent = (user?.roles ?? []).some(

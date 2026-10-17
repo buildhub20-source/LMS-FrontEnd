@@ -17,12 +17,12 @@ import LeetCodeBadge from '../components/LeetCodeBadge';
 import BadgeDetailModal from '../components/BadgeDetailModal';
 import Spinner from '../../../components/common/Spinner';
 import Alert from '../../../components/feedback/Alert';
-import { formatDateTime, formatRelative, formatDate } from '../../../utils/dateUtils';
+import { formatDateTime, formatRelative } from '../../../utils/dateUtils';
 import { ROUTES } from '../../../constants/routes';
 
 export const GlobalSubmissionsHistoryPage = () => {
   const location = useLocation();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const isInstructor = location.pathname.startsWith('/instructor');
 
   const initialAssessmentId = searchParams.get('assessmentId') || 'ALL';

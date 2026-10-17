@@ -18,7 +18,6 @@ export default function ImportQuestionsFileModal({
   isOpen,
   onClose,
   onImportSuccess,
-  target = 'bank', // 'bank' or 'assessment'
   targetTitle = 'Question Bank',
 }) {
   const [dragActive, setDragActive] = useState(false);

@@ -1,9 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { cn } from "@/utils"
 import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
+import { cn } from "@/utils"
 
 function DropdownMenu({
   ...props

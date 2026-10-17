@@ -822,7 +822,6 @@ export const AdminAssessmentListPage = () => {
     }
   };
 
-  const f = { width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', background: 'var(--lms-card)', color: 'var(--text-primary)', fontSize: 14, fontFamily: 'system-ui, -apple-system, sans-serif', boxSizing: 'border-box', outline: 'none' };
 
   return (
     <div className="space-y-6" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>

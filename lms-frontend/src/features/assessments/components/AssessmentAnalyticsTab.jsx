@@ -13,10 +13,10 @@ import {
 import Spinner from '../../../components/common/Spinner';
 import Alert from '../../../components/feedback/Alert';
 import Badge from '../../../components/common/Badge';
-import LeetCodeBadge from './LeetCodeBadge';
 import { evaluateStudentBadges } from '../utils/badgeDefinitions';
 import { useToast } from '../../../components/feedback/Toast';
 import { formatDate } from '../../../utils/dateUtils';
+import LeetCodeBadge from './LeetCodeBadge';
 
 export const AssessmentAnalyticsTab = ({ assessmentId }) => {
   const { data: analytics, isLoading, error } = useAdminAssessmentAnalytics(assessmentId);

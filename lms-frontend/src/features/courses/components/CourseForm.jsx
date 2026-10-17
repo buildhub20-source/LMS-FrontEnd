@@ -55,7 +55,6 @@ export const CourseForm = ({
   });
 
   const summaryValue = useWatch({ control, name: 'summary' }) || '';
-  const descriptionValue = useWatch({ control, name: 'description' }) || '';
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
