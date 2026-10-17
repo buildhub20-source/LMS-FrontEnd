@@ -1815,93 +1815,105 @@ export const AssessmentResultPage = () => {
                                         </span>
                                       </div>
 
-                                      <div
-                                        style={{
-                                          display: 'grid',
-                                          gridTemplateColumns:
-                                            'repeat(auto-fit, minmax(180px, 1fr))',
-                                          gap: 10,
-                                        }}
-                                      >
-                                        <div>
-                                          <span
-                                            style={{
-                                              fontSize: 10,
-                                              fontWeight: 700,
-                                              textTransform: 'uppercase',
-                                              color: 'var(--text-muted)',
-                                              display: 'block',
-                                              marginBottom: 3,
-                                            }}
-                                          >
-                                            Input Data
-                                          </span>
-                                          <div
-                                            style={{
-                                              padding: '6px 10px',
-                                              borderRadius: 6,
-                                              background: 'rgba(0,0,0,0.25)',
-                                              fontFamily: 'monospace',
-                                              fontSize: 11,
-                                              color: 'var(--text-secondary)',
-                                            }}
-                                          >
-                                            {tc.inputData || '(Empty Input)'}
+                                      {tc.hidden ? (
+                                        <p
+                                          style={{
+                                            margin: 0,
+                                            fontSize: 11,
+                                            color: 'var(--text-muted)',
+                                          }}
+                                        >
+                                          Hidden test case: its input and output are not shown.
+                                        </p>
+                                      ) : (
+                                        <div
+                                          style={{
+                                            display: 'grid',
+                                            gridTemplateColumns:
+                                              'repeat(auto-fit, minmax(180px, 1fr))',
+                                            gap: 10,
+                                          }}
+                                        >
+                                          <div>
+                                            <span
+                                              style={{
+                                                fontSize: 10,
+                                                fontWeight: 700,
+                                                textTransform: 'uppercase',
+                                                color: 'var(--text-muted)',
+                                                display: 'block',
+                                                marginBottom: 3,
+                                              }}
+                                            >
+                                              Input Data
+                                            </span>
+                                            <div
+                                              style={{
+                                                padding: '6px 10px',
+                                                borderRadius: 6,
+                                                background: 'rgba(0,0,0,0.25)',
+                                                fontFamily: 'monospace',
+                                                fontSize: 11,
+                                                color: 'var(--text-secondary)',
+                                              }}
+                                            >
+                                              {tc.inputData || '(Empty Input)'}
+                                            </div>
+                                          </div>
+                                          <div>
+                                            <span
+                                              style={{
+                                                fontSize: 10,
+                                                fontWeight: 700,
+                                                textTransform: 'uppercase',
+                                                color: 'var(--text-muted)',
+                                                display: 'block',
+                                                marginBottom: 3,
+                                              }}
+                                            >
+                                              Expected Output
+                                            </span>
+                                            <div
+                                              style={{
+                                                padding: '6px 10px',
+                                                borderRadius: 6,
+                                                background: 'rgba(0,0,0,0.25)',
+                                                fontFamily: 'monospace',
+                                                fontSize: 11,
+                                                color: '#34d399',
+                                              }}
+                                            >
+                                              {tc.expectedOutput || '(None)'}
+                                            </div>
+                                          </div>
+                                          <div>
+                                            <span
+                                              style={{
+                                                fontSize: 10,
+                                                fontWeight: 700,
+                                                textTransform: 'uppercase',
+                                                color: 'var(--text-muted)',
+                                                display: 'block',
+                                                marginBottom: 3,
+                                              }}
+                                            >
+                                              Actual Output
+                                            </span>
+                                            <div
+                                              style={{
+                                                padding: '6px 10px',
+                                                borderRadius: 6,
+                                                background: 'rgba(0,0,0,0.25)',
+                                                fontFamily: 'monospace',
+                                                fontSize: 11,
+                                                color: tc.passed ? '#34d399' : '#f87171',
+                                              }}
+                                            >
+                                              {tc.actualOutput || '\u2014'}
+                                            </div>
                                           </div>
                                         </div>
-                                        <div>
-                                          <span
-                                            style={{
-                                              fontSize: 10,
-                                              fontWeight: 700,
-                                              textTransform: 'uppercase',
-                                              color: 'var(--text-muted)',
-                                              display: 'block',
-                                              marginBottom: 3,
-                                            }}
-                                          >
-                                            Expected Output
-                                          </span>
-                                          <div
-                                            style={{
-                                              padding: '6px 10px',
-                                              borderRadius: 6,
-                                              background: 'rgba(0,0,0,0.25)',
-                                              fontFamily: 'monospace',
-                                              fontSize: 11,
-                                              color: '#34d399',
-                                            }}
-                                          >
-                                            {tc.expectedOutput || '(None)'}
-                                          </div>
-                                        </div>
-                                        <div>
-                                          <span
-                                            style={{
-                                              fontSize: 10,
-                                              fontWeight: 700,
-                                              textTransform: 'uppercase',
-                                              color: 'var(--text-muted)',
-                                              display: 'block',
-                                              marginBottom: 3,
-                                            }}
-                                          >
-                                            Actual Output
-                                          </span>
-                                          <div
-                                            style={{
-                                              padding: '6px 10px',
-                                              borderRadius: 6,
-                                              background: 'rgba(0,0,0,0.25)',
-                                              fontFamily: 'monospace',
-                                              fontSize: 11,
-                                              color: tc.passed ? '#34d399' : '#f87171',
-                                            }}
-                                          >
-                                            {tc.actualOutput || '\u2014'}
-                                          </div>
-                                        </div>
-                                      </div>
+                                      )}
                                     </div>
                                   ))}
                                 </div>

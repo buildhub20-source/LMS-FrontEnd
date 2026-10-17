@@ -125,6 +125,8 @@ export const API_ENDPOINTS = Object.freeze({
     rubricById: (id) => `/admin/assessments/rubrics/${id}`,
     pendingGrading: '/admin/assessments/grading/pending',
     gradeAttempt: (attemptId) => `/admin/assessments/grading/attempts/${attemptId}/grade`,
+    aiSuggestion: (submissionId) =>
+      `/admin/assessments/grading/submissions/${submissionId}/ai-suggestion`,
   },
   certificates: {
     base: '/certificates',

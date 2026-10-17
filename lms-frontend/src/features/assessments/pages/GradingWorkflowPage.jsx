@@ -22,6 +22,8 @@ import Badge from '../../../components/common/Badge';
 import Alert from '../../../components/feedback/Alert';
 import gradingService from '../services/gradingService';
 import rubricService from '../services/rubricService';
+import AiSuggestionPanel from '../components/AiSuggestionPanel';
+import { prefillFromSuggestion } from '../utils/aiSuggestion';
 
 /** Maps submission language strings to Monaco language identifiers */
 const LANG_MAP = {
@@ -71,6 +73,12 @@ export const GradingWorkflowPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState(null);
 
+  // AI grading suggestion for the selected submission
+  const [aiSuggestion, setAiSuggestion] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState(null);
+  const aiForSubmissionRef = useRef(null);
+
   const fetchData = async () => {
     setLoading(true);
     setError(null);
@@ -92,16 +100,61 @@ export const GradingWorkflowPage = () => {
     }
   };
 
+  // Switching submissions must not carry over the previous one's scores or suggestion.
+  const selectSubmission = (sub) => {
+    setSelectedSub(sub);
+    setRubricScores({});
+    setManualScore('');
+    setStatus('ACCEPTED');
+  };
+
+  const handleAiSuggest = async () => {
+    if (!selectedSub) return;
+    const subId = selectedSub.id;
+    setAiLoading(true);
+    setAiError(null);
+    try {
+      const suggestion = await gradingService.requestAiSuggestion(subId, selectedRubricId);
+      if (aiForSubmissionRef.current !== subId) return;
+      setAiSuggestion(suggestion);
+      const prefill = prefillFromSuggestion(
+        suggestion,
+        rubrics.find((r) => r.id === selectedRubricId),
+      );
+      if (prefill.rubricScores) setRubricScores((prev) => ({ ...prev, ...prefill.rubricScores }));
+      setManualScore(prefill.manualScore);
+      setStatus(prefill.status);
+    } catch (err) {
+      if (aiForSubmissionRef.current === subId) {
+        setAiError(err?.response?.data?.message || 'AI grading failed. Please grade manually.');
+      }
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
 
-  // Load annotations when active submission changes
+  // Load annotations and any earlier AI suggestion when the active submission changes
   useEffect(() => {
+    setAiSuggestion(null);
+    setAiError(null);
+    aiForSubmissionRef.current = selectedSub?.id ?? null;
     if (!selectedSub) {
       setAnnotations([]);
       return;
     }
+    const subId = selectedSub.id;
+    gradingService
+      .getAiSuggestion(subId)
+      .then((s) => {
+        if (aiForSubmissionRef.current === subId) setAiSuggestion(s);
+      })
+      .catch(() => {
+        /* no suggestion requested yet */
+      });
     const stored = localStorage.getItem(`lms_code_annotations_${selectedSub.id}`);
     if (stored) {
       try {
@@ -311,7 +364,7 @@ export const GradingWorkflowPage = () => {
             {pending.map((sub) => (
               <div
                 key={sub.id}
-                onClick={() => setSelectedSub(sub)}
+                onClick={() => selectSubmission(sub)}
                 style={{
                   padding: 12,
                   borderRadius: 6,
@@ -621,9 +674,49 @@ export const GradingWorkflowPage = () => {
                 onSubmit={handleSubmitGrade}
                 style={{ marginTop: 24, paddingTop: 24, borderTop: '1px solid #e5e7eb' }}
               >
-                <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: 16 }}>
-                  Evaluate Submission
-                </h3>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: 12,
+                    flexWrap: 'wrap',
+                    marginBottom: 16,
+                  }}
+                >
+                  <h3 style={{ fontSize: '1rem', fontWeight: 600, margin: 0 }}>
+                    Evaluate Submission
+                  </h3>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={handleAiSuggest}
+                    isLoading={aiLoading}
+                    disabled={aiLoading}
+                  >
+                    <Sparkles size={16} style={{ marginRight: 6 }} />
+                    {aiSuggestion?.status === 'SUGGESTED' ? 'Suggest again' : 'Suggest with AI'}
+                  </Button>
+                </div>
+
+                {aiLoading && (
+                  <p
+                    role="status"
+                    style={{
+                      fontSize: '0.85rem',
+                      color: 'var(--text-muted, #6b7280)',
+                      marginTop: 0,
+                    }}
+                  >
+                    Running the code against the test cases. This usually takes under a minute.
+                  </p>
+                )}
+                {aiError && (
+                  <div style={{ marginBottom: 16 }}>
+                    <Alert tone="error">{aiError}</Alert>
+                  </div>
+                )}
+                <AiSuggestionPanel suggestion={aiSuggestion} />
 
                 <div
                   style={{
