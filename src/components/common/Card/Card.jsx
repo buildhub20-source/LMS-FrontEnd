@@ -1,17 +1,13 @@
 import styles from './Card.module.css';
 
-export const Card = ({ title, subtitle, actions, footer, onClick, className = '', children, style }) => (
+export const Card = ({ title, actions, footer, onClick, className = '', children }) => (
   <section
     className={`${styles.card} ${onClick ? styles.interactive : ''} ${className}`}
     onClick={onClick}
-    style={style}
   >
-    {(title || subtitle || actions) && (
+    {(title || actions) && (
       <header className={styles.header}>
-        <div>
-          {typeof title === 'string' ? <h4 className={styles.title}>{title}</h4> : title}
-          {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
-        </div>
+        {typeof title === 'string' ? <h4>{title}</h4> : title}
         {actions}
       </header>
     )}

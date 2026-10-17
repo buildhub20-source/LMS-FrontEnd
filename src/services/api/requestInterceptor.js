@@ -10,8 +10,8 @@ export const onRequest = (config) => {
   }
 
   const tenant = storage.get(STORAGE_KEYS.TENANT);
-  if (tenant?.slug) {
-    config.headers['X-Tenant-Slug'] = tenant.slug;
+  if (tenant?.id) {
+    config.headers['X-Tenant-Id'] = tenant.id;
   }
 
   config.headers['X-Request-Id'] = crypto.randomUUID();

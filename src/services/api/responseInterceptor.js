@@ -21,9 +21,8 @@ export const createResponseErrorHandler = (client) => async (error) => {
   const status = error.response?.status;
 
   const isRefreshCall = original?.url?.includes(API_ENDPOINTS.auth.refresh);
-  const isLoginCall = original?.url?.includes(API_ENDPOINTS.auth.login);
 
-  if (status === HTTP_STATUS.UNAUTHORIZED && !original?._retry && !isRefreshCall && !isLoginCall) {
+  if (status === HTTP_STATUS.UNAUTHORIZED && !original?._retry && !isRefreshCall) {
     original._retry = true;
 
     const refreshToken = tokenStorage.getRefreshToken();

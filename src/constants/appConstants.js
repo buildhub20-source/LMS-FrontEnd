@@ -3,7 +3,6 @@ export const STORAGE_KEYS = Object.freeze({
   REFRESH_TOKEN: 'lms.refreshToken',
   THEME: 'lms.theme',
   TENANT: 'lms.tenant',
-  PLATFORM_ACCESS_TOKEN: 'lms.platform.accessToken',
 });
 
 export const QUERY_KEYS = Object.freeze({
@@ -11,9 +10,6 @@ export const QUERY_KEYS = Object.freeze({
   USERS: ['users'],
   ROLES: ['roles'],
   INVITATIONS: ['invitations'],
-  STUDENTS: ['students'],
-  INSTRUCTORS: ['instructors'],
-  BATCHES: ['batches'],
   COURSES: ['courses'],
   ENROLLMENTS: ['enrollments'],
   ASSESSMENTS: ['assessments'],
@@ -23,10 +19,6 @@ export const QUERY_KEYS = Object.freeze({
   SUBSCRIPTION: ['subscription'],
   TENANT: ['tenant'],
   PROFILE: ['profile'],
-  GAMIFICATION: ['gamification'],
-  CALENDAR: ['calendar'],
-  NOTES: ['notes'],
-  BOOKMARKS: ['bookmarks'],
 });
 
 export const HTTP_STATUS = Object.freeze({

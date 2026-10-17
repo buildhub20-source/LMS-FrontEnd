@@ -1,28 +1,23 @@
 .container {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: var(--space-5);
   width: 100%;
-  max-width: 100%;
 }
 .head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--space-4);
   flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-.head h1 {
-  color: var(--foreground);
-  font-size: 1.75rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  margin: 0;
+  margin-bottom: var(--space-5);
 }
 .subtitle {
-  color: var(--muted-foreground);
-  font-size: 14px;
-  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin: var(--space-1) 0 0;
 }
 .actions {
   display: flex;
-  gap: 8px;
+  gap: var(--space-2);
 }

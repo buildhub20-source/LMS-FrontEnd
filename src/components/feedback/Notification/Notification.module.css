@@ -1,25 +1,22 @@
 .item {
   display: flex;
-  gap: 12px;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
   cursor: pointer;
-  background: var(--card);
-  transition: background 150ms ease;
+  background: var(--color-surface);
 }
 .item:hover {
-  background: var(--muted);
+  background: var(--color-surface-alt);
 }
 .unread {
-  border-left: 3px solid var(--primary);
-  background: var(--accent);
+  border-left: 3px solid var(--color-primary-600);
 }
 .title {
-  font-weight: 500;
-  font-size: 14px;
-  color: var(--foreground);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-sm);
 }
 .meta {
-  font-size: 12px;
-  color: var(--muted-foreground);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
 }
