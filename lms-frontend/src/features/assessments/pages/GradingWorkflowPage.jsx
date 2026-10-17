@@ -777,7 +777,7 @@ export const GradingWorkflowPage = () => {
                         border: '1px solid #ccc',
                       }}
                     >
-                      <option value="ACCEPTED">ACCEPTED (Full Marks)</option>
+                      <option value="ACCEPTED">ACCEPTED</option>
                       <option value="WRONG_ANSWER">WRONG_ANSWER</option>
                       <option value="PARTIAL_SUCCESS">PARTIAL_SUCCESS</option>
                       <option value="MANUALLY_GRADED">MANUALLY_GRADED</option>

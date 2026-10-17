@@ -422,7 +422,7 @@ export const CertificateListPage = () => {
                               gap: 4,
                             }}
                           >
-                            <ShieldCheck size={11} /> {cert.issuer || 'External Credential'}
+                            Self-reported · {cert.issuer || 'External credential'}
                           </span>
                           <h4
                             style={{

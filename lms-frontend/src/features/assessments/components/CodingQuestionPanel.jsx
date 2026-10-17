@@ -85,258 +85,81 @@ const runJavaScriptInWorker = (sourceCode, input) =>
 /**
  * Sandboxed code execution simulator for sample test cases
  */
+/**
+ * Runs code against the sample test cases. Only JavaScript can run in the
+ * browser; other languages are not executed here, and no result is invented
+ * for them. Every submitted answer is graded after the attempt is submitted.
+ */
 async function executeCodeSandbox(language, sourceCode, testCases, customInput = '') {
-  const startTime = performance.now();
-  const results = [];
-
   if (!sourceCode || !sourceCode.trim()) {
-    return {
-      status: 'COMPILE_ERROR',
-      message: 'Source code is empty. Please write your solution.',
-      results: [],
-      executionTimeMs: 0,
-    };
+    return { status: 'EMPTY', message: 'Write some code before running it.', results: [] };
   }
 
-  // Realistic compiler/syntax validation for Java
-  if (language === 'java') {
-    const openBraces = (sourceCode.match(/\{/g) || []).length;
-    const closeBraces = (sourceCode.match(/\}/g) || []).length;
-    if (openBraces !== closeBraces) {
-      return {
-        status: 'COMPILE_ERROR',
-        message: `Main.java: error: reached end of file while parsing (unmatched braces: ${openBraces} '{' vs ${closeBraces} '}')`,
-        results: [],
-        executionTimeMs: 12,
-      };
-    }
-
-    if (/System\.out\.printl[^n]/.test(sourceCode) || /System\.out\.printl\s*\(/.test(sourceCode)) {
-      return {
-        status: 'COMPILE_ERROR',
-        message:
-          'Main.java: error: cannot find symbol\n  symbol:   method printl(java.lang.String)\n  location: variable out of type java.io.PrintStream',
-        results: [],
-        executionTimeMs: 14,
-      };
-    }
-
-    const codeLines = sourceCode.split('\n');
-    for (let lineNum = 0; lineNum < codeLines.length; lineNum++) {
-      const line = codeLines[lineNum].trim();
-      if (
-        (line.startsWith('int ') ||
-          line.startsWith('String ') ||
-          line.startsWith('Scanner ') ||
-          line.startsWith('Map<') ||
-          line.startsWith('return ')) &&
-        !line.endsWith(';') &&
-        !line.endsWith('{') &&
-        !line.endsWith('}') &&
-        !line.startsWith('//') &&
-        !line.startsWith('/*')
-      ) {
-        return {
-          status: 'COMPILE_ERROR',
-          message: `Main.java:${lineNum + 1}: error: ';' expected\n    ${line}\n    ${' '.repeat(Math.max(0, line.length - 1))}^`,
-          results: [],
-          executionTimeMs: 15,
-        };
-      }
-    }
+  if (language !== 'javascript') {
+    const label = LANGUAGES.find((l) => l.value === language)?.label ?? language;
+    return {
+      status: 'UNAVAILABLE',
+      message: `Running ${label} code isn't available yet. Your answer is saved and will be graded after you submit.`,
+      results: [],
+    };
   }
 
   const casesToRun = [...testCases];
   if (customInput && customInput.trim()) {
     casesToRun.push({
       id: 'custom-input',
-      label: 'Custom Input Case',
+      label: 'Custom Input',
       input: customInput,
-      expectedOutput: '(Custom Evaluation)',
       isCustom: true,
     });
   }
-
-  // Fallback sample if question has no test cases configured
   if (casesToRun.length === 0) {
-    casesToRun.push({
-      id: 'default-1',
-      label: 'Sample Case 1',
-      input: '1 2 3',
-      expectedOutput: 'Sample Result',
-      isCustom: true,
-    });
+    return {
+      status: 'NO_TESTS',
+      message: 'This question has no sample test cases. Add custom input to try your code.',
+      results: [],
+    };
   }
 
-  // Comprehensive code simulation engine for Java, Python, C++, C
+  const startTime = performance.now();
+  const results = [];
   for (let i = 0; i < casesToRun.length; i++) {
     const tc = casesToRun[i];
-    const expectedTrimmed = (tc.expectedOutput ?? '').trim();
-    const inputContent = (tc.input ?? '').trim();
+    const caseStart = performance.now();
+    const run = await runJavaScriptInWorker(sourceCode, tc.input ?? '');
+    const actualOutput = (run.output ?? '').trim();
+    const errorMsg = run.success ? null : (run.error ?? 'The sandboxed JavaScript runner failed.');
 
-    let actualOutput = '';
-    let isPassed = false;
-    let errorMsg = null;
-
-    if (language === 'javascript') {
-      const run = await runJavaScriptInWorker(sourceCode, tc.input ?? '');
-      actualOutput = run.output ?? '';
-      errorMsg = run.success ? null : (run.error ?? 'The sandboxed JavaScript runner failed.');
-    } else {
-      // Robust output parser for Java, Python, C++, and C
-      const collectedOutputs = [];
-
-      if (language === 'java') {
-        // Check if code is implementing Two Sum logic
-        const isTwoSumCode = /scanner|nextInt|map|target|nums|twoSum|sum/i.test(sourceCode);
-        const numbers = inputContent.match(/-?\d+/g)?.map(Number) || [];
-        if (isTwoSumCode && numbers.length >= 3) {
-          const n = numbers[0];
-          const arr = numbers.slice(1, 1 + n);
-          const target = numbers[1 + n];
-          if (arr.length === n && target !== undefined) {
-            const seen = new Map();
-            let found = null;
-            for (let idx = 0; idx < arr.length; idx++) {
-              const comp = target - arr[idx];
-              if (seen.has(comp)) {
-                const first = seen.get(comp);
-                found = `${Math.min(first, idx)} ${Math.max(first, idx)}`;
-                break;
-              }
-              seen.set(arr[idx], idx);
-            }
-            if (found) {
-              collectedOutputs.push(found);
-            }
-          }
-        }
-
-        if (collectedOutputs.length === 0) {
-          // Fallback regex parser for System.out.println, System.out.print, System.out.printf, System.err.print
-          const javaPrintRegex =
-            /System\.(?:out|err)\.(?:println|print|printf)\s*\(\s*([^;]+?)\s*\)\s*;/g;
-          let match;
-          while ((match = javaPrintRegex.exec(sourceCode)) !== null) {
-            const rawArg = match[1].trim();
-            // Extract string literal(s) or evaluate simple expressions
-            const stringMatches = [...rawArg.matchAll(/["'](.*?)["']/g)];
-            if (stringMatches.length > 0) {
-              collectedOutputs.push(stringMatches.map((m) => m[1]).join(''));
-            } else if (/^-?\d+(?:\.\d+)?$/.test(rawArg)) {
-              collectedOutputs.push(rawArg);
-            } else if (rawArg.toLowerCase() === 'true' || rawArg.toLowerCase() === 'false') {
-              collectedOutputs.push(rawArg.toLowerCase());
-            } else if (
-              inputContent &&
-              (rawArg.includes('scanner') || rawArg.includes('input') || rawArg.includes('in.'))
-            ) {
-              collectedOutputs.push(inputContent);
-            } else {
-              collectedOutputs.push(rawArg.replace(/[()]/g, ''));
-            }
-          }
-        }
-      } else if (language === 'python') {
-        // Match print(...) or sys.stdout.write(...)
-        const pyPrintRegex = /(?:print|sys\.stdout\.write)\s*\(\s*(.*?)\s*\)(?:\s*#.*)?$/gm;
-        let match;
-        while ((match = pyPrintRegex.exec(sourceCode)) !== null) {
-          const rawArg = match[1].trim();
-          const stringMatches = [...rawArg.matchAll(/["'](.*?)["']/g)];
-          if (stringMatches.length > 0) {
-            collectedOutputs.push(stringMatches.map((m) => m[1]).join(' '));
-          } else if (/^-?\d+(?:\.\d+)?$/.test(rawArg)) {
-            collectedOutputs.push(rawArg);
-          } else if (
-            inputContent &&
-            (rawArg.includes('input_data') ||
-              rawArg.includes('input(') ||
-              rawArg.includes('sys.stdin'))
-          ) {
-            collectedOutputs.push(inputContent);
-          } else {
-            collectedOutputs.push(rawArg);
-          }
-        }
-      } else if (language === 'cpp') {
-        // Match cout << ... or printf(...)
-        const coutRegex = /cout\s*<<\s*([^;]+);/g;
-        let match;
-        while ((match = coutRegex.exec(sourceCode)) !== null) {
-          const rawParts = match[1].split('<<');
-          const lineParts = [];
-          for (const part of rawParts) {
-            const p = part.trim();
-            if (p === 'endl' || p === '"\\n"') continue;
-            const strMatch = p.match(/["'](.*?)["']/);
-            if (strMatch) {
-              lineParts.push(strMatch[1]);
-            } else if (/^-?\d+(?:\.\d+)?$/.test(p)) {
-              lineParts.push(p);
-            }
-          }
-          if (lineParts.length > 0) collectedOutputs.push(lineParts.join(''));
-        }
-
-        const printfRegex = /printf\s*\(\s*["'](.*?)["'](?:\s*,\s*([^)]*))?\s*\)\s*;/g;
-        while ((match = printfRegex.exec(sourceCode)) !== null) {
-          collectedOutputs.push(match[1].replace(/\\n/g, '').trim());
-        }
-      } else if (language === 'c') {
-        // Match printf(...) or puts(...)
-        const cPrintRegex = /(?:printf|puts)\s*\(\s*["'](.*?)["'](?:\s*,\s*([^)]*))?\s*\)\s*;/g;
-        let match;
-        while ((match = cPrintRegex.exec(sourceCode)) !== null) {
-          collectedOutputs.push(match[1].replace(/\\n/g, '').trim());
-        }
-      }
-
-      if (collectedOutputs.length > 0) {
-        actualOutput = collectedOutputs.join('\n').trim();
-      }
-    }
-
-    // Determine pass / fail status
-    if (errorMsg) {
-      isPassed = false;
-    } else if (tc.isCustom) {
-      isPassed = true;
-    } else {
-      const actualNorm = (actualOutput || '').trim().replace(/\r\n/g, '\n');
-      const expectedNorm = expectedTrimmed.replace(/\r\n/g, '\n');
-      isPassed =
-        actualNorm === expectedNorm || actualNorm.toLowerCase() === expectedNorm.toLowerCase();
+    let status;
+    if (errorMsg) status = 'RUNTIME_ERROR';
+    else if (tc.isCustom) status = 'RAN';
+    else {
+      const actualNorm = actualOutput.replace(/\r\n/g, '\n');
+      const expectedNorm = (tc.expectedOutput ?? '').trim().replace(/\r\n/g, '\n');
+      status = actualNorm === expectedNorm ? 'PASSED' : 'WRONG_ANSWER';
     }
 
     results.push({
       testCaseIndex: i + 1,
       label: tc.label || `Case ${i + 1}`,
       input: tc.input ?? '',
-      expectedOutput: tc.expectedOutput ?? '',
-      actualOutput: errorMsg
-        ? `Runtime Error: ${errorMsg}`
-        : actualOutput || '(Execution completed with no output)',
-      status: errorMsg ? 'RUNTIME_ERROR' : isPassed ? 'PASSED' : 'WRONG_ANSWER',
+      expectedOutput: tc.isCustom ? null : (tc.expectedOutput ?? ''),
+      actualOutput: errorMsg ? `Runtime Error: ${errorMsg}` : actualOutput || '(no output)',
+      status,
       errorMessage: errorMsg,
-      executionTimeMs: Math.max(12, Math.round(Math.random() * 25 + 12)),
-      memoryMb: +(Math.random() * 5 + 18).toFixed(1),
+      executionTimeMs: Math.round(performance.now() - caseStart),
       isCustom: tc.isCustom,
     });
   }
 
-  const duration = Math.round(performance.now() - startTime);
-  const allPassed = results.length > 0 && results.every((r) => r.status === 'PASSED');
+  const checked = results.filter((r) => !r.isCustom);
+  let status = 'RAN';
+  if (results.some((r) => r.status === 'RUNTIME_ERROR')) status = 'RUNTIME_ERROR';
+  else if (checked.length > 0) {
+    status = checked.every((r) => r.status === 'PASSED') ? 'ACCEPTED' : 'WRONG_ANSWER';
+  }
 
-  return {
-    status: allPassed
-      ? 'ACCEPTED'
-      : results.some((r) => r.status === 'RUNTIME_ERROR')
-        ? 'RUNTIME_ERROR'
-        : 'WRONG_ANSWER',
-    results,
-    executionTimeMs: Math.max(duration, 42),
-  };
+  return { status, results, executionTimeMs: Math.round(performance.now() - startTime) };
 }
 
 /**
@@ -1630,43 +1453,65 @@ export const CodingQuestionPanel = ({
                   ) : (
                     <div>
                       {/* Overall Status Banner */}
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '10px 14px',
-                          borderRadius: 8,
-                          marginBottom: 14,
-                          background:
-                            runResults.status === 'ACCEPTED'
-                              ? 'rgba(16, 185, 129, 0.15)'
-                              : 'rgba(239, 68, 68, 0.15)',
-                          border: `1px solid ${runResults.status === 'ACCEPTED' ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)'}`,
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          {runResults.status === 'ACCEPTED' ? (
-                            <CheckCircle2 size={18} style={{ color: '#10b981' }} />
-                          ) : (
-                            <XCircle size={18} style={{ color: '#ef4444' }} />
-                          )}
-                          <span
-                            style={{
-                              fontSize: 14,
-                              fontWeight: 800,
-                              color: runResults.status === 'ACCEPTED' ? '#34d399' : '#f87171',
-                            }}
-                          >
-                            {runResults.status === 'ACCEPTED'
-                              ? 'All Sample Test Cases Passed'
-                              : 'Test Cases Failed / Output Mismatch'}
+                      {runResults.message ? (
+                        <div
+                          role="status"
+                          style={{
+                            padding: '10px 14px',
+                            borderRadius: 8,
+                            marginBottom: 14,
+                            background: 'rgba(148, 163, 184, 0.12)',
+                            border: '1px solid rgba(148, 163, 184, 0.3)',
+                            color: '#cbd5e1',
+                            fontSize: 13,
+                          }}
+                        >
+                          {runResults.message}
+                        </div>
+                      ) : (
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '10px 14px',
+                            borderRadius: 8,
+                            marginBottom: 14,
+                            background:
+                              runResults.status === 'ACCEPTED' || runResults.status === 'RAN'
+                                ? 'rgba(16, 185, 129, 0.15)'
+                                : 'rgba(239, 68, 68, 0.15)',
+                            border: `1px solid ${runResults.status === 'ACCEPTED' || runResults.status === 'RAN' ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)'}`,
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            {runResults.status === 'ACCEPTED' || runResults.status === 'RAN' ? (
+                              <CheckCircle2 size={18} style={{ color: '#10b981' }} />
+                            ) : (
+                              <XCircle size={18} style={{ color: '#ef4444' }} />
+                            )}
+                            <span
+                              style={{
+                                fontSize: 14,
+                                fontWeight: 800,
+                                color:
+                                  runResults.status === 'ACCEPTED' || runResults.status === 'RAN'
+                                    ? '#34d399'
+                                    : '#f87171',
+                              }}
+                            >
+                              {{
+                                ACCEPTED: 'All sample test cases passed',
+                                RAN: 'Code ran',
+                                RUNTIME_ERROR: 'Runtime error',
+                              }[runResults.status] ?? 'Some sample test cases failed'}
+                            </span>
+                          </div>
+                          <span style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'monospace' }}>
+                            Runtime: {runResults.executionTimeMs} ms
                           </span>
                         </div>
-                        <span style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'monospace' }}>
-                          Runtime: {runResults.executionTimeMs} ms
-                        </span>
-                      </div>
+                      )}
 
                       {/* Per-Case Details */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -1677,7 +1522,7 @@ export const CodingQuestionPanel = ({
                               background: '#080c16',
                               borderRadius: 8,
                               padding: 12,
-                              border: `1px solid ${res.status === 'PASSED' ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)'}`,
+                              border: `1px solid ${res.status === 'PASSED' || res.status === 'RAN' ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)'}`,
                             }}
                           >
                             <div
@@ -1698,10 +1543,13 @@ export const CodingQuestionPanel = ({
                                   padding: '2px 8px',
                                   borderRadius: 4,
                                   background:
-                                    res.status === 'PASSED'
+                                    res.status === 'PASSED' || res.status === 'RAN'
                                       ? 'rgba(16, 185, 129, 0.2)'
                                       : 'rgba(239, 68, 68, 0.2)',
-                                  color: res.status === 'PASSED' ? '#34d399' : '#f87171',
+                                  color:
+                                    res.status === 'PASSED' || res.status === 'RAN'
+                                      ? '#34d399'
+                                      : '#f87171',
                                 }}
                               >
                                 {res.status}
@@ -1743,7 +1591,9 @@ export const CodingQuestionPanel = ({
                                     color: '#34d399',
                                   }}
                                 >
-                                  {res.expectedOutput || '(empty)'}
+                                  {res.isCustom
+                                    ? '(custom input: not checked)'
+                                    : res.expectedOutput || '(empty)'}
                                 </pre>
                               </div>
                               <div>
@@ -1757,7 +1607,10 @@ export const CodingQuestionPanel = ({
                                     background: '#0f172a',
                                     borderRadius: 4,
                                     overflowX: 'auto',
-                                    color: res.status === 'PASSED' ? '#34d399' : '#f87171',
+                                    color:
+                                      res.status === 'PASSED' || res.status === 'RAN'
+                                        ? '#34d399'
+                                        : '#f87171',
                                   }}
                                 >
                                   {res.actualOutput}

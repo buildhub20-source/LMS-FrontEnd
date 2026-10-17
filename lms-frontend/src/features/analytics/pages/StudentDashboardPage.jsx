@@ -38,15 +38,13 @@ import { QUERY_KEYS } from '../../../constants/appConstants';
 import Spinner from '../../../components/common/Spinner';
 import { useResources } from '../../resources/hooks/useResources';
 import resourceService from '../../resources/services/resourceService';
-import LeetCodeBadge from '../../assessments/components/LeetCodeBadge';
-import BadgeDetailModal from '../../assessments/components/BadgeDetailModal';
-import { LEETCODE_BADGES } from '../../assessments/utils/badgeDefinitions';
+import { useStudentBadges } from '../../gamification/hooks/useGamification';
+import certificateService from '../../certificates/services/certificateService';
 
 export const StudentDashboardPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const studentName = user?.fullName || user?.firstName || user?.email?.split('@')[0] || 'Learner';
-  const [selectedBadge, setSelectedBadge] = useState(null);
 
   // Current time greeting
   const greeting = useMemo(() => {
@@ -126,23 +124,19 @@ export const StudentDashboardPage = () => {
     };
   }, []);
 
-  // Weekly Trend Chart Data
-  const weeklyTrends = useMemo(() => {
-    const defaultDays = [
-      { name: 'Mon', hours: 1.5 },
-      { name: 'Tue', hours: 2.0 },
-      { name: 'Wed', hours: 0.8 },
-      { name: 'Thu', hours: 3.2 },
-      { name: 'Fri', hours: 2.4 },
-      { name: 'Sat', hours: 1.0 },
-      { name: 'Sun', hours: 2.1 },
-    ];
-    return analytics?.enrollmentTrend && analytics.enrollmentTrend.length > 0
-      ? analytics.enrollmentTrend
-      : defaultDays;
-  }, [analytics]);
+  const { data: badgeData } = useStudentBadges();
+  const badges = Array.isArray(badgeData) ? badgeData : (badgeData?.content ?? []);
+  const earnedBadges = badges.filter((b) => Boolean(b.awardedAt));
 
-  const maxHours = Math.max(1, ...weeklyTrends.map((d) => d.hours || 0));
+  const { data: certificatePage } = useQuery({
+    queryKey: ['certificates', 'mine', 'count'],
+    queryFn: () => certificateService.list({ page: 0, size: 1 }),
+  });
+  const certificateCount = certificatePage?.totalElements ?? certificatePage?.content?.length;
+
+  // Weekly Trend Chart Data
+  const weeklyTrends = useMemo(() => analytics?.enrollmentTrend ?? [], [analytics]);
+  const maxPoints = Math.max(1, ...weeklyTrends.map((d) => d.points || 0));
 
   // Quick download helper for study cheatsheets
 
@@ -169,53 +163,19 @@ export const StudentDashboardPage = () => {
     },
     {
       label: 'Certificates Earned',
-      value: analytics?.certificateCount ?? 0,
-      subtext: '0 / 7 verifiable credentials',
+      value: certificateCount ?? '—',
+      subtext: 'Issued to you',
       icon: <Award size={20} className="text-amber-400" />,
       color: '#f59e0b',
       bg: 'rgba(245, 158, 11, 0.1)',
     },
     {
-      label: 'Hours Learned',
-      value: `${analytics?.hoursLearned ?? 12}h`,
-      subtext: '+3.2h logged this week',
+      label: 'Day Streak',
+      value: analytics?.streakDays ?? 0,
+      subtext: 'Consecutive days with activity',
       icon: <Clock size={20} className="text-violet-400" />,
       color: '#8b5cf6',
       bg: 'rgba(139, 92, 246, 0.1)',
-    },
-  ];
-
-  // Announcements
-  const announcements = [
-    {
-      id: 1,
-      tag: 'ASSESSMENT WINDOW',
-      tagColor: '#3b82f6',
-      tagBg: 'rgba(59, 130, 246, 0.12)',
-      title: 'Proctored Assessments are Live',
-      detail:
-        'Java Collections & SQL Optimization are open for testing. Make sure webcam permissions are granted.',
-      date: 'Today, 2:30 PM',
-    },
-    {
-      id: 2,
-      tag: 'NEW CONTENT',
-      tagColor: '#10b981',
-      tagBg: 'rgba(16, 185, 129, 0.12)',
-      title: 'React 19 Hooks & Architectural Patterns Added',
-      detail:
-        'New practical exercises and reference study guides have been published in your module curriculum.',
-      date: 'Yesterday',
-    },
-    {
-      id: 3,
-      tag: 'CERTIFICATION',
-      tagColor: '#f59e0b',
-      tagBg: 'rgba(245, 158, 11, 0.12)',
-      title: 'Verifiable Digital Credentials Enabled',
-      detail:
-        'Completed course certificates now feature instant cryptographic QR verification for LinkedIn sharing.',
-      date: 'Sep 11, 2026',
     },
   ];
 
@@ -267,7 +227,7 @@ export const StudentDashboardPage = () => {
               }}
             >
               <Flame size={13} fill="#ef4444" />
-              {analytics?.streakDays ?? 4} Day Streak!
+              {analytics?.streakDays ?? 0} Day Streak
             </span>
           </div>
           <h1
@@ -439,7 +399,7 @@ export const StudentDashboardPage = () => {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1.4fr) minmax(0, 1fr)',
+          gridTemplateColumns: 'minmax(0, 1fr)',
           gap: 24,
           alignItems: 'start',
         }}
@@ -695,11 +655,11 @@ export const StudentDashboardPage = () => {
               <h2
                 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}
               >
-                Weekly Study Time
+                Activity This Week
               </h2>
             </div>
             <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 500 }}>
-              Last 7 Days
+              Points earned per day
             </span>
           </div>
 
@@ -715,7 +675,7 @@ export const StudentDashboardPage = () => {
             }}
           >
             {weeklyTrends.map((d) => {
-              const heightPct = Math.round(((d.hours || 0) / maxHours) * 120);
+              const heightPct = Math.round(((d.points || 0) / maxPoints) * 120);
               return (
                 <div
                   key={d.name}
@@ -728,16 +688,18 @@ export const StudentDashboardPage = () => {
                   }}
                 >
                   <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)' }}>
-                    {d.hours > 0 ? `${d.hours}h` : '0'}
+                    {d.points || 0}
                   </span>
                   <div
-                    title={`${d.name}: ${d.hours} hours`}
+                    title={`${d.name}: ${d.points || 0} points`}
                     style={{
                       width: '70%',
                       maxWidth: 24,
                       height: `${Math.max(8, heightPct)}px`,
                       background:
-                        d.hours > 0 ? 'var(--color-primary-500, #3b82f6)' : 'var(--surface-medium)',
+                        d.points > 0
+                          ? 'var(--color-primary-500, #3b82f6)'
+                          : 'var(--surface-medium)',
                       borderRadius: '6px 6px 0 0',
                       transition: 'height 0.4s ease',
                     }}
@@ -749,10 +711,6 @@ export const StudentDashboardPage = () => {
               );
             })}
           </div>
-
-          <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', textAlign: 'center' }}>
-            Consistent daily study boosts memory retention by over 60%!
-          </p>
         </div>
       </div>
 
@@ -927,183 +885,9 @@ export const StudentDashboardPage = () => {
           alignItems: 'start',
         }}
       >
-        {/* Left Column: Daily Target & Campus Noticeboard */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {/* Daily Learning Goal Card */}
-          <div
-            style={{
-              background: 'var(--lms-card)',
-              border: '1px solid var(--border-color)',
-              borderRadius: 18,
-              padding: 22,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 14,
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Target size={18} className="text-emerald-400" />
-                <h3
-                  style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}
-                >
-                  Today&apos;s Study Goal
-                </h3>
-              </div>
-              <span style={{ fontSize: 12, fontWeight: 700, color: '#10b981' }}>
-                35m / 45m (78%)
-              </span>
-            </div>
-
-            <div
-              style={{
-                height: 8,
-                background: 'var(--surface-medium)',
-                borderRadius: 99,
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  height: '100%',
-                  width: '78%',
-                  background: 'linear-gradient(90deg, #10b981, #06b6d4)',
-                  borderRadius: 99,
-                }}
-              />
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                fontSize: 12,
-              }}
-            >
-              <span style={{ color: 'var(--text-muted)' }}>
-                🔥 10 more minutes to hit your goal & secure your 5-day streak!
-              </span>
-              <button
-                onClick={() => {
-                  if (continueCourse) navigate(ROUTES.LEARNING(continueCourse.id));
-                  else navigate(ROUTES.MY_COURSES);
-                }}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: 'var(--color-primary-400, #60a5fa)',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  padding: 0,
-                }}
-              >
-                Study Now <ChevronRight size={14} />
-              </button>
-            </div>
-          </div>
-
-          {/* Campus & Batch Noticeboard */}
-          <div
-            style={{
-              background: 'var(--lms-card)',
-              border: '1px solid var(--border-color)',
-              borderRadius: 18,
-              padding: 22,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 14,
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Bell size={18} className="text-amber-400" />
-                <h3
-                  style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}
-                >
-                  Campus & Batch Noticeboard
-                </h3>
-              </div>
-              <Link
-                to={ROUTES.NOTIFICATIONS}
-                style={{
-                  fontSize: 12,
-                  fontWeight: 600,
-                  color: 'var(--color-primary-400, #60a5fa)',
-                  textDecoration: 'none',
-                }}
-              >
-                Notifications Center
-              </Link>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {announcements.map((item) => (
-                <div
-                  key={item.id}
-                  style={{
-                    background: 'var(--surface-medium)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 12,
-                    padding: '14px 16px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 6,
-                  }}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <span
-                      style={{
-                        padding: '2px 8px',
-                        borderRadius: 4,
-                        fontSize: 10,
-                        fontWeight: 700,
-                        background: item.tagBg,
-                        color: item.tagColor,
-                      }}
-                    >
-                      {item.tag}
-                    </span>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.date}</span>
-                  </div>
-                  <h4
-                    style={{
-                      margin: 0,
-                      fontSize: 13,
-                      fontWeight: 700,
-                      color: 'var(--text-primary)',
-                    }}
-                  >
-                    {item.title}
-                  </h4>
-                  <p
-                    style={{
-                      margin: 0,
-                      fontSize: 12,
-                      color: 'var(--text-secondary)',
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    {item.detail}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
         {/* Right Column: Gamification Badges & Quick Study Toolkit */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {/* LeetCode Skill Badges & Category Standings */}
+          {/* Earned badges */}
           <div
             style={{
               background: 'var(--lms-card)',
@@ -1112,7 +896,7 @@ export const StudentDashboardPage = () => {
               padding: 22,
               display: 'flex',
               flexDirection: 'column',
-              gap: 16,
+              gap: 14,
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1121,140 +905,50 @@ export const StudentDashboardPage = () => {
                 <h3
                   style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}
                 >
-                  Skill Badges &amp; Category Standings
+                  Badges
                 </h3>
               </div>
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#f59e0b' }}>
-                LeetCode Honors
+              <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                {earnedBadges.length} of {badges.length} earned
               </span>
             </div>
-
-            {/* Badges Display Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              {LEETCODE_BADGES.slice(0, 4).map((b) => (
-                <div
-                  key={b.id}
-                  onClick={() => setSelectedBadge(b)}
-                  style={{
-                    background: 'var(--surface-medium)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 12,
-                    padding: '10px 12px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 6,
-                    cursor: 'pointer',
-                    transition: 'transform 0.15s ease',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'none')}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <LeetCodeBadge badge={b} size="xs" interactive={false} />
-                    <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)' }}>
-                      {b.tier.label}
-                    </span>
-                  </div>
-                  <p
-                    style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.3 }}
-                  >
-                    {b.criteria}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            {/* Category Standing Progress Mini-Bars */}
-            <div
-              style={{
-                background: 'var(--surface-dark, rgba(0,0,0,0.2))',
-                borderRadius: 12,
-                padding: 12,
-                border: '1px solid var(--border-color)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 10,
-              }}
-            >
-              <div
+            {earnedBadges.length === 0 ? (
+              <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>
+                No badges yet. Complete lessons, courses and assessments to earn them.
+              </p>
+            ) : (
+              <ul
                 style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  color: 'var(--text-primary)',
-                  textTransform: 'uppercase',
+                  listStyle: 'none',
+                  margin: 0,
+                  padding: 0,
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+                  gap: 10,
                 }}
               >
-                Category Skill Percentile
-              </div>
-
-              <div>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    fontSize: 11,
-                    marginBottom: 4,
-                  }}
-                >
-                  <span style={{ color: 'var(--text-secondary)' }}>💻 Algorithms &amp; Coding</span>
-                  <strong style={{ color: '#a855f7' }}>Top 12% (Knight)</strong>
-                </div>
-                <div
-                  style={{
-                    height: 5,
-                    borderRadius: 99,
-                    background: 'var(--border-color)',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <div
+                {earnedBadges.slice(0, 6).map((b) => (
+                  <li
+                    key={b.id}
                     style={{
-                      height: '100%',
-                      width: '88%',
-                      background: '#a855f7',
-                      borderRadius: 99,
+                      background: 'var(--surface-medium)',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: 12,
+                      padding: '10px 12px',
                     }}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    fontSize: 11,
-                    marginBottom: 4,
-                  }}
-                >
-                  <span style={{ color: 'var(--text-secondary)' }}>🗄️ Database &amp; SQL</span>
-                  <strong style={{ color: '#3b82f6' }}>Top 15% (Grandmaster)</strong>
-                </div>
-                <div
-                  style={{
-                    height: 5,
-                    borderRadius: 99,
-                    background: 'var(--border-color)',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <div
-                    style={{
-                      height: '100%',
-                      width: '85%',
-                      background: '#3b82f6',
-                      borderRadius: 99,
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
+                  >
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
+                      {b.icon} {b.name}
+                    </div>
+                    {b.description && (
+                      <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
+                        {b.description}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {/* Quick Study Toolkit (Cheatsheets & References) */}
@@ -1774,11 +1468,6 @@ export const StudentDashboardPage = () => {
           )}
         </div>
       </div>
-
-      {/* Badge Lore & Criteria Modal */}
-      {selectedBadge && (
-        <BadgeDetailModal badge={selectedBadge} onClose={() => setSelectedBadge(null)} />
-      )}
     </div>
   );
 };

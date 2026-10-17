@@ -143,8 +143,7 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
       isImported: true,
       issuedAt: issueDate ? new Date(issueDate).toISOString() : new Date().toISOString(),
       expiresAt: !noExpiry && expiryDate ? new Date(expiryDate).toISOString() : null,
-      credentialId:
-        credentialId.trim() || `VER-${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
+      credentialId: credentialId.trim() || null,
       verificationUrl: verificationUrl.trim() || null,
       skills: skills
         ? skills
@@ -186,8 +185,8 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
           }}
         >
           <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>
-            Add external certifications from AWS, Coursera, Google, Udemy, or upload a verifiable
-            credential.
+            Add certificates you earned elsewhere. They are listed as self-reported, are not
+            verified, and are saved only in this browser.
           </p>
 
           {/* Tab Switcher */}
