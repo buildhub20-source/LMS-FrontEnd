@@ -24,7 +24,8 @@ class ChatUnreadService {
     this.isInitialized = true;
 
     // Fetch initial unread counts via REST
-    chatService.getUnreadCounts()
+    chatService
+      .getUnreadCounts()
       .then((counts) => {
         if (counts && typeof counts === 'object') {
           this.setCounts(counts);

@@ -46,26 +46,33 @@ export function useChat(initialChannelId = null) {
         console.warn('Could not fetch unread counts via REST:', err.message);
         return {};
       }),
-    ]).then(([channelsData, unreadData]) => {
-      if (!isMounted) return;
-      const list = Array.isArray(channelsData) ? channelsData : [];
-      setChannels(list);
-      if (list.length > 0) {
-        setActiveChannelId((prev) => {
-          if (prev) return prev;
-          if (initialChannelId && list.some((c) => c.id === initialChannelId || String(c.id) === String(initialChannelId))) {
-            return initialChannelId;
-          }
-          return list[0].id;
-        });
-      }
-      if (unreadData && typeof unreadData === 'object') {
-        chatUnreadService.setCounts(unreadData);
-        setUnreadCounts(unreadData);
-      }
-    }).finally(() => {
-      if (isMounted) setIsLoadingChannels(false);
-    });
+    ])
+      .then(([channelsData, unreadData]) => {
+        if (!isMounted) return;
+        const list = Array.isArray(channelsData) ? channelsData : [];
+        setChannels(list);
+        if (list.length > 0) {
+          setActiveChannelId((prev) => {
+            if (prev) return prev;
+            if (
+              initialChannelId &&
+              list.some(
+                (c) => c.id === initialChannelId || String(c.id) === String(initialChannelId),
+              )
+            ) {
+              return initialChannelId;
+            }
+            return list[0].id;
+          });
+        }
+        if (unreadData && typeof unreadData === 'object') {
+          chatUnreadService.setCounts(unreadData);
+          setUnreadCounts(unreadData);
+        }
+      })
+      .finally(() => {
+        if (isMounted) setIsLoadingChannels(false);
+      });
 
     return () => {
       isMounted = false;
@@ -107,19 +114,46 @@ export function useChat(initialChannelId = null) {
               return {
                 ...existing,
                 ...newCh,
-                displayName: newCh.displayName || newCh.display_name || existing?.displayName || existing?.display_name,
-                display_name: newCh.display_name || newCh.displayName || existing?.display_name || existing?.displayName,
-                otherUserId: newCh.otherUserId || newCh.other_user_id || existing?.otherUserId || existing?.other_user_id,
-                other_user_id: newCh.other_user_id || newCh.otherUserId || existing?.other_user_id || existing?.other_user_id,
-                otherUserName: newCh.otherUserName || newCh.other_user_name || existing?.otherUserName || existing?.other_user_name,
-                other_user_name: newCh.other_user_name || newCh.otherUserName || existing?.other_user_name || existing?.otherUserName,
+                displayName:
+                  newCh.displayName ||
+                  newCh.display_name ||
+                  existing?.displayName ||
+                  existing?.display_name,
+                display_name:
+                  newCh.display_name ||
+                  newCh.displayName ||
+                  existing?.display_name ||
+                  existing?.displayName,
+                otherUserId:
+                  newCh.otherUserId ||
+                  newCh.other_user_id ||
+                  existing?.otherUserId ||
+                  existing?.other_user_id,
+                other_user_id:
+                  newCh.other_user_id ||
+                  newCh.otherUserId ||
+                  existing?.other_user_id ||
+                  existing?.other_user_id,
+                otherUserName:
+                  newCh.otherUserName ||
+                  newCh.other_user_name ||
+                  existing?.otherUserName ||
+                  existing?.other_user_name,
+                other_user_name:
+                  newCh.other_user_name ||
+                  newCh.otherUserName ||
+                  existing?.other_user_name ||
+                  existing?.otherUserName,
                 members: newCh.members || existing?.members || [],
               };
             });
           });
           setActiveChannelId((prev) => {
             if (prev) return prev;
-            if (initialChannelId && ch.some((c) => c.id === initialChannelId || String(c.id) === String(initialChannelId))) {
+            if (
+              initialChannelId &&
+              ch.some((c) => c.id === initialChannelId || String(c.id) === String(initialChannelId))
+            ) {
               return initialChannelId;
             }
             return ch.length > 0 ? ch[0].id : null;
@@ -141,13 +175,15 @@ export function useChat(initialChannelId = null) {
 
       chatSocketService.on(SERVER_EVENTS.CHANNEL_ARCHIVED, ({ channelId }) => {
         setChannels((prev) =>
-          prev.map((c) => (c.id === channelId ? { ...c, is_archived: true, isArchived: true } : c))
+          prev.map((c) => (c.id === channelId ? { ...c, is_archived: true, isArchived: true } : c)),
         );
       }),
 
       chatSocketService.on(SERVER_EVENTS.CHANNEL_UNARCHIVED, ({ channelId }) => {
         setChannels((prev) =>
-          prev.map((c) => (c.id === channelId ? { ...c, is_archived: false, isArchived: false } : c))
+          prev.map((c) =>
+            c.id === channelId ? { ...c, is_archived: false, isArchived: false } : c,
+          ),
         );
       }),
 
@@ -198,16 +234,19 @@ export function useChat(initialChannelId = null) {
     setActiveChannelId(channel.id);
   }, []);
 
-  const createDm = useCallback(async (targetUserId) => {
-    const channel = await chatService.createDirectChannel(targetUserId);
-    handleChannelCreated(channel);
-    return channel;
-  }, [handleChannelCreated]);
+  const createDm = useCallback(
+    async (targetUserId) => {
+      const channel = await chatService.createDirectChannel(targetUserId);
+      handleChannelCreated(channel);
+      return channel;
+    },
+    [handleChannelCreated],
+  );
 
   const updateChannel = useCallback((updatedChannel) => {
     if (!updatedChannel?.id) return;
     setChannels((prev) =>
-      prev.map((c) => (c.id === updatedChannel.id ? { ...c, ...updatedChannel } : c))
+      prev.map((c) => (c.id === updatedChannel.id ? { ...c, ...updatedChannel } : c)),
     );
   }, []);
 
@@ -220,7 +259,7 @@ export function useChat(initialChannelId = null) {
         !c.display_name &&
         !c.otherUserName &&
         !c.other_user_name &&
-        (!c.members || c.members.length === 0)
+        (!c.members || c.members.length === 0),
     );
 
     if (directChannelsMissingName.length === 0) return;
@@ -235,7 +274,7 @@ export function useChat(initialChannelId = null) {
         } catch {
           return null;
         }
-      })
+      }),
     ).then((results) => {
       if (!isMounted) return;
       setChannels((prev) =>
@@ -245,7 +284,7 @@ export function useChat(initialChannelId = null) {
             return { ...c, members: match.members };
           }
           return c;
-        })
+        }),
       );
     });
 

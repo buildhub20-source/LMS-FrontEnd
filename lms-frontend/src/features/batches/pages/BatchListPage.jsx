@@ -1,8 +1,22 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Users, BookOpen, Calendar, Clock, Search, LayoutGrid, LayoutList,
-  GraduationCap, Award, Layers, ExternalLink, RefreshCw, TrendingUp, Plus, Edit2, Trash2
+  Users,
+  BookOpen,
+  Calendar,
+  Clock,
+  Search,
+  LayoutGrid,
+  LayoutList,
+  GraduationCap,
+  Award,
+  Layers,
+  ExternalLink,
+  RefreshCw,
+  TrendingUp,
+  Plus,
+  Edit2,
+  Trash2,
 } from 'lucide-react';
 import AdminButton from '../../../components/ui/AdminButton';
 import AdminPagination from '../../../components/ui/AdminPagination';
@@ -24,12 +38,42 @@ import {
 
 /* ── Status Pill ── */
 const BATCH_STATUS_CONFIG = {
-  PLANNED: { label: 'Planned', bg: 'rgba(59, 130, 246, 0.18)', color: '#60a5fa', border: 'rgba(59, 130, 246, 0.35)' },
-  ONGOING: { label: 'Ongoing', bg: 'rgba(16, 185, 129, 0.18)', color: '#34d399', border: 'rgba(16, 185, 129, 0.35)' },
-  IN_PROGRESS: { label: 'Ongoing', bg: 'rgba(16, 185, 129, 0.18)', color: '#34d399', border: 'rgba(16, 185, 129, 0.35)' },
-  COMPLETED: { label: 'Completed', bg: 'rgba(168, 85, 247, 0.18)', color: '#c084fc', border: 'rgba(168, 85, 247, 0.35)' },
-  CANCELLED: { label: 'Cancelled', bg: 'rgba(239, 68, 68, 0.18)', color: '#f87171', border: 'rgba(239, 68, 68, 0.35)' },
-  ARCHIVED: { label: 'Archived', bg: 'rgba(100, 116, 139, 0.18)', color: '#94a3b8', border: 'rgba(100, 116, 139, 0.35)' },
+  PLANNED: {
+    label: 'Planned',
+    bg: 'rgba(59, 130, 246, 0.18)',
+    color: '#60a5fa',
+    border: 'rgba(59, 130, 246, 0.35)',
+  },
+  ONGOING: {
+    label: 'Ongoing',
+    bg: 'rgba(16, 185, 129, 0.18)',
+    color: '#34d399',
+    border: 'rgba(16, 185, 129, 0.35)',
+  },
+  IN_PROGRESS: {
+    label: 'Ongoing',
+    bg: 'rgba(16, 185, 129, 0.18)',
+    color: '#34d399',
+    border: 'rgba(16, 185, 129, 0.35)',
+  },
+  COMPLETED: {
+    label: 'Completed',
+    bg: 'rgba(168, 85, 247, 0.18)',
+    color: '#c084fc',
+    border: 'rgba(168, 85, 247, 0.35)',
+  },
+  CANCELLED: {
+    label: 'Cancelled',
+    bg: 'rgba(239, 68, 68, 0.18)',
+    color: '#f87171',
+    border: 'rgba(239, 68, 68, 0.35)',
+  },
+  ARCHIVED: {
+    label: 'Archived',
+    bg: 'rgba(100, 116, 139, 0.18)',
+    color: '#94a3b8',
+    border: 'rgba(100, 116, 139, 0.35)',
+  },
 };
 
 function StatusPill({ status }) {
@@ -60,9 +104,24 @@ function StatusPill({ status }) {
 
 /* ── Clean Skeleton Card ── */
 function SkeletonCard() {
-  const s = { background: 'var(--skeleton-bg, #e2e8f0)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' };
+  const s = {
+    background: 'var(--skeleton-bg, #e2e8f0)',
+    borderRadius: 8,
+    animation: 'pulse 1.5s ease-in-out infinite',
+  };
   return (
-    <div style={{ background: 'var(--card, #ffffff)', border: '1px solid var(--border, #e2e8f0)', borderRadius: 16, padding: 22, display: 'flex', flexDirection: 'column', gap: 14, boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))' }}>
+    <div
+      style={{
+        background: 'var(--card, #ffffff)',
+        border: '1px solid var(--border, #e2e8f0)',
+        borderRadius: 16,
+        padding: 22,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 14,
+        boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
+      }}
+    >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ ...s, width: 90, height: 24, borderRadius: 6 }} />
         <div style={{ ...s, width: 80, height: 24, borderRadius: 99 }} />
@@ -102,7 +161,12 @@ export const BatchListPage = () => {
     refetch,
   } = useBatches({
     search: search || undefined,
-    status: statusFilter === 'ALL' ? undefined : (statusFilter === 'ONGOING' ? 'IN_PROGRESS' : statusFilter),
+    status:
+      statusFilter === 'ALL'
+        ? undefined
+        : statusFilter === 'ONGOING'
+          ? 'IN_PROGRESS'
+          : statusFilter,
     page,
     size: PAGE_SIZE,
   });
@@ -122,7 +186,9 @@ export const BatchListPage = () => {
   // Telemetry KPIs
   const stats = useMemo(() => {
     const total = totalElements || batches.length;
-    const inProgress = batches.filter((b) => b.status === 'IN_PROGRESS' || b.status === 'ONGOING').length;
+    const inProgress = batches.filter(
+      (b) => b.status === 'IN_PROGRESS' || b.status === 'ONGOING',
+    ).length;
     const totalEnrolled = batches.reduce((acc, b) => acc + (b.enrolledCount || 0), 0);
     const totalCapacity = batches.reduce((acc, b) => acc + (b.capacity || 0), 0);
     const avgFillRate = totalCapacity > 0 ? Math.round((totalEnrolled / totalCapacity) * 100) : 0;
@@ -168,11 +234,20 @@ export const BatchListPage = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: 24,
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+              letterSpacing: '-0.5px',
+            }}
+          >
             Batches & Cohorts
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)' }}>
-            Schedule and oversee student training cohorts, track capacity utilization, and inspect live learner rosters.
+            Schedule and oversee student training cohorts, track capacity utilization, and inspect
+            live learner rosters.
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -204,10 +279,38 @@ export const BatchListPage = () => {
         }}
       >
         {[
-          { label: 'Total Cohorts', val: stats.total, sub: 'Registered institutional batches', icon: Layers, tone: '#3b82f6', bg: 'var(--card-blue, #e3f2fd)' },
-          { label: 'Enrolled Learners', val: stats.totalEnrolled, sub: 'Active candidates across cohorts', icon: Users, tone: '#16a34a', bg: 'var(--card-green, #e8f5e9)' },
-          { label: 'Active Batches', val: stats.inProgress, sub: 'Currently in-progress schedules', icon: TrendingUp, tone: '#d97706', bg: 'var(--card-yellow, #fff8e1)' },
-          { label: 'Capacity Fill Rate', val: `${stats.avgFillRate}%`, sub: 'Seat allocation efficiency', icon: Award, tone: '#7c3aed', bg: 'var(--card-purple, #f3e5f5)' },
+          {
+            label: 'Total Cohorts',
+            val: stats.total,
+            sub: 'Registered institutional batches',
+            icon: Layers,
+            tone: '#3b82f6',
+            bg: 'var(--card-blue, #e3f2fd)',
+          },
+          {
+            label: 'Enrolled Learners',
+            val: stats.totalEnrolled,
+            sub: 'Active candidates across cohorts',
+            icon: Users,
+            tone: '#16a34a',
+            bg: 'var(--card-green, #e8f5e9)',
+          },
+          {
+            label: 'Active Batches',
+            val: stats.inProgress,
+            sub: 'Currently in-progress schedules',
+            icon: TrendingUp,
+            tone: '#d97706',
+            bg: 'var(--card-yellow, #fff8e1)',
+          },
+          {
+            label: 'Capacity Fill Rate',
+            val: `${stats.avgFillRate}%`,
+            sub: 'Seat allocation efficiency',
+            icon: Award,
+            tone: '#7c3aed',
+            bg: 'var(--card-purple, #f3e5f5)',
+          },
         ].map((m, idx) => {
           const Icon = m.icon;
           return (
@@ -225,10 +328,27 @@ export const BatchListPage = () => {
               }}
             >
               <div>
-                <p style={{ margin: 0, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted, #64748b)' }}>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 11,
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: 'var(--text-muted, #64748b)',
+                  }}
+                >
                   {m.label}
                 </p>
-                <div style={{ fontSize: 26, fontWeight: 800, color: 'var(--text-primary, #1a1a2e)', marginTop: 4, letterSpacing: '-0.02em' }}>
+                <div
+                  style={{
+                    fontSize: 26,
+                    fontWeight: 800,
+                    color: 'var(--text-primary, #1a1a2e)',
+                    marginTop: 4,
+                    letterSpacing: '-0.02em',
+                  }}
+                >
                   {m.val}
                 </div>
                 <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--text-muted, #94a3b8)' }}>
@@ -300,13 +420,29 @@ export const BatchListPage = () => {
                 outline: 'none',
                 transition: 'border-color 0.2s, background 0.2s',
               }}
-              onFocus={(e) => { e.target.style.borderColor = 'var(--primary, #22c55e)'; e.target.style.background = 'var(--card, #ffffff)'; }}
-              onBlur={(e) => { e.target.style.borderColor = 'var(--border, #e2e8f0)'; e.target.style.background = 'var(--color-bg, #f5f7fa)'; }}
+              onFocus={(e) => {
+                e.target.style.borderColor = 'var(--primary, #22c55e)';
+                e.target.style.background = 'var(--card, #ffffff)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'var(--border, #e2e8f0)';
+                e.target.style.background = 'var(--color-bg, #f5f7fa)';
+              }}
             />
           </div>
 
           {/* Status Pills */}
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', background: 'var(--color-bg, #f5f7fa)', padding: 4, borderRadius: 99, border: '1px solid var(--border, #e2e8f0)' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: 6,
+              flexWrap: 'wrap',
+              background: 'var(--color-bg, #f5f7fa)',
+              padding: 4,
+              borderRadius: 99,
+              border: '1px solid var(--border, #e2e8f0)',
+            }}
+          >
             {STATUS_FILTERS.map((s) => {
               const active = statusFilter === s;
               return (
@@ -324,15 +460,21 @@ export const BatchListPage = () => {
                     cursor: 'pointer',
                     fontFamily: 'inherit',
                     background: active ? 'var(--text-primary, #1a1a2e)' : 'transparent',
-                    color: active ? 'var(--color-surface, #ffffff)' : 'var(--text-secondary, #64748b)',
+                    color: active
+                      ? 'var(--color-surface, #ffffff)'
+                      : 'var(--text-secondary, #64748b)',
                     border: 'none',
                     boxShadow: active ? '0 1px 4px rgba(0,0,0,0.12)' : 'none',
                     transition: 'all 0.15s ease',
                   }}
-                  onMouseEnter={(e) => { if (!active) e.currentTarget.style.color = 'var(--text-primary, #1a1a2e)'; }}
-                  onMouseLeave={(e) => { if (!active) e.currentTarget.style.color = 'var(--text-secondary, #64748b)'; }}
+                  onMouseEnter={(e) => {
+                    if (!active) e.currentTarget.style.color = 'var(--text-primary, #1a1a2e)';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!active) e.currentTarget.style.color = 'var(--text-secondary, #64748b)';
+                  }}
                 >
-                  {s === 'ALL' ? 'All Batches' : BATCH_STATUS_CONFIG[s]?.label ?? s}
+                  {s === 'ALL' ? 'All Batches' : (BATCH_STATUS_CONFIG[s]?.label ?? s)}
                 </button>
               );
             })}
@@ -365,7 +507,10 @@ export const BatchListPage = () => {
                     display: 'flex',
                     alignItems: 'center',
                     background: viewMode === id ? 'var(--card, #ffffff)' : 'transparent',
-                    color: viewMode === id ? 'var(--text-primary, #1a1a2e)' : 'var(--text-muted, #94a3b8)',
+                    color:
+                      viewMode === id
+                        ? 'var(--text-primary, #1a1a2e)'
+                        : 'var(--text-muted, #94a3b8)',
                     boxShadow: viewMode === id ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                     transition: 'all 0.15s',
                   }}
@@ -380,19 +525,48 @@ export const BatchListPage = () => {
 
       {/* Main Content Section */}
       {isLoading ? (
-        <div style={{ display: 'grid', gap: 20, gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))' }}>
-          {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+        <div
+          style={{
+            display: 'grid',
+            gap: 20,
+            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+          }}
+        >
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
         </div>
       ) : batches.length === 0 ? (
-        <div style={{ padding: 48, textAlign: 'center', background: 'var(--lms-card)', borderRadius: 16, border: '1px solid var(--border-color)' }}>
+        <div
+          style={{
+            padding: 48,
+            textAlign: 'center',
+            background: 'var(--lms-card)',
+            borderRadius: 16,
+            border: '1px solid var(--border-color)',
+          }}
+        >
           <GraduationCap size={48} style={{ color: 'var(--text-muted)', margin: '0 auto 16px' }} />
-          <p style={{ margin: '0 0 8px', fontWeight: 600, color: 'var(--text-primary)', fontSize: 18 }}>No cohorts found</p>
+          <p
+            style={{
+              margin: '0 0 8px',
+              fontWeight: 600,
+              color: 'var(--text-primary)',
+              fontSize: 18,
+            }}
+          >
+            No cohorts found
+          </p>
           <p style={{ margin: '0 0 20px', color: 'var(--text-muted)', fontSize: 14 }}>
             {search || statusFilter !== 'ALL'
               ? 'Try adjusting your search query or reset active filters.'
               : 'Schedule a batch before admitting learners into it.'}
           </p>
-          <AdminButton variant="primary" icon={<Plus className="h-4 w-4" />} onClick={() => setEditing({})}>
+          <AdminButton
+            variant="primary"
+            icon={<Plus className="h-4 w-4" />}
+            onClick={() => setEditing({})}
+          >
             Schedule Batch
           </AdminButton>
         </div>
@@ -427,16 +601,26 @@ export const BatchListPage = () => {
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-3px)';
                   e.currentTarget.style.borderColor = 'var(--primary, #22c55e)';
-                  e.currentTarget.style.boxShadow = 'var(--shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08))';
+                  e.currentTarget.style.boxShadow =
+                    'var(--shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08))';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.borderColor = 'var(--border, #e2e8f0)';
-                  e.currentTarget.style.boxShadow = 'var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.04))';
+                  e.currentTarget.style.boxShadow =
+                    'var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.04))';
                 }}
               >
                 {/* Header: Batch Code & Status */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 12 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 10,
+                    marginBottom: 12,
+                  }}
+                >
                   <span
                     style={{
                       padding: '4px 10px',
@@ -484,7 +668,15 @@ export const BatchListPage = () => {
                   }}
                 >
                   <BookOpen size={14} style={{ color: '#3b82f6', flexShrink: 0 }} />
-                  <span style={{ color: 'var(--text-secondary, #4a5568)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span
+                    style={{
+                      color: 'var(--text-secondary, #4a5568)',
+                      fontWeight: 500,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
                     {batch.courseTitle || 'Core Curriculum'}
                   </span>
                 </div>
@@ -503,30 +695,81 @@ export const BatchListPage = () => {
                     marginBottom: 16,
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary, #4a5568)' }}>
-                    <Calendar size={13} style={{ color: 'var(--text-muted, #94a3b8)', flexShrink: 0 }} />
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      color: 'var(--text-secondary, #4a5568)',
+                    }}
+                  >
+                    <Calendar
+                      size={13}
+                      style={{ color: 'var(--text-muted, #94a3b8)', flexShrink: 0 }}
+                    />
                     <span>
-                      Runs: <strong style={{ color: 'var(--text-primary, #1a1a2e)' }}>{batch.startDate || 'TBD'}</strong> → <strong style={{ color: 'var(--text-primary, #1a1a2e)' }}>{batch.endDate || 'TBD'}</strong>
+                      Runs:{' '}
+                      <strong style={{ color: 'var(--text-primary, #1a1a2e)' }}>
+                        {batch.startDate || 'TBD'}
+                      </strong>{' '}
+                      →{' '}
+                      <strong style={{ color: 'var(--text-primary, #1a1a2e)' }}>
+                        {batch.endDate || 'TBD'}
+                      </strong>
                     </span>
                   </div>
                   {batch.schedule && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-muted, #64748b)' }}>
-                      <Clock size={13} style={{ color: 'var(--text-muted, #94a3b8)', flexShrink: 0 }} />
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        color: 'var(--text-muted, #64748b)',
+                      }}
+                    >
+                      <Clock
+                        size={13}
+                        style={{ color: 'var(--text-muted, #94a3b8)', flexShrink: 0 }}
+                      />
                       <span>{batch.schedule}</span>
                     </div>
                   )}
                   {batch.instructorName && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-muted, #64748b)' }}>
-                      <Users size={13} style={{ color: 'var(--text-muted, #94a3b8)', flexShrink: 0 }} />
-                      <span>Instructor: <strong style={{ color: 'var(--text-primary, #1a1a2e)' }}>{batch.instructorName}</strong></span>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        color: 'var(--text-muted, #64748b)',
+                      }}
+                    >
+                      <Users
+                        size={13}
+                        style={{ color: 'var(--text-muted, #94a3b8)', flexShrink: 0 }}
+                      />
+                      <span>
+                        Instructor:{' '}
+                        <strong style={{ color: 'var(--text-primary, #1a1a2e)' }}>
+                          {batch.instructorName}
+                        </strong>
+                      </span>
                     </div>
                   )}
                 </div>
 
                 {/* Capacity Progress Bar */}
                 <div style={{ marginBottom: 18 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 6 }}>
-                    <span style={{ color: 'var(--text-muted, #64748b)', fontWeight: 500 }}>Cohort Enrolment</span>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: 12,
+                      marginBottom: 6,
+                    }}
+                  >
+                    <span style={{ color: 'var(--text-muted, #64748b)', fontWeight: 500 }}>
+                      Cohort Enrolment
+                    </span>
                     <span style={{ color: 'var(--text-primary, #1a1a2e)', fontWeight: 700 }}>
                       {enrolled} / {capacity || '—'} Seats ({pct}%)
                     </span>
@@ -545,9 +788,10 @@ export const BatchListPage = () => {
                         height: '100%',
                         width: `${pct}%`,
                         borderRadius: 99,
-                        background: pct >= 90
-                          ? 'linear-gradient(90deg, #f59e0b, #ef4444)'
-                          : 'linear-gradient(90deg, #3b82f6, #10b981)',
+                        background:
+                          pct >= 90
+                            ? 'linear-gradient(90deg, #f59e0b, #ef4444)'
+                            : 'linear-gradient(90deg, #3b82f6, #10b981)',
                         transition: 'width 0.3s ease',
                       }}
                     />
@@ -606,8 +850,12 @@ export const BatchListPage = () => {
                       gap: 5,
                       transition: 'all 0.2s',
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'; }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
+                    }}
                   >
                     <Edit2 size={13} />
                     <span>Edit</span>
@@ -616,7 +864,11 @@ export const BatchListPage = () => {
                   <button
                     onClick={() => setDeleting(batch)}
                     disabled={enrolled > 0}
-                    title={enrolled > 0 ? `${enrolled} learner(s) enrolled — cannot delete` : 'Delete Batch'}
+                    title={
+                      enrolled > 0
+                        ? `${enrolled} learner(s) enrolled — cannot delete`
+                        : 'Delete Batch'
+                    }
                     style={{
                       padding: '8px 12px',
                       borderRadius: 99,
@@ -632,8 +884,14 @@ export const BatchListPage = () => {
                       justifyContent: 'center',
                       transition: 'all 0.2s',
                     }}
-                    onMouseEnter={(e) => { if (enrolled === 0) e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'; }}
-                    onMouseLeave={(e) => { if (enrolled === 0) e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)'; }}
+                    onMouseEnter={(e) => {
+                      if (enrolled === 0)
+                        e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (enrolled === 0)
+                        e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)';
+                    }}
                   >
                     <Trash2 size={13} />
                   </button>
@@ -672,7 +930,8 @@ export const BatchListPage = () => {
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'none';
                   e.currentTarget.style.borderColor = 'var(--border, #e2e8f0)';
-                  e.currentTarget.style.boxShadow = 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.04))';
+                  e.currentTarget.style.boxShadow =
+                    'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.04))';
                 }}
               >
                 {/* Cohort Icon Box */}
@@ -695,8 +954,24 @@ export const BatchListPage = () => {
 
                 {/* Batch Name & Details */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary, #1a1a2e)' }}>{batch.name}</span>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      marginBottom: 4,
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 700,
+                        color: 'var(--text-primary, #1a1a2e)',
+                      }}
+                    >
+                      {batch.name}
+                    </span>
                     <span
                       style={{
                         padding: '2px 8px',
@@ -713,12 +988,23 @@ export const BatchListPage = () => {
                     </span>
                     <StatusPill status={batch.status} />
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 12, color: 'var(--text-muted, #64748b)', flexWrap: 'wrap' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 12,
+                      fontSize: 12,
+                      color: 'var(--text-muted, #64748b)',
+                      flexWrap: 'wrap',
+                    }}
+                  >
                     <span style={{ color: '#3b82f6', fontWeight: 600 }}>
                       {batch.courseTitle || 'General Curriculum'}
                     </span>
                     <span>•</span>
-                    <span>{batch.startDate} → {batch.endDate}</span>
+                    <span>
+                      {batch.startDate} → {batch.endDate}
+                    </span>
                     {batch.schedule && (
                       <>
                         <span>•</span>
@@ -728,7 +1014,12 @@ export const BatchListPage = () => {
                     {batch.instructorName && (
                       <>
                         <span>•</span>
-                        <span>Instructor: <strong style={{ color: 'var(--text-primary, #1a1a2e)' }}>{batch.instructorName}</strong></span>
+                        <span>
+                          Instructor:{' '}
+                          <strong style={{ color: 'var(--text-primary, #1a1a2e)' }}>
+                            {batch.instructorName}
+                          </strong>
+                        </span>
                       </>
                     )}
                   </div>
@@ -736,17 +1027,48 @@ export const BatchListPage = () => {
 
                 {/* Capacity Meter */}
                 <div style={{ width: 140, flexShrink: 0 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: 11,
+                      marginBottom: 4,
+                    }}
+                  >
                     <span style={{ color: 'var(--text-muted, #64748b)' }}>Capacity</span>
-                    <span style={{ color: 'var(--text-primary, #1a1a2e)', fontWeight: 700 }}>{enrolled}/{capacity}</span>
+                    <span style={{ color: 'var(--text-primary, #1a1a2e)', fontWeight: 700 }}>
+                      {enrolled}/{capacity}
+                    </span>
                   </div>
-                  <div style={{ width: '100%', height: 5, borderRadius: 99, background: 'var(--muted, #f1f5f9)', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, #3b82f6, #10b981)' }} />
+                  <div
+                    style={{
+                      width: '100%',
+                      height: 5,
+                      borderRadius: 99,
+                      background: 'var(--muted, #f1f5f9)',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div
+                      style={{
+                        height: '100%',
+                        width: `${pct}%`,
+                        background: 'linear-gradient(90deg, #3b82f6, #10b981)',
+                      }}
+                    />
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div style={{ display: 'flex', gap: 8, borderLeft: '1px solid var(--border, #e2e8f0)', paddingLeft: 16, flexShrink: 0 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: 8,
+                    borderLeft: '1px solid var(--border, #e2e8f0)',
+                    paddingLeft: 16,
+                    flexShrink: 0,
+                  }}
+                >
                   <button
                     onClick={() => setSelectedBatchForRoster(batch)}
                     style={{
@@ -782,8 +1104,12 @@ export const BatchListPage = () => {
                       alignItems: 'center',
                       gap: 5,
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'; }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
+                    }}
                   >
                     <Edit2 size={13} />
                     <span>Edit</span>
@@ -792,7 +1118,11 @@ export const BatchListPage = () => {
                   <button
                     onClick={() => setDeleting(batch)}
                     disabled={enrolled > 0}
-                    title={enrolled > 0 ? `${enrolled} learner(s) enrolled — cannot delete` : 'Delete Batch'}
+                    title={
+                      enrolled > 0
+                        ? `${enrolled} learner(s) enrolled — cannot delete`
+                        : 'Delete Batch'
+                    }
                     style={{
                       padding: '7px 12px',
                       borderRadius: 99,

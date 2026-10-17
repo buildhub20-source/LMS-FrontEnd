@@ -2,9 +2,17 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
-  FileText, Download, CreditCard, Plus,
-  Calendar, ArrowLeft, Search, Building2, ChevronRight,
-  Receipt, AlertCircle
+  FileText,
+  Download,
+  CreditCard,
+  Plus,
+  Calendar,
+  ArrowLeft,
+  Search,
+  Building2,
+  ChevronRight,
+  Receipt,
+  AlertCircle,
 } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Button from '../../../components/common/Button';
@@ -27,7 +35,7 @@ export const BillingPage = () => {
   const invoices = Array.isArray(apiInvoices) ? apiInvoices : [];
 
   const filteredInvoices = invoices.filter((inv) =>
-    (inv.id + ' ' + inv.description).toLowerCase().includes(search.toLowerCase())
+    (inv.id + ' ' + inv.description).toLowerCase().includes(search.toLowerCase()),
   );
 
   const handleDownloadInvoice = (inv) => {
@@ -50,56 +58,100 @@ export const BillingPage = () => {
         </Button>
       }
     >
-      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div
+        style={{
+          maxWidth: 1100,
+          margin: '0 auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 24,
+        }}
+      >
         {/* Breadcrumb */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)' }}>
-          <Link to={ROUTES.SUBSCRIPTION} style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            fontSize: 13,
+            color: 'var(--text-muted)',
+          }}
+        >
+          <Link
+            to={ROUTES.SUBSCRIPTION}
+            style={{ color: 'var(--text-muted)', textDecoration: 'none' }}
+          >
             Subscription
           </Link>
           <ChevronRight size={13} />
-          <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Billing &amp; Invoices</span>
+          <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>
+            Billing &amp; Invoices
+          </span>
         </div>
 
         {/* ── Not-configured banner ── */}
-        <div style={{
-          background: 'var(--bg-primary)',
-          border: '1px solid var(--border-color)',
-          borderRadius: 16,
-          padding: 28,
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: 16,
-        }}>
+        <div
+          style={{
+            background: 'var(--bg-primary)',
+            border: '1px solid var(--border-color)',
+            borderRadius: 16,
+            padding: 28,
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 16,
+          }}
+        >
           <AlertCircle size={22} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 2 }} />
           <div>
-            <p style={{ margin: '0 0 4px', fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
+            <p
+              style={{
+                margin: '0 0 4px',
+                fontSize: 15,
+                fontWeight: 700,
+                color: 'var(--text-primary)',
+              }}
+            >
               Billing not configured
             </p>
             <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
-              Payment method and billing contact details have not been set up yet.
-              Contact your platform administrator to configure billing for this organisation.
+              Payment method and billing contact details have not been set up yet. Contact your
+              platform administrator to configure billing for this organisation.
             </p>
           </div>
         </div>
 
         {/* ── Invoice History Table ── */}
-        <div style={{
-          background: 'var(--bg-primary)',
-          border: '1px solid var(--border-color)',
-          borderRadius: 16,
-          padding: 24,
-          boxShadow: '0 4px 20px -2px rgba(0,0,0,0.04)',
-        }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: 16,
-            marginBottom: 20,
-          }}>
+        <div
+          style={{
+            background: 'var(--bg-primary)',
+            border: '1px solid var(--border-color)',
+            borderRadius: 16,
+            padding: 24,
+            boxShadow: '0 4px 20px -2px rgba(0,0,0,0.04)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 16,
+              marginBottom: 20,
+            }}
+          >
             <div>
-              <h2 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: 17,
+                  fontWeight: 700,
+                  color: 'var(--text-primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
                 <Receipt size={18} style={{ color: '#6366f1' }} />
                 Invoice Receipts ({filteredInvoices.length})
               </h2>
@@ -111,7 +163,16 @@ export const BillingPage = () => {
             {/* Search */}
             {invoices.length > 0 && (
               <div style={{ position: 'relative', width: 260 }}>
-                <Search size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <Search
+                  size={15}
+                  style={{
+                    position: 'absolute',
+                    left: 12,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: 'var(--text-muted)',
+                  }}
+                />
                 <input
                   type="text"
                   placeholder="Search invoices…"
@@ -148,42 +209,129 @@ export const BillingPage = () => {
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                 <thead>
-                  <tr style={{ background: 'var(--surface-medium)', borderBottom: '1px solid var(--border-color)' }}>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: 700, color: 'var(--text-muted)' }}>Invoice ID</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: 700, color: 'var(--text-muted)' }}>Billing Date</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: 700, color: 'var(--text-muted)' }}>Description</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: 700, color: 'var(--text-muted)' }}>Amount</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: 700, color: 'var(--text-muted)' }}>Status</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 700, color: 'var(--text-muted)' }}>Action</th>
+                  <tr
+                    style={{
+                      background: 'var(--surface-medium)',
+                      borderBottom: '1px solid var(--border-color)',
+                    }}
+                  >
+                    <th
+                      style={{
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        fontWeight: 700,
+                        color: 'var(--text-muted)',
+                      }}
+                    >
+                      Invoice ID
+                    </th>
+                    <th
+                      style={{
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        fontWeight: 700,
+                        color: 'var(--text-muted)',
+                      }}
+                    >
+                      Billing Date
+                    </th>
+                    <th
+                      style={{
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        fontWeight: 700,
+                        color: 'var(--text-muted)',
+                      }}
+                    >
+                      Description
+                    </th>
+                    <th
+                      style={{
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        fontWeight: 700,
+                        color: 'var(--text-muted)',
+                      }}
+                    >
+                      Amount
+                    </th>
+                    <th
+                      style={{
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        fontWeight: 700,
+                        color: 'var(--text-muted)',
+                      }}
+                    >
+                      Status
+                    </th>
+                    <th
+                      style={{
+                        padding: '12px 16px',
+                        textAlign: 'right',
+                        fontWeight: 700,
+                        color: 'var(--text-muted)',
+                      }}
+                    >
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredInvoices.map((inv) => (
                     <tr key={inv.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                      <td style={{ padding: '14px 16px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'monospace' }}>
+                      <td
+                        style={{
+                          padding: '14px 16px',
+                          fontWeight: 700,
+                          color: 'var(--text-primary)',
+                          fontFamily: 'monospace',
+                        }}
+                      >
                         {inv.id}
                       </td>
                       <td style={{ padding: '14px 16px', color: 'var(--text-muted)' }}>
-                        {new Date(inv.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                        {new Date(inv.date).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        })}
                       </td>
-                      <td style={{ padding: '14px 16px', color: 'var(--text-primary)', fontWeight: 500 }}>
+                      <td
+                        style={{
+                          padding: '14px 16px',
+                          color: 'var(--text-primary)',
+                          fontWeight: 500,
+                        }}
+                      >
                         {inv.description}
                       </td>
-                      <td style={{ padding: '14px 16px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                      <td
+                        style={{
+                          padding: '14px 16px',
+                          fontWeight: 700,
+                          color: 'var(--text-primary)',
+                        }}
+                      >
                         {inv.amount}
                       </td>
                       <td style={{ padding: '14px 16px' }}>
-                        <span style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 4,
-                          fontSize: 11,
-                          fontWeight: 700,
-                          padding: '2px 8px',
-                          borderRadius: 12,
-                          background: inv.status === 'PAID' ? 'rgba(34, 197, 94, 0.12)' : 'rgba(245,158,11,0.12)',
-                          color: inv.status === 'PAID' ? '#10b981' : '#f59e0b',
-                        }}>
+                        <span
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            fontSize: 11,
+                            fontWeight: 700,
+                            padding: '2px 8px',
+                            borderRadius: 12,
+                            background:
+                              inv.status === 'PAID'
+                                ? 'rgba(34, 197, 94, 0.12)'
+                                : 'rgba(245,158,11,0.12)',
+                            color: inv.status === 'PAID' ? '#10b981' : '#f59e0b',
+                          }}
+                        >
                           {inv.status}
                         </span>
                       </td>

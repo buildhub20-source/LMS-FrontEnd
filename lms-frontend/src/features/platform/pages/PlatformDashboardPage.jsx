@@ -42,7 +42,13 @@ export const PlatformDashboardPage = () => {
   if (isLoading) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: 16,
+          }}
+        >
           {[1, 2, 3, 4].map((i) => (
             <AdminCardSkeleton key={i} />
           ))}
@@ -100,7 +106,15 @@ export const PlatformDashboardPage = () => {
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 1400, margin: '0 auto' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 24,
+        maxWidth: 1400,
+        margin: '0 auto',
+      }}
+    >
       {/* ── Page Header ── */}
       <div
         style={{
@@ -115,14 +129,30 @@ export const PlatformDashboardPage = () => {
       >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)' }}>
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                color: 'var(--text-muted)',
+              }}
+            >
               Telemetry & Control
             </span>
             <AdminBadge variant="success" dot>
               Operational
             </AdminBadge>
           </div>
-          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: 24,
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+              letterSpacing: '-0.5px',
+            }}
+          >
             Platform Overview
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
@@ -176,7 +206,9 @@ export const PlatformDashboardPage = () => {
                 justifyContent: 'space-between',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              >
                 <span
                   style={{
                     fontSize: 12,
@@ -257,7 +289,9 @@ export const PlatformDashboardPage = () => {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <Activity size={16} style={{ color: '#4ade80' }} />
-              <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
+              <h3
+                style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}
+              >
                 System Infrastructure
               </h3>
             </div>
@@ -279,7 +313,14 @@ export const PlatformDashboardPage = () => {
                 fontSize: 13,
               }}
             >
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-muted)' }}>
+              <span
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  color: 'var(--text-muted)',
+                }}
+              >
                 <Database size={15} style={{ color: '#67e8f9' }} /> Database Connectivity
               </span>
               <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
@@ -299,10 +340,19 @@ export const PlatformDashboardPage = () => {
                 fontSize: 13,
               }}
             >
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-muted)' }}>
+              <span
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  color: 'var(--text-muted)',
+                }}
+              >
                 <HardDrive size={15} style={{ color: '#c084fc' }} /> JVM Heap Memory
               </span>
-              <span style={{ fontFamily: 'monospace', fontWeight: 600, color: 'var(--text-primary)' }}>
+              <span
+                style={{ fontFamily: 'monospace', fontWeight: 600, color: 'var(--text-primary)' }}
+              >
                 {overview?.systemHealth?.usedMemoryMb} MB / {overview?.systemHealth?.maxMemoryMb} MB
               </span>
             </div>
@@ -319,7 +369,14 @@ export const PlatformDashboardPage = () => {
                 fontSize: 13,
               }}
             >
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-muted)' }}>
+              <span
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  color: 'var(--text-muted)',
+                }}
+              >
                 <Cpu size={15} style={{ color: '#facc15' }} /> CPU Compute Threads
               </span>
               <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
@@ -352,7 +409,9 @@ export const PlatformDashboardPage = () => {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <Layers size={16} style={{ color: 'var(--text-secondary)' }} />
-              <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
+              <h3
+                style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}
+              >
                 Active Workspaces
               </h3>
             </div>
@@ -404,19 +463,28 @@ export const PlatformDashboardPage = () => {
                       {tenant.slug}
                     </span>
                   </div>
-                  <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <p
+                    style={{
+                      margin: '2px 0 0',
+                      fontSize: 11,
+                      color: 'var(--text-muted)',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
                     {tenant.ownerEmail}
                   </p>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <AdminBadge
-                    variant={tenant.status === 'ACTIVE' ? 'success' : 'warning'}
-                    dot
-                  >
+                  <AdminBadge variant={tenant.status === 'ACTIVE' ? 'success' : 'warning'} dot>
                     {tenant.status}
                   </AdminBadge>
-                  <Link to={ROUTES.PLATFORM_TENANTS} style={{ color: 'var(--text-muted)', display: 'flex' }}>
+                  <Link
+                    to={ROUTES.PLATFORM_TENANTS}
+                    style={{ color: 'var(--text-muted)', display: 'flex' }}
+                  >
                     <ExternalLink size={14} />
                   </Link>
                 </div>

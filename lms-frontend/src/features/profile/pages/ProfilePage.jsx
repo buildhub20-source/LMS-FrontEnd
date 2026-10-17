@@ -20,7 +20,12 @@ export const ProfilePage = () => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
-  const { data: userProfile, isLoading, error, refetch } = useQuery({
+  const {
+    data: userProfile,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: QUERY_KEYS.PROFILE,
     queryFn: profileService.get,
   });
@@ -94,11 +99,24 @@ export const ProfilePage = () => {
         }}
       >
         {/* Decorative radial glow spots */}
-        <div style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: 'radial-gradient(ellipse at 85% 50%, rgba(255,255,255,0.18) 0%, transparent 65%)',
-        }} />
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 20 }}>
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            pointerEvents: 'none',
+            background:
+              'radial-gradient(ellipse at 85% 50%, rgba(255,255,255,0.18) 0%, transparent 65%)',
+          }}
+        />
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 20,
+          }}
+        >
           {/* Left: Avatar + User Identity Details */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
             <ProfileAvatar
@@ -109,7 +127,16 @@ export const ProfilePage = () => {
 
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <h2 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: '#ffffff', letterSpacing: '-0.3px', textShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+                <h2
+                  style={{
+                    margin: 0,
+                    fontSize: 22,
+                    fontWeight: 700,
+                    color: '#ffffff',
+                    letterSpacing: '-0.3px',
+                    textShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                  }}
+                >
                   {user.fullName || user.name || user.email}
                 </h2>
                 <span
@@ -133,12 +160,26 @@ export const ProfilePage = () => {
                 </span>
               </div>
 
-              <p style={{ margin: '4px 0 0', fontSize: 14, color: 'rgba(255,255,255,0.82)', fontWeight: 500 }}>
+              <p
+                style={{
+                  margin: '4px 0 0',
+                  fontSize: 14,
+                  color: 'rgba(255,255,255,0.82)',
+                  fontWeight: 500,
+                }}
+              >
                 {user.email}
               </p>
 
               {user.jobTitle && (
-                <p style={{ margin: '2px 0 0', fontSize: 13, color: 'rgba(255,255,255,0.65)', fontWeight: 500 }}>
+                <p
+                  style={{
+                    margin: '2px 0 0',
+                    fontSize: 13,
+                    color: 'rgba(255,255,255,0.65)',
+                    fontWeight: 500,
+                  }}
+                >
                   {user.jobTitle}
                 </p>
               )}
@@ -175,7 +216,16 @@ export const ProfilePage = () => {
 
             {/* Profile Strength Progress Meter */}
             <div style={{ width: '100%', maxWidth: 200, textAlign: 'right' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.85)', marginBottom: 4 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: 'rgba(255,255,255,0.85)',
+                  marginBottom: 4,
+                }}
+              >
                 <span>Profile Completeness</span>
                 <span style={{ color: completionPercent >= 80 ? '#86efac' : '#fcd34d' }}>
                   {completionPercent}%
@@ -238,9 +288,7 @@ export const ProfilePage = () => {
                 padding: '9px 18px',
                 border: 'none',
                 borderRadius: 8,
-                background: isActive
-                  ? 'var(--surface-dark, #ffffff)'
-                  : 'transparent',
+                background: isActive ? 'var(--surface-dark, #ffffff)' : 'transparent',
                 color: isActive ? 'var(--text-primary, #0f172a)' : 'var(--text-secondary, #475569)',
                 fontWeight: isActive ? 700 : 500,
                 fontSize: 14,
@@ -250,7 +298,10 @@ export const ProfilePage = () => {
                 boxShadow: isActive ? '0 1px 3px rgba(0, 0, 0, 0.08)' : 'none',
               }}
             >
-              <Icon size={16} style={{ color: isActive ? 'var(--primary, #0284c7)' : 'currentColor' }} />
+              <Icon
+                size={16}
+                style={{ color: isActive ? 'var(--primary, #0284c7)' : 'currentColor' }}
+              />
               {tab.label}
             </button>
           );
@@ -271,11 +322,7 @@ export const ProfilePage = () => {
               title="Personal Details"
               subtitle="Update your name, designation, contact numbers, and bio visible across the platform."
             >
-              <ProfileForm
-                defaultValues={user}
-                onSubmit={save.mutateAsync}
-                error={save.error}
-              />
+              <ProfileForm defaultValues={user} onSubmit={save.mutateAsync} error={save.error} />
             </Card>
           )}
 

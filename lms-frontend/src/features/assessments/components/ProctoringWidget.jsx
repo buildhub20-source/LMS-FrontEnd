@@ -15,7 +15,11 @@ export const ProctoringWidget = ({
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
       {/* Screen Recording Badge */}
       <div
-        title={isScreenRecording ? 'Your screen is being actively recorded' : 'Screen monitoring initialized'}
+        title={
+          isScreenRecording
+            ? 'Your screen is being actively recorded'
+            : 'Screen monitoring initialized'
+        }
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -80,9 +84,7 @@ export const ProctoringWidget = ({
           gap: 5,
           padding: '4px 9px',
           borderRadius: 6,
-          background: hasStrikes
-            ? 'rgba(239, 68, 68, 0.15)'
-            : 'rgba(255, 255, 255, 0.05)',
+          background: hasStrikes ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 255, 255, 0.05)',
           border: `1px solid ${hasStrikes ? 'rgba(239, 68, 68, 0.35)' : 'rgba(255, 255, 255, 0.08)'}`,
           color: hasStrikes ? '#fca5a5' : '#94a3b8',
           fontSize: 11,
@@ -91,7 +93,9 @@ export const ProctoringWidget = ({
         }}
       >
         <AlertTriangle size={12} style={{ color: hasStrikes ? '#ef4444' : '#94a3b8' }} />
-        <span>Strikes: {tabSwitchCount}/{maxStrikes}</span>
+        <span>
+          Strikes: {tabSwitchCount}/{maxStrikes}
+        </span>
       </div>
 
       <style>{`

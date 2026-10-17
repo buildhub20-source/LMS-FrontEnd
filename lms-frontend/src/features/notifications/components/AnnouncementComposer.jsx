@@ -1,7 +1,17 @@
 import { useState, useEffect } from 'react';
 import {
-  Megaphone, Plus, Trash2, ToggleLeft, ToggleRight,
-  AlertCircle, Info, AlertTriangle, Wrench, Send, X, Clock
+  Megaphone,
+  Plus,
+  Trash2,
+  ToggleLeft,
+  ToggleRight,
+  AlertCircle,
+  Info,
+  AlertTriangle,
+  Wrench,
+  Send,
+  X,
+  Clock,
 } from 'lucide-react';
 import Button from '../../../components/common/Button';
 import Input from '../../../components/common/Input';
@@ -109,8 +119,20 @@ export const AnnouncementComposer = () => {
             </p>
           </div>
         </div>
-        <Button onClick={() => setShowCreate(!showCreate)} variant={showCreate ? 'ghost' : 'primary'} size="sm">
-          {showCreate ? <><X size={14} style={{ marginRight: 4 }} /> Cancel</> : <><Plus size={14} style={{ marginRight: 4 }} /> New Announcement</>}
+        <Button
+          onClick={() => setShowCreate(!showCreate)}
+          variant={showCreate ? 'ghost' : 'primary'}
+          size="sm"
+        >
+          {showCreate ? (
+            <>
+              <X size={14} style={{ marginRight: 4 }} /> Cancel
+            </>
+          ) : (
+            <>
+              <Plus size={14} style={{ marginRight: 4 }} /> New Announcement
+            </>
+          )}
         </Button>
       </div>
 
@@ -119,7 +141,14 @@ export const AnnouncementComposer = () => {
       {/* Create Form */}
       {showCreate && (
         <form onSubmit={handleCreate} style={createFormStyle}>
-          <h3 style={{ margin: '0 0 16px', fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
+          <h3
+            style={{
+              margin: '0 0 16px',
+              fontSize: 15,
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+            }}
+          >
             📢 Compose Announcement
           </h3>
 
@@ -145,7 +174,7 @@ export const AnnouncementComposer = () => {
               <div>
                 <label style={labelStyle}>Type</label>
                 <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
-                  {TYPE_OPTIONS.map(t => {
+                  {TYPE_OPTIONS.map((t) => {
                     const cfg = TYPE_CONFIG[t];
                     const selected = type === t;
                     return (
@@ -154,11 +183,17 @@ export const AnnouncementComposer = () => {
                         type="button"
                         onClick={() => setType(t)}
                         style={{
-                          padding: '6px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600,
-                          border: selected ? `2px solid ${cfg.color}` : '1px solid var(--border-color)',
+                          padding: '6px 12px',
+                          borderRadius: 8,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          border: selected
+                            ? `2px solid ${cfg.color}`
+                            : '1px solid var(--border-color)',
                           background: selected ? `${cfg.color}15` : 'transparent',
                           color: selected ? cfg.color : 'var(--text-secondary)',
-                          cursor: 'pointer', fontFamily: 'inherit',
+                          cursor: 'pointer',
+                          fontFamily: 'inherit',
                           transition: 'all 0.15s ease',
                         }}
                       >
@@ -178,9 +213,25 @@ export const AnnouncementComposer = () => {
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--border-color)' }}>
-            <Button type="button" variant="ghost" onClick={() => setShowCreate(false)}>Cancel</Button>
-            <Button type="submit" variant="primary" isLoading={saving} disabled={!title.trim() || !message.trim()}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: 10,
+              marginTop: 16,
+              paddingTop: 16,
+              borderTop: '1px solid var(--border-color)',
+            }}
+          >
+            <Button type="button" variant="ghost" onClick={() => setShowCreate(false)}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              isLoading={saving}
+              disabled={!title.trim() || !message.trim()}
+            >
               <Send size={14} style={{ marginRight: 6 }} /> Publish Announcement
             </Button>
           </div>
@@ -189,11 +240,20 @@ export const AnnouncementComposer = () => {
 
       {/* Announcement List */}
       {loading ? (
-        <p style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>Loading announcements...</p>
+        <p style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>
+          Loading announcements...
+        </p>
       ) : announcements.length === 0 ? (
         <div style={emptyStyle}>
           <Megaphone size={36} style={{ color: 'var(--text-muted)', marginBottom: 12 }} />
-          <p style={{ margin: '0 0 6px', fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
+          <p
+            style={{
+              margin: '0 0 6px',
+              fontSize: 15,
+              fontWeight: 600,
+              color: 'var(--text-primary)',
+            }}
+          >
             No announcements yet
           </p>
           <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>
@@ -202,37 +262,70 @@ export const AnnouncementComposer = () => {
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {announcements.map(ann => {
+          {announcements.map((ann) => {
             const cfg = TYPE_CONFIG[ann.type] || TYPE_CONFIG.INFO;
             const Icon = cfg.icon;
             return (
-              <div key={ann.id} style={{
-                ...announcementCardStyle,
-                borderLeft: `4px solid ${cfg.color}`,
-                opacity: ann.active ? 1 : 0.5,
-              }}>
+              <div
+                key={ann.id}
+                style={{
+                  ...announcementCardStyle,
+                  borderLeft: `4px solid ${cfg.color}`,
+                  opacity: ann.active ? 1 : 0.5,
+                }}
+              >
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flex: 1 }}>
-                  <div style={{
-                    width: 32, height: 32, borderRadius: 8,
-                    background: `${cfg.color}15`, color: cfg.color,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    flexShrink: 0, marginTop: 2,
-                  }}>
+                  <div
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 8,
+                      background: `${cfg.color}15`,
+                      color: cfg.color,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      marginTop: 2,
+                    }}
+                  >
                     <Icon size={16} />
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <h4 style={{ margin: 0, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
+                      <h4
+                        style={{
+                          margin: 0,
+                          fontSize: 14,
+                          fontWeight: 600,
+                          color: 'var(--text-primary)',
+                        }}
+                      >
                         {ann.title}
                       </h4>
                       <Badge tone={ann.active ? 'success' : 'neutral'}>
                         {ann.active ? 'Active' : 'Inactive'}
                       </Badge>
                     </div>
-                    <p style={{ margin: 0, fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 13,
+                        color: 'var(--text-secondary)',
+                        lineHeight: 1.5,
+                      }}
+                    >
                       {ann.message}
                     </p>
-                    <div style={{ display: 'flex', gap: 12, marginTop: 6, fontSize: 11, color: 'var(--text-muted)' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: 12,
+                        marginTop: 6,
+                        fontSize: 11,
+                        color: 'var(--text-muted)',
+                      }}
+                    >
                       {ann.createdAt && (
                         <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                           <Clock size={11} /> {new Date(ann.createdAt).toLocaleDateString()}
@@ -251,13 +344,13 @@ export const AnnouncementComposer = () => {
                     style={iconBtnStyle}
                     title={ann.active ? 'Deactivate' : 'Activate'}
                   >
-                    {ann.active ? <ToggleRight size={18} style={{ color: '#10b981' }} /> : <ToggleLeft size={18} />}
+                    {ann.active ? (
+                      <ToggleRight size={18} style={{ color: '#10b981' }} />
+                    ) : (
+                      <ToggleLeft size={18} />
+                    )}
                   </button>
-                  <button
-                    onClick={() => handleDelete(ann.id)}
-                    style={iconBtnStyle}
-                    title="Delete"
-                  >
+                  <button onClick={() => handleDelete(ann.id)} style={iconBtnStyle} title="Delete">
                     <Trash2 size={15} style={{ color: '#ef4444' }} />
                   </button>
                 </div>

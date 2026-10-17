@@ -43,7 +43,11 @@ export const LiveClassesHubPage = () => {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 
   // Queries & Mutations
-  const { data: sessions = [], isLoading, refetch } = useAllLiveSessions({
+  const {
+    data: sessions = [],
+    isLoading,
+    refetch,
+  } = useAllLiveSessions({
     status: activeTab === 'ALL' ? undefined : activeTab,
     courseId: selectedCourseId || undefined,
   });
@@ -87,7 +91,8 @@ export const LiveClassesHubPage = () => {
   };
 
   const handleEndSession = async (sessionId) => {
-    if (!window.confirm('Are you sure you want to end this live session for all attendees?')) return;
+    if (!window.confirm('Are you sure you want to end this live session for all attendees?'))
+      return;
     try {
       await endMutation.mutateAsync(sessionId);
       refetch();
@@ -201,7 +206,8 @@ export const LiveClassesHubPage = () => {
                 )}
               </div>
               <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
-                Real-time interactive video lectures, collaborative whiteboards, and automatic attendance tracking.
+                Real-time interactive video lectures, collaborative whiteboards, and automatic
+                attendance tracking.
               </p>
             </div>
           </div>
@@ -279,7 +285,9 @@ export const LiveClassesHubPage = () => {
               <p style={{ margin: 0, fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }}>
                 {metrics.liveCount}
               </p>
-              <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>Broadcasting Now</p>
+              <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
+                Broadcasting Now
+              </p>
             </div>
           </div>
 
@@ -288,7 +296,8 @@ export const LiveClassesHubPage = () => {
             style={{
               padding: '16px 20px',
               borderRadius: 14,
-              background: activeTab === 'SCHEDULED' ? 'rgba(59,130,246,0.12)' : 'var(--surface-medium)',
+              background:
+                activeTab === 'SCHEDULED' ? 'rgba(59,130,246,0.12)' : 'var(--surface-medium)',
               border: `1px solid ${activeTab === 'SCHEDULED' ? 'rgba(59,130,246,0.4)' : 'var(--border-color)'}`,
               cursor: 'pointer',
               display: 'flex',
@@ -315,7 +324,9 @@ export const LiveClassesHubPage = () => {
               <p style={{ margin: 0, fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }}>
                 {metrics.scheduledCount}
               </p>
-              <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>Scheduled Upcoming</p>
+              <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
+                Scheduled Upcoming
+              </p>
             </div>
           </div>
 
@@ -351,7 +362,9 @@ export const LiveClassesHubPage = () => {
               <p style={{ margin: 0, fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }}>
                 {metrics.endedCount}
               </p>
-              <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>Completed Archives</p>
+              <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
+                Completed Archives
+              </p>
             </div>
           </div>
         </div>
@@ -518,12 +531,14 @@ export const LiveClassesHubPage = () => {
             <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>
               No live classes found
             </h3>
-            <p style={{ margin: '6px 0 0', fontSize: 13, color: 'var(--text-muted)', maxWidth: 440 }}>
+            <p
+              style={{ margin: '6px 0 0', fontSize: 13, color: 'var(--text-muted)', maxWidth: 440 }}
+            >
               {searchQuery || selectedCourseId || activeTab !== 'ALL'
                 ? 'Try adjusting your search query or filters above.'
                 : isInstructorOrAdmin
-                ? 'No classes have been scheduled yet. Click "Schedule Live Class" above to set up your first interactive lecture.'
-                : 'Your instructors have not scheduled any upcoming live classes yet. Check back soon!'}
+                  ? 'No classes have been scheduled yet. Click "Schedule Live Class" above to set up your first interactive lecture.'
+                  : 'Your instructors have not scheduled any upcoming live classes yet. Check back soon!'}
             </p>
           </div>
           {isInstructorOrAdmin && !searchQuery && activeTab === 'ALL' && (

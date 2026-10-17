@@ -19,7 +19,12 @@ import {
   Users,
   Eye,
 } from 'lucide-react';
-import { useResources, useCreateResource, useUpdateResource, useDeleteResource } from '../hooks/useResources';
+import {
+  useResources,
+  useCreateResource,
+  useUpdateResource,
+  useDeleteResource,
+} from '../hooks/useResources';
 import resourceService from '../services/resourceService';
 import useAuth from '../../auth/hooks/useAuth';
 import Avatar from '../../../components/common/Avatar';
@@ -27,10 +32,30 @@ import { useToast } from '../../../components/feedback/Toast';
 
 const CATEGORY_MAP = {
   ALL: { label: 'All Resources', color: '#38bdf8' },
-  CHEATSHEET: { label: 'Cheatsheet', color: '#10b981', bg: 'rgba(16, 185, 129, 0.15)', border: 'rgba(16, 185, 129, 0.3)' },
-  ACADEMIC_GUIDE: { label: 'Academic Guide', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.15)', border: 'rgba(59, 130, 246, 0.3)' },
-  POLICY_EXAM: { label: 'Exam & Policy', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.15)', border: 'rgba(245, 158, 11, 0.3)' },
-  SOFTWARE_KIT: { label: 'Software Kit', color: '#a855f7', bg: 'rgba(168, 85, 247, 0.15)', border: 'rgba(168, 85, 247, 0.3)' },
+  CHEATSHEET: {
+    label: 'Cheatsheet',
+    color: '#10b981',
+    bg: 'rgba(16, 185, 129, 0.15)',
+    border: 'rgba(16, 185, 129, 0.3)',
+  },
+  ACADEMIC_GUIDE: {
+    label: 'Academic Guide',
+    color: '#3b82f6',
+    bg: 'rgba(59, 130, 246, 0.15)',
+    border: 'rgba(59, 130, 246, 0.3)',
+  },
+  POLICY_EXAM: {
+    label: 'Exam & Policy',
+    color: '#f59e0b',
+    bg: 'rgba(245, 158, 11, 0.15)',
+    border: 'rgba(245, 158, 11, 0.3)',
+  },
+  SOFTWARE_KIT: {
+    label: 'Software Kit',
+    color: '#a855f7',
+    bg: 'rgba(168, 85, 247, 0.15)',
+    border: 'rgba(168, 85, 247, 0.3)',
+  },
 };
 
 export const ResourceManagementPage = () => {
@@ -59,7 +84,11 @@ export const ResourceManagementPage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const { data: resources = [], isLoading, refetch } = useResources({
+  const {
+    data: resources = [],
+    isLoading,
+    refetch,
+  } = useResources({
     search,
     category: selectedCategory,
   });
@@ -168,7 +197,11 @@ export const ResourceManagementPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this resource? Students will no longer be able to download it.')) {
+    if (
+      !window.confirm(
+        'Are you sure you want to delete this resource? Students will no longer be able to download it.',
+      )
+    ) {
       return;
     }
     try {
@@ -304,8 +337,12 @@ export const ResourceManagementPage = () => {
             <FolderDown size={20} />
           </div>
           <div>
-            <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary)', fontWeight: 700 }}>TOTAL RESOURCES</p>
-            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>{metrics.total}</h3>
+            <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary)', fontWeight: 700 }}>
+              TOTAL RESOURCES
+            </p>
+            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+              {metrics.total}
+            </h3>
           </div>
         </div>
 
@@ -337,8 +374,12 @@ export const ResourceManagementPage = () => {
             <BookOpen size={20} />
           </div>
           <div>
-            <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary)', fontWeight: 700 }}>STUDENT CHEATSHEETS</p>
-            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>{metrics.cheatsheets}</h3>
+            <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary)', fontWeight: 700 }}>
+              STUDENT CHEATSHEETS
+            </p>
+            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+              {metrics.cheatsheets}
+            </h3>
           </div>
         </div>
 
@@ -370,8 +411,12 @@ export const ResourceManagementPage = () => {
             <Shield size={20} />
           </div>
           <div>
-            <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary)', fontWeight: 700 }}>EXAM & CAMPUS POLICIES</p>
-            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>{metrics.policies}</h3>
+            <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary)', fontWeight: 700 }}>
+              EXAM & CAMPUS POLICIES
+            </p>
+            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+              {metrics.policies}
+            </h3>
           </div>
         </div>
 
@@ -403,8 +448,12 @@ export const ResourceManagementPage = () => {
             <Download size={20} />
           </div>
           <div>
-            <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary)', fontWeight: 700 }}>TOTAL STUDENT DOWNLOADS</p>
-            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>{metrics.totalDownloads}</h3>
+            <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary)', fontWeight: 700 }}>
+              TOTAL STUDENT DOWNLOADS
+            </p>
+            <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+              {metrics.totalDownloads}
+            </h3>
           </div>
         </div>
       </div>
@@ -453,7 +502,10 @@ export const ResourceManagementPage = () => {
 
         {/* Search */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-          <Search size={14} style={{ position: 'absolute', left: 12, color: 'var(--text-muted)' }} />
+          <Search
+            size={14}
+            style={{ position: 'absolute', left: 12, color: 'var(--text-muted)' }}
+          />
           <input
             type="text"
             value={search}
@@ -491,7 +543,13 @@ export const ResourceManagementPage = () => {
 
       {/* ── Resource Cards Grid ── */}
       {isLoading ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 20 }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+            gap: 20,
+          }}
+        >
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
@@ -506,19 +564,94 @@ export const ResourceManagementPage = () => {
                 boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ width: 42, height: 42, borderRadius: 12, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
-                <div style={{ width: 70, height: 24, borderRadius: 99, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              <div
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              >
+                <div
+                  style={{
+                    width: 42,
+                    height: 42,
+                    borderRadius: 12,
+                    background: 'var(--skeleton-bg, #e2e8f0)',
+                    animation: 'pulse 1.5s ease-in-out infinite',
+                  }}
+                />
+                <div
+                  style={{
+                    width: 70,
+                    height: 24,
+                    borderRadius: 99,
+                    background: 'var(--skeleton-subtle, #f1f5f9)',
+                    animation: 'pulse 1.5s ease-in-out infinite',
+                  }}
+                />
               </div>
-              <div style={{ height: 18, width: '75%', borderRadius: 6, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
-              <div style={{ height: 14, width: '90%', borderRadius: 6, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              <div
+                style={{
+                  height: 18,
+                  width: '75%',
+                  borderRadius: 6,
+                  background: 'var(--skeleton-bg, #e2e8f0)',
+                  animation: 'pulse 1.5s ease-in-out infinite',
+                }}
+              />
+              <div
+                style={{
+                  height: 14,
+                  width: '90%',
+                  borderRadius: 6,
+                  background: 'var(--skeleton-subtle, #f1f5f9)',
+                  animation: 'pulse 1.5s ease-in-out infinite',
+                }}
+              />
               <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-                <div style={{ width: 60, height: 20, borderRadius: 99, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
-                <div style={{ width: 80, height: 20, borderRadius: 99, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                <div
+                  style={{
+                    width: 60,
+                    height: 20,
+                    borderRadius: 99,
+                    background: 'var(--skeleton-subtle, #f1f5f9)',
+                    animation: 'pulse 1.5s ease-in-out infinite',
+                  }}
+                />
+                <div
+                  style={{
+                    width: 80,
+                    height: 20,
+                    borderRadius: 99,
+                    background: 'var(--skeleton-subtle, #f1f5f9)',
+                    animation: 'pulse 1.5s ease-in-out infinite',
+                  }}
+                />
               </div>
-              <div style={{ marginTop: 'auto', paddingTop: 14, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ width: 90, height: 14, borderRadius: 4, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              <div
+                style={{
+                  marginTop: 'auto',
+                  paddingTop: 14,
+                  borderTop: '1px solid var(--border)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    width: 90,
+                    height: 14,
+                    borderRadius: 4,
+                    background: 'var(--skeleton-subtle, #f1f5f9)',
+                    animation: 'pulse 1.5s ease-in-out infinite',
+                  }}
+                />
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 8,
+                    background: 'var(--skeleton-bg, #e2e8f0)',
+                    animation: 'pulse 1.5s ease-in-out infinite',
+                  }}
+                />
               </div>
             </div>
           ))}
@@ -534,7 +667,16 @@ export const ResourceManagementPage = () => {
           }}
         >
           <FolderDown size={40} style={{ color: 'var(--text-muted)', margin: '0 auto 14px' }} />
-          <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>No resources found</h3>
+          <h3
+            style={{
+              margin: '0 0 6px',
+              fontSize: 16,
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+            }}
+          >
+            No resources found
+          </h3>
           <p style={{ margin: '0 0 16px', fontSize: 13, color: 'var(--text-secondary)' }}>
             Upload reference guides or cheatsheets to make them available for students.
           </p>
@@ -590,7 +732,14 @@ export const ResourceManagementPage = () => {
               >
                 <div>
                   {/* Top Bar: Category & File Format */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: 12,
+                    }}
+                  >
                     <span
                       style={{
                         padding: '3px 9px',
@@ -621,7 +770,15 @@ export const ResourceManagementPage = () => {
                   </div>
 
                   {/* Title & Description */}
-                  <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.3 }}>
+                  <h3
+                    style={{
+                      margin: '0 0 6px',
+                      fontSize: 16,
+                      fontWeight: 700,
+                      color: 'var(--text-primary)',
+                      lineHeight: 1.3,
+                    }}
+                  >
                     {res.title}
                   </h3>
                   <p
@@ -642,15 +799,41 @@ export const ResourceManagementPage = () => {
 
                 {/* Footer Section */}
                 <div style={{ borderTop: '1px solid var(--border)', paddingTop: 14 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: 12,
+                    }}
+                  >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <Avatar name={res.author || 'Admin'} size="xs" />
                       <div>
-                        <p style={{ margin: 0, fontSize: 11, fontWeight: 600, color: 'var(--text-primary)' }}>{res.author}</p>
-                        <p style={{ margin: 0, fontSize: 10, color: 'var(--text-muted)' }}>{res.authorRole || 'Author'}</p>
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: 11,
+                            fontWeight: 600,
+                            color: 'var(--text-primary)',
+                          }}
+                        >
+                          {res.author}
+                        </p>
+                        <p style={{ margin: 0, fontSize: 10, color: 'var(--text-muted)' }}>
+                          {res.authorRole || 'Author'}
+                        </p>
                       </div>
                     </div>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        color: 'var(--text-muted)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 4,
+                      }}
+                    >
                       <Download size={12} /> {res.downloadsCount || 0} downloads
                     </span>
                   </div>
@@ -763,7 +946,9 @@ export const ResourceManagementPage = () => {
               }}
             >
               <div>
-                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>
+                <h3
+                  style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}
+                >
                   {editingResource ? 'Edit Resource' : 'Upload Resource to Campus Toolkit'}
                 </h3>
                 <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-secondary)' }}>
@@ -785,10 +970,21 @@ export const ResourceManagementPage = () => {
             </div>
 
             {/* Modal Form Body */}
-            <form onSubmit={handleSubmit} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <form
+              onSubmit={handleSubmit}
+              style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: 16 }}
+            >
               {/* Title */}
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: 'var(--text-secondary)',
+                    marginBottom: 6,
+                  }}
+                >
                   Resource Title *
                 </label>
                 <input
@@ -814,7 +1010,15 @@ export const ResourceManagementPage = () => {
               {/* Category & Audience */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: 'var(--text-secondary)',
+                      marginBottom: 6,
+                    }}
+                  >
                     Category
                   </label>
                   <select
@@ -840,7 +1044,15 @@ export const ResourceManagementPage = () => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: 'var(--text-secondary)',
+                      marginBottom: 6,
+                    }}
+                  >
                     Target Audience
                   </label>
                   <select
@@ -866,7 +1078,15 @@ export const ResourceManagementPage = () => {
 
               {/* Description */}
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: 'var(--text-secondary)',
+                    marginBottom: 6,
+                  }}
+                >
                   Description / Topic Summary *
                 </label>
                 <textarea
@@ -892,7 +1112,15 @@ export const ResourceManagementPage = () => {
 
               {/* File Attachment Picker */}
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 6 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: 'var(--text-secondary)',
+                    marginBottom: 6,
+                  }}
+                >
                   Upload Document or Toolkit File (.pdf, .zip, .docx, .md)
                 </label>
                 <div
@@ -920,7 +1148,14 @@ export const ResourceManagementPage = () => {
                     }}
                   />
                   <UploadCloud size={28} style={{ color: '#3b82f6', margin: '0 auto 8px' }} />
-                  <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
+                  <p
+                    style={{
+                      margin: '0 0 4px',
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: 'var(--text-primary)',
+                    }}
+                  >
                     {uploadedFileName ? uploadedFileName : 'Click or drag a file to upload'}
                   </p>
                   <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)' }}>
@@ -933,12 +1168,37 @@ export const ResourceManagementPage = () => {
 
               {/* Upload Progress Indicator */}
               {uploadProgress > 0 && uploadProgress < 100 && (
-                <div style={{ marginTop: 4, padding: '10px 14px', background: 'rgba(37, 99, 235, 0.08)', borderRadius: 10, border: '1px solid rgba(37, 99, 235, 0.2)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, fontWeight: 600, color: '#3b82f6', marginBottom: 6 }}>
+                <div
+                  style={{
+                    marginTop: 4,
+                    padding: '10px 14px',
+                    background: 'rgba(37, 99, 235, 0.08)',
+                    borderRadius: 10,
+                    border: '1px solid rgba(37, 99, 235, 0.2)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: 11,
+                      fontWeight: 600,
+                      color: '#3b82f6',
+                      marginBottom: 6,
+                    }}
+                  >
                     <span>Uploading directly to Cloudflare R2...</span>
                     <span>{uploadProgress}%</span>
                   </div>
-                  <div style={{ width: '100%', height: 6, background: 'var(--border)', borderRadius: 3, overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      width: '100%',
+                      height: 6,
+                      background: 'var(--border)',
+                      borderRadius: 3,
+                      overflow: 'hidden',
+                    }}
+                  >
                     <div
                       style={{
                         width: `${uploadProgress}%`,
@@ -997,8 +1257,8 @@ export const ResourceManagementPage = () => {
                   {createMutation.isPending || updateMutation.isPending
                     ? 'Publishing...'
                     : editingResource
-                    ? 'Save Changes'
-                    : 'Publish Guide'}
+                      ? 'Save Changes'
+                      : 'Publish Guide'}
                 </button>
               </div>
             </form>

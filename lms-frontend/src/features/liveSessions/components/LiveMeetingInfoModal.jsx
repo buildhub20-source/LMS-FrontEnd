@@ -66,7 +66,9 @@ export const LiveMeetingInfoModal = ({
           {sessionId && (
             <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/60">
               <span className="text-[10px] text-slate-400 block mb-1">Session ID</span>
-              <span className="font-mono text-slate-200 text-[11px] select-all break-all">{sessionId}</span>
+              <span className="font-mono text-slate-200 text-[11px] select-all break-all">
+                {sessionId}
+              </span>
             </div>
           )}
         </div>

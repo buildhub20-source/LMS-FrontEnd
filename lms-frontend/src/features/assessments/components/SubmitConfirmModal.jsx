@@ -16,10 +16,10 @@ export const SubmitConfirmModal = ({
   assessmentTitle = 'Assessment',
   onJumpToQuestion,
 }) => {
-
   const answered = questions.filter((q) => drafts[q.id]?.sourceCode?.trim());
   const unanswered = questions.filter((q) => !drafts[q.id]?.sourceCode?.trim());
-  const completionPct = questions.length > 0 ? Math.round((answered.length / questions.length) * 100) : 0;
+  const completionPct =
+    questions.length > 0 ? Math.round((answered.length / questions.length) * 100) : 0;
 
   React.useEffect(() => {
     if (!isOpen || isLoading) return;
@@ -126,7 +126,9 @@ export const SubmitConfirmModal = ({
         {/* Body */}
         <div style={{ padding: '24px' }}>
           <p style={{ fontSize: 13, color: '#94a3b8', margin: '0 0 20px', lineHeight: 1.6 }}>
-            You are finalizing your test session for <strong style={{ color: '#ffffff' }}>{assessmentTitle}</strong>. Once submitted, your answers will be locked for grading and cannot be modified.
+            You are finalizing your test session for{' '}
+            <strong style={{ color: '#ffffff' }}>{assessmentTitle}</strong>. Once submitted, your
+            answers will be locked for grading and cannot be modified.
           </p>
 
           {/* Completion Progress Bar */}
@@ -139,23 +141,53 @@ export const SubmitConfirmModal = ({
               marginBottom: 18,
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-              <span style={{ fontSize: 12, fontWeight: 700, color: '#cbd5e1', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 8,
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: '#cbd5e1',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}
+              >
                 Completion Status
               </span>
-              <span style={{ fontSize: 13, fontWeight: 800, color: completionPct === 100 ? '#34d399' : '#818cf8' }}>
+              <span
+                style={{
+                  fontSize: 13,
+                  fontWeight: 800,
+                  color: completionPct === 100 ? '#34d399' : '#818cf8',
+                }}
+              >
                 {completionPct}% Complete
               </span>
             </div>
 
-            <div style={{ height: 6, background: '#1e293b', borderRadius: 4, overflow: 'hidden', marginBottom: 14 }}>
+            <div
+              style={{
+                height: 6,
+                background: '#1e293b',
+                borderRadius: 4,
+                overflow: 'hidden',
+                marginBottom: 14,
+              }}
+            >
               <div
                 style={{
                   height: '100%',
                   width: `${completionPct}%`,
-                  background: completionPct === 100
-                    ? 'linear-gradient(90deg, #10b981 0%, #059669 100%)'
-                    : 'linear-gradient(90deg, #6366f1 0%, #4f46e5 100%)',
+                  background:
+                    completionPct === 100
+                      ? 'linear-gradient(90deg, #10b981 0%, #059669 100%)'
+                      : 'linear-gradient(90deg, #6366f1 0%, #4f46e5 100%)',
                   borderRadius: 4,
                   transition: 'width 0.4s ease',
                 }}
@@ -166,12 +198,23 @@ export const SubmitConfirmModal = ({
             <div style={{ display: 'flex', gap: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <CheckCircle2 size={15} style={{ color: '#10b981' }} />
-                <span style={{ fontSize: 13, fontWeight: 700, color: '#34d399' }}>{answered.length}</span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: '#34d399' }}>
+                  {answered.length}
+                </span>
                 <span style={{ fontSize: 12, color: '#94a3b8' }}>Answered</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Circle size={15} style={{ color: unanswered.length > 0 ? '#ef4444' : '#64748b' }} />
-                <span style={{ fontSize: 13, fontWeight: 700, color: unanswered.length > 0 ? '#f87171' : '#94a3b8' }}>
+                <Circle
+                  size={15}
+                  style={{ color: unanswered.length > 0 ? '#ef4444' : '#64748b' }}
+                />
+                <span
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: unanswered.length > 0 ? '#f87171' : '#94a3b8',
+                  }}
+                >
                   {unanswered.length}
                 </span>
                 <span style={{ fontSize: 12, color: '#94a3b8' }}>Unanswered</span>
@@ -219,7 +262,9 @@ export const SubmitConfirmModal = ({
                         gap: 4,
                       }}
                     >
-                      <span>Q{idx + 1}: {q.title}</span>
+                      <span>
+                        Q{idx + 1}: {q.title}
+                      </span>
                       <ArrowRight size={11} />
                     </button>
                   );

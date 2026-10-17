@@ -40,19 +40,22 @@ export default function ChatSidebar({
     }
   });
 
-  const togglePinChannel = useCallback((e, channelId) => {
-    e.stopPropagation();
-    setPinnedIds((prev) => {
-      const isPinned = prev.includes(channelId);
-      const next = isPinned ? prev.filter((id) => id !== channelId) : [...prev, channelId];
-      try {
-        localStorage.setItem(storageKey, JSON.stringify(next));
-      } catch (err) {
-        console.error('Failed to persist pinned channels:', err);
-      }
-      return next;
-    });
-  }, [storageKey]);
+  const togglePinChannel = useCallback(
+    (e, channelId) => {
+      e.stopPropagation();
+      setPinnedIds((prev) => {
+        const isPinned = prev.includes(channelId);
+        const next = isPinned ? prev.filter((id) => id !== channelId) : [...prev, channelId];
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(next));
+        } catch (err) {
+          console.error('Failed to persist pinned channels:', err);
+        }
+        return next;
+      });
+    },
+    [storageKey],
+  );
 
   const safeChannels = Array.isArray(channels) ? channels : [];
 
@@ -83,10 +86,18 @@ export default function ChatSidebar({
   const pinnedChannels = filtered.filter((c) => pinnedIds.includes(c.id));
 
   // Group remaining channels by type for display
-  const orgChannels = filtered.filter((c) => c.type === CHANNEL_TYPES.ORG && !pinnedIds.includes(c.id));
-  const courseChannels = filtered.filter((c) => c.type === CHANNEL_TYPES.COURSE && !pinnedIds.includes(c.id));
-  const directChannels = filtered.filter((c) => c.type === CHANNEL_TYPES.DIRECT && !pinnedIds.includes(c.id));
-  const groupChannels = filtered.filter((c) => c.type === CHANNEL_TYPES.GROUP && !pinnedIds.includes(c.id));
+  const orgChannels = filtered.filter(
+    (c) => c.type === CHANNEL_TYPES.ORG && !pinnedIds.includes(c.id),
+  );
+  const courseChannels = filtered.filter(
+    (c) => c.type === CHANNEL_TYPES.COURSE && !pinnedIds.includes(c.id),
+  );
+  const directChannels = filtered.filter(
+    (c) => c.type === CHANNEL_TYPES.DIRECT && !pinnedIds.includes(c.id),
+  );
+  const groupChannels = filtered.filter(
+    (c) => c.type === CHANNEL_TYPES.GROUP && !pinnedIds.includes(c.id),
+  );
 
   return (
     <aside className="chat-sidebar">
@@ -215,9 +226,7 @@ export default function ChatSidebar({
                 onTogglePin={togglePinChannel}
               />
             )}
-            {filtered.length === 0 && (
-              <p className="chat-sidebar__empty">No channels found</p>
-            )}
+            {filtered.length === 0 && <p className="chat-sidebar__empty">No channels found</p>}
           </>
         )}
       </nav>
@@ -243,11 +252,19 @@ function ChannelGroup({
         const unread = (unreadCounts && unreadCounts[ch.id]) ?? 0;
         const isActive = ch.id === activeId;
         const isPinned = pinnedIds.includes(ch.id);
-        const otherMember = ch.members?.find((m) => String(m.user_id || m.userId || m.id) !== String(currentUserId));
-        const otherUserId = ch.otherUserId || ch.other_user_id || otherMember?.user_id || otherMember?.userId || otherMember?.id;
-        const isUserOnline = ch.type === CHANNEL_TYPES.DIRECT && otherUserId && presence.isOnline
-          ? presence.isOnline(otherUserId)
-          : false;
+        const otherMember = ch.members?.find(
+          (m) => String(m.user_id || m.userId || m.id) !== String(currentUserId),
+        );
+        const otherUserId =
+          ch.otherUserId ||
+          ch.other_user_id ||
+          otherMember?.user_id ||
+          otherMember?.userId ||
+          otherMember?.id;
+        const isUserOnline =
+          ch.type === CHANNEL_TYPES.DIRECT && otherUserId && presence.isOnline
+            ? presence.isOnline(otherUserId)
+            : false;
 
         const displayName = getChannelDisplayName(ch, currentUserId, ch.members);
 
@@ -259,7 +276,9 @@ function ChannelGroup({
             title={displayName}
           >
             <span className="chat-channel-item__icon-wrapper">
-              <span className={`chat-channel-icon-badge chat-channel-icon-badge--${ch.type?.toLowerCase()}`}>
+              <span
+                className={`chat-channel-icon-badge chat-channel-icon-badge--${ch.type?.toLowerCase()}`}
+              >
                 {getChannelIcon(ch.type)}
               </span>
               {ch.type === CHANNEL_TYPES.DIRECT && otherUserId && (

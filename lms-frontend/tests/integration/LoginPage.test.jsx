@@ -71,7 +71,9 @@ describe('LoginPage Comprehensive Test Cases', () => {
 
     expect(screen.getByRole('alert')).toBeInTheDocument();
     expect(screen.getByText('Missing Required Fields')).toBeInTheDocument();
-    expect(screen.getByText(/please enter both your email address and password/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/please enter both your email address and password/i),
+    ).toBeInTheDocument();
     expect(authService.login).not.toHaveBeenCalled();
   });
 
@@ -194,7 +196,10 @@ describe('LoginPage Comprehensive Test Cases', () => {
     authService.login.mockRejectedValue({
       response: {
         status: 403,
-        data: { code: 'ACCOUNT_DISABLED', message: 'This account is locked. Contact an administrator.' },
+        data: {
+          code: 'ACCOUNT_DISABLED',
+          message: 'This account is locked. Contact an administrator.',
+        },
       },
     });
 
@@ -206,7 +211,9 @@ describe('LoginPage Comprehensive Test Cases', () => {
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument();
       expect(screen.getByText('Account Locked or Disabled')).toBeInTheDocument();
-      expect(screen.getByText(/this account is locked. contact an administrator./i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/this account is locked. contact an administrator./i),
+      ).toBeInTheDocument();
     });
   });
 
@@ -228,7 +235,9 @@ describe('LoginPage Comprehensive Test Cases', () => {
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument();
       expect(screen.getByText('Backend Server Problem')).toBeInTheDocument();
-      expect(screen.getByText(/a backend server error occurred while processing your request/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/a backend server error occurred while processing your request/i),
+      ).toBeInTheDocument();
     });
   });
 

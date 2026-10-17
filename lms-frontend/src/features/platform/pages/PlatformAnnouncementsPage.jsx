@@ -1,14 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  AlertTriangle,
-  Info,
-  Megaphone,
-  Plus,
-  Power,
-  Trash2,
-  X,
-} from 'lucide-react';
+import { AlertTriangle, Info, Megaphone, Plus, Power, Trash2, X } from 'lucide-react';
 import platformService from '../services/platformService';
 import AdminButton from '../../../components/ui/AdminButton';
 import AdminBadge from '../../../components/ui/AdminBadge';
@@ -55,7 +47,8 @@ export const PlatformAnnouncementsPage = () => {
       queryClient.invalidateQueries({ queryKey: ['platform-announcements'] });
       queryClient.invalidateQueries({ queryKey: ['active-broadcast-announcements'] });
     },
-    onError: (err) => setActionError(err?.response?.data?.message || 'Failed to publish announcement.'),
+    onError: (err) =>
+      setActionError(err?.response?.data?.message || 'Failed to publish announcement.'),
   });
 
   const toggleMutation = useMutation({
@@ -81,7 +74,16 @@ export const PlatformAnnouncementsPage = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 1400, margin: '0 auto', fontFamily: 'Inter, sans-serif' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 24,
+        maxWidth: 1400,
+        margin: '0 auto',
+        fontFamily: 'Inter, sans-serif',
+      }}
+    >
       {/* ── Page Header ── */}
       <div
         style={{
@@ -95,14 +97,31 @@ export const PlatformAnnouncementsPage = () => {
         }}
       >
         <div>
-          <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)' }}>
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              color: 'var(--text-muted)',
+            }}
+          >
             Broadcasting & Notifications
           </span>
-          <h1 style={{ margin: '4px 0 0', fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
+          <h1
+            style={{
+              margin: '4px 0 0',
+              fontSize: 24,
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+              letterSpacing: '-0.5px',
+            }}
+          >
             Broadcast Announcements
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
-            Broadcast platform maintenance windows, critical announcements, or release notes to all workspaces.
+            Broadcast platform maintenance windows, critical announcements, or release notes to all
+            workspaces.
           </p>
         </div>
 
@@ -143,15 +162,32 @@ export const PlatformAnnouncementsPage = () => {
             gap: 16,
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 12, borderBottom: '1px solid var(--border-color)' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              paddingBottom: 12,
+              borderBottom: '1px solid var(--border-color)',
+            }}
+          >
             <Megaphone size={18} style={{ color: 'var(--text-secondary)' }} />
             <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
               Publish Broadcast Announcement
             </h3>
           </div>
 
-          <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
+          <form
+            onSubmit={handleCreate}
+            style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
+          >
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: 14,
+              }}
+            >
               <AdminInput
                 label="Announcement Title"
                 placeholder="e.g. Scheduled Cloud Maintenance Window"
@@ -161,7 +197,15 @@ export const PlatformAnnouncementsPage = () => {
               />
 
               <div>
-                <label style={{ display: 'block', marginBottom: 6, fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    marginBottom: 6,
+                    fontSize: 13,
+                    fontWeight: 500,
+                    color: 'var(--text-secondary)',
+                  }}
+                >
                   Notice Level / Type
                 </label>
                 <select
@@ -190,7 +234,15 @@ export const PlatformAnnouncementsPage = () => {
             </div>
 
             <div>
-              <label style={{ display: 'block', marginBottom: 6, fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)' }}>
+              <label
+                style={{
+                  display: 'block',
+                  marginBottom: 6,
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: 'var(--text-secondary)',
+                }}
+              >
                 Broadcast Message
               </label>
               <textarea
@@ -215,8 +267,24 @@ export const PlatformAnnouncementsPage = () => {
               />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8 }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: 'var(--text-secondary)' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingTop: 8,
+              }}
+            >
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  color: 'var(--text-secondary)',
+                }}
+              >
                 <input
                   type="checkbox"
                   checked={formData.active}
@@ -281,17 +349,38 @@ export const PlatformAnnouncementsPage = () => {
                   <AdminBadge variant={TYPE_BADGE_VARIANTS[item.type] || 'default'} dot>
                     {item.type}
                   </AdminBadge>
-                  <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
+                  <h4
+                    style={{
+                      margin: 0,
+                      fontSize: 14,
+                      fontWeight: 700,
+                      color: 'var(--text-primary)',
+                    }}
+                  >
                     {item.title}
                   </h4>
                   <AdminBadge variant={item.active ? 'success' : 'neutral'}>
                     {item.active ? 'Active' : 'Inactive'}
                   </AdminBadge>
                 </div>
-                <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                <p
+                  style={{
+                    margin: '8px 0 0',
+                    fontSize: 13,
+                    color: 'var(--text-secondary)',
+                    lineHeight: 1.5,
+                  }}
+                >
                   {item.message}
                 </p>
-                <span style={{ display: 'block', margin: '6px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
+                <span
+                  style={{
+                    display: 'block',
+                    margin: '6px 0 0',
+                    fontSize: 11,
+                    color: 'var(--text-muted)',
+                  }}
+                >
                   Published {formatDate(item.createdAt)}
                 </span>
               </div>

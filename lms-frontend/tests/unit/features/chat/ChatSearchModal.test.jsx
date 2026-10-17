@@ -27,7 +27,7 @@ describe('ChatSearchModal Component', () => {
         onClose={vi.fn()}
         activeChannel={activeChannel}
         onSelectResult={vi.fn()}
-      />
+      />,
     );
 
     expect(screen.getByPlaceholderText(/Search messages, links, code/i)).toBeInTheDocument();
@@ -42,7 +42,7 @@ describe('ChatSearchModal Component', () => {
         onClose={vi.fn()}
         activeChannel={activeChannel}
         onSelectResult={vi.fn()}
-      />
+      />,
     );
 
     expect(container.firstChild).toBeNull();
@@ -65,18 +65,21 @@ describe('ChatSearchModal Component', () => {
         onClose={vi.fn()}
         activeChannel={activeChannel}
         onSelectResult={vi.fn()}
-      />
+      />,
     );
 
     const input = screen.getByPlaceholderText(/Search messages, links, code/i);
     fireEvent.change(input, { target: { value: 'deadline' } });
 
-    await waitFor(() => {
-      expect(chatService.searchMessages).toHaveBeenCalledWith({
-        query: 'deadline',
-        channelId: 'chan-1',
-      });
-    }, { timeout: 1000 });
+    await waitFor(
+      () => {
+        expect(chatService.searchMessages).toHaveBeenCalledWith({
+          query: 'deadline',
+          channelId: 'chan-1',
+        });
+      },
+      { timeout: 1000 },
+    );
 
     await waitFor(() => {
       expect(screen.getByText('Alice')).toBeInTheDocument();
@@ -93,7 +96,7 @@ describe('ChatSearchModal Component', () => {
         onClose={vi.fn()}
         activeChannel={activeChannel}
         onSelectResult={vi.fn()}
-      />
+      />,
     );
 
     const allChannelsBtn = screen.getByText('All Channels');
@@ -102,12 +105,15 @@ describe('ChatSearchModal Component', () => {
     const input = screen.getByPlaceholderText(/Search messages, links, code/i);
     fireEvent.change(input, { target: { value: 'meeting' } });
 
-    await waitFor(() => {
-      expect(chatService.searchMessages).toHaveBeenCalledWith({
-        query: 'meeting',
-        channelId: undefined,
-      });
-    }, { timeout: 1000 });
+    await waitFor(
+      () => {
+        expect(chatService.searchMessages).toHaveBeenCalledWith({
+          query: 'meeting',
+          channelId: undefined,
+        });
+      },
+      { timeout: 1000 },
+    );
   });
 
   it('invokes onSelectResult and onClose when a result item is clicked', async () => {
@@ -130,15 +136,18 @@ describe('ChatSearchModal Component', () => {
         onClose={onClose}
         activeChannel={activeChannel}
         onSelectResult={onSelectResult}
-      />
+      />,
     );
 
     const input = screen.getByPlaceholderText(/Search messages, links, code/i);
     fireEvent.change(input, { target: { value: 'announcement' } });
 
-    await waitFor(() => {
-      expect(screen.getByText('Bob')).toBeInTheDocument();
-    }, { timeout: 1000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText('Bob')).toBeInTheDocument();
+      },
+      { timeout: 1000 },
+    );
 
     fireEvent.click(screen.getByText('Bob'));
 

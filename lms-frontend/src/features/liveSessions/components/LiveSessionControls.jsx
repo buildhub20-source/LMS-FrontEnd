@@ -1,9 +1,25 @@
 import { useState } from 'react';
-import { 
-  Mic, MicOff, Video, VideoOff, ScreenShare, Hand, 
-  Users, MessageSquare, PhoneOff, StopCircle,
-  Maximize, Minimize, LayoutGrid, Maximize2, 
-  Smile, Settings, Info, Crop, Expand, Tv
+import {
+  Mic,
+  MicOff,
+  Video,
+  VideoOff,
+  ScreenShare,
+  Hand,
+  Users,
+  MessageSquare,
+  PhoneOff,
+  StopCircle,
+  Maximize,
+  Minimize,
+  LayoutGrid,
+  Maximize2,
+  Smile,
+  Settings,
+  Info,
+  Crop,
+  Expand,
+  Tv,
 } from 'lucide-react';
 
 const QUICK_REACTIONS = ['👏', '❤️', '👍', '🎉', '😂', '💡'];
@@ -50,7 +66,7 @@ export const LiveSessionControls = ({
   };
 
   return (
-    <footer 
+    <footer
       className="relative z-30 flex items-center justify-between px-4 sm:px-6 py-3 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white select-none shrink-0"
       style={{ position: 'relative', zIndex: 30 }}
       role="toolbar"
@@ -64,8 +80,8 @@ export const LiveSessionControls = ({
           title={showParticipants ? 'Close Participants List' : 'View Participants List'}
           aria-label={`Participants (${participantCount})`}
           className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-all duration-150 active:scale-95 ${
-            showParticipants 
-              ? 'bg-emerald-600 text-white ring-2 ring-emerald-400/50 shadow-md shadow-emerald-600/30' 
+            showParticipants
+              ? 'bg-emerald-600 text-white ring-2 ring-emerald-400/50 shadow-md shadow-emerald-600/30'
               : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/80 hover:text-white'
           }`}
         >
@@ -164,8 +180,8 @@ export const LiveSessionControls = ({
             title="Send Live Reaction"
             aria-label="Send Reaction"
             className={`p-3 rounded-full cursor-pointer transition-all duration-150 active:scale-95 border border-slate-700/80 ${
-              showReactionsMenu 
-                ? 'bg-emerald-600 text-white ring-2 ring-emerald-400' 
+              showReactionsMenu
+                ? 'bg-emerald-600 text-white ring-2 ring-emerald-400'
                 : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-amber-400'
             }`}
           >
@@ -237,7 +253,11 @@ export const LiveSessionControls = ({
                 : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'
             }`}
           >
-            {layoutMode === 'grid' ? <Maximize2 className="w-5 h-5" /> : <LayoutGrid className="w-5 h-5" />}
+            {layoutMode === 'grid' ? (
+              <Maximize2 className="w-5 h-5" />
+            ) : (
+              <LayoutGrid className="w-5 h-5" />
+            )}
           </button>
         )}
 
@@ -246,7 +266,9 @@ export const LiveSessionControls = ({
           <button
             type="button"
             onClick={onToggleAspectFit}
-            title={aspectFitMode === 'cover' ? 'Fit Video to Screen (Contain)' : 'Fill Stage (Cover)'}
+            title={
+              aspectFitMode === 'cover' ? 'Fit Video to Screen (Contain)' : 'Fill Stage (Cover)'
+            }
             aria-label="Toggle Video Aspect Ratio"
             className={`p-3 rounded-full cursor-pointer transition-all duration-150 active:scale-95 border border-slate-700/80 ${
               aspectFitMode === 'cover'
@@ -254,7 +276,11 @@ export const LiveSessionControls = ({
                 : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'
             }`}
           >
-            {aspectFitMode === 'cover' ? <Crop className="w-5 h-5" /> : <Expand className="w-5 h-5" />}
+            {aspectFitMode === 'cover' ? (
+              <Crop className="w-5 h-5" />
+            ) : (
+              <Expand className="w-5 h-5" />
+            )}
           </button>
         )}
       </div>

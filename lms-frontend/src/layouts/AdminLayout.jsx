@@ -136,10 +136,7 @@ const TOP_TABS = [
 
 export const AdminLayout = () => (
   <RouteErrorBoundary>
-    <AppShell
-      navigation={SIDEBAR_ITEMS}
-      tabNav={<TopTabNav tabs={TOP_TABS} />}
-    />
+    <AppShell navigation={SIDEBAR_ITEMS} tabNav={<TopTabNav tabs={TOP_TABS} />} />
   </RouteErrorBoundary>
 );
 

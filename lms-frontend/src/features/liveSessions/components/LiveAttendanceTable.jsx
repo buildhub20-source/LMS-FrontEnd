@@ -32,7 +32,9 @@ export const LiveAttendanceTable = ({ attendanceList = [], isLoading }) => {
             <Users className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Total Attendees</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              Total Attendees
+            </p>
             <p className="text-xl font-bold text-slate-900 dark:text-slate-100">{totalAttendees}</p>
           </div>
         </div>
@@ -42,8 +44,12 @@ export const LiveAttendanceTable = ({ attendanceList = [], isLoading }) => {
             <CheckCircle2 className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Currently In Room</p>
-            <p className="text-xl font-bold text-slate-900 dark:text-slate-100">{activeAttendees}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              Currently In Room
+            </p>
+            <p className="text-xl font-bold text-slate-900 dark:text-slate-100">
+              {activeAttendees}
+            </p>
           </div>
         </div>
 
@@ -53,7 +59,9 @@ export const LiveAttendanceTable = ({ attendanceList = [], isLoading }) => {
           </div>
           <div>
             <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Avg Duration</p>
-            <p className="text-xl font-bold text-slate-900 dark:text-slate-100">{avgMinutes} mins</p>
+            <p className="text-xl font-bold text-slate-900 dark:text-slate-100">
+              {avgMinutes} mins
+            </p>
           </div>
         </div>
       </div>
@@ -85,10 +93,15 @@ export const LiveAttendanceTable = ({ attendanceList = [], isLoading }) => {
                 </tr>
               ) : (
                 attendanceList.map((record) => (
-                  <tr key={record.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+                  <tr
+                    key={record.id}
+                    className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
+                  >
                     <td className="px-5 py-3.5">
                       <div>
-                        <p className="font-semibold text-slate-900 dark:text-slate-100">{record.userName || 'Student'}</p>
+                        <p className="font-semibold text-slate-900 dark:text-slate-100">
+                          {record.userName || 'Student'}
+                        </p>
                         <p className="text-xs text-slate-400">{record.userEmail}</p>
                       </div>
                     </td>

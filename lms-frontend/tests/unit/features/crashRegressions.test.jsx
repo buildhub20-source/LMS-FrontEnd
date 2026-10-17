@@ -23,14 +23,26 @@ describe('ChannelDetailsModal', () => {
   const channel = { id: 'c1', name: 'general', type: 'GROUP', creator_id: 'u1' };
 
   it('opens without crashing and shows owner controls to the owner', async () => {
-    render(<ChannelDetailsModal isOpen channel={channel} currentUser={{ id: 'u1' }} onClose={() => {}} />);
+    render(
+      <ChannelDetailsModal
+        isOpen
+        channel={channel}
+        currentUser={{ id: 'u1' }}
+        onClose={() => {}}
+      />,
+    );
 
     await waitFor(() => expect(screen.getByText('Edit')).toBeInTheDocument());
   });
 
   it('hides owner controls from an ordinary member', async () => {
     render(
-      <ChannelDetailsModal isOpen channel={{ ...channel, creator_id: 'someone-else' }} currentUser={{ id: 'u2' }} onClose={() => {}} />,
+      <ChannelDetailsModal
+        isOpen
+        channel={{ ...channel, creator_id: 'someone-else' }}
+        currentUser={{ id: 'u2' }}
+        onClose={() => {}}
+      />,
     );
 
     await waitFor(() => expect(screen.getByText('general')).toBeInTheDocument());
@@ -41,7 +53,9 @@ describe('ChannelDetailsModal', () => {
 describe('QuestionPreviewModal', () => {
   it('survives being opened and closed again', () => {
     const question = { title: 'Two Sum', questionType: 'CODING', testCases: [] };
-    const { rerender } = render(<QuestionPreviewModal isOpen={false} questionData={question} onClose={() => {}} />);
+    const { rerender } = render(
+      <QuestionPreviewModal isOpen={false} questionData={question} onClose={() => {}} />,
+    );
 
     rerender(<QuestionPreviewModal isOpen questionData={question} onClose={() => {}} />);
     expect(screen.getByText('Student Experience Preview')).toBeInTheDocument();

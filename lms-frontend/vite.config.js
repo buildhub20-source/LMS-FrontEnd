@@ -51,11 +51,18 @@ export default defineConfig(({ mode }) => {
               // before browser storage has been populated.
               configure(proxy) {
                 proxy.on('proxyReq', (proxyRequest, request) => {
-                  const host = String(request.headers.host ?? '').split(':')[0].toLowerCase();
+                  const host = String(request.headers.host ?? '')
+                    .split(':')[0]
+                    .toLowerCase();
                   const suffix = '.localhost';
                   if (!host.endsWith(suffix)) return;
                   const slug = host.slice(0, -suffix.length);
-                  if (!env.VITE_DEV_TENANT_SLUG && slug && !slug.includes('.') && slug !== 'platform') {
+                  if (
+                    !env.VITE_DEV_TENANT_SLUG &&
+                    slug &&
+                    !slug.includes('.') &&
+                    slug !== 'platform'
+                  ) {
                     proxyRequest.setHeader('X-Tenant-Slug', slug);
                   }
                 });

@@ -1,9 +1,20 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  ChevronRight, Send, Maximize2, Minimize2,
-  AlertTriangle, Shield, Video, Sparkles, Terminal, Code2,
-  ArrowLeft, CheckCircle2, BarChart3, RefreshCw
+  ChevronRight,
+  Send,
+  Maximize2,
+  Minimize2,
+  AlertTriangle,
+  Shield,
+  Video,
+  Sparkles,
+  Terminal,
+  Code2,
+  ArrowLeft,
+  CheckCircle2,
+  BarChart3,
+  RefreshCw,
 } from 'lucide-react';
 import Spinner from '../../../components/common/Spinner';
 import Button from '../../../components/common/Button';
@@ -79,87 +90,107 @@ export const StudentAssessmentTakingPage = () => {
   const isCritical = (remainingSeconds ?? 999) <= 300; // 5 mins warning
 
   // Finalize exam, flush active draft, and upload recording with real-time synchronized stages
-  const handleFinalSubmit = useCallback(async (_isAuto = false, shouldNavigate = true) => {
-    if (isSubmittingRef.current) return;
-    // Mark as submitting FIRST — suppresses proctoring events synchronously
-    isSubmittingRef.current = true;
-    setShowSubmitModal(false);
-    setShowProcessingScreen(true);
-    setSubmissionErrorMsg(null);
+  const handleFinalSubmit = useCallback(
+    async (_isAuto = false, shouldNavigate = true) => {
+      if (isSubmittingRef.current) return;
+      // Mark as submitting FIRST — suppresses proctoring events synchronously
+      isSubmittingRef.current = true;
+      setShowSubmitModal(false);
+      setShowProcessingScreen(true);
+      setSubmissionErrorMsg(null);
 
-    // 1. Exit fullscreen immediately so the processing screen displays cleanly
-    if (document.fullscreenElement) {
-      try { await document.exitFullscreen(); } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
-    }
-
-    try {
-      const targetAttemptId = attempt?.id || attempt?.attemptId;
-      if (!targetAttemptId) throw new Error('No active attempt. Reload the assessment before submitting.');
-      setSubmissionStage('saving');
-      await flushDrafts();
-
-      // Stage 2: Stop and upload screen recording telemetry (safeguarded timeout)
-      setSubmissionStage('uploading');
-      try {
-        const videoBlob = stopRecordingRef.current ? await stopRecordingRef.current() : null;
-        if (videoBlob && targetAttemptId) {
-          await Promise.race([
-            assessmentService.uploadAttemptRecording(targetAttemptId, videoBlob),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Upload timeout')), 2500)),
-          ]);
+      // 1. Exit fullscreen immediately so the processing screen displays cleanly
+      if (document.fullscreenElement) {
+        try {
+          await document.exitFullscreen();
+        } catch {
+          /* Best-effort browser cleanup; failure must not block the workflow. */
         }
-      } catch (err) {
-        console.warn('Screen recording upload note on submit (non-fatal):', err);
       }
 
-      // Stage 3: Submit attempt to backend DB & finalize
-      setSubmissionStage('submitting');
-      if (targetAttemptId) {
+      try {
+        const targetAttemptId = attempt?.id || attempt?.attemptId;
+        if (!targetAttemptId)
+          throw new Error('No active attempt. Reload the assessment before submitting.');
+        setSubmissionStage('saving');
+        await flushDrafts();
+
+        // Stage 2: Stop and upload screen recording telemetry (safeguarded timeout)
+        setSubmissionStage('uploading');
         try {
-          await assessmentService.submitAttempt(targetAttemptId);
-        } catch (submitErr) {
-          const errMsg = (submitErr?.response?.data?.message || submitErr?.message || '').toLowerCase();
-          if (
-            errMsg.includes('already submitted') ||
-            errMsg.includes('already completed') ||
-            errMsg.includes('expired')
-          ) {
-            // The server already finalized this attempt.
-          } else {
-            throw submitErr;
+          const videoBlob = stopRecordingRef.current ? await stopRecordingRef.current() : null;
+          if (videoBlob && targetAttemptId) {
+            await Promise.race([
+              assessmentService.uploadAttemptRecording(targetAttemptId, videoBlob),
+              new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Upload timeout')), 2500),
+              ),
+            ]);
+          }
+        } catch (err) {
+          console.warn('Screen recording upload note on submit (non-fatal):', err);
+        }
+
+        // Stage 3: Submit attempt to backend DB & finalize
+        setSubmissionStage('submitting');
+        if (targetAttemptId) {
+          try {
+            await assessmentService.submitAttempt(targetAttemptId);
+          } catch (submitErr) {
+            const errMsg = (
+              submitErr?.response?.data?.message ||
+              submitErr?.message ||
+              ''
+            ).toLowerCase();
+            if (
+              errMsg.includes('already submitted') ||
+              errMsg.includes('already completed') ||
+              errMsg.includes('expired')
+            ) {
+              // The server already finalized this attempt.
+            } else {
+              throw submitErr;
+            }
           }
         }
+
+        // Clean up localStorage drafts on successful submission
+        if (targetAttemptId) {
+          (attempt?.questions ?? []).forEach((q) => {
+            try {
+              localStorage.removeItem(`lms_assessment_draft_${targetAttemptId}_${q.id}`);
+            } catch {
+              /* Best-effort browser cleanup; failure must not block the workflow. */
+            }
+          });
+        }
+
+        // Stage 4: Completed
+        setSubmissionStage('completed');
+
+        if (shouldNavigate) {
+          setTimeout(() => {
+            setShowProcessingScreen(false);
+            navigate(ROUTES.ASSESSMENT_RESULT(targetAttemptId || assessmentId));
+          }, 400);
+        }
+      } catch (err) {
+        isSubmittingRef.current = false;
+        console.error('Final submit failed:', err);
+        setSubmissionStage('error');
+        setSubmissionErrorMsg(
+          err?.response?.data?.message ||
+            err?.message ||
+            'Submission failed. Please check your network connection and retry.',
+        );
       }
+    },
+    [attempt?.id, attempt?.attemptId, attempt?.questions, assessmentId, flushDrafts, navigate],
+  );
 
-      // Clean up localStorage drafts on successful submission
-      if (targetAttemptId) {
-        (attempt?.questions ?? []).forEach((q) => {
-          try {
-            localStorage.removeItem(`lms_assessment_draft_${targetAttemptId}_${q.id}`);
-          } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
-        });
-      }
-
-      // Stage 4: Completed
-      setSubmissionStage('completed');
-
-      if (shouldNavigate) {
-        setTimeout(() => {
-          setShowProcessingScreen(false);
-          navigate(ROUTES.ASSESSMENT_RESULT(targetAttemptId || assessmentId));
-        }, 400);
-      }
-    } catch (err) {
-      isSubmittingRef.current = false;
-      console.error('Final submit failed:', err);
-      setSubmissionStage('error');
-      setSubmissionErrorMsg(
-        err?.response?.data?.message || err?.message || 'Submission failed. Please check your network connection and retry.'
-      );
-    }
-  }, [attempt?.id, attempt?.attemptId, attempt?.questions, assessmentId, flushDrafts, navigate]);
-
-  useEffect(() => { handleFinalSubmitRef.current = handleFinalSubmit; }, [handleFinalSubmit]);
+  useEffect(() => {
+    handleFinalSubmitRef.current = handleFinalSubmit;
+  }, [handleFinalSubmit]);
 
   // Proctoring & Lockdown hook
   const {
@@ -182,7 +213,9 @@ export const StudentAssessmentTakingPage = () => {
     suppressRef: isSubmittingRef,
   });
 
-  useEffect(() => { stopRecordingRef.current = stopAndGetRecordingBlob; }, [stopAndGetRecordingBlob]);
+  useEffect(() => {
+    stopRecordingRef.current = stopAndGetRecordingBlob;
+  }, [stopAndGetRecordingBlob]);
 
   // Step 1: Request screen recording stream inside lobby
   const handleRequestScreen = async () => {
@@ -197,7 +230,9 @@ export const StudentAssessmentTakingPage = () => {
   const handleLaunchAssessment = async () => {
     try {
       await enterFullscreen();
-    } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
+    } catch {
+      /* Best-effort browser cleanup; failure must not block the workflow. */
+    }
     setIsRulesAgreed(true);
     setExamStage('COUNTDOWN');
   };
@@ -297,7 +332,9 @@ export const StudentAssessmentTakingPage = () => {
               width: 58,
               height: 58,
               borderRadius: '50%',
-              background: isLimitReached ? 'color-mix(in srgb, var(--primary) 15%, transparent)' : 'rgba(239, 68, 68, 0.15)',
+              background: isLimitReached
+                ? 'color-mix(in srgb, var(--primary) 15%, transparent)'
+                : 'rgba(239, 68, 68, 0.15)',
               color: isLimitReached ? 'var(--primary)' : 'var(--destructive)',
               display: 'flex',
               alignItems: 'center',
@@ -311,7 +348,14 @@ export const StudentAssessmentTakingPage = () => {
           <h2 style={{ margin: '0 0 8px', fontSize: 20, fontWeight: 800 }}>
             {isLimitReached ? 'Assessment Already Completed' : 'Unable to Start Assessment'}
           </h2>
-          <p style={{ margin: '0 0 26px', fontSize: 14, color: 'var(--muted-foreground, #94a3b8)', lineHeight: 1.6 }}>
+          <p
+            style={{
+              margin: '0 0 26px',
+              fontSize: 14,
+              color: 'var(--muted-foreground, #94a3b8)',
+              lineHeight: 1.6,
+            }}
+          >
             {error}
           </p>
 
@@ -469,7 +513,15 @@ export const StudentAssessmentTakingPage = () => {
             >
               {attempt?.assessmentTitle || 'Assessment'}
             </h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#94a3b8' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                fontSize: 11,
+                color: '#94a3b8',
+              }}
+            >
               <span style={{ color: '#10b981', fontWeight: 700 }}>●</span>
               <span>
                 {answeredCount} of {totalQuestions} answered
@@ -542,7 +594,7 @@ export const StudentAssessmentTakingPage = () => {
           <Button
             variant="primary"
             onClick={() => {
-              isSubmittingRef.current = true;  // suppress blur synchronously when modal opens
+              isSubmittingRef.current = true; // suppress blur synchronously when modal opens
               setShowSubmitModal(true);
             }}
             iconRight={<Send size={14} />}
@@ -575,7 +627,9 @@ export const StudentAssessmentTakingPage = () => {
           }}
         >
           <AlertTriangle size={14} style={{ color: '#ef4444' }} />
-          <p style={{ margin: 0, fontSize: 13, color: '#fca5a5', fontWeight: 600 }}>{submitError}</p>
+          <p style={{ margin: 0, fontSize: 13, color: '#fca5a5', fontWeight: 600 }}>
+            {submitError}
+          </p>
         </div>
       )}
 
@@ -592,7 +646,15 @@ export const StudentAssessmentTakingPage = () => {
         />
 
         {/* Center/Right: Problem statement + Monaco Editor + Test Console */}
-        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div
+          style={{
+            flex: 1,
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+          }}
+        >
           {currentQuestion ? (
             currentQuestion.questionType === 'MULTIPLE_CHOICE' ? (
               <McqQuestionPanel
@@ -622,7 +684,15 @@ export const StudentAssessmentTakingPage = () => {
               />
             )
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, color: '#94a3b8' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flex: 1,
+                color: '#94a3b8',
+              }}
+            >
               No question selected.
             </div>
           )}
@@ -644,16 +714,35 @@ export const StudentAssessmentTakingPage = () => {
         }}
       >
         {/* Left: Question counter indicator */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#94a3b8' }}>
+        <div
+          style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#94a3b8' }}
+        >
           <span style={{ fontWeight: 700, color: '#e2e8f0' }}>
             Question {currentIdx + 1} of {questions.length}
           </span>
           {drafts[currentQuestion?.id]?.sourceCode?.trim() ? (
-            <span style={{ fontSize: 11, color: '#34d399', background: 'rgba(16, 185, 129, 0.12)', padding: '2px 8px', borderRadius: 4, fontWeight: 700 }}>
+            <span
+              style={{
+                fontSize: 11,
+                color: '#34d399',
+                background: 'rgba(16, 185, 129, 0.12)',
+                padding: '2px 8px',
+                borderRadius: 4,
+                fontWeight: 700,
+              }}
+            >
               Answered
             </span>
           ) : (
-            <span style={{ fontSize: 11, color: '#94a3b8', background: 'rgba(255, 255, 255, 0.04)', padding: '2px 8px', borderRadius: 4 }}>
+            <span
+              style={{
+                fontSize: 11,
+                color: '#94a3b8',
+                background: 'rgba(255, 255, 255, 0.04)',
+                padding: '2px 8px',
+                borderRadius: 4,
+              }}
+            >
               Incomplete
             </span>
           )}
@@ -703,7 +792,14 @@ export const StudentAssessmentTakingPage = () => {
         </div>
 
         {/* Right: Next Question Button (if more questions remain) */}
-        <div style={{ display: 'flex', alignItems: 'center', minWidth: 90, justifyContent: 'flex-end' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            minWidth: 90,
+            justifyContent: 'flex-end',
+          }}
+        >
           {currentIdx < questions.length - 1 ? (
             <Button
               variant="secondary"

@@ -99,6 +99,6 @@ export default function ImageLightbox({ isOpen, src, alt, name, onClose }) {
         />
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }

@@ -18,12 +18,7 @@ import { ThemeContext } from '../../../context/ThemeContext';
  * @param {Object} [props.style] - Optional extra styles
  * @param {boolean} [props.showTooltip=true] - Whether to show title tooltip
  */
-export const ThemeSlider = ({
-  size = 'md',
-  className = '',
-  style = {},
-  showTooltip = true,
-}) => {
+export const ThemeSlider = ({ size = 'md', className = '', style = {}, showTooltip = true }) => {
   // Try to use ThemeContext if rendered inside ThemeProvider
   const context = useContext(ThemeContext);
 
@@ -74,7 +69,10 @@ export const ThemeSlider = ({
         setCurrentTheme(attr);
       }
     });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class'] });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme', 'class'],
+    });
 
     return () => {
       window.removeEventListener('lms-theme-change', handleThemeChange);
@@ -83,28 +81,31 @@ export const ThemeSlider = ({
     };
   }, [currentTheme]);
 
-  const applyTheme = useCallback((nextTheme) => {
-    setCurrentTheme(nextTheme);
+  const applyTheme = useCallback(
+    (nextTheme) => {
+      setCurrentTheme(nextTheme);
 
-    // 1. Update <html> element attributes & classes for CSS selectors
-    document.documentElement.classList.remove('light', 'dark');
-    document.documentElement.classList.add(nextTheme);
-    document.documentElement.setAttribute('data-theme', nextTheme);
+      // 1. Update <html> element attributes & classes for CSS selectors
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
 
-    // 2. Persist in storage
-    localStorage.setItem('lms-theme', nextTheme);
-    localStorage.setItem('lms.theme', nextTheme);
+      // 2. Persist in storage
+      localStorage.setItem('lms-theme', nextTheme);
+      localStorage.setItem('lms.theme', nextTheme);
 
-    // 3. Update React context if available
-    if (context?.setTheme) {
-      context.setTheme(nextTheme);
-    } else if (context?.toggleTheme) {
-      context.toggleTheme();
-    }
+      // 3. Update React context if available
+      if (context?.setTheme) {
+        context.setTheme(nextTheme);
+      } else if (context?.toggleTheme) {
+        context.toggleTheme();
+      }
 
-    // 4. Notify any other sliders or listeners
-    window.dispatchEvent(new CustomEvent('lms-theme-change', { detail: nextTheme }));
-  }, [context]);
+      // 4. Notify any other sliders or listeners
+      window.dispatchEvent(new CustomEvent('lms-theme-change', { detail: nextTheme }));
+    },
+    [context],
+  );
 
   const handleToggle = () => {
     const nextTheme = isDark ? 'light' : 'dark';
@@ -119,35 +120,36 @@ export const ThemeSlider = ({
   };
 
   // Dimension presets
-  const dimensions = {
-    sm: {
-      width: 52,
-      height: 26,
-      padding: 2.5,
-      knobSize: 21,
-      travel: 26,
-      iconSize: 11,
-      moonIconSize: 11,
-    },
-    md: {
-      width: 60,
-      height: 30,
-      padding: 3,
-      knobSize: 24,
-      travel: 30,
-      iconSize: 13,
-      moonIconSize: 12,
-    },
-    lg: {
-      width: 68,
-      height: 34,
-      padding: 3.5,
-      knobSize: 27,
-      travel: 34,
-      iconSize: 15,
-      moonIconSize: 14,
-    },
-  }[size] || dimensions.md;
+  const dimensions =
+    {
+      sm: {
+        width: 52,
+        height: 26,
+        padding: 2.5,
+        knobSize: 21,
+        travel: 26,
+        iconSize: 11,
+        moonIconSize: 11,
+      },
+      md: {
+        width: 60,
+        height: 30,
+        padding: 3,
+        knobSize: 24,
+        travel: 30,
+        iconSize: 13,
+        moonIconSize: 12,
+      },
+      lg: {
+        width: 68,
+        height: 34,
+        padding: 3.5,
+        knobSize: 27,
+        travel: 34,
+        iconSize: 15,
+        moonIconSize: 14,
+      },
+    }[size] || dimensions.md;
 
   const { width, height, padding, knobSize, travel, iconSize, moonIconSize } = dimensions;
 

@@ -45,10 +45,23 @@ export const ChangePasswordForm = () => {
     let label = 'Very Weak';
     let color = '#ef4444';
 
-    if (count === 1) { score = 25; label = 'Weak'; color = '#ef4444'; }
-    else if (count === 2) { score = 50; label = 'Fair'; color = '#f59e0b'; }
-    else if (count === 3) { score = 75; label = 'Strong'; color = '#3b82f6'; }
-    else if (count === 4) { score = 100; label = 'Excellent'; color = '#10b981'; }
+    if (count === 1) {
+      score = 25;
+      label = 'Weak';
+      color = '#ef4444';
+    } else if (count === 2) {
+      score = 50;
+      label = 'Fair';
+      color = '#f59e0b';
+    } else if (count === 3) {
+      score = 75;
+      label = 'Strong';
+      color = '#3b82f6';
+    } else if (count === 4) {
+      score = 100;
+      label = 'Excellent';
+      color = '#10b981';
+    }
 
     return { checks, score, label, color };
   }, [newPassword]);
@@ -65,13 +78,33 @@ export const ChangePasswordForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      style={{ display: 'flex', flexDirection: 'column', gap: 20 }}
+    >
       {error && <Alert tone="error">{error.message}</Alert>}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: 20,
+        }}
+      >
         {/* Current Password */}
         <div>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              fontSize: 13,
+              fontWeight: 600,
+              color: 'var(--text-primary)',
+              marginBottom: 6,
+            }}
+          >
             <KeyRound size={15} style={{ color: 'var(--primary, #6366f1)' }} />
             Current Password <span style={{ color: '#ef4444' }}>*</span>
           </label>
@@ -103,7 +136,17 @@ export const ChangePasswordForm = () => {
 
         {/* New Password */}
         <div>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              fontSize: 13,
+              fontWeight: 600,
+              color: 'var(--text-primary)',
+              marginBottom: 6,
+            }}
+          >
             <Lock size={15} style={{ color: 'var(--primary, #6366f1)' }} />
             New Password <span style={{ color: '#ef4444' }}>*</span>
           </label>
@@ -135,7 +178,17 @@ export const ChangePasswordForm = () => {
 
         {/* Confirm Password */}
         <div>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              fontSize: 13,
+              fontWeight: 600,
+              color: 'var(--text-primary)',
+              marginBottom: 6,
+            }}
+          >
             <ShieldCheck size={15} style={{ color: 'var(--primary, #6366f1)' }} />
             Confirm New Password <span style={{ color: '#ef4444' }}>*</span>
           </label>
@@ -178,42 +231,113 @@ export const ChangePasswordForm = () => {
             border: '1px solid var(--border-color, #334155)',
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>Password Strength:</span>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 8,
+            }}
+          >
+            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
+              Password Strength:
+            </span>
             <span style={{ fontSize: 13, fontWeight: 700, color: strengthMetrics.color }}>
               {strengthMetrics.label}
             </span>
           </div>
 
           {/* Progress bar */}
-          <div style={{ height: 6, width: '100%', background: 'rgba(255,255,255,0.1)', borderRadius: 3, overflow: 'hidden', marginBottom: 12 }}>
+          <div
+            style={{
+              height: 6,
+              width: '100%',
+              background: 'rgba(255,255,255,0.1)',
+              borderRadius: 3,
+              overflow: 'hidden',
+              marginBottom: 12,
+            }}
+          >
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${strengthMetrics.score}%` }}
-              style={{ height: '100%', background: strengthMetrics.color, transition: 'width 0.3s ease' }}
+              style={{
+                height: '100%',
+                background: strengthMetrics.color,
+                transition: 'width 0.3s ease',
+              }}
             />
           </div>
 
           {/* Criteria Checklist */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
-            <span style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 6, color: strengthMetrics.checks.length ? '#10b981' : 'var(--text-muted)' }}>
-              {strengthMetrics.checks.length ? <Check size={14} /> : <X size={14} />} At least 8 characters
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+              gap: 8,
+            }}
+          >
+            <span
+              style={{
+                fontSize: 12,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                color: strengthMetrics.checks.length ? '#10b981' : 'var(--text-muted)',
+              }}
+            >
+              {strengthMetrics.checks.length ? <Check size={14} /> : <X size={14} />} At least 8
+              characters
             </span>
-            <span style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 6, color: strengthMetrics.checks.uppercase ? '#10b981' : 'var(--text-muted)' }}>
-              {strengthMetrics.checks.uppercase ? <Check size={14} /> : <X size={14} />} Uppercase letter (A-Z)
+            <span
+              style={{
+                fontSize: 12,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                color: strengthMetrics.checks.uppercase ? '#10b981' : 'var(--text-muted)',
+              }}
+            >
+              {strengthMetrics.checks.uppercase ? <Check size={14} /> : <X size={14} />} Uppercase
+              letter (A-Z)
             </span>
-            <span style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 6, color: strengthMetrics.checks.number ? '#10b981' : 'var(--text-muted)' }}>
-              {strengthMetrics.checks.number ? <Check size={14} /> : <X size={14} />} Numeric digit (0-9)
+            <span
+              style={{
+                fontSize: 12,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                color: strengthMetrics.checks.number ? '#10b981' : 'var(--text-muted)',
+              }}
+            >
+              {strengthMetrics.checks.number ? <Check size={14} /> : <X size={14} />} Numeric digit
+              (0-9)
             </span>
-            <span style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 6, color: strengthMetrics.checks.special ? '#10b981' : 'var(--text-muted)' }}>
-              {strengthMetrics.checks.special ? <Check size={14} /> : <X size={14} />} Special character (!@#$)
+            <span
+              style={{
+                fontSize: 12,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                color: strengthMetrics.checks.special ? '#10b981' : 'var(--text-muted)',
+              }}
+            >
+              {strengthMetrics.checks.special ? <Check size={14} /> : <X size={14} />} Special
+              character (!@#$)
             </span>
           </div>
         </motion.div>
       )}
 
       {/* Action Buttons */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 16, borderTop: '1px solid var(--border-color)' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          paddingTop: 16,
+          borderTop: '1px solid var(--border-color)',
+        }}
+      >
         <Button
           type="submit"
           isLoading={isSubmitting}

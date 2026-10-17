@@ -48,7 +48,7 @@ export default function MessageComposer({
     const add = (m) => {
       if (!m) return;
       const id = m.user_id || m.userId || m.id;
-      const key = id ? String(id) : (m.email || m.name || m.display_name);
+      const key = id ? String(id) : m.email || m.name || m.display_name;
       if (key && !seen.has(key)) {
         seen.add(key);
         list.push(m);
@@ -92,19 +92,26 @@ export default function MessageComposer({
 
       // If we couldn't differentiate from current user but have at least one member
       if (!other && effectiveMembers.length > 0) {
-        other = effectiveMembers.find((m) => {
-          const mEmail = m.email;
-          return currentUser?.email ? mEmail !== currentUser.email : true;
-        }) || effectiveMembers[0];
+        other =
+          effectiveMembers.find((m) => {
+            const mEmail = m.email;
+            return currentUser?.email ? mEmail !== currentUser.email : true;
+          }) || effectiveMembers[0];
       }
 
       const helperName = getChannelDisplayName(channel, currentUserId, effectiveMembers);
       const targetName =
         (other?.name && other.name !== 'Direct Message' ? other.name : null) ||
-        (other?.display_name && other.display_name !== 'Direct Message' ? other.display_name : null) ||
+        (other?.display_name && other.display_name !== 'Direct Message'
+          ? other.display_name
+          : null) ||
         (other?.displayName && other.displayName !== 'Direct Message' ? other.displayName : null) ||
-        (channel?.otherUserName && channel.otherUserName !== 'Direct Message' ? channel.otherUserName : null) ||
-        (channel?.other_user_name && channel.other_user_name !== 'Direct Message' ? channel.other_user_name : null) ||
+        (channel?.otherUserName && channel.otherUserName !== 'Direct Message'
+          ? channel.otherUserName
+          : null) ||
+        (channel?.other_user_name && channel.other_user_name !== 'Direct Message'
+          ? channel.other_user_name
+          : null) ||
         (helperName && helperName !== 'Direct Message' ? helperName : null) ||
         (channel?.directUserEmail ? channel.directUserEmail.split('@')[0] : null) ||
         (other?.email ? other.email.split('@')[0] : null) ||
@@ -168,11 +175,7 @@ export default function MessageComposer({
     return allCandidates
       .filter((c) => {
         if (c.isEveryone) {
-          return (
-            'everyone'.startsWith(q) ||
-            'all'.startsWith(q) ||
-            'everyone'.includes(q)
-          );
+          return 'everyone'.startsWith(q) || 'all'.startsWith(q) || 'everyone'.includes(q);
         }
         const nameMatch = (c.name || '').toLowerCase().includes(q);
         const displayMatch = (c.display_name || '').toLowerCase().includes(q);
@@ -212,8 +215,10 @@ export default function MessageComposer({
       const list = Array.isArray(uploaded)
         ? uploaded
         : Array.isArray(uploaded?.data)
-        ? uploaded.data
-        : (uploaded ? [uploaded] : []);
+          ? uploaded.data
+          : uploaded
+            ? [uploaded]
+            : [];
       setAttachments((prev) => [...prev, ...list]);
     } catch (err) {
       console.error('File upload failed:', err);
@@ -244,7 +249,7 @@ export default function MessageComposer({
           const renamedFile = new File(
             [file],
             `screenshot-${new Date().toISOString().replace(/[:.]/g, '-')}.${extension}`,
-            { type: file.type }
+            { type: file.type },
           );
           filesToUpload.push(renamedFile);
         }
@@ -372,7 +377,8 @@ export default function MessageComposer({
 
   const remaining = MESSAGE_MAX_LENGTH - content.length;
   const isNearLimit = remaining < 200;
-  const canSend = (content.trim().length > 0 || attachments.length > 0) && !disabled && !isUploading;
+  const canSend =
+    (content.trim().length > 0 || attachments.length > 0) && !disabled && !isUploading;
 
   return (
     <form
@@ -405,11 +411,15 @@ export default function MessageComposer({
                   className={`chat-mention-item ${idx === mentionIndex ? 'chat-mention-item--selected' : ''}`}
                   onClick={() => insertMention(member)}
                 >
-                  <div className={`chat-mention-avatar ${member.isEveryone ? 'chat-mention-avatar--everyone' : ''}`}>
+                  <div
+                    className={`chat-mention-avatar ${member.isEveryone ? 'chat-mention-avatar--everyone' : ''}`}
+                  >
                     {member.isEveryone ? <Users size={14} /> : displayName[0]?.toUpperCase()}
                   </div>
                   <div className="chat-mention-info">
-                    <span className={`chat-mention-name ${member.isEveryone ? 'chat-mention-name--everyone' : ''}`}>
+                    <span
+                      className={`chat-mention-name ${member.isEveryone ? 'chat-mention-name--everyone' : ''}`}
+                    >
                       {member.isEveryone ? '@everyone' : displayName}
                     </span>
                     {member.isEveryone ? (
@@ -436,11 +446,7 @@ export default function MessageComposer({
             ↪ Replying to {replyTo.senderEmail?.split('@')[0] ?? 'message'}
           </span>
           <span className="chat-composer__reply-text">{replyTo.content?.slice(0, 80)}</span>
-          <button
-            type="button"
-            className="chat-composer__reply-cancel"
-            onClick={onCancelReply}
-          >
+          <button type="button" className="chat-composer__reply-cancel" onClick={onCancelReply}>
             ✕
           </button>
         </div>
@@ -451,13 +457,16 @@ export default function MessageComposer({
         <div className="chat-composer__attachments">
           {attachments.map((file, idx) => {
             if (!file) return null;
-            const fileName = typeof file === 'string'
-              ? file.split('/').pop() || 'file'
-              : (file.name || file.originalName || file.filename || 'file');
+            const fileName =
+              typeof file === 'string'
+                ? file.split('/').pop() || 'file'
+                : file.name || file.originalName || file.filename || 'file';
             const fileUrl = typeof file === 'string' ? file : file.url;
-            const fileMime = typeof file === 'object' ? (file.mimeType || file.mimetype || '') : '';
-            const isImg = fileMime.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(fileName);
-            const sizeStr = typeof file === 'object' && file.size ? `${(file.size / 1024).toFixed(0)} KB` : '';
+            const fileMime = typeof file === 'object' ? file.mimeType || file.mimetype || '' : '';
+            const isImg =
+              fileMime.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(fileName);
+            const sizeStr =
+              typeof file === 'object' && file.size ? `${(file.size / 1024).toFixed(0)} KB` : '';
             return (
               <div key={file.id || file.filename || idx} className="chat-attachment-chip">
                 {isImg && fileUrl ? (
@@ -505,13 +514,21 @@ export default function MessageComposer({
           title="Attach files (images, PDFs, documents)"
           aria-label="Attach files"
         >
-          {isUploading ? <Loader2 size={18} className="chat-spinner-icon" /> : <Paperclip size={18} />}
+          {isUploading ? (
+            <Loader2 size={18} className="chat-spinner-icon" />
+          ) : (
+            <Paperclip size={18} />
+          )}
         </button>
 
         <textarea
           ref={inputRef}
           className="chat-composer__input"
-          placeholder={disabled ? 'Reconnecting...' : 'Type a message... (paste screenshots or type @ to mention)'}
+          placeholder={
+            disabled
+              ? 'Reconnecting...'
+              : 'Type a message... (paste screenshots or type @ to mention)'
+          }
           value={content}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
@@ -527,7 +544,14 @@ export default function MessageComposer({
           title="Send message"
           aria-label="Send message"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <line x1="22" y1="2" x2="11" y2="13" />
             <polygon points="22 2 15 22 11 13 2 9 22 2" />
           </svg>
@@ -536,7 +560,9 @@ export default function MessageComposer({
 
       {/* Character count near limit */}
       {isNearLimit && (
-        <div className={`chat-composer__char-count ${remaining < 50 ? 'chat-composer__char-count--danger' : ''}`}>
+        <div
+          className={`chat-composer__char-count ${remaining < 50 ? 'chat-composer__char-count--danger' : ''}`}
+        >
           {remaining} characters remaining
         </div>
       )}

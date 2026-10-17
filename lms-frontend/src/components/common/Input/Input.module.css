@@ -19,7 +19,9 @@
   background: var(--card);
   color: var(--foreground);
   font-size: 14px;
-  transition: border-color 150ms ease, box-shadow 150ms ease;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
   width: 100%;
 }
 .control::placeholder {

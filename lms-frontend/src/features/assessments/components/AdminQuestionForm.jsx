@@ -2,10 +2,29 @@ import { useMemo, useEffect, useState, useRef } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  Code2, Plus, Trash2, Eye, EyeOff, Settings, CheckCircle2,
-  ListFilter, Copy, Check, ArrowRight, ArrowLeft,
-  Terminal, FileCode, Sliders, Sparkles, Bold, Italic, List,
-  Quote, Braces, AlertCircle, Table
+  Code2,
+  Plus,
+  Trash2,
+  Eye,
+  EyeOff,
+  Settings,
+  CheckCircle2,
+  ListFilter,
+  Copy,
+  Check,
+  ArrowRight,
+  ArrowLeft,
+  Terminal,
+  FileCode,
+  Sliders,
+  Sparkles,
+  Bold,
+  Italic,
+  List,
+  Quote,
+  Braces,
+  AlertCircle,
+  Table,
 } from 'lucide-react';
 import Input from '../../../components/common/Input';
 import Select from '../../../components/common/Select';
@@ -82,27 +101,60 @@ function renderMarkdownPreview(md) {
       return `<pre style="margin: 12px 0; padding: 12px 14px; border-radius: 8px; background: var(--surface-dark); border: 1px solid var(--border-color); font-family: monospace; font-size: 12px; color: var(--text-primary); overflow-x: auto;"><code>${code.trim()}</code></pre>`;
     })
     // Inline code
-    .replace(/`([^`]+)`/g, '<code style="padding: 2px 6px; border-radius: 4px; background: var(--surface-medium); color: var(--text-primary); font-family: monospace; font-size: 12px; border: 1px solid var(--border-color);">$1</code>')
+    .replace(
+      /`([^`]+)`/g,
+      '<code style="padding: 2px 6px; border-radius: 4px; background: var(--surface-medium); color: var(--text-primary); font-family: monospace; font-size: 12px; border: 1px solid var(--border-color);">$1</code>',
+    )
     // Bold
-    .replace(/\*\*(.+?)\*\*/g, '<strong style="font-weight: 700; color: var(--text-primary);">$1</strong>')
+    .replace(
+      /\*\*(.+?)\*\*/g,
+      '<strong style="font-weight: 700; color: var(--text-primary);">$1</strong>',
+    )
     // Italic
-    .replace(/\*([^*]+)\*/g, '<em style="font-style: italic; color: var(--text-secondary);">$1</em>')
+    .replace(
+      /\*([^*]+)\*/g,
+      '<em style="font-style: italic; color: var(--text-secondary);">$1</em>',
+    )
     // Headings
-    .replace(/^### (.+)$/gm, '<h4 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 14px 0 6px;">$1</h4>')
-    .replace(/^## (.+)$/gm, '<h3 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 18px 0 8px;">$1</h3>')
-    .replace(/^# (.+)$/gm, '<h2 style="font-size: 18px; font-weight: 800; color: var(--text-primary); margin: 20px 0 10px;">$1</h2>')
+    .replace(
+      /^### (.+)$/gm,
+      '<h4 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin: 14px 0 6px;">$1</h4>',
+    )
+    .replace(
+      /^## (.+)$/gm,
+      '<h3 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 18px 0 8px;">$1</h3>',
+    )
+    .replace(
+      /^# (.+)$/gm,
+      '<h2 style="font-size: 18px; font-weight: 800; color: var(--text-primary); margin: 20px 0 10px;">$1</h2>',
+    )
     // Blockquote
-    .replace(/^> (.+)$/gm, '<blockquote style="margin: 12px 0; padding: 6px 14px; border-left: 3px solid var(--color-primary-500, #2563eb); background: var(--surface-medium); font-size: 12px; color: var(--text-secondary); border-radius: 0 8px 8px 0;">$1</blockquote>')
+    .replace(
+      /^> (.+)$/gm,
+      '<blockquote style="margin: 12px 0; padding: 6px 14px; border-left: 3px solid var(--color-primary-500, #2563eb); background: var(--surface-medium); font-size: 12px; color: var(--text-secondary); border-radius: 0 8px 8px 0;">$1</blockquote>',
+    )
     // Unordered lists
-    .replace(/^[-*] (.+)$/gm, '<li style="color: var(--text-secondary); margin-left: 16px; list-style: disc; margin-top: 3px; margin-bottom: 3px;">$1</li>')
+    .replace(
+      /^[-*] (.+)$/gm,
+      '<li style="color: var(--text-secondary); margin-left: 16px; list-style: disc; margin-top: 3px; margin-bottom: 3px;">$1</li>',
+    )
     // Ordered lists
-    .replace(/^\d+\. (.+)$/gm, '<li style="color: var(--text-secondary); margin-left: 16px; list-style: decimal; margin-top: 3px; margin-bottom: 3px;">$1</li>')
+    .replace(
+      /^\d+\. (.+)$/gm,
+      '<li style="color: var(--text-secondary); margin-left: 16px; list-style: decimal; margin-top: 3px; margin-bottom: 3px;">$1</li>',
+    )
     // Line breaks
     .replace(/\n/g, '<br/>');
 
   // Wrap lists
-  html = html.replace(/((<li style="[^"]*list-disc[^"]*">.*?<\/li><br\/>?)+)/g, '<ul style="margin: 8px 0; padding: 0;">$1</ul>');
-  html = html.replace(/((<li style="[^"]*list-decimal[^"]*">.*?<\/li><br\/>?)+)/g, '<ol style="margin: 8px 0; padding: 0;">$1</ol>');
+  html = html.replace(
+    /((<li style="[^"]*list-disc[^"]*">.*?<\/li><br\/>?)+)/g,
+    '<ul style="margin: 8px 0; padding: 0;">$1</ul>',
+  );
+  html = html.replace(
+    /((<li style="[^"]*list-decimal[^"]*">.*?<\/li><br\/>?)+)/g,
+    '<ol style="margin: 8px 0; padding: 0;">$1</ol>',
+  );
   return html;
 }
 
@@ -141,21 +193,21 @@ export const AdminQuestionForm = ({
       timeLimitMs: defaultValues?.timeLimitMs ?? 2000,
       memoryLimitMb: defaultValues?.memoryLimitMb ?? 256,
       testCases: isCoding
-        ? (defaultValues?.testCases && defaultValues.testCases.length > 0
-            ? defaultValues.testCases.map((tc) => ({
-                ...tc,
-                inputData: tc.inputData ?? '',
-                expectedOutput: tc.expectedOutput ?? '',
-                sample: Boolean(tc.sample),
-                hidden: tc.hidden !== undefined ? Boolean(tc.hidden) : !tc.sample,
-                weight: tc.weight ? Number(tc.weight) : 1,
-              }))
-            : EMPTY_Q.testCases)
+        ? defaultValues?.testCases && defaultValues.testCases.length > 0
+          ? defaultValues.testCases.map((tc) => ({
+              ...tc,
+              inputData: tc.inputData ?? '',
+              expectedOutput: tc.expectedOutput ?? '',
+              sample: Boolean(tc.sample),
+              hidden: tc.hidden !== undefined ? Boolean(tc.hidden) : !tc.sample,
+              weight: tc.weight ? Number(tc.weight) : 1,
+            }))
+          : EMPTY_Q.testCases
         : [],
       options: !isCoding
-        ? (defaultValues?.options && defaultValues.options.length > 0
-            ? defaultValues.options
-            : EMPTY_Q.options)
+        ? defaultValues?.options && defaultValues.options.length > 0
+          ? defaultValues.options
+          : EMPTY_Q.options
         : [],
     };
   }, [defaultValues]);
@@ -202,7 +254,9 @@ export const AdminQuestionForm = ({
   }, [fields.length, selectedCaseIndex]);
 
   // Summary counts
-  const visibleCasesCount = testCasesWatch.filter((tc) => Boolean(tc?.sample) && !tc?.hidden).length;
+  const visibleCasesCount = testCasesWatch.filter(
+    (tc) => Boolean(tc?.sample) && !tc?.hidden,
+  ).length;
   const hiddenCasesCount = testCasesWatch.filter((tc) => !tc?.sample || Boolean(tc?.hidden)).length;
 
   const handleAddVisibleCase = () => {
@@ -265,7 +319,10 @@ export const AdminQuestionForm = ({
 
   const handleToggleVisibility = (idx) => {
     const isSample = Boolean(watch(`testCases.${idx}.sample`));
-    const isHidden = watch(`testCases.${idx}.hidden`) !== undefined ? Boolean(watch(`testCases.${idx}.hidden`)) : !isSample;
+    const isHidden =
+      watch(`testCases.${idx}.hidden`) !== undefined
+        ? Boolean(watch(`testCases.${idx}.hidden`))
+        : !isSample;
     const nowSample = isHidden || !isSample;
 
     setValue(`testCases.${idx}.sample`, nowSample, { shouldValidate: true, shouldDirty: true });
@@ -285,7 +342,10 @@ export const AdminQuestionForm = ({
     const ta = descTextareaRef.current;
     const current = watch('description') || '';
     if (!ta) {
-      setValue('description', current + before + placeholder + after, { shouldValidate: true, shouldDirty: true });
+      setValue('description', current + before + placeholder + after, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
       return;
     }
     const start = ta.selectionStart ?? current.length;
@@ -379,13 +439,15 @@ export const AdminQuestionForm = ({
 
   return (
     <>
-      <form onSubmit={handleSubmit(handleFormSubmit, handleFormError)} noValidate className="flex flex-col lg:flex-row gap-6 items-start font-sans">
-      
+      <form
+        onSubmit={handleSubmit(handleFormSubmit, handleFormError)}
+        noValidate
+        className="flex flex-col lg:flex-row gap-6 items-start font-sans"
+      >
         {/* ═══════════════════════════════════════════════════════════════════
             MAIN WORKSPACE (Left Column) — Theme-Aware Architecture (Light & Dark)
             ═══════════════════════════════════════════════════════════════════ */}
         <div className="flex-1 w-full space-y-5">
-          
           {/* Error Alert */}
           {error && (
             <div className="mb-2">
@@ -394,32 +456,47 @@ export const AdminQuestionForm = ({
           )}
 
           {/* ── 1. Question Title Banner ── */}
-          <div 
+          <div
             style={S.card}
             className="p-4 shadow-sm transition-colors focus-within:border-[var(--text-muted)]"
           >
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <div 
-                  style={{ background: 'var(--surface-medium)', border: '1px solid var(--border-color)', color: 'var(--text-muted)' }}
+                <div
+                  style={{
+                    background: 'var(--surface-medium)',
+                    border: '1px solid var(--border-color)',
+                    color: 'var(--text-muted)',
+                  }}
                   className="w-5 h-5 rounded flex items-center justify-center text-xs font-bold"
                 >
                   <Sparkles size={11} />
                 </div>
-                <span style={{ color: 'var(--text-muted)' }} className="text-[11px] font-semibold uppercase tracking-wider">
+                <span
+                  style={{ color: 'var(--text-muted)' }}
+                  className="text-[11px] font-semibold uppercase tracking-wider"
+                >
                   Question Title
                 </span>
               </div>
-              
+
               <div className="flex items-center gap-2">
-                <span 
-                  style={{ background: 'var(--surface-medium)', border: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}
+                <span
+                  style={{
+                    background: 'var(--surface-medium)',
+                    border: '1px solid var(--border-color)',
+                    color: 'var(--text-secondary)',
+                  }}
                   className="text-[11px] font-medium px-2 py-0.5 rounded"
                 >
                   {difficultyWatch}
                 </span>
-                <span 
-                  style={{ background: 'var(--surface-medium)', border: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}
+                <span
+                  style={{
+                    background: 'var(--surface-medium)',
+                    border: '1px solid var(--border-color)',
+                    color: 'var(--text-secondary)',
+                  }}
                   className="text-[11px] font-medium px-2 py-0.5 rounded"
                 >
                   {questionType === 'CODING' ? 'Coding' : 'MCQ'}
@@ -446,14 +523,20 @@ export const AdminQuestionForm = ({
           {/* ── 2. Problem Statement / Question Prompt Card ── */}
           <div style={S.card} className="shadow-sm overflow-hidden">
             {/* Header with Mode Switcher (Write vs Preview) */}
-            <div style={S.cardHeader} className="px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+            <div
+              style={S.cardHeader}
+              className="px-4 py-3 flex flex-wrap justify-between items-center gap-3"
+            >
               <div className="flex items-center gap-2">
                 {questionType === 'MULTIPLE_CHOICE' ? (
                   <ListFilter size={15} style={{ color: 'var(--text-muted)' }} />
                 ) : (
                   <Code2 size={15} style={{ color: 'var(--text-muted)' }} />
                 )}
-                <h3 style={{ color: 'var(--text-primary)' }} className="text-xs font-semibold uppercase tracking-wider">
+                <h3
+                  style={{ color: 'var(--text-primary)' }}
+                  className="text-xs font-semibold uppercase tracking-wider"
+                >
                   {questionType === 'MULTIPLE_CHOICE' ? 'Question Prompt' : 'Problem Statement'}
                 </h3>
                 <span style={{ color: 'var(--text-muted)' }} className="text-[11px] font-mono">
@@ -462,8 +545,11 @@ export const AdminQuestionForm = ({
               </div>
 
               {/* Segmented Write / Preview Toggle */}
-              <div 
-                style={{ background: 'var(--surface-dark)', border: '1px solid var(--border-color)' }}
+              <div
+                style={{
+                  background: 'var(--surface-dark)',
+                  border: '1px solid var(--border-color)',
+                }}
                 className="flex items-center gap-1 p-0.5 rounded-lg"
               >
                 <button
@@ -493,19 +579,46 @@ export const AdminQuestionForm = ({
 
             {/* Formatting Toolbar (Only in Write Mode) */}
             {descTab === 'write' && (
-              <div 
-                style={{ background: 'var(--surface-medium)', borderBottom: '1px solid var(--border-color)' }}
+              <div
+                style={{
+                  background: 'var(--surface-medium)',
+                  borderBottom: '1px solid var(--border-color)',
+                }}
                 className="px-4 py-1.5 flex flex-wrap items-center justify-between gap-2"
               >
                 {/* Text Formatting Shortcuts */}
                 <div className="flex items-center gap-1">
                   {[
-                    { icon: Bold, title: 'Bold', action: () => insertDescMarkdown('**', '**', 'bold text') },
-                    { icon: Italic, title: 'Italic', action: () => insertDescMarkdown('*', '*', 'italic text') },
-                    { label: '</>', title: 'Inline Code', action: () => insertDescMarkdown('`', '`', 'code') },
-                    { icon: Braces, title: 'Code Block', action: () => insertDescMarkdown('\n```java\n', '\n```\n', '// code here') },
-                    { icon: List, title: 'Bulleted List', action: () => insertDescMarkdown('\n- ', '', 'List item') },
-                    { icon: Quote, title: 'Quote', action: () => insertDescMarkdown('\n> ', '', 'Important note') },
+                    {
+                      icon: Bold,
+                      title: 'Bold',
+                      action: () => insertDescMarkdown('**', '**', 'bold text'),
+                    },
+                    {
+                      icon: Italic,
+                      title: 'Italic',
+                      action: () => insertDescMarkdown('*', '*', 'italic text'),
+                    },
+                    {
+                      label: '</>',
+                      title: 'Inline Code',
+                      action: () => insertDescMarkdown('`', '`', 'code'),
+                    },
+                    {
+                      icon: Braces,
+                      title: 'Code Block',
+                      action: () => insertDescMarkdown('\n```java\n', '\n```\n', '// code here'),
+                    },
+                    {
+                      icon: List,
+                      title: 'Bulleted List',
+                      action: () => insertDescMarkdown('\n- ', '', 'List item'),
+                    },
+                    {
+                      icon: Quote,
+                      title: 'Quote',
+                      action: () => insertDescMarkdown('\n> ', '', 'Important note'),
+                    },
                   ].map((btn, idx) => (
                     <button
                       key={idx}
@@ -522,7 +635,9 @@ export const AdminQuestionForm = ({
 
                 {/* Quick Section Templates */}
                 <div className="flex items-center gap-1.5">
-                  <span style={{ color: 'var(--text-muted)' }} className="text-[11px] font-medium">Quick Add:</span>
+                  <span style={{ color: 'var(--text-muted)' }} className="text-[11px] font-medium">
+                    Quick Add:
+                  </span>
                   {[
                     { label: '+ Example', type: 'example' },
                     { label: '+ Note', type: 'note' },
@@ -576,7 +691,7 @@ export const AdminQuestionForm = ({
                   )}
                 </div>
               ) : (
-                <div 
+                <div
                   style={{
                     background: 'var(--surface-medium)',
                     border: '1px solid var(--border-color)',
@@ -589,21 +704,35 @@ export const AdminQuestionForm = ({
 
               {/* Coding Question Specific Sub-Sections: Input/Output Formats & Constraints */}
               {questionType === 'CODING' && (
-                <div style={{ borderTop: '1px solid var(--border-color)' }} className="mt-4 space-y-3 pt-3.5">
+                <div
+                  style={{ borderTop: '1px solid var(--border-color)' }}
+                  className="mt-4 space-y-3 pt-3.5"
+                >
                   {/* Two-Column Specification: Input & Output */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {/* Input Format */}
-                    <div 
-                      style={{ background: 'var(--surface-medium)', border: '1px solid var(--border-color)' }}
+                    <div
+                      style={{
+                        background: 'var(--surface-medium)',
+                        border: '1px solid var(--border-color)',
+                      }}
                       className="rounded-xl p-3 space-y-1.5"
                     >
                       <div className="flex justify-between items-center">
-                        <span style={{ color: 'var(--text-primary)' }} className="text-xs font-semibold flex items-center gap-1.5">
+                        <span
+                          style={{ color: 'var(--text-primary)' }}
+                          className="text-xs font-semibold flex items-center gap-1.5"
+                        >
                           <Terminal size={13} style={{ color: 'var(--text-muted)' }} /> Input Format
                         </span>
                         <button
                           type="button"
-                          onClick={() => appendFormat('inputFormat', 'First line contains space-separated integers for nums. Second line contains target integer.')}
+                          onClick={() =>
+                            appendFormat(
+                              'inputFormat',
+                              'First line contains space-separated integers for nums. Second line contains target integer.',
+                            )
+                          }
                           style={{ color: 'var(--text-muted)' }}
                           className="text-[10px] hover:text-[var(--text-primary)] cursor-pointer"
                         >
@@ -627,17 +756,29 @@ export const AdminQuestionForm = ({
                     </div>
 
                     {/* Output Format */}
-                    <div 
-                      style={{ background: 'var(--surface-medium)', border: '1px solid var(--border-color)' }}
+                    <div
+                      style={{
+                        background: 'var(--surface-medium)',
+                        border: '1px solid var(--border-color)',
+                      }}
                       className="rounded-xl p-3 space-y-1.5"
                     >
                       <div className="flex justify-between items-center">
-                        <span style={{ color: 'var(--text-primary)' }} className="text-xs font-semibold flex items-center gap-1.5">
-                          <FileCode size={13} style={{ color: 'var(--text-muted)' }} /> Output Format
+                        <span
+                          style={{ color: 'var(--text-primary)' }}
+                          className="text-xs font-semibold flex items-center gap-1.5"
+                        >
+                          <FileCode size={13} style={{ color: 'var(--text-muted)' }} /> Output
+                          Format
                         </span>
                         <button
                           type="button"
-                          onClick={() => appendFormat('outputFormat', 'Space-separated pair of indices (e.g. "0 1").')}
+                          onClick={() =>
+                            appendFormat(
+                              'outputFormat',
+                              'Space-separated pair of indices (e.g. "0 1").',
+                            )
+                          }
                           style={{ color: 'var(--text-muted)' }}
                           className="text-[10px] hover:text-[var(--text-primary)] cursor-pointer"
                         >
@@ -662,17 +803,28 @@ export const AdminQuestionForm = ({
                   </div>
 
                   {/* Constraints & Boundaries */}
-                  <div 
-                    style={{ background: 'var(--surface-medium)', border: '1px solid var(--border-color)' }}
+                  <div
+                    style={{
+                      background: 'var(--surface-medium)',
+                      border: '1px solid var(--border-color)',
+                    }}
                     className="rounded-xl p-3 space-y-1.5"
                   >
                     <div className="flex flex-wrap justify-between items-center gap-2">
-                      <span style={{ color: 'var(--text-primary)' }} className="text-xs font-semibold flex items-center gap-1.5">
+                      <span
+                        style={{ color: 'var(--text-primary)' }}
+                        className="text-xs font-semibold flex items-center gap-1.5"
+                      >
                         <Sliders size={13} style={{ color: 'var(--text-muted)' }} /> Constraints
                       </span>
                       {/* Quick Chips for Common Constraints */}
                       <div className="flex flex-wrap items-center gap-1">
-                        <span style={{ color: 'var(--text-muted)' }} className="text-[10px] font-medium">Quick Add:</span>
+                        <span
+                          style={{ color: 'var(--text-muted)' }}
+                          className="text-[10px] font-medium"
+                        >
+                          Quick Add:
+                        </span>
                         {[
                           '2 <= nums.length <= 10^4',
                           '-10^9 <= nums[i] <= 10^9',
@@ -720,7 +872,10 @@ export const AdminQuestionForm = ({
             <div style={S.card} className="shadow-sm overflow-hidden">
               <div style={S.cardHeader} className="px-4 py-3 flex justify-between items-center">
                 <div>
-                  <h3 style={{ color: 'var(--text-primary)' }} className="text-xs font-semibold uppercase tracking-wider flex items-center gap-2">
+                  <h3
+                    style={{ color: 'var(--text-primary)' }}
+                    className="text-xs font-semibold uppercase tracking-wider flex items-center gap-2"
+                  >
                     <CheckCircle2 size={15} style={{ color: 'var(--text-muted)' }} /> Answer Options
                   </h3>
                   <p style={{ color: 'var(--text-muted)' }} className="text-[11px] mt-0.5">
@@ -758,7 +913,9 @@ export const AdminQuestionForm = ({
                       key={field.id}
                       style={{
                         background: isCorrect ? 'var(--surface-medium)' : 'var(--surface-dark)',
-                        border: isCorrect ? '1.5px solid var(--color-primary-500, #2563eb)' : '1px solid var(--border-color)',
+                        border: isCorrect
+                          ? '1.5px solid var(--color-primary-500, #2563eb)'
+                          : '1px solid var(--border-color)',
                       }}
                       className="relative rounded-xl p-3 transition-colors shadow-sm"
                     >
@@ -766,12 +923,20 @@ export const AdminQuestionForm = ({
                         {/* Correct Answer Checkbox Badge */}
                         <label
                           style={{
-                            background: isCorrect ? 'var(--color-primary-500, #2563eb)' : 'var(--surface-medium)',
+                            background: isCorrect
+                              ? 'var(--color-primary-500, #2563eb)'
+                              : 'var(--surface-medium)',
                             color: isCorrect ? '#ffffff' : 'var(--text-muted)',
-                            border: isCorrect ? '1px solid var(--color-primary-500, #2563eb)' : '1px solid var(--border-color)',
+                            border: isCorrect
+                              ? '1px solid var(--color-primary-500, #2563eb)'
+                              : '1px solid var(--border-color)',
                           }}
                           className="mt-1 flex items-center justify-center w-7 h-7 rounded-lg cursor-pointer transition-colors font-bold text-xs select-none shrink-0"
-                          title={isCorrect ? 'Correct answer (click to unmark)' : 'Mark as correct answer'}
+                          title={
+                            isCorrect
+                              ? 'Correct answer (click to unmark)'
+                              : 'Mark as correct answer'
+                          }
                         >
                           <input
                             type="checkbox"
@@ -820,20 +985,31 @@ export const AdminQuestionForm = ({
           {questionType === 'CODING' && (
             <div style={S.card} className="shadow-sm overflow-hidden">
               {/* Header Bar */}
-              <div style={S.cardHeader} className="px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+              <div
+                style={S.cardHeader}
+                className="px-4 py-3 flex flex-wrap justify-between items-center gap-3"
+              >
                 <div className="flex items-center gap-2.5">
-                  <div 
-                    style={{ background: 'var(--surface-dark)', border: '1px solid var(--border-color)', color: 'var(--text-muted)' }}
+                  <div
+                    style={{
+                      background: 'var(--surface-dark)',
+                      border: '1px solid var(--border-color)',
+                      color: 'var(--text-muted)',
+                    }}
                     className="w-6 h-6 rounded flex items-center justify-center"
                   >
                     <Terminal size={13} />
                   </div>
                   <div>
-                    <h3 style={{ color: 'var(--text-primary)' }} className="text-xs font-semibold uppercase tracking-wider">
+                    <h3
+                      style={{ color: 'var(--text-primary)' }}
+                      className="text-xs font-semibold uppercase tracking-wider"
+                    >
                       Test Cases Suite
                     </h3>
                     <p style={{ color: 'var(--text-muted)' }} className="text-[11px]">
-                      {fields.length} Cases ({visibleCasesCount} Visible Sample · {hiddenCasesCount} Graded Hidden)
+                      {fields.length} Cases ({visibleCasesCount} Visible Sample · {hiddenCasesCount}{' '}
+                      Graded Hidden)
                     </p>
                   </div>
                 </div>
@@ -902,17 +1078,27 @@ export const AdminQuestionForm = ({
 
               {/* ── All Cases Overview Table (When toggled) ── */}
               {showAllOverview && (
-                <div 
-                  style={{ borderBottom: '1px solid var(--border-color)', background: 'var(--surface-medium)' }}
+                <div
+                  style={{
+                    borderBottom: '1px solid var(--border-color)',
+                    background: 'var(--surface-medium)',
+                  }}
                   className="p-4"
                 >
-                  <div 
-                    style={{ border: '1px solid var(--border-color)', background: 'var(--surface-dark)' }}
+                  <div
+                    style={{
+                      border: '1px solid var(--border-color)',
+                      background: 'var(--surface-dark)',
+                    }}
                     className="overflow-x-auto rounded-lg"
                   >
                     <table className="w-full text-left text-xs font-mono">
-                      <thead 
-                        style={{ background: 'var(--surface-medium)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)' }}
+                      <thead
+                        style={{
+                          background: 'var(--surface-medium)',
+                          borderBottom: '1px solid var(--border-color)',
+                          color: 'var(--text-muted)',
+                        }}
                         className="text-[11px]"
                       >
                         <tr>
@@ -924,27 +1110,40 @@ export const AdminQuestionForm = ({
                           <th className="py-2 px-3 text-right font-semibold">Action</th>
                         </tr>
                       </thead>
-                      <tbody style={{ color: 'var(--text-primary)' }} className="divide-y divide-[var(--border-color)]">
+                      <tbody
+                        style={{ color: 'var(--text-primary)' }}
+                        className="divide-y divide-[var(--border-color)]"
+                      >
                         {fields.map((f, i) => {
                           const isSample = Boolean(testCasesWatch[i]?.sample);
-                          const isHidden = testCasesWatch[i]?.hidden !== undefined ? Boolean(testCasesWatch[i]?.hidden) : !isSample;
+                          const isHidden =
+                            testCasesWatch[i]?.hidden !== undefined
+                              ? Boolean(testCasesWatch[i]?.hidden)
+                              : !isSample;
                           const inVal = testCasesWatch[i]?.inputData || '(empty)';
                           const outVal = testCasesWatch[i]?.expectedOutput || '(empty)';
                           const weightVal = testCasesWatch[i]?.weight || 1;
                           return (
                             <tr
                               key={f.id}
-                              onClick={() => { setSelectedCaseIndex(i); setShowAllOverview(false); }}
+                              onClick={() => {
+                                setSelectedCaseIndex(i);
+                                setShowAllOverview(false);
+                              }}
                               style={{
-                                background: selectedCaseIndex === i ? 'var(--hover-bg)' : 'transparent',
+                                background:
+                                  selectedCaseIndex === i ? 'var(--hover-bg)' : 'transparent',
                               }}
                               className="cursor-pointer transition-colors hover:bg-[var(--hover-bg)]"
                             >
                               <td className="py-2 px-3 font-bold">#{i + 1}</td>
                               <td className="py-2 px-3">
-                                <span 
+                                <span
                                   style={{
-                                    background: isSample && !isHidden ? 'var(--surface-medium)' : 'var(--surface-dark)',
+                                    background:
+                                      isSample && !isHidden
+                                        ? 'var(--surface-medium)'
+                                        : 'var(--surface-dark)',
                                     color: 'var(--text-secondary)',
                                     border: '1px solid var(--border-color)',
                                   }}
@@ -953,9 +1152,18 @@ export const AdminQuestionForm = ({
                                   {isSample && !isHidden ? 'Sample' : 'Hidden'}
                                 </span>
                               </td>
-                              <td style={{ color: 'var(--text-muted)' }} className="py-2 px-3">{weightVal} pt</td>
-                              <td style={{ color: 'var(--text-muted)' }} className="py-2 px-3 max-w-[140px] truncate">{inVal}</td>
-                              <td className="py-2 px-3 max-w-[140px] truncate font-bold">{outVal}</td>
+                              <td style={{ color: 'var(--text-muted)' }} className="py-2 px-3">
+                                {weightVal} pt
+                              </td>
+                              <td
+                                style={{ color: 'var(--text-muted)' }}
+                                className="py-2 px-3 max-w-[140px] truncate"
+                              >
+                                {inVal}
+                              </td>
+                              <td className="py-2 px-3 max-w-[140px] truncate font-bold">
+                                {outVal}
+                              </td>
                               <td className="py-2 px-3 text-right">
                                 <button
                                   type="button"
@@ -980,14 +1188,20 @@ export const AdminQuestionForm = ({
               )}
 
               {/* ── Compact Tab Selector Bar (LeetCode Style) ── */}
-              <div 
-                style={{ background: 'var(--surface-medium)', borderBottom: '1px solid var(--border-color)' }}
+              <div
+                style={{
+                  background: 'var(--surface-medium)',
+                  borderBottom: '1px solid var(--border-color)',
+                }}
                 className="px-4 py-2.5 flex items-center justify-between gap-3 overflow-x-auto"
               >
                 <div className="flex items-center gap-1.5 min-w-max">
                   {fields.map((field, idx) => {
                     const isSample = Boolean(testCasesWatch[idx]?.sample);
-                    const isHidden = testCasesWatch[idx]?.hidden !== undefined ? Boolean(testCasesWatch[idx]?.hidden) : !isSample;
+                    const isHidden =
+                      testCasesWatch[idx]?.hidden !== undefined
+                        ? Boolean(testCasesWatch[idx]?.hidden)
+                        : !isSample;
                     const isSelected = selectedCaseIndex === idx;
                     const hasError = Boolean(errors.testCases?.[idx]);
 
@@ -999,22 +1213,28 @@ export const AdminQuestionForm = ({
                         style={{
                           background: isSelected ? 'var(--text-primary)' : 'var(--surface-dark)',
                           color: isSelected ? 'var(--background)' : 'var(--text-secondary)',
-                          border: isSelected ? '1px solid var(--text-primary)' : '1px solid var(--border-color)',
+                          border: isSelected
+                            ? '1px solid var(--text-primary)'
+                            : '1px solid var(--border-color)',
                         }}
                         className="px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition-all cursor-pointer shadow-sm"
                       >
-                        <span 
+                        <span
                           style={{
-                            background: hasError 
-                              ? '#ef4444' 
-                              : isSample && !isHidden 
-                                ? (isSelected ? 'var(--background)' : '#2563eb')
-                                : (isSelected ? 'var(--background)' : 'var(--text-muted)'),
+                            background: hasError
+                              ? '#ef4444'
+                              : isSample && !isHidden
+                                ? isSelected
+                                  ? 'var(--background)'
+                                  : '#2563eb'
+                                : isSelected
+                                  ? 'var(--background)'
+                                  : 'var(--text-muted)',
                           }}
-                          className="w-1.5 h-1.5 rounded-full" 
+                          className="w-1.5 h-1.5 rounded-full"
                         />
                         <span className="font-semibold">Case {idx + 1}</span>
-                        <span 
+                        <span
                           style={{
                             opacity: isSelected ? 0.8 : 0.6,
                           }}
@@ -1048,9 +1268,17 @@ export const AdminQuestionForm = ({
               {/* ── Active Case Focused Workspace ── */}
               {fields.length === 0 ? (
                 <div style={{ background: 'var(--surface-medium)' }} className="p-8 text-center">
-                  <Terminal size={24} style={{ color: 'var(--text-muted)' }} className="mx-auto mb-2" />
-                  <p style={{ color: 'var(--text-primary)' }} className="text-xs font-medium">No test cases configured yet.</p>
-                  <p style={{ color: 'var(--text-muted)' }} className="text-[11px] mt-1 mb-3">Add at least one sample test case for student evaluation.</p>
+                  <Terminal
+                    size={24}
+                    style={{ color: 'var(--text-muted)' }}
+                    className="mx-auto mb-2"
+                  />
+                  <p style={{ color: 'var(--text-primary)' }} className="text-xs font-medium">
+                    No test cases configured yet.
+                  </p>
+                  <p style={{ color: 'var(--text-muted)' }} className="text-[11px] mt-1 mb-3">
+                    Add at least one sample test case for student evaluation.
+                  </p>
                   <button
                     type="button"
                     onClick={handleAddVisibleCase}
@@ -1069,7 +1297,10 @@ export const AdminQuestionForm = ({
                   {fields.map((field, idx) => {
                     const isSelected = selectedCaseIndex === idx;
                     const isSample = Boolean(testCasesWatch[idx]?.sample);
-                    const isHidden = testCasesWatch[idx]?.hidden !== undefined ? Boolean(testCasesWatch[idx]?.hidden) : !isSample;
+                    const isHidden =
+                      testCasesWatch[idx]?.hidden !== undefined
+                        ? Boolean(testCasesWatch[idx]?.hidden)
+                        : !isSample;
                     const inputVal = watch(`testCases.${idx}.inputData`) || '';
                     const outputVal = watch(`testCases.${idx}.expectedOutput`) || '';
                     const currentWeight = watch(`testCases.${idx}.weight`) ?? 1;
@@ -1078,20 +1309,20 @@ export const AdminQuestionForm = ({
                     const outputCopyKey = `tc-${idx}-out`;
 
                     return (
-                      <div
-                        key={field.id}
-                        className={isSelected ? 'block space-y-4' : 'hidden'}
-                      >
+                      <div key={field.id} className={isSelected ? 'block space-y-4' : 'hidden'}>
                         {/* Active Case Top Control Toolbar */}
-                        <div 
+                        <div
                           style={{ borderBottom: '1px solid var(--border-color)' }}
                           className="flex flex-wrap items-center justify-between gap-3 pb-3"
                         >
                           <div className="flex items-center gap-2.5">
-                            <span style={{ color: 'var(--text-primary)' }} className="text-xs font-bold uppercase tracking-wider">
+                            <span
+                              style={{ color: 'var(--text-primary)' }}
+                              className="text-xs font-bold uppercase tracking-wider"
+                            >
                               Editing Case #{idx + 1}
                             </span>
-                            <span 
+                            <span
                               style={{
                                 background: 'var(--surface-medium)',
                                 border: '1px solid var(--border-color)',
@@ -1099,11 +1330,16 @@ export const AdminQuestionForm = ({
                               }}
                               className="px-2.5 py-0.5 rounded-md text-[11px] font-semibold flex items-center gap-1.5"
                             >
-                              <span 
-                                style={{ background: isSample && !isHidden ? '#2563eb' : 'var(--text-muted)' }}
-                                className="w-1.5 h-1.5 rounded-full" 
+                              <span
+                                style={{
+                                  background:
+                                    isSample && !isHidden ? '#2563eb' : 'var(--text-muted)',
+                                }}
+                                className="w-1.5 h-1.5 rounded-full"
                               />
-                              {isSample && !isHidden ? 'Visible Sample (Shown to Students)' : 'Hidden (Secret Graded Suite)'}
+                              {isSample && !isHidden
+                                ? 'Visible Sample (Shown to Students)'
+                                : 'Hidden (Secret Graded Suite)'}
                             </span>
                           </div>
 
@@ -1163,19 +1399,32 @@ export const AdminQuestionForm = ({
                         {/* Side-by-Side Dual Terminal Consoles */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {/* STDIN Console */}
-                          <div 
-                            style={{ border: '1px solid var(--border-color)', background: 'var(--surface-dark)' }}
+                          <div
+                            style={{
+                              border: '1px solid var(--border-color)',
+                              background: 'var(--surface-dark)',
+                            }}
                             className="rounded-xl overflow-hidden shadow-sm"
                           >
-                            <div 
-                              style={{ background: 'var(--surface-medium)', borderBottom: '1px solid var(--border-color)' }}
+                            <div
+                              style={{
+                                background: 'var(--surface-medium)',
+                                borderBottom: '1px solid var(--border-color)',
+                              }}
                               className="px-3.5 py-2 flex justify-between items-center text-xs"
                             >
-                              <span style={{ color: 'var(--text-primary)' }} className="font-mono font-semibold flex items-center gap-1.5">
-                                <Terminal size={13} style={{ color: 'var(--text-muted)' }} /> stdin (Input Data)
+                              <span
+                                style={{ color: 'var(--text-primary)' }}
+                                className="font-mono font-semibold flex items-center gap-1.5"
+                              >
+                                <Terminal size={13} style={{ color: 'var(--text-muted)' }} /> stdin
+                                (Input Data)
                               </span>
                               <div className="flex items-center gap-2">
-                                <span style={{ color: 'var(--text-muted)' }} className="text-[10px] font-mono">
+                                <span
+                                  style={{ color: 'var(--text-muted)' }}
+                                  className="text-[10px] font-mono"
+                                >
                                   {inputVal ? `${inputVal.split('\n').length} lines` : 'empty'}
                                 </span>
                                 {inputVal && (
@@ -1189,7 +1438,11 @@ export const AdminQuestionForm = ({
                                     }}
                                     className="hover:text-[var(--text-primary)] flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded cursor-pointer transition-colors"
                                   >
-                                    {copiedKey === inputCopyKey ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} />}
+                                    {copiedKey === inputCopyKey ? (
+                                      <Check size={10} className="text-emerald-500" />
+                                    ) : (
+                                      <Copy size={10} />
+                                    )}
                                     {copiedKey === inputCopyKey ? 'Copied' : 'Copy'}
                                   </button>
                                 )}
@@ -1208,16 +1461,26 @@ export const AdminQuestionForm = ({
                           </div>
 
                           {/* STDOUT Console */}
-                          <div 
-                            style={{ border: '1px solid var(--border-color)', background: 'var(--surface-dark)' }}
+                          <div
+                            style={{
+                              border: '1px solid var(--border-color)',
+                              background: 'var(--surface-dark)',
+                            }}
                             className="rounded-xl overflow-hidden shadow-sm"
                           >
-                            <div 
-                              style={{ background: 'var(--surface-medium)', borderBottom: '1px solid var(--border-color)' }}
+                            <div
+                              style={{
+                                background: 'var(--surface-medium)',
+                                borderBottom: '1px solid var(--border-color)',
+                              }}
                               className="px-3.5 py-2 flex justify-between items-center text-xs"
                             >
-                              <span style={{ color: 'var(--text-primary)' }} className="font-mono font-semibold flex items-center gap-1.5">
-                                <FileCode size={13} style={{ color: 'var(--text-muted)' }} /> stdout (Expected Output) <span className="text-red-500">*</span>
+                              <span
+                                style={{ color: 'var(--text-primary)' }}
+                                className="font-mono font-semibold flex items-center gap-1.5"
+                              >
+                                <FileCode size={13} style={{ color: 'var(--text-muted)' }} /> stdout
+                                (Expected Output) <span className="text-red-500">*</span>
                               </span>
                               {outputVal && (
                                 <button
@@ -1230,7 +1493,11 @@ export const AdminQuestionForm = ({
                                   }}
                                   className="hover:text-[var(--text-primary)] flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded cursor-pointer transition-colors"
                                 >
-                                  {copiedKey === outputCopyKey ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} />}
+                                  {copiedKey === outputCopyKey ? (
+                                    <Check size={10} className="text-emerald-500" />
+                                  ) : (
+                                    <Copy size={10} />
+                                  )}
                                   {copiedKey === outputCopyKey ? 'Copied' : 'Copy'}
                                 </button>
                               )}
@@ -1255,40 +1522,68 @@ export const AdminQuestionForm = ({
                         )}
 
                         {/* Bottom Meta & Points Weight Configuration */}
-                        <div 
-                          style={{ border: '1px solid var(--border-color)', background: 'var(--surface-medium)' }}
+                        <div
+                          style={{
+                            border: '1px solid var(--border-color)',
+                            background: 'var(--surface-medium)',
+                          }}
                           className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl text-xs"
                         >
-                          <span style={{ color: 'var(--text-muted)' }} className="text-xs flex items-center gap-2">
+                          <span
+                            style={{ color: 'var(--text-muted)' }}
+                            className="text-xs flex items-center gap-2"
+                          >
                             {isSample && !isHidden ? (
                               <>
                                 <Eye size={13} />
-                                <span>Students can see this test case and run test executions against it.</span>
+                                <span>
+                                  Students can see this test case and run test executions against
+                                  it.
+                                </span>
                               </>
                             ) : (
                               <>
                                 <EyeOff size={13} />
-                                <span>Secret test case evaluated only upon final submission scoring.</span>
+                                <span>
+                                  Secret test case evaluated only upon final submission scoring.
+                                </span>
                               </>
                             )}
                           </span>
 
                           <div className="flex items-center gap-2">
-                            <span style={{ color: 'var(--text-muted)' }} className="text-xs font-medium uppercase tracking-wider">
+                            <span
+                              style={{ color: 'var(--text-muted)' }}
+                              className="text-xs font-medium uppercase tracking-wider"
+                            >
                               Points Weight:
                             </span>
-                            <div 
-                              style={{ background: 'var(--surface-dark)', border: '1px solid var(--border-color)' }}
+                            <div
+                              style={{
+                                background: 'var(--surface-dark)',
+                                border: '1px solid var(--border-color)',
+                              }}
                               className="flex items-center gap-1 rounded-lg p-0.5"
                             >
                               {[1, 2, 5].map((pts) => (
                                 <button
                                   key={pts}
                                   type="button"
-                                  onClick={() => setValue(`testCases.${idx}.weight`, pts, { shouldValidate: true, shouldDirty: true })}
+                                  onClick={() =>
+                                    setValue(`testCases.${idx}.weight`, pts, {
+                                      shouldValidate: true,
+                                      shouldDirty: true,
+                                    })
+                                  }
                                   style={{
-                                    background: Number(currentWeight) === pts ? 'var(--text-primary)' : 'transparent',
-                                    color: Number(currentWeight) === pts ? 'var(--background)' : 'var(--text-muted)',
+                                    background:
+                                      Number(currentWeight) === pts
+                                        ? 'var(--text-primary)'
+                                        : 'transparent',
+                                    color:
+                                      Number(currentWeight) === pts
+                                        ? 'var(--background)'
+                                        : 'var(--text-muted)',
                                   }}
                                   className="px-2 py-0.5 text-xs rounded font-semibold transition-colors cursor-pointer"
                                 >
@@ -1307,7 +1602,6 @@ export const AdminQuestionForm = ({
                             </div>
                           </div>
                         </div>
-
                       </div>
                     );
                   })}
@@ -1321,10 +1615,13 @@ export const AdminQuestionForm = ({
             RIGHT SIDE BAR / CONTAINER — Preserved and Untouched as Instructed
             ═══════════════════════════════════════════════════════════════════ */}
         <div className="w-full lg:w-80 flex flex-col gap-6 lg:sticky lg:top-6">
-          
           {/* Actions Card */}
           <div style={S.card} className="p-5 shadow-sm flex flex-col gap-3">
-            <Button type="submit" isLoading={isSubmitting} className="w-full justify-center text-base py-2.5">
+            <Button
+              type="submit"
+              isLoading={isSubmitting}
+              className="w-full justify-center text-base py-2.5"
+            >
               {submitLabel}
             </Button>
             <button
@@ -1345,16 +1642,20 @@ export const AdminQuestionForm = ({
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(99, 102, 241, 0.2)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(99, 102, 241, 0.1)'; }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(99, 102, 241, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(99, 102, 241, 0.1)';
+              }}
             >
               <Eye size={16} />
               <span>Preview & Test</span>
             </button>
             {onCancel && (
-              <button 
-                type="button" 
-                onClick={onCancel} 
+              <button
+                type="button"
+                onClick={onCancel}
                 style={S.textMuted}
                 className="w-full justify-center py-2 text-sm font-semibold hover:text-[var(--text-primary)] hover:bg-[var(--hover-bg)] rounded-lg transition-colors border border-transparent hover:border-[var(--border-color)] cursor-pointer"
               >
@@ -1366,7 +1667,10 @@ export const AdminQuestionForm = ({
           {/* Configuration Card */}
           <div style={S.card} className="shadow-sm overflow-hidden">
             <div style={S.cardHeader} className="px-5 py-4">
-              <h3 style={S.textPrimary} className="text-sm font-semibold flex items-center gap-2 uppercase tracking-wider">
+              <h3
+                style={S.textPrimary}
+                className="text-sm font-semibold flex items-center gap-2 uppercase tracking-wider"
+              >
                 <Settings size={16} className="text-blue-500" /> Configuration
               </h3>
             </div>
@@ -1388,7 +1692,7 @@ export const AdminQuestionForm = ({
                   label="Section"
                   options={[
                     { value: '', label: 'None (Unsectioned)' },
-                    ...sections.map(s => ({ value: s.id, label: s.title }))
+                    ...sections.map((s) => ({ value: s.id, label: s.title })),
                   ]}
                   error={errors.sectionId?.message}
                   {...register('sectionId')}
@@ -1435,7 +1739,6 @@ export const AdminQuestionForm = ({
               )}
             </div>
           </div>
-
         </div>
       </form>
 

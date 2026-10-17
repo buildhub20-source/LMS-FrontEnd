@@ -46,9 +46,13 @@ export const AdminInput = forwardRef(
         />
       </div>
       {error ? (
-        <p className="mt-1 text-xs" style={{ color: 'var(--color-red-500)' }}>{error}</p>
+        <p className="mt-1 text-xs" style={{ color: 'var(--color-red-500)' }}>
+          {error}
+        </p>
       ) : hint ? (
-        <p className="mt-1 text-xs" style={{ color: 'var(--muted-foreground)' }}>{hint}</p>
+        <p className="mt-1 text-xs" style={{ color: 'var(--muted-foreground)' }}>
+          {hint}
+        </p>
       ) : null}
     </div>
   ),

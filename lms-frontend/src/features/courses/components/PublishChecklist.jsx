@@ -1,21 +1,31 @@
 import { useState, useMemo } from 'react';
 import {
-  CheckCircle2, AlertCircle, AlertTriangle, Layers, FileText,
-  Image, Clock, BookOpen, Shield, ChevronDown, ChevronUp, Sparkles
+  CheckCircle2,
+  AlertCircle,
+  AlertTriangle,
+  Layers,
+  FileText,
+  Image,
+  Clock,
+  BookOpen,
+  Shield,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
 } from 'lucide-react';
 import Button from '../../../components/common/Button';
 
 /**
  * Pre-Publish Checklist component
  * Validates course readiness and shows a "readiness score" dial.
- * 
+ *
  * Rules:
  *   BLOCKERS (must fix to publish):
  *     - At least 1 section exists
  *     - At least 1 lesson exists across all sections
  *     - Course title is set
  *     - Course description is at least 200 characters
- * 
+ *
  *   WARNINGS (recommended but not blocking):
  *     - Course thumbnail/summary is set
  *     - At least 30 minutes of estimated duration
@@ -31,9 +41,10 @@ function runChecks(course, modules) {
   const checks = [];
   const totalLessons = (modules || []).reduce((sum, m) => sum + (m.lessons?.length || 0), 0);
   const totalDuration = (modules || []).reduce(
-    (sum, m) => sum + (m.lessons || []).reduce((ls, l) => ls + (l.durationMinutes || 0), 0), 0
+    (sum, m) => sum + (m.lessons || []).reduce((ls, l) => ls + (l.durationMinutes || 0), 0),
+    0,
   );
-  const emptySections = (modules || []).filter(m => !m.lessons || m.lessons.length === 0);
+  const emptySections = (modules || []).filter((m) => !m.lessons || m.lessons.length === 0);
 
   // ── BLOCKERS ──
   checks.push({
@@ -96,9 +107,10 @@ function runChecks(course, modules) {
     id: 'no-empty-sections',
     type: WARNING,
     label: 'All sections have at least 1 lesson',
-    detail: emptySections.length > 0
-      ? `${emptySections.length} empty section(s): ${emptySections.map(s => s.title || 'Untitled').join(', ')}`
-      : 'All sections have content',
+    detail:
+      emptySections.length > 0
+        ? `${emptySections.length} empty section(s): ${emptySections.map((s) => s.title || 'Untitled').join(', ')}`
+        : 'All sections have content',
     passed: emptySections.length === 0,
     icon: Layers,
   });
@@ -107,7 +119,7 @@ function runChecks(course, modules) {
     id: 'has-category',
     type: WARNING,
     label: 'Category is assigned',
-    passed: !!(course?.categoryId),
+    passed: !!course?.categoryId,
     icon: Shield,
   });
 
@@ -124,7 +136,7 @@ function runChecks(course, modules) {
 
 function computeScore(checks) {
   const total = checks.length;
-  const passed = checks.filter(c => c.passed).length;
+  const passed = checks.filter((c) => c.passed).length;
   return Math.round((passed / total) * 100);
 }
 
@@ -140,19 +152,31 @@ const ScoreRing = ({ score }) => {
   return (
     <svg width={size} height={size} style={{ display: 'block' }}>
       <circle
-        cx={size / 2} cy={size / 2} r={radius}
-        fill="none" stroke="var(--border-color, #e5e7eb)" strokeWidth={stroke}
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke="var(--border-color, #e5e7eb)"
+        strokeWidth={stroke}
       />
       <circle
-        cx={size / 2} cy={size / 2} r={radius}
-        fill="none" stroke={color} strokeWidth={stroke}
-        strokeDasharray={circumference} strokeDashoffset={offset}
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke={color}
+        strokeWidth={stroke}
+        strokeDasharray={circumference}
+        strokeDashoffset={offset}
         strokeLinecap="round"
         transform={`rotate(-90 ${size / 2} ${size / 2})`}
         style={{ transition: 'stroke-dashoffset 0.6s ease' }}
       />
       <text
-        x="50%" y="50%" dominantBaseline="central" textAnchor="middle"
+        x="50%"
+        y="50%"
+        dominantBaseline="central"
+        textAnchor="middle"
         style={{ fontSize: 22, fontWeight: 700, fill: color }}
       >
         {score}%
@@ -166,29 +190,30 @@ export const PublishChecklist = ({ course, modules, onPublish }) => {
   const checks = useMemo(() => runChecks(course, modules), [course, modules]);
   const score = useMemo(() => computeScore(checks), [checks]);
 
-  const blockers = checks.filter(c => c.type === BLOCKER);
-  const warnings = checks.filter(c => c.type === WARNING);
-  const hasBlockers = blockers.some(c => !c.passed);
-  const failedBlockers = blockers.filter(c => !c.passed).length;
-  const failedWarnings = warnings.filter(c => !c.passed).length;
+  const blockers = checks.filter((c) => c.type === BLOCKER);
+  const warnings = checks.filter((c) => c.type === WARNING);
+  const hasBlockers = blockers.some((c) => !c.passed);
+  const failedBlockers = blockers.filter((c) => !c.passed).length;
+  const failedWarnings = warnings.filter((c) => !c.passed).length;
 
   return (
     <div style={containerStyle}>
       {/* Header */}
-      <button
-        onClick={() => setExpanded(!expanded)}
-        style={headerStyle}
-      >
+      <button onClick={() => setExpanded(!expanded)} style={headerStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Shield size={18} style={{ color: hasBlockers ? '#ef4444' : '#10b981' }} />
           <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
             Publish Readiness
           </span>
           {failedBlockers > 0 && (
-            <span style={blockerBadge}>{failedBlockers} blocker{failedBlockers > 1 ? 's' : ''}</span>
+            <span style={blockerBadge}>
+              {failedBlockers} blocker{failedBlockers > 1 ? 's' : ''}
+            </span>
           )}
           {failedWarnings > 0 && (
-            <span style={warningBadge}>{failedWarnings} warning{failedWarnings > 1 ? 's' : ''}</span>
+            <span style={warningBadge}>
+              {failedWarnings} warning{failedWarnings > 1 ? 's' : ''}
+            </span>
           )}
         </div>
         {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -207,7 +232,7 @@ export const PublishChecklist = ({ course, modules, onPublish }) => {
               <p style={sectionLabelStyle}>
                 <AlertCircle size={13} style={{ color: '#ef4444' }} /> Must Fix
               </p>
-              {blockers.map(check => (
+              {blockers.map((check) => (
                 <CheckItem key={check.id} check={check} />
               ))}
             </div>
@@ -219,7 +244,7 @@ export const PublishChecklist = ({ course, modules, onPublish }) => {
               <p style={sectionLabelStyle}>
                 <AlertTriangle size={13} style={{ color: '#f59e0b' }} /> Recommended
               </p>
-              {warnings.map(check => (
+              {warnings.map((check) => (
                 <CheckItem key={check.id} check={check} />
               ))}
             </div>
@@ -245,10 +270,16 @@ export const PublishChecklist = ({ course, modules, onPublish }) => {
 const CheckItem = ({ check }) => {
   const Icon = check.icon || FileText;
   return (
-    <div style={{
-      display: 'flex', alignItems: 'flex-start', gap: 8, padding: '6px 0',
-      fontSize: 13, color: check.passed ? 'var(--text-muted)' : 'var(--text-primary)'
-    }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 8,
+        padding: '6px 0',
+        fontSize: 13,
+        color: check.passed ? 'var(--text-muted)' : 'var(--text-primary)',
+      }}
+    >
       {check.passed ? (
         <CheckCircle2 size={15} style={{ color: '#10b981', flexShrink: 0, marginTop: 1 }} />
       ) : check.type === BLOCKER ? (
@@ -257,15 +288,19 @@ const CheckItem = ({ check }) => {
         <AlertTriangle size={15} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 1 }} />
       )}
       <div>
-        <span style={{
-          fontWeight: check.passed ? 400 : 600,
-          textDecoration: check.passed ? 'line-through' : 'none',
-          opacity: check.passed ? 0.6 : 1
-        }}>
+        <span
+          style={{
+            fontWeight: check.passed ? 400 : 600,
+            textDecoration: check.passed ? 'line-through' : 'none',
+            opacity: check.passed ? 0.6 : 1,
+          }}
+        >
           {check.label}
         </span>
         {check.detail && !check.passed && (
-          <span style={{ display: 'block', fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>
+          <span
+            style={{ display: 'block', fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}
+          >
             {check.detail}
           </span>
         )}

@@ -23,13 +23,13 @@ const M = {
 
 /* ─── Pastel badge palette keyed by role name ───────────────────────── */
 const ROLE_BADGE = [
-  { bg: 'rgba(59, 130, 246, 0.12)', color: '#3b82f6' },   /* blue (info) */
-  { bg: 'rgba(245, 158, 11, 0.12)', color: '#f59e0b' },   /* amber (warning) */
-  { bg: 'rgba(6, 182, 212, 0.12)', color: '#06b6d4' },    /* cyan (chart) */
-  { bg: 'rgba(34, 197, 94, 0.12)', color: '#22c55e' },    /* green (primary/success) */
-  { bg: 'rgba(239, 68, 68, 0.12)', color: '#ef4444' },    /* red (destructive) */
-  { bg: 'rgba(139, 92, 246, 0.12)', color: '#8b5cf6' },   /* violet (chart-5) */
-  { bg: 'rgba(236, 72, 153, 0.12)', color: '#ec4899' },   /* pink (chart-4) */
+  { bg: 'rgba(59, 130, 246, 0.12)', color: '#3b82f6' } /* blue (info) */,
+  { bg: 'rgba(245, 158, 11, 0.12)', color: '#f59e0b' } /* amber (warning) */,
+  { bg: 'rgba(6, 182, 212, 0.12)', color: '#06b6d4' } /* cyan (chart) */,
+  { bg: 'rgba(34, 197, 94, 0.12)', color: '#22c55e' } /* green (primary/success) */,
+  { bg: 'rgba(239, 68, 68, 0.12)', color: '#ef4444' } /* red (destructive) */,
+  { bg: 'rgba(139, 92, 246, 0.12)', color: '#8b5cf6' } /* violet (chart-5) */,
+  { bg: 'rgba(236, 72, 153, 0.12)', color: '#ec4899' } /* pink (chart-4) */,
 ];
 
 function roleBadgeStyle(name = '') {
@@ -124,9 +124,7 @@ export const PermissionsPage = () => {
   roles.forEach((role) => {
     (role.permissions ?? []).forEach((p) => {
       const authorityStr = typeof p === 'string' ? p : (p.name ?? p.authority);
-      const permObj = permissions.find(
-        (x) => x.name === authorityStr || x.id === (p.id ?? p),
-      );
+      const permObj = permissions.find((x) => x.name === authorityStr || x.id === (p.id ?? p));
       if (permObj) {
         if (!permRolesMap[permObj.id]) permRolesMap[permObj.id] = [];
         if (!permRolesMap[permObj.id].find((r) => r.id === role.id))
@@ -607,7 +605,14 @@ export const PermissionsPage = () => {
                 padding: '12px 16px',
               }}
             >
-              <p style={{ margin: 0, fontSize: 14, fontWeight: 500, color: 'var(--destructive, #ef4444)' }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: 'var(--destructive, #ef4444)',
+                }}
+              >
                 {modalError}
               </p>
             </div>
@@ -619,7 +624,9 @@ export const PermissionsPage = () => {
                   <AdminInput
                     label="Resource"
                     value={permResource}
-                    onChange={(e) => setPermResource(e.target.value.toUpperCase().replace(/\s+/g, '_'))}
+                    onChange={(e) =>
+                      setPermResource(e.target.value.toUpperCase().replace(/\s+/g, '_'))
+                    }
                     placeholder="e.g. COURSE"
                     hint="UPPER_SNAKE_CASE (e.g. USER, COURSE)"
                     autoFocus
@@ -627,7 +634,9 @@ export const PermissionsPage = () => {
                   <AdminInput
                     label="Action"
                     value={permAction}
-                    onChange={(e) => setPermAction(e.target.value.toUpperCase().replace(/\s+/g, '_'))}
+                    onChange={(e) =>
+                      setPermAction(e.target.value.toUpperCase().replace(/\s+/g, '_'))
+                    }
                     placeholder="e.g. VIEW"
                     hint="UPPER_SNAKE_CASE (e.g. VIEW, CREATE)"
                   />
@@ -636,14 +645,19 @@ export const PermissionsPage = () => {
                   label="Permission identifier (Optional)"
                   value={permName}
                   onChange={(e) => setPermName(e.target.value.toUpperCase().replace(/\s+/g, '_'))}
-                  placeholder={permResource && permAction ? `${permResource}_${permAction}` : 'e.g. COURSE_VIEW'}
+                  placeholder={
+                    permResource && permAction
+                      ? `${permResource}_${permAction}`
+                      : 'e.g. COURSE_VIEW'
+                  }
                   hint="Defaults to {RESOURCE}_{ACTION}"
                 />
               </>
             ) : (
               <div>
                 <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>
-                  Identifier: <strong style={{ color: 'var(--text-primary)' }}>{permName}</strong> ({permResource} · {permAction})
+                  Identifier: <strong style={{ color: 'var(--text-primary)' }}>{permName}</strong> (
+                  {permResource} · {permAction})
                 </p>
               </div>
             )}

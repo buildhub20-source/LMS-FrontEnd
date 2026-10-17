@@ -25,7 +25,7 @@ describe('LiveSessionCard', () => {
           onStart={onStart}
           onEnd={vi.fn()}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('Spring Boot Architecture Deep Dive')).toBeInTheDocument();
@@ -48,7 +48,7 @@ describe('LiveSessionCard', () => {
           onStart={vi.fn()}
           onEnd={vi.fn()}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText(/Awaiting Instructor to Start/i)).toBeInTheDocument();
@@ -65,7 +65,7 @@ describe('LiveSessionCard', () => {
           onStart={vi.fn()}
           onEnd={vi.fn()}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('LIVE NOW')).toBeInTheDocument();
@@ -82,7 +82,7 @@ describe('LiveSessionCard', () => {
           onStart={vi.fn()}
           onEnd={vi.fn()}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('Ended')).toBeInTheDocument();

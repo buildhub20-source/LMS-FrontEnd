@@ -36,11 +36,14 @@ export const ThemeProvider = ({ children }) => {
     return () => window.removeEventListener('lms-theme-change', handleExternalChange);
   }, [theme]);
 
-  const setTheme = useCallback((nextTheme) => {
-    setThemeState(nextTheme);
-    applyTheme(nextTheme);
-    window.dispatchEvent(new CustomEvent('lms-theme-change', { detail: nextTheme }));
-  }, [applyTheme]);
+  const setTheme = useCallback(
+    (nextTheme) => {
+      setThemeState(nextTheme);
+      applyTheme(nextTheme);
+      window.dispatchEvent(new CustomEvent('lms-theme-change', { detail: nextTheme }));
+    },
+    [applyTheme],
+  );
 
   const toggleTheme = useCallback(() => {
     setThemeState((prev) => {

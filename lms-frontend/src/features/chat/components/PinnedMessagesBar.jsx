@@ -4,7 +4,12 @@ import { Pin, ChevronDown, ChevronUp, X } from 'lucide-react';
 /**
  * Sticky banner at the top of the chat showing pinned messages.
  */
-export default function PinnedMessagesBar({ pinnedMessages = [], onJumpToMessage, onUnpin, canUnpin }) {
+export default function PinnedMessagesBar({
+  pinnedMessages = [],
+  onJumpToMessage,
+  onUnpin,
+  canUnpin,
+}) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   if (!pinnedMessages || pinnedMessages.length === 0) return null;
@@ -12,11 +17,19 @@ export default function PinnedMessagesBar({ pinnedMessages = [], onJumpToMessage
   const count = pinnedMessages.length;
   const currentPin = pinnedMessages[0];
   const currentMessageId = currentPin.message_id || currentPin.id || currentPin.messageId;
-  const currentAuthor = currentPin.sender_name || currentPin.senderName || currentPin.sender_email?.split('@')[0] || currentPin.senderEmail?.split('@')[0] || 'User';
+  const currentAuthor =
+    currentPin.sender_name ||
+    currentPin.senderName ||
+    currentPin.sender_email?.split('@')[0] ||
+    currentPin.senderEmail?.split('@')[0] ||
+    'User';
 
   return (
     <div className="chat-pinned-bar">
-      <div className="chat-pinned-bar__header" onClick={() => count > 1 && setIsExpanded((prev) => !prev)}>
+      <div
+        className="chat-pinned-bar__header"
+        onClick={() => count > 1 && setIsExpanded((prev) => !prev)}
+      >
         <div className="chat-pinned-bar__icon-wrapper">
           <Pin size={14} className="chat-pinned-bar__icon" />
         </div>
@@ -25,7 +38,8 @@ export default function PinnedMessagesBar({ pinnedMessages = [], onJumpToMessage
             Pinned message{count > 1 ? ` (1 of ${count})` : ''} • {currentAuthor}
           </div>
           <div className="chat-pinned-bar__snippet">
-            {currentPin.content?.slice(0, 100) || (currentPin.attachments?.length ? 'Shared an attachment' : 'Message')}
+            {currentPin.content?.slice(0, 100) ||
+              (currentPin.attachments?.length ? 'Shared an attachment' : 'Message')}
           </div>
         </div>
 
@@ -67,12 +81,19 @@ export default function PinnedMessagesBar({ pinnedMessages = [], onJumpToMessage
         <div className="chat-pinned-bar__dropdown">
           {pinnedMessages.slice(1).map((pin) => {
             const pinId = pin.message_id || pin.id || pin.messageId;
-            const pinAuthor = pin.sender_name || pin.senderName || pin.sender_email?.split('@')[0] || pin.senderEmail?.split('@')[0] || 'User';
+            const pinAuthor =
+              pin.sender_name ||
+              pin.senderName ||
+              pin.sender_email?.split('@')[0] ||
+              pin.senderEmail?.split('@')[0] ||
+              'User';
             return (
               <div key={pin.pin_id || pinId} className="chat-pinned-bar__item">
                 <div className="chat-pinned-bar__item-content">
                   <span className="chat-pinned-bar__item-sender">{pinAuthor}:</span>
-                  <span className="chat-pinned-bar__item-text">{pin.content?.slice(0, 80) || 'Attachment'}</span>
+                  <span className="chat-pinned-bar__item-text">
+                    {pin.content?.slice(0, 80) || 'Attachment'}
+                  </span>
                 </div>
                 <div className="chat-pinned-bar__item-actions">
                   <button

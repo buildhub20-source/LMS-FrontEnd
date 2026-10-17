@@ -140,7 +140,8 @@ export const InstructorDetailsPage = () => {
                     <div>
                       <div className={styles.contactName}>{batch.name}</div>
                       <div className={styles.contactMeta}>
-                        {batch.code}{batch.courseTitle ? ` • ${batch.courseTitle}` : ''}
+                        {batch.code}
+                        {batch.courseTitle ? ` • ${batch.courseTitle}` : ''}
                       </div>
                     </div>
                     <Field

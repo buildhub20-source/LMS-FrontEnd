@@ -54,7 +54,8 @@ export const LEETCODE_BADGES = [
     glyph: '👑',
     iconName: 'Crown',
     criteria: 'Rank in the Top 5% of the class with score ≥ 90%',
-    description: 'Mastery over the assessment realm. Reserved for highest-tier performers who dominate overall standings.',
+    description:
+      'Mastery over the assessment realm. Reserved for highest-tier performers who dominate overall standings.',
     rarity: 'Top 5%',
   },
   {
@@ -102,7 +103,8 @@ export const LEETCODE_BADGES = [
     glyph: '⚔️',
     iconName: 'Swords',
     criteria: 'Scored ≥ 85% on coding and algorithmic challenges',
-    description: 'Demonstrated exceptional algorithmic intuition, optimal time complexity, and data structure proficiency.',
+    description:
+      'Demonstrated exceptional algorithmic intuition, optimal time complexity, and data structure proficiency.',
     rarity: 'High Honor',
   },
   {
@@ -168,10 +170,30 @@ export const LEETCODE_BADGES = [
 ];
 
 export const LEADERBOARD_CATEGORIES = [
-  { id: 'ALL', label: 'Overall Hall of Fame', icon: 'Trophy', desc: 'Cumulative score across all questions & sections' },
-  { id: 'CODING', label: 'Algorithms & Coding', icon: 'Code', desc: 'Competitive programming, logic, and data structures' },
-  { id: 'SQL', label: 'Database & SQL', icon: 'Database', desc: 'Complex relational queries, indexing, and schema design' },
-  { id: 'QUIZ', label: 'Quizzes & Aptitude', icon: 'CheckSquare', desc: 'Multiple-choice theoretical and problem-solving concepts' },
+  {
+    id: 'ALL',
+    label: 'Overall Hall of Fame',
+    icon: 'Trophy',
+    desc: 'Cumulative score across all questions & sections',
+  },
+  {
+    id: 'CODING',
+    label: 'Algorithms & Coding',
+    icon: 'Code',
+    desc: 'Competitive programming, logic, and data structures',
+  },
+  {
+    id: 'SQL',
+    label: 'Database & SQL',
+    icon: 'Database',
+    desc: 'Complex relational queries, indexing, and schema design',
+  },
+  {
+    id: 'QUIZ',
+    label: 'Quizzes & Aptitude',
+    icon: 'CheckSquare',
+    desc: 'Multiple-choice theoretical and problem-solving concepts',
+  },
 ];
 
 /**
@@ -207,7 +229,9 @@ export const calculateStudentCategoryScore = (student, categoryId, questions = [
     return false;
   });
 
-  const categoryTotalMarks = relevantQuestions.reduce((sum, q) => sum + (Number(q.marks) || 10), 0) || Math.round(totalMarks * 0.4);
+  const categoryTotalMarks =
+    relevantQuestions.reduce((sum, q) => sum + (Number(q.marks) || 10), 0) ||
+    Math.round(totalMarks * 0.4);
 
   // Deterministic seed variation based on student ID to simulate realistic category strengths
   const seed = (student.studentId || student.id || student.studentName || 'seed')
@@ -217,15 +241,18 @@ export const calculateStudentCategoryScore = (student, categoryId, questions = [
 
   let varianceFactor = 1.0;
   if (categoryId === 'CODING') {
-    varianceFactor = 0.88 + ((seed % 25) / 100); // 0.88 - 1.13
+    varianceFactor = 0.88 + (seed % 25) / 100; // 0.88 - 1.13
   } else if (categoryId === 'SQL') {
-    varianceFactor = 0.85 + (((seed * 7) % 30) / 100); // 0.85 - 1.15
+    varianceFactor = 0.85 + ((seed * 7) % 30) / 100; // 0.85 - 1.15
   } else if (categoryId === 'QUIZ') {
-    varianceFactor = 0.90 + (((seed * 13) % 20) / 100); // 0.90 - 1.10
+    varianceFactor = 0.9 + ((seed * 13) % 20) / 100; // 0.90 - 1.10
   }
 
   const categoryPercentage = Math.min(100, Math.max(0, Math.round(ratio * varianceFactor * 100)));
-  const categoryScore = Math.min(categoryTotalMarks, Math.round((categoryPercentage / 100) * categoryTotalMarks));
+  const categoryScore = Math.min(
+    categoryTotalMarks,
+    Math.round((categoryPercentage / 100) * categoryTotalMarks),
+  );
 
   return {
     score: categoryScore,
@@ -278,7 +305,7 @@ export const evaluateStudentBadges = (student, rank, totalCount, categoryScores 
   }
 
   // 5. Speed Demon (High score and fast rank)
-  if (pct >= 80 && (rank <= Math.max(3, Math.ceil(totalCount * 0.2)))) {
+  if (pct >= 80 && rank <= Math.max(3, Math.ceil(totalCount * 0.2))) {
     earned.push(LEETCODE_BADGES.find((b) => b.id === 'speed_demon'));
   }
 
@@ -362,7 +389,11 @@ export const generateLeaderboard = (studentStats = [], categoryId = 'ALL', quest
 /**
  * Export the leaderboard table to a CSV file.
  */
-export const exportLeaderboardToCsv = (leaderboardRows = [], assessmentTitle = 'Assessment', categoryLabel = 'Overall') => {
+export const exportLeaderboardToCsv = (
+  leaderboardRows = [],
+  assessmentTitle = 'Assessment',
+  categoryLabel = 'Overall',
+) => {
   if (!leaderboardRows.length) return;
 
   const headers = [
@@ -404,9 +435,14 @@ export const exportLeaderboardToCsv = (leaderboardRows = [], assessmentTitle = '
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
-  const sanitizedTitle = (assessmentTitle || 'assessment').replace(/[^a-zA-Z0-9_-]/g, '_').toLowerCase();
+  const sanitizedTitle = (assessmentTitle || 'assessment')
+    .replace(/[^a-zA-Z0-9_-]/g, '_')
+    .toLowerCase();
   link.setAttribute('href', url);
-  link.setAttribute('download', `${sanitizedTitle}_leaderboard_${categoryLabel.toLowerCase().replace(/\s+/g, '_')}.csv`);
+  link.setAttribute(
+    'download',
+    `${sanitizedTitle}_leaderboard_${categoryLabel.toLowerCase().replace(/\s+/g, '_')}.csv`,
+  );
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

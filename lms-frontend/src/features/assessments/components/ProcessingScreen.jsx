@@ -1,7 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  CheckCircle2, Clock, ShieldCheck, Database, Cpu,
-  FileCode2, AlertCircle, Award, Loader2, RefreshCw, AlertTriangle
+  CheckCircle2,
+  Clock,
+  ShieldCheck,
+  Database,
+  Cpu,
+  FileCode2,
+  AlertCircle,
+  Award,
+  Loader2,
+  RefreshCw,
+  AlertTriangle,
 } from 'lucide-react';
 import Button from '../../../components/common/Button';
 
@@ -62,7 +71,8 @@ export const ProcessingScreen = ({
   });
   const attendedCount = attendedList.length;
   const skippedCount = totalQuestions - attendedCount;
-  const completionPercent = totalQuestions > 0 ? Math.round((attendedCount / totalQuestions) * 100) : 0;
+  const completionPercent =
+    totalQuestions > 0 ? Math.round((attendedCount / totalQuestions) * 100) : 0;
 
   // Real-time elapsed stopwatch ticker (updates smoothly every 100ms without freezing)
   useEffect(() => {
@@ -121,8 +131,8 @@ export const ProcessingScreen = ({
           boxShadow: isCompleted
             ? '0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 45px rgba(16, 185, 129, 0.2)'
             : isError
-            ? '0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 45px rgba(239, 68, 68, 0.2)'
-            : '0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 45px rgba(99, 102, 241, 0.2)',
+              ? '0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 45px rgba(239, 68, 68, 0.2)'
+              : '0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 45px rgba(99, 102, 241, 0.2)',
           display: 'flex',
           flexDirection: 'column',
           gap: '24px',
@@ -130,7 +140,15 @@ export const ProcessingScreen = ({
         }}
       >
         {/* Top Header: Spinner/Check + Title + Live Timer Badge */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 16,
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <div
               style={{
@@ -140,16 +158,16 @@ export const ProcessingScreen = ({
                 background: isCompleted
                   ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
                   : isError
-                  ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
-                  : 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                    ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                    : 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 boxShadow: isCompleted
                   ? '0 8px 20px rgba(16, 185, 129, 0.4)'
                   : isError
-                  ? '0 8px 20px rgba(239, 68, 68, 0.4)'
-                  : '0 8px 20px rgba(99, 102, 241, 0.4)',
+                    ? '0 8px 20px rgba(239, 68, 68, 0.4)'
+                    : '0 8px 20px rgba(99, 102, 241, 0.4)',
                 transition: 'all 0.4s ease',
               }}
             >
@@ -158,16 +176,28 @@ export const ProcessingScreen = ({
               ) : isError ? (
                 <AlertTriangle size={26} color="#ffffff" />
               ) : (
-                <Loader2 size={26} color="#ffffff" style={{ animation: 'spin360 1s linear infinite' }} />
+                <Loader2
+                  size={26}
+                  color="#ffffff"
+                  style={{ animation: 'spin360 1s linear infinite' }}
+                />
               )}
             </div>
             <div>
-              <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, letterSpacing: '-0.02em', color: '#ffffff' }}>
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: 20,
+                  fontWeight: 800,
+                  letterSpacing: '-0.02em',
+                  color: '#ffffff',
+                }}
+              >
                 {isCompleted
                   ? 'Assessment Submitted!'
                   : isError
-                  ? 'Submission Encountered An Error'
-                  : 'Submitting Assessment'}
+                    ? 'Submission Encountered An Error'
+                    : 'Submitting Assessment'}
               </h2>
               <p style={{ margin: '3px 0 0', fontSize: 13, color: '#94a3b8' }}>
                 {assessmentTitle} · Saving your responses securely
@@ -184,14 +214,14 @@ export const ProcessingScreen = ({
               background: isCompleted
                 ? 'rgba(16, 185, 129, 0.15)'
                 : isError
-                ? 'rgba(239, 68, 68, 0.15)'
-                : 'rgba(99, 102, 241, 0.15)',
+                  ? 'rgba(239, 68, 68, 0.15)'
+                  : 'rgba(99, 102, 241, 0.15)',
               border: `1px solid ${
                 isCompleted
                   ? 'rgba(16, 185, 129, 0.35)'
                   : isError
-                  ? 'rgba(239, 68, 68, 0.35)'
-                  : 'rgba(99, 102, 241, 0.35)'
+                    ? 'rgba(239, 68, 68, 0.35)'
+                    : 'rgba(99, 102, 241, 0.35)'
               }`,
               borderRadius: '30px',
               padding: '6px 16px',
@@ -202,7 +232,8 @@ export const ProcessingScreen = ({
               <>
                 <CheckCircle2 size={16} style={{ color: '#34d399' }} />
                 <span style={{ fontSize: 13, fontWeight: 700, color: '#34d399' }}>
-                  Completed in <strong style={{ color: '#ffffff', fontSize: 14 }}>{elapsedSecs}s</strong>
+                  Completed in{' '}
+                  <strong style={{ color: '#ffffff', fontSize: 14 }}>{elapsedSecs}s</strong>
                 </span>
               </>
             ) : isError ? (
@@ -214,9 +245,13 @@ export const ProcessingScreen = ({
               </>
             ) : (
               <>
-                <Clock size={16} style={{ color: '#818cf8', animation: 'pulseGlow 1.5s infinite' }} />
+                <Clock
+                  size={16}
+                  style={{ color: '#818cf8', animation: 'pulseGlow 1.5s infinite' }}
+                />
                 <span style={{ fontSize: 13, fontWeight: 700, color: '#c7d2fe' }}>
-                  Finalizing · <strong style={{ color: '#ffffff', fontSize: 14 }}>{elapsedSecs}s</strong>
+                  Finalizing ·{' '}
+                  <strong style={{ color: '#ffffff', fontSize: 14 }}>{elapsedSecs}s</strong>
                 </span>
               </>
             )}
@@ -242,15 +277,15 @@ export const ProcessingScreen = ({
                 background: isCompleted
                   ? 'linear-gradient(90deg, #10b981 0%, #059669 100%)'
                   : isError
-                  ? 'linear-gradient(90deg, #ef4444 0%, #dc2626 100%)'
-                  : 'linear-gradient(90deg, #6366f1 0%, #10b981 100%)',
+                    ? 'linear-gradient(90deg, #ef4444 0%, #dc2626 100%)'
+                    : 'linear-gradient(90deg, #6366f1 0%, #10b981 100%)',
                 borderRadius: 99,
                 transition: 'width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)',
                 boxShadow: isCompleted
                   ? '0 0 16px rgba(16, 185, 129, 0.7)'
                   : isError
-                  ? '0 0 16px rgba(239, 68, 68, 0.7)'
-                  : '0 0 14px rgba(99, 102, 241, 0.5)',
+                    ? '0 0 16px rgba(239, 68, 68, 0.7)'
+                    : '0 0 14px rgba(99, 102, 241, 0.5)',
               }}
             />
           </div>
@@ -272,9 +307,7 @@ export const ProcessingScreen = ({
                   color: isCompleted ? '#34d399' : isError ? '#f87171' : '#818cf8',
                 }}
               />
-              <span style={{ color: '#cbd5e1', fontWeight: 600 }}>
-                {currentStageConfig.label}
-              </span>
+              <span style={{ color: '#cbd5e1', fontWeight: 600 }}>{currentStageConfig.label}</span>
             </div>
             <span
               style={{
@@ -308,7 +341,8 @@ export const ProcessingScreen = ({
                   Submission could not be completed
                 </div>
                 <div style={{ fontSize: 12, color: '#fca5a5', marginTop: 2 }}>
-                  {errorMessage || 'Your code is securely saved locally. Please check your connection and click Retry.'}
+                  {errorMessage ||
+                    'Your code is securely saved locally. Please check your connection and click Retry.'}
                 </div>
               </div>
             </div>
@@ -366,7 +400,15 @@ export const ProcessingScreen = ({
               padding: '12px 16px',
             }}
           >
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.05em' }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                color: '#64748b',
+                letterSpacing: '0.05em',
+              }}
+            >
               Total Questions
             </div>
             <div style={{ fontSize: 22, fontWeight: 800, color: '#f8fafc', marginTop: 4 }}>
@@ -383,28 +425,67 @@ export const ProcessingScreen = ({
               padding: '12px 16px',
             }}
           >
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: '#34d399', letterSpacing: '0.05em' }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                color: '#34d399',
+                letterSpacing: '0.05em',
+              }}
+            >
               Attended
             </div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: '#10b981', marginTop: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div
+              style={{
+                fontSize: 22,
+                fontWeight: 800,
+                color: '#10b981',
+                marginTop: 4,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
               <span>{attendedCount}</span>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#34d399' }}>({completionPercent}%)</span>
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#34d399' }}>
+                ({completionPercent}%)
+              </span>
             </div>
           </div>
 
           {/* Unattended (Skipped) */}
           <div
             style={{
-              background: skippedCount > 0 ? 'rgba(245, 158, 11, 0.08)' : 'rgba(255, 255, 255, 0.03)',
-              border: skippedCount > 0 ? '1px solid rgba(245, 158, 11, 0.25)' : '1px solid rgba(255, 255, 255, 0.06)',
+              background:
+                skippedCount > 0 ? 'rgba(245, 158, 11, 0.08)' : 'rgba(255, 255, 255, 0.03)',
+              border:
+                skippedCount > 0
+                  ? '1px solid rgba(245, 158, 11, 0.25)'
+                  : '1px solid rgba(255, 255, 255, 0.06)',
               borderRadius: 12,
               padding: '12px 16px',
             }}
           >
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: skippedCount > 0 ? '#fbbf24' : '#64748b', letterSpacing: '0.05em' }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                color: skippedCount > 0 ? '#fbbf24' : '#64748b',
+                letterSpacing: '0.05em',
+              }}
+            >
               Unattended
             </div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: skippedCount > 0 ? '#fbbf24' : '#94a3b8', marginTop: 4 }}>
+            <div
+              style={{
+                fontSize: 22,
+                fontWeight: 800,
+                color: skippedCount > 0 ? '#fbbf24' : '#94a3b8',
+                marginTop: 4,
+              }}
+            >
               {skippedCount}
             </div>
           </div>
@@ -444,7 +525,9 @@ export const ProcessingScreen = ({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    background: isAnswered ? 'rgba(16, 185, 129, 0.05)' : 'rgba(255, 255, 255, 0.02)',
+                    background: isAnswered
+                      ? 'rgba(16, 185, 129, 0.05)'
+                      : 'rgba(255, 255, 255, 0.02)',
                     border: `1px solid ${isAnswered ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.06)'}`,
                     borderRadius: 10,
                     padding: '10px 14px',
@@ -456,7 +539,9 @@ export const ProcessingScreen = ({
                         width: 24,
                         height: 24,
                         borderRadius: 6,
-                        background: isAnswered ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.06)',
+                        background: isAnswered
+                          ? 'rgba(16, 185, 129, 0.2)'
+                          : 'rgba(255, 255, 255, 0.06)',
                         color: isAnswered ? '#34d399' : '#64748b',
                         fontSize: 11,
                         fontWeight: 800,
@@ -471,12 +556,23 @@ export const ProcessingScreen = ({
                       <div style={{ fontSize: 13, fontWeight: 700, color: '#f8fafc' }}>
                         {q.title || `Question ${idx + 1}`}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 2, fontSize: 11, color: '#64748b' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                          marginTop: 2,
+                          fontSize: 11,
+                          color: '#64748b',
+                        }}
+                      >
                         <span>{q.marks || 10} Marks</span>
                         {isAnswered && (
                           <>
                             <span>·</span>
-                            <span style={{ textTransform: 'capitalize', color: '#94a3b8' }}>{lang}</span>
+                            <span style={{ textTransform: 'capitalize', color: '#94a3b8' }}>
+                              {lang}
+                            </span>
                             <span>·</span>
                             <span>{codeLines} lines</span>
                           </>

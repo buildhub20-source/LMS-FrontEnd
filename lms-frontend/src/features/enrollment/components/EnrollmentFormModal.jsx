@@ -20,7 +20,9 @@ export const EnrollmentFormModal = ({ isOpen, onClose }) => {
   const { data: myCoursesData, isLoading: loadingMyCourses } = useMyCourses({ size: 100 });
 
   const students = usersData?.data?.content || [];
-  const courses = isAdmin ? (allCoursesData?.data?.content || []) : (myCoursesData?.data?.content || []);
+  const courses = isAdmin
+    ? allCoursesData?.data?.content || []
+    : myCoursesData?.data?.content || [];
   const loadingCourses = isAdmin ? loadingAllCourses : loadingMyCourses;
 
   // Mutations
@@ -53,7 +55,11 @@ export const EnrollmentFormModal = ({ isOpen, onClose }) => {
       <Button variant="secondary" onClick={onClose} disabled={isSubmitting}>
         Cancel
       </Button>
-      <Button onClick={handleSubmit} disabled={isSubmitting || !studentId || !courseId} loading={isSubmitting}>
+      <Button
+        onClick={handleSubmit}
+        disabled={isSubmitting || !studentId || !courseId}
+        loading={isSubmitting}
+      >
         Enroll Student
       </Button>
     </>

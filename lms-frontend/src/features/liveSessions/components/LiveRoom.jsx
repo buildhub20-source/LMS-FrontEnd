@@ -1,9 +1,31 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import { Room, RoomEvent, Track, createLocalVideoTrack, createLocalAudioTrack } from 'livekit-client';
-import { 
-  VideoOff, MicOff, ScreenShare, Hand, 
-  MessageSquare, Users, Send, Wifi, Shield, X, CheckCircle2, AlertTriangle, Info,
-  VolumeX, Maximize, Minimize, Crop, Expand, Clock
+import {
+  Room,
+  RoomEvent,
+  Track,
+  createLocalVideoTrack,
+  createLocalAudioTrack,
+} from 'livekit-client';
+import {
+  VideoOff,
+  MicOff,
+  ScreenShare,
+  Hand,
+  MessageSquare,
+  Users,
+  Send,
+  Wifi,
+  Shield,
+  X,
+  CheckCircle2,
+  AlertTriangle,
+  Info,
+  VolumeX,
+  Maximize,
+  Minimize,
+  Crop,
+  Expand,
+  Clock,
 } from 'lucide-react';
 import liveSessionApi from '../api/liveSessionApi';
 import LiveSessionControls from './LiveSessionControls';
@@ -23,7 +45,10 @@ export const LiveRoom = ({
   onLeave,
   onEndSession,
 }) => {
-  const myId = useMemo(() => participantIdentity || participantName, [participantIdentity, participantName]);
+  const myId = useMemo(
+    () => participantIdentity || participantName,
+    [participantIdentity, participantName],
+  );
 
   const [room, setRoom] = useState(null);
   const [isLiveKitConnected, setIsLiveKitConnected] = useState(false);
@@ -108,7 +133,17 @@ export const LiveRoom = ({
       remotePeers,
       activeSidebar,
     };
-  }, [myId, participantName, isInstructor, isVideoEnabled, isAudioEnabled, isHandRaised, isScreenSharing, remotePeers, activeSidebar]);
+  }, [
+    myId,
+    participantName,
+    isInstructor,
+    isVideoEnabled,
+    isAudioEnabled,
+    isHandRaised,
+    isScreenSharing,
+    remotePeers,
+    activeSidebar,
+  ]);
 
   const showToast = useCallback((message, type = 'info') => {
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
@@ -189,7 +224,7 @@ export const LiveRoom = ({
       const attId = String(att.userId || att.id);
       const attName = att.userName || att.userEmail || 'Student';
       const exists = list.some(
-        (p) => p.identity === attId || p.name.toLowerCase() === attName.toLowerCase()
+        (p) => p.identity === attId || p.name.toLowerCase() === attName.toLowerCase(),
       );
       if (!exists) {
         list.push({
@@ -212,7 +247,16 @@ export const LiveRoom = ({
       if (b.isLocal) return 1;
       return a.name.localeCompare(b.name);
     });
-  }, [myId, participantName, isInstructor, isHandRaised, isVideoEnabled, isAudioEnabled, remotePeers, dbAttendance]);
+  }, [
+    myId,
+    participantName,
+    isInstructor,
+    isHandRaised,
+    isVideoEnabled,
+    isAudioEnabled,
+    remotePeers,
+    dbAttendance,
+  ]);
 
   // Determine who is presenting on the main stage
   const activePresenter = useMemo(() => {
@@ -237,37 +281,40 @@ export const LiveRoom = ({
   }, [isInstructor, participantName, myId, participants]);
 
   // Send Floating Live Emoji Reaction
-  const handleSendReaction = useCallback((emoji) => {
-    const reactionObj = {
-      id: String(Date.now()) + Math.random(),
-      emoji,
-      sender: participantName,
-      left: Math.floor(Math.random() * 60) + 20, // 20% to 80% horizontal offset
-      duration: 2.8,
-    };
+  const handleSendReaction = useCallback(
+    (emoji) => {
+      const reactionObj = {
+        id: String(Date.now()) + Math.random(),
+        emoji,
+        sender: participantName,
+        left: Math.floor(Math.random() * 60) + 20, // 20% to 80% horizontal offset
+        duration: 2.8,
+      };
 
-    setFloatingReactions((prev) => [...prev, reactionObj]);
+      setFloatingReactions((prev) => [...prev, reactionObj]);
 
-    // Broadcast reaction
-    channelRef.current?.postMessage({
-      type: 'REACTION',
-      reaction: reactionObj,
-    });
+      // Broadcast reaction
+      channelRef.current?.postMessage({
+        type: 'REACTION',
+        reaction: reactionObj,
+      });
 
-    if (room?.localParticipant) {
-      try {
-        const payload = JSON.stringify({ type: 'REACTION', reaction: reactionObj });
-        room.localParticipant.publishData(new TextEncoder().encode(payload), { reliable: false });
-      } catch (e) {
-        console.warn('LiveKit reaction error:', e);
+      if (room?.localParticipant) {
+        try {
+          const payload = JSON.stringify({ type: 'REACTION', reaction: reactionObj });
+          room.localParticipant.publishData(new TextEncoder().encode(payload), { reliable: false });
+        } catch (e) {
+          console.warn('LiveKit reaction error:', e);
+        }
       }
-    }
 
-    // Auto cleanup floating reaction after animation
-    setTimeout(() => {
-      setFloatingReactions((prev) => prev.filter((r) => r.id !== reactionObj.id));
-    }, 3000);
-  }, [participantName, room]);
+      // Auto cleanup floating reaction after animation
+      setTimeout(() => {
+        setFloatingReactions((prev) => prev.filter((r) => r.id !== reactionObj.id));
+      }, 3000);
+    },
+    [participantName, room],
+  );
 
   // Picture-in-Picture mode toggle
   const handleTogglePiP = useCallback(async () => {
@@ -339,130 +386,144 @@ export const LiveRoom = ({
   }, []);
 
   // WebRTC Signaling Handlers
-  const startPeerConnection = useCallback(async (peerId, streamToShare) => {
-    try {
-      const stream = streamToShare || localStreamRef.current;
-      if (!stream) return;
+  const startPeerConnection = useCallback(
+    async (peerId, streamToShare) => {
+      try {
+        const stream = streamToShare || localStreamRef.current;
+        if (!stream) return;
 
-      if (peerConnectionsRef.current[peerId]) {
-        peerConnectionsRef.current[peerId].close();
-      }
-
-      const pc = new RTCPeerConnection({
-        iceServers: [
-          { urls: 'stun:stun.l.google.com:19302' },
-          { urls: 'stun:stun1.l.google.com:19302' },
-        ],
-      });
-      peerConnectionsRef.current[peerId] = pc;
-
-      stream.getTracks().forEach((track) => {
-        pc.addTrack(track, stream);
-      });
-
-      pc.onicecandidate = (e) => {
-        if (e.candidate && channelRef.current) {
-          channelRef.current.postMessage({
-            type: 'RTC_ICE',
-            candidate: e.candidate.toJSON(),
-            senderId: myId,
-            targetId: peerId,
-          });
+        if (peerConnectionsRef.current[peerId]) {
+          peerConnectionsRef.current[peerId].close();
         }
-      };
 
-      const offer = await pc.createOffer();
-      await pc.setLocalDescription(offer);
+        const pc = new RTCPeerConnection({
+          iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+          ],
+        });
+        peerConnectionsRef.current[peerId] = pc;
 
-      channelRef.current?.postMessage({
-        type: 'RTC_OFFER',
-        offer: { type: offer.type, sdp: offer.sdp },
-        senderId: myId,
-        targetId: peerId,
-      });
-    } catch (e) {
-      console.warn('WebRTC peer offer error:', e);
-    }
-  }, [myId]);
+        stream.getTracks().forEach((track) => {
+          pc.addTrack(track, stream);
+        });
 
-  const handleRtcOffer = useCallback(async (data) => {
-    try {
-      if (data.targetId && data.targetId !== myId) return;
+        pc.onicecandidate = (e) => {
+          if (e.candidate && channelRef.current) {
+            channelRef.current.postMessage({
+              type: 'RTC_ICE',
+              candidate: e.candidate.toJSON(),
+              senderId: myId,
+              targetId: peerId,
+            });
+          }
+        };
 
-      if (peerConnectionsRef.current[data.senderId]) {
-        peerConnectionsRef.current[data.senderId].close();
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+
+        channelRef.current?.postMessage({
+          type: 'RTC_OFFER',
+          offer: { type: offer.type, sdp: offer.sdp },
+          senderId: myId,
+          targetId: peerId,
+        });
+      } catch (e) {
+        console.warn('WebRTC peer offer error:', e);
       }
+    },
+    [myId],
+  );
 
-      const pc = new RTCPeerConnection({
-        iceServers: [
-          { urls: 'stun:stun.l.google.com:19302' },
-          { urls: 'stun:stun1.l.google.com:19302' },
-        ],
-      });
-      peerConnectionsRef.current[data.senderId] = pc;
+  const handleRtcOffer = useCallback(
+    async (data) => {
+      try {
+        if (data.targetId && data.targetId !== myId) return;
 
-      pc.ontrack = (event) => {
-        const stream = (event.streams && event.streams[0]) ? event.streams[0] : new MediaStream([event.track]);
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.srcObject = stream;
-          remoteVideoRef.current.muted = false;
-          remoteVideoRef.current.play()
-            .then(() => setRemoteStreamActive(true))
-            .catch(() => setRemoteStreamActive(true));
-        } else {
-          setRemoteStreamActive(true);
+        if (peerConnectionsRef.current[data.senderId]) {
+          peerConnectionsRef.current[data.senderId].close();
         }
-      };
 
-      pc.onicecandidate = (e) => {
-        if (e.candidate && channelRef.current) {
-          channelRef.current.postMessage({
-            type: 'RTC_ICE',
-            candidate: e.candidate.toJSON(),
-            senderId: myId,
-            targetId: data.senderId,
-          });
+        const pc = new RTCPeerConnection({
+          iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+          ],
+        });
+        peerConnectionsRef.current[data.senderId] = pc;
+
+        pc.ontrack = (event) => {
+          const stream =
+            event.streams && event.streams[0] ? event.streams[0] : new MediaStream([event.track]);
+          if (remoteVideoRef.current) {
+            remoteVideoRef.current.srcObject = stream;
+            remoteVideoRef.current.muted = false;
+            remoteVideoRef.current
+              .play()
+              .then(() => setRemoteStreamActive(true))
+              .catch(() => setRemoteStreamActive(true));
+          } else {
+            setRemoteStreamActive(true);
+          }
+        };
+
+        pc.onicecandidate = (e) => {
+          if (e.candidate && channelRef.current) {
+            channelRef.current.postMessage({
+              type: 'RTC_ICE',
+              candidate: e.candidate.toJSON(),
+              senderId: myId,
+              targetId: data.senderId,
+            });
+          }
+        };
+
+        await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+
+        channelRef.current?.postMessage({
+          type: 'RTC_ANSWER',
+          answer: { type: answer.type, sdp: answer.sdp },
+          senderId: myId,
+          targetId: data.senderId,
+        });
+      } catch (e) {
+        console.warn('WebRTC answer error:', e);
+      }
+    },
+    [myId],
+  );
+
+  const handleRtcAnswer = useCallback(
+    async (data) => {
+      try {
+        if (data.targetId && data.targetId !== myId) return;
+        const pc = peerConnectionsRef.current[data.senderId];
+        if (pc && pc.signalingState !== 'stable') {
+          await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
         }
-      };
-
-      await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-
-      channelRef.current?.postMessage({
-        type: 'RTC_ANSWER',
-        answer: { type: answer.type, sdp: answer.sdp },
-        senderId: myId,
-        targetId: data.senderId,
-      });
-    } catch (e) {
-      console.warn('WebRTC answer error:', e);
-    }
-  }, [myId]);
-
-  const handleRtcAnswer = useCallback(async (data) => {
-    try {
-      if (data.targetId && data.targetId !== myId) return;
-      const pc = peerConnectionsRef.current[data.senderId];
-      if (pc && pc.signalingState !== 'stable') {
-        await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+      } catch (e) {
+        console.warn('WebRTC set remote description error:', e);
       }
-    } catch (e) {
-      console.warn('WebRTC set remote description error:', e);
-    }
-  }, [myId]);
+    },
+    [myId],
+  );
 
-  const handleRtcIce = useCallback(async (data) => {
-    try {
-      if (data.targetId && data.targetId !== myId) return;
-      const pc = peerConnectionsRef.current[data.senderId];
-      if (pc && data.candidate) {
-        await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+  const handleRtcIce = useCallback(
+    async (data) => {
+      try {
+        if (data.targetId && data.targetId !== myId) return;
+        const pc = peerConnectionsRef.current[data.senderId];
+        if (pc && data.candidate) {
+          await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+        }
+      } catch (e) {
+        console.warn('WebRTC add ICE candidate error:', e);
       }
-    } catch (e) {
-      console.warn('WebRTC add ICE candidate error:', e);
-    }
-  }, [myId]);
+    },
+    [myId],
+  );
 
   // Scroll chat on new message
   useEffect(() => {
@@ -542,7 +603,11 @@ export const LiveRoom = ({
 
             showToast(`${data.peer.name} joined the live class`, 'info');
 
-            if (stateRef.current.isInstructor && localStreamRef.current && (stateRef.current.isVideoEnabled || stateRef.current.isScreenSharing)) {
+            if (
+              stateRef.current.isInstructor &&
+              localStreamRef.current &&
+              (stateRef.current.isVideoEnabled || stateRef.current.isScreenSharing)
+            ) {
               startPeerConnection(data.peer.id, localStreamRef.current);
               startFrameBroadcast();
             }
@@ -625,7 +690,9 @@ export const LiveRoom = ({
               {
                 id: String(Date.now()) + Math.random(),
                 sender: 'Classroom',
-                text: data.raised ? `✋ ${data.sender} raised their hand.` : `${data.sender} lowered hand.`,
+                text: data.raised
+                  ? `✋ ${data.sender} raised their hand.`
+                  : `${data.sender} lowered hand.`,
                 time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 isSystem: true,
               },
@@ -750,7 +817,16 @@ export const LiveRoom = ({
       Object.values(peerConnectionsRef.current).forEach((pc) => pc.close());
       peerConnectionsRef.current = {};
     };
-  }, [sessionId, myId, showToast, startPeerConnection, startFrameBroadcast, handleRtcOffer, handleRtcAnswer, handleRtcIce]);
+  }, [
+    sessionId,
+    myId,
+    showToast,
+    startPeerConnection,
+    startFrameBroadcast,
+    handleRtcOffer,
+    handleRtcAnswer,
+    handleRtcIce,
+  ]);
 
   // Connect to LiveKit Room if credentials exist
   useEffect(() => {
@@ -817,7 +893,7 @@ export const LiveRoom = ({
             new Promise((_, reject) => {
               connectionTimer = setTimeout(
                 () => reject(new Error('LiveKit connection timed out.')),
-                8000
+                8000,
               );
             }),
           ]);
@@ -899,7 +975,14 @@ export const LiveRoom = ({
       }
       stopFrameBroadcast();
     };
-  }, [serverUrl, token, isInstructor, startPeerConnection, startFrameBroadcast, stopFrameBroadcast]);
+  }, [
+    serverUrl,
+    token,
+    isInstructor,
+    startPeerConnection,
+    startFrameBroadcast,
+    stopFrameBroadcast,
+  ]);
 
   // Audio Toggle
   const handleToggleAudio = useCallback(async () => {
@@ -917,7 +1000,10 @@ export const LiveRoom = ({
     if (room?.localParticipant) {
       try {
         await room.localParticipant.setMicrophoneEnabled(nextState);
-        showToast(nextState ? 'Microphone unmuted' : 'Microphone muted', nextState ? 'success' : 'info');
+        showToast(
+          nextState ? 'Microphone unmuted' : 'Microphone muted',
+          nextState ? 'success' : 'info',
+        );
         return;
       } catch (err) {
         console.warn('LiveKit mic toggle error:', err);
@@ -962,7 +1048,10 @@ export const LiveRoom = ({
     if (room?.localParticipant) {
       try {
         await room.localParticipant.setCameraEnabled(nextState);
-        showToast(nextState ? 'Camera turned on' : 'Camera turned off', nextState ? 'success' : 'info');
+        showToast(
+          nextState ? 'Camera turned on' : 'Camera turned off',
+          nextState ? 'success' : 'info',
+        );
         return;
       } catch (err) {
         console.warn('LiveKit camera toggle error:', err);
@@ -1061,7 +1150,17 @@ export const LiveRoom = ({
       }
     }
     showToast('Screen sharing stopped', 'info');
-  }, [room, isVideoEnabled, isAudioEnabled, myId, showToast, remotePeers, startPeerConnection, startFrameBroadcast, stopFrameBroadcast]);
+  }, [
+    room,
+    isVideoEnabled,
+    isAudioEnabled,
+    myId,
+    showToast,
+    remotePeers,
+    startPeerConnection,
+    startFrameBroadcast,
+    stopFrameBroadcast,
+  ]);
 
   // Screen Share Toggle
   const handleToggleScreenShare = async () => {
@@ -1238,7 +1337,9 @@ export const LiveRoom = ({
   // Check if presenter's video is on
   const isPresenterVideoActive = isInstructor
     ? isVideoEnabled || isScreenSharing
-    : remotePeers[activePresenter.identity]?.isVideoEnabled || remotePeers[activePresenter.identity]?.isScreenSharing || remoteStreamActive;
+    : remotePeers[activePresenter.identity]?.isVideoEnabled ||
+      remotePeers[activePresenter.identity]?.isScreenSharing ||
+      remoteStreamActive;
 
   return (
     <div className="flex flex-col h-screen w-full bg-slate-950 text-white overflow-hidden select-none relative">
@@ -1259,13 +1360,20 @@ export const LiveRoom = ({
           </div>
 
           <div>
-            <h1 className="text-sm font-semibold text-white truncate max-w-[180px] sm:max-w-md">{roomName}</h1>
-            <p className="text-[11px] text-slate-400 hidden sm:block">Secure WebRTC Live Classroom</p>
+            <h1 className="text-sm font-semibold text-white truncate max-w-[180px] sm:max-w-md">
+              {roomName}
+            </h1>
+            <p className="text-[11px] text-slate-400 hidden sm:block">
+              Secure WebRTC Live Classroom
+            </p>
           </div>
         </div>
 
         <div className="flex items-center gap-3 text-xs text-slate-400">
-          <div className="flex items-center gap-1.5" title={isLiveKitConnected ? 'Connected to LiveKit SFU' : 'Connected via Real-Time Mesh'}>
+          <div
+            className="flex items-center gap-1.5"
+            title={isLiveKitConnected ? 'Connected to LiveKit SFU' : 'Connected via Real-Time Mesh'}
+          >
             <Wifi className="w-3.5 h-3.5 text-emerald-400" />
             <span className="capitalize">{isLiveKitConnected ? 'LiveKit Cloud' : 'Connected'}</span>
           </div>
@@ -1290,23 +1398,29 @@ export const LiveRoom = ({
       {/* Main Content Area */}
       <div className="flex-1 flex overflow-hidden relative">
         {/* Stage / Video Canvas Area */}
-        <main className={`flex-1 min-w-0 relative flex flex-col items-center justify-center ${isFullscreen ? 'p-0' : 'p-2 sm:p-4'} bg-slate-950 overflow-hidden`}>
+        <main
+          className={`flex-1 min-w-0 relative flex flex-col items-center justify-center ${isFullscreen ? 'p-0' : 'p-2 sm:p-4'} bg-slate-950 overflow-hidden`}
+        >
           {/* Action Notification Toast Banner */}
           {toastNotification && (
-            <div 
+            <div
               className={`absolute top-4 right-4 z-40 px-4 py-2 rounded-xl text-xs font-medium shadow-2xl border flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-150 backdrop-blur-md ${
                 toastNotification.type === 'error'
                   ? 'bg-rose-950/90 text-rose-200 border-rose-800/80 shadow-rose-950/50'
                   : toastNotification.type === 'warning'
-                  ? 'bg-amber-950/90 text-amber-200 border-amber-800/80 shadow-amber-950/50'
-                  : toastNotification.type === 'success'
-                  ? 'bg-emerald-950/90 text-emerald-200 border-emerald-800/80 shadow-emerald-950/50'
-                  : 'bg-slate-900/90 text-slate-200 border-slate-700/80'
+                    ? 'bg-amber-950/90 text-amber-200 border-amber-800/80 shadow-amber-950/50'
+                    : toastNotification.type === 'success'
+                      ? 'bg-emerald-950/90 text-emerald-200 border-emerald-800/80 shadow-emerald-950/50'
+                      : 'bg-slate-900/90 text-slate-200 border-slate-700/80'
               }`}
             >
-              {toastNotification.type === 'error' && <AlertTriangle className="w-4 h-4 text-rose-400" />}
+              {toastNotification.type === 'error' && (
+                <AlertTriangle className="w-4 h-4 text-rose-400" />
+              )}
               {toastNotification.type === 'warning' && <Hand className="w-4 h-4 text-amber-400" />}
-              {toastNotification.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
+              {toastNotification.type === 'success' && (
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              )}
               {toastNotification.type === 'info' && <Info className="w-4 h-4 text-sky-400" />}
               <span>{toastNotification.message}</span>
             </div>
@@ -1343,7 +1457,9 @@ export const LiveRoom = ({
             />
           ) : (
             /* VIEW MODE 2: Speaker View (Full edge-to-edge cinematic stage) */
-            <div className={`w-full h-full relative ${isFullscreen ? 'rounded-none border-0' : 'rounded-2xl border border-slate-800/80'} overflow-hidden bg-slate-900 shadow-2xl flex items-center justify-center`}>
+            <div
+              className={`w-full h-full relative ${isFullscreen ? 'rounded-none border-0' : 'rounded-2xl border border-slate-800/80'} overflow-hidden bg-slate-900 shadow-2xl flex items-center justify-center`}
+            >
               {/* Instructor Local Video / Screen Share Element */}
               {isInstructor && (
                 <video
@@ -1353,7 +1469,7 @@ export const LiveRoom = ({
                   muted
                   className={`absolute inset-0 w-full h-full ${
                     aspectFitMode === 'contain' ? 'object-contain' : 'object-cover'
-                  } ${!isScreenSharing ? '-scale-x-100' : ''} ${(isVideoEnabled || isScreenSharing) ? 'block' : 'hidden'}`}
+                  } ${!isScreenSharing ? '-scale-x-100' : ''} ${isVideoEnabled || isScreenSharing ? 'block' : 'hidden'}`}
                 />
               )}
 
@@ -1379,7 +1495,10 @@ export const LiveRoom = ({
               )}
 
               {/* Container for incoming LiveKit SFU remote tracks */}
-              <div ref={remoteVideoContainerRef} className="absolute inset-0 flex items-center justify-center pointer-events-none" />
+              <div
+                ref={remoteVideoContainerRef}
+                className="absolute inset-0 flex items-center justify-center pointer-events-none"
+              />
 
               {/* Avatar Placeholder: show when video is off OR when student is waiting for video stream */}
               {(!isPresenterVideoActive || (!isInstructor && !remoteStreamActive)) && (
@@ -1393,8 +1512,8 @@ export const LiveRoom = ({
                       {isPresenterVideoActive && !remoteStreamActive
                         ? 'Connecting to Host Camera...'
                         : activePresenter.isInstructor
-                        ? 'Class Host / Instructor (Camera Off)'
-                        : 'Participant Stage'}
+                          ? 'Class Host / Instructor (Camera Off)'
+                          : 'Participant Stage'}
                     </p>
                   </div>
                 </div>
@@ -1408,7 +1527,11 @@ export const LiveRoom = ({
                   title={aspectFitMode === 'cover' ? 'Fit Video to Screen' : 'Fill Stage (Crop)'}
                   className="p-2 rounded-xl bg-slate-950/70 hover:bg-slate-900 text-slate-300 hover:text-white backdrop-blur-md border border-slate-700/60 shadow-md transition-colors cursor-pointer"
                 >
-                  {aspectFitMode === 'cover' ? <Crop className="w-4 h-4" /> : <Expand className="w-4 h-4" />}
+                  {aspectFitMode === 'cover' ? (
+                    <Crop className="w-4 h-4" />
+                  ) : (
+                    <Expand className="w-4 h-4" />
+                  )}
                 </button>
 
                 <button
@@ -1417,14 +1540,20 @@ export const LiveRoom = ({
                   title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
                   className="p-2 rounded-xl bg-slate-950/70 hover:bg-slate-900 text-slate-300 hover:text-white backdrop-blur-md border border-slate-700/60 shadow-md transition-colors cursor-pointer"
                 >
-                  {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+                  {isFullscreen ? (
+                    <Minimize className="w-4 h-4" />
+                  ) : (
+                    <Maximize className="w-4 h-4" />
+                  )}
                 </button>
               </div>
 
               {/* Stage bottom badge */}
               <div className="absolute bottom-4 left-4 flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-800 text-xs text-slate-200 shadow-md z-20">
                 <span className="font-semibold">{activePresenter.name}</span>
-                {activePresenter.isInstructor && <span className="text-emerald-400 font-bold">• Host</span>}
+                {activePresenter.isInstructor && (
+                  <span className="text-emerald-400 font-bold">• Host</span>
+                )}
                 {isInstructor && !isAudioEnabled && (
                   <span className="flex items-center text-rose-400 gap-1 ml-1 font-medium">
                     <MicOff className="w-3.5 h-3.5" /> Muted
@@ -1442,9 +1571,15 @@ export const LiveRoom = ({
 
         {/* Right Sidebar: Chat & Participants */}
         {activeSidebar && (
-          <aside 
+          <aside
             className="flex flex-col bg-slate-900 border-l border-slate-800 transition-all duration-200 z-20 shrink-0"
-            style={{ width: '360px', minWidth: '320px', maxWidth: '420px', flexShrink: 0, height: '100%' }}
+            style={{
+              width: '360px',
+              minWidth: '320px',
+              maxWidth: '420px',
+              flexShrink: 0,
+              height: '100%',
+            }}
             aria-label="Classroom Sidebar"
           >
             {/* Sidebar Tab Header */}
@@ -1456,8 +1591,8 @@ export const LiveRoom = ({
                   setUnreadChatCount(0);
                 }}
                 className={`flex-1 py-3 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 cursor-pointer transition-colors ${
-                  activeSidebar === 'chat' 
-                    ? 'border-emerald-500 text-emerald-400 bg-slate-800/40' 
+                  activeSidebar === 'chat'
+                    ? 'border-emerald-500 text-emerald-400 bg-slate-800/40'
                     : 'border-transparent text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -1474,8 +1609,8 @@ export const LiveRoom = ({
                 type="button"
                 onClick={() => setActiveSidebar('participants')}
                 className={`flex-1 py-3 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 cursor-pointer transition-colors ${
-                  activeSidebar === 'participants' 
-                    ? 'border-emerald-500 text-emerald-400 bg-slate-800/40' 
+                  activeSidebar === 'participants'
+                    ? 'border-emerald-500 text-emerald-400 bg-slate-800/40'
                     : 'border-transparent text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -1523,7 +1658,10 @@ export const LiveRoom = ({
                   <div ref={chatBottomRef} />
                 </div>
 
-                <form onSubmit={handleSendMessage} className="p-3 border-t border-slate-800 bg-slate-900/90 flex gap-2 shrink-0">
+                <form
+                  onSubmit={handleSendMessage}
+                  className="p-3 border-t border-slate-800 bg-slate-900/90 flex gap-2 shrink-0"
+                >
                   <input
                     type="text"
                     value={chatInput}
@@ -1578,7 +1716,11 @@ export const LiveRoom = ({
                               </span>
                             )}
                           </div>
-                          {p.isInstructor && <p className="text-[10px] text-emerald-400 font-bold">Host / Instructor</p>}
+                          {p.isInstructor && (
+                            <p className="text-[10px] text-emerald-400 font-bold">
+                              Host / Instructor
+                            </p>
+                          )}
                         </div>
                       </div>
 
@@ -1614,7 +1756,9 @@ export const LiveRoom = ({
           setActiveSidebar((prev) => (prev === 'chat' ? null : 'chat'));
           setUnreadChatCount(0);
         }}
-        onToggleParticipants={() => setActiveSidebar((prev) => (prev === 'participants' ? null : 'participants'))}
+        onToggleParticipants={() =>
+          setActiveSidebar((prev) => (prev === 'participants' ? null : 'participants'))
+        }
         onLeave={onLeave}
         onEndSession={onEndSession}
         canPublish={isInstructor}

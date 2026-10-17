@@ -110,7 +110,7 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
       setIssuer(
         typeof parsed.issuer === 'string'
           ? parsed.issuer
-          : parsed.issuer?.name || cred.issuer || 'External Credential'
+          : parsed.issuer?.name || cred.issuer || 'External Credential',
       );
       if (parsed.issuanceDate || parsed.issuedAt || cred.issuedAt) {
         const d = (parsed.issuanceDate || parsed.issuedAt || cred.issuedAt).split('T')[0];
@@ -143,9 +143,15 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
       isImported: true,
       issuedAt: issueDate ? new Date(issueDate).toISOString() : new Date().toISOString(),
       expiresAt: !noExpiry && expiryDate ? new Date(expiryDate).toISOString() : null,
-      credentialId: credentialId.trim() || `VER-${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
+      credentialId:
+        credentialId.trim() || `VER-${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
       verificationUrl: verificationUrl.trim() || null,
-      skills: skills ? skills.split(',').map((s) => s.trim()).filter(Boolean) : [],
+      skills: skills
+        ? skills
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : [],
       grade: grade.trim() || null,
       fileName: fileName || null,
       fileDataUrl: fileDataUrl || null,
@@ -166,11 +172,22 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Import Certificate & Credential" size="lg">
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 18, color: 'var(--text-primary)' }}>
+      <div
+        style={{ display: 'flex', flexDirection: 'column', gap: 18, color: 'var(--text-primary)' }}
+      >
         {/* Header subtitle */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 12,
+          }}
+        >
           <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>
-            Add external certifications from AWS, Coursera, Google, Udemy, or upload a verifiable credential.
+            Add external certifications from AWS, Coursera, Google, Udemy, or upload a verifiable
+            credential.
           </p>
 
           {/* Tab Switcher */}
@@ -194,7 +211,8 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
                 fontSize: 12,
                 fontWeight: 600,
                 cursor: 'pointer',
-                background: activeTab === 'manual' ? 'var(--color-primary, #6366f1)' : 'transparent',
+                background:
+                  activeTab === 'manual' ? 'var(--color-primary, #6366f1)' : 'transparent',
                 color: activeTab === 'manual' ? '#fff' : 'var(--text-muted)',
               }}
             >
@@ -239,10 +257,23 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
         )}
 
         {activeTab === 'manual' ? (
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <form
+            onSubmit={handleSubmit}
+            style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
+          >
             {/* Quick Provider Presets */}
             <div>
-              <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 8, letterSpacing: '0.5px' }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: 'var(--text-muted)',
+                  textTransform: 'uppercase',
+                  marginBottom: 8,
+                  letterSpacing: '0.5px',
+                }}
+              >
                 Quick Platform Presets
               </label>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -254,7 +285,10 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
                     style={{
                       padding: '6px 12px',
                       borderRadius: 8,
-                      border: issuer === preset.name ? `1.5px solid ${preset.color}` : '1px solid var(--border-color)',
+                      border:
+                        issuer === preset.name
+                          ? `1.5px solid ${preset.color}`
+                          : '1px solid var(--border-color)',
                       background: issuer === preset.name ? preset.bg : 'var(--surface-medium)',
                       color: issuer === preset.name ? preset.color : 'var(--text-secondary)',
                       fontSize: 12,
@@ -266,7 +300,9 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
                       transition: 'all 0.15s ease',
                     }}
                   >
-                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: preset.color }} />
+                    <span
+                      style={{ width: 6, height: 6, borderRadius: '50%', background: preset.color }}
+                    />
                     {preset.name}
                   </button>
                 ))}
@@ -274,9 +310,23 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
             </div>
 
             {/* Title & Issuer Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                gap: 14,
+              }}
+            >
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: 'var(--text-primary)',
+                    marginBottom: 6,
+                  }}
+                >
                   Certificate / Course Title <span style={{ color: '#ef4444' }}>*</span>
                 </label>
                 <input
@@ -300,7 +350,15 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: 'var(--text-primary)',
+                    marginBottom: 6,
+                  }}
+                >
                   Issuing Organization <span style={{ color: '#ef4444' }}>*</span>
                 </label>
                 <input
@@ -325,9 +383,23 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
             </div>
 
             {/* Dates Row */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14 }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: 14,
+              }}
+            >
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: 'var(--text-primary)',
+                    marginBottom: 6,
+                  }}
+                >
                   Issue Date
                 </label>
                 <input
@@ -349,11 +421,27 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
               </div>
 
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: 6,
+                  }}
+                >
                   <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>
                     Expiration Date
                   </label>
-                  <label style={{ fontSize: 11, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}>
+                  <label
+                    style={{
+                      fontSize: 11,
+                      color: 'var(--text-muted)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      cursor: 'pointer',
+                    }}
+                  >
                     <input
                       type="checkbox"
                       checked={noExpiry}
@@ -384,9 +472,23 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
             </div>
 
             {/* Credential ID & Verification URL */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                gap: 14,
+              }}
+            >
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: 'var(--text-primary)',
+                    marginBottom: 6,
+                  }}
+                >
                   Credential / License ID
                 </label>
                 <input
@@ -409,7 +511,15 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: 'var(--text-primary)',
+                    marginBottom: 6,
+                  }}
+                >
                   Verification URL
                 </label>
                 <input
@@ -435,7 +545,15 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
             {/* Skills & Optional Grade */}
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 14 }}>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: 'var(--text-primary)',
+                    marginBottom: 6,
+                  }}
+                >
                   Key Skills Learned (comma separated)
                 </label>
                 <input
@@ -458,7 +576,15 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: 'var(--text-primary)',
+                    marginBottom: 6,
+                  }}
+                >
                   Grade / Score (Optional)
                 </label>
                 <input
@@ -483,7 +609,15 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
 
             {/* Upload PDF / Certificate Attachment */}
             <div>
-              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: 'var(--text-primary)',
+                  marginBottom: 6,
+                }}
+              >
                 Certificate Document / Badge Image (Optional)
               </label>
               <div
@@ -501,8 +635,14 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
                   justifyContent: 'center',
                   gap: 12,
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#6366f1'; e.currentTarget.style.background = 'rgba(99, 102, 241, 0.05)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)'; }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#6366f1';
+                  e.currentTarget.style.background = 'rgba(99, 102, 241, 0.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border-color)';
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)';
+                }}
               >
                 <FileUp size={20} color="#818cf8" />
                 <div style={{ textAlign: 'left' }}>
@@ -560,8 +700,14 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
                 alignItems: 'center',
                 gap: 8,
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#10b981'; e.currentTarget.style.background = 'rgba(16, 185, 129, 0.05)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)'; }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#10b981';
+                e.currentTarget.style.background = 'rgba(16, 185, 129, 0.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'var(--border-color)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)';
+              }}
             >
               <Upload size={28} color="#34d399" />
               <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
@@ -580,7 +726,15 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: 'var(--text-primary)',
+                  marginBottom: 6,
+                }}
+              >
                 Or paste credential JSON snippet:
               </label>
               <textarea
@@ -623,7 +777,9 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
                 }}
               >
                 <CheckCircle2 size={16} />
-                <span>Detected: <strong>{title}</strong> issued by <strong>{issuer}</strong></span>
+                <span>
+                  Detected: <strong>{title}</strong> issued by <strong>{issuer}</strong>
+                </span>
               </div>
             )}
 

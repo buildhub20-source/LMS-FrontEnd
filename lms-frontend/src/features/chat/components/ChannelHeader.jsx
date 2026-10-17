@@ -33,16 +33,20 @@ export default function ChannelHeader({
   const otherMember = isDirect
     ? members.find((m) => String(m.user_id || m.userId || m.id) !== String(currentUserId))
     : null;
-  const otherUserId = channel.otherUserId || channel.other_user_id || otherMember?.user_id || otherMember?.id;
+  const otherUserId =
+    channel.otherUserId || channel.other_user_id || otherMember?.user_id || otherMember?.id;
   const isOtherOnline = isDirect && otherUserId && isOnline ? isOnline(otherUserId) : false;
-  const presenceSubtitle = isDirect && otherUserId && formatPresence ? formatPresence(otherUserId) : null;
+  const presenceSubtitle =
+    isDirect && otherUserId && formatPresence ? formatPresence(otherUserId) : null;
 
   return (
     <header className="chat-channel-header">
       <div className="chat-channel-header__top">
         <div className="chat-channel-header__info">
           <div className="chat-channel-header__avatar-wrapper">
-            <span className={`chat-channel-icon-badge chat-channel-icon-badge--header chat-channel-icon-badge--${channel.type?.toLowerCase()}`}>
+            <span
+              className={`chat-channel-icon-badge chat-channel-icon-badge--header chat-channel-icon-badge--${channel.type?.toLowerCase()}`}
+            >
               {getChannelIcon(channel.type)}
             </span>
             {isDirect && otherUserId && (
@@ -59,7 +63,10 @@ export default function ChannelHeader({
             <div className="chat-channel-header__name-row">
               <h3 className="chat-channel-header__name">{displayName}</h3>
               {isArchived && (
-                <span className="chat-archived-badge" title="This channel is archived and read-only">
+                <span
+                  className="chat-archived-badge"
+                  title="This channel is archived and read-only"
+                >
                   <Lock size={12} />
                   <span>Archived</span>
                 </span>
@@ -69,17 +76,17 @@ export default function ChannelHeader({
             <div className="chat-channel-header__meta">
               {isDirect ? (
                 presenceSubtitle && (
-                  <span className={`chat-channel-header__presence ${isOtherOnline ? 'chat-channel-header__presence--online' : ''}`}>
+                  <span
+                    className={`chat-channel-header__presence ${isOtherOnline ? 'chat-channel-header__presence--online' : ''}`}
+                  >
                     {presenceSubtitle}
                   </span>
                 )
-              ) : (
-                channel.description ? (
-                  <p className="chat-channel-header__desc">{channel.description}</p>
-                ) : memberCount > 0 ? (
-                  <span className="chat-channel-header__member-count">{memberCount} members</span>
-                ) : null
-              )}
+              ) : channel.description ? (
+                <p className="chat-channel-header__desc">{channel.description}</p>
+              ) : memberCount > 0 ? (
+                <span className="chat-channel-header__member-count">{memberCount} members</span>
+              ) : null}
             </div>
           </div>
         </div>

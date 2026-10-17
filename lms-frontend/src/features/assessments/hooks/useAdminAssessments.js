@@ -114,7 +114,8 @@ export const useAddQuestion = (assessmentId) => {
 export const useUpdateQuestion = (assessmentId) => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ questionId, ...payload }) => adminAssessmentService.updateQuestion(questionId, payload),
+    mutationFn: ({ questionId, ...payload }) =>
+      adminAssessmentService.updateQuestion(questionId, payload),
     onSuccess: () => {
       if (assessmentId) {
         qc.invalidateQueries({ queryKey: adminAssessmentKeys.questions(assessmentId) });

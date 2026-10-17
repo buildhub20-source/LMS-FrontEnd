@@ -18,8 +18,14 @@ const TABS = [
 ];
 
 const PRESET_COLORS = [
-  '#6366f1', '#3b82f6', '#0ea5e9', '#10b981',
-  '#f59e0b', '#ec4899', '#8b5cf6', '#1e293b',
+  '#6366f1',
+  '#3b82f6',
+  '#0ea5e9',
+  '#10b981',
+  '#f59e0b',
+  '#ec4899',
+  '#8b5cf6',
+  '#1e293b',
 ];
 
 const EDITABLE_FIELDS = ['name', 'supportEmail', 'description', 'primaryColor', 'logoUrl'];
@@ -118,22 +124,44 @@ const SettingsForm = ({ initial }) => {
         </div>
       }
     >
-      <div style={{ maxWidth: 1000, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)' }}>
-          <Link to={ROUTES.ORGANIZATION} style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>
+      <div
+        style={{
+          maxWidth: 1000,
+          margin: '0 auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 24,
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            fontSize: 13,
+            color: 'var(--text-muted)',
+          }}
+        >
+          <Link
+            to={ROUTES.ORGANIZATION}
+            style={{ color: 'var(--text-muted)', textDecoration: 'none' }}
+          >
             Organization
           </Link>
           <ChevronRight size={13} />
           <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Settings</span>
         </div>
 
-        <div role="tablist" style={{
-          display: 'flex',
-          gap: 6,
-          borderBottom: '1px solid var(--border-color)',
-          paddingBottom: 2,
-          overflowX: 'auto',
-        }}>
+        <div
+          role="tablist"
+          style={{
+            display: 'flex',
+            gap: 6,
+            borderBottom: '1px solid var(--border-color)',
+            paddingBottom: 2,
+            overflowX: 'auto',
+          }}
+        >
           {TABS.map((t) => (
             <button
               key={t.id}
@@ -149,7 +177,8 @@ const SettingsForm = ({ initial }) => {
                 border: 'none',
                 borderRadius: '8px 8px 0 0',
                 background: activeTab === t.id ? 'var(--surface-medium)' : 'transparent',
-                borderBottom: activeTab === t.id ? '2.5px solid var(--primary)' : '2.5px solid transparent',
+                borderBottom:
+                  activeTab === t.id ? '2.5px solid var(--primary)' : '2.5px solid transparent',
                 color: activeTab === t.id ? 'var(--primary)' : 'var(--text-muted)',
                 fontSize: 14,
                 fontWeight: 700,
@@ -163,23 +192,43 @@ const SettingsForm = ({ initial }) => {
           ))}
         </div>
 
-        <div style={{
-          background: 'var(--bg-primary)',
-          border: '1px solid var(--border-color)',
-          borderRadius: 16,
-          padding: 28,
-        }}>
+        <div
+          style={{
+            background: 'var(--bg-primary)',
+            border: '1px solid var(--border-color)',
+            borderRadius: 16,
+            padding: 28,
+          }}
+        >
           {activeTab === 'general' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                  gap: 20,
+                }}
+              >
                 <div>
-                  <label htmlFor="org-name" style={labelStyle}>Organization Name</label>
-                  <input id="org-name" style={inputStyle} maxLength={160} value={form.name} onChange={update('name')} />
-                  <span style={helpTextStyle}>Shown on the sign-in page, dashboards and certificates.</span>
+                  <label htmlFor="org-name" style={labelStyle}>
+                    Organization Name
+                  </label>
+                  <input
+                    id="org-name"
+                    style={inputStyle}
+                    maxLength={160}
+                    value={form.name}
+                    onChange={update('name')}
+                  />
+                  <span style={helpTextStyle}>
+                    Shown on the sign-in page, dashboards and certificates.
+                  </span>
                 </div>
 
                 <div>
-                  <label htmlFor="org-support-email" style={labelStyle}>Support Email</label>
+                  <label htmlFor="org-support-email" style={labelStyle}>
+                    Support Email
+                  </label>
                   <input
                     id="org-support-email"
                     style={inputStyle}
@@ -193,7 +242,9 @@ const SettingsForm = ({ initial }) => {
               </div>
 
               <div>
-                <label htmlFor="org-description" style={labelStyle}>Description</label>
+                <label htmlFor="org-description" style={labelStyle}>
+                  Description
+                </label>
                 <textarea
                   id="org-description"
                   style={{ ...inputStyle, minHeight: 90, resize: 'vertical' }}
@@ -219,7 +270,15 @@ const SettingsForm = ({ initial }) => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
               <div>
                 <span style={labelStyle}>Primary Brand Color</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8, flexWrap: 'wrap' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    marginTop: 8,
+                    flexWrap: 'wrap',
+                  }}
+                >
                   {PRESET_COLORS.map((c) => (
                     <button
                       key={c}
@@ -228,11 +287,16 @@ const SettingsForm = ({ initial }) => {
                       aria-pressed={form.primaryColor === c}
                       onClick={() => setForm({ ...form, primaryColor: c })}
                       style={{
-                        width: 34, height: 34, borderRadius: '50%',
-                        background: c, border: form.primaryColor === c ? '3px solid #ffffff' : 'none',
+                        width: 34,
+                        height: 34,
+                        borderRadius: '50%',
+                        background: c,
+                        border: form.primaryColor === c ? '3px solid #ffffff' : 'none',
                         boxShadow: form.primaryColor === c ? `0 0 0 2px ${c}` : 'none',
                         cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       }}
                     >
                       {form.primaryColor === c && <Check size={14} color="#ffffff" />}
@@ -243,13 +307,22 @@ const SettingsForm = ({ initial }) => {
                     aria-label="Custom brand color"
                     value={form.primaryColor}
                     onChange={update('primaryColor')}
-                    style={{ width: 34, height: 34, padding: 0, border: 'none', borderRadius: '50%', cursor: 'pointer' }}
+                    style={{
+                      width: 34,
+                      height: 34,
+                      padding: 0,
+                      border: 'none',
+                      borderRadius: '50%',
+                      cursor: 'pointer',
+                    }}
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="org-logo-url" style={labelStyle}>Logo URL</label>
+                <label htmlFor="org-logo-url" style={labelStyle}>
+                  Logo URL
+                </label>
                 <input
                   id="org-logo-url"
                   style={inputStyle}
@@ -259,7 +332,9 @@ const SettingsForm = ({ initial }) => {
                   value={form.logoUrl}
                   onChange={update('logoUrl')}
                 />
-                <span style={helpTextStyle}>An https link to a PNG or SVG. Used on certificates.</span>
+                <span style={helpTextStyle}>
+                  An https link to a PNG or SVG. Used on certificates.
+                </span>
               </div>
             </div>
           )}

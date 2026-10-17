@@ -21,11 +21,16 @@ export const courseService = {
   // Recordings
   getRecordings: (id) => http.get(API_ENDPOINTS.courses.recordings(id)),
   getRecordingPlaybackUrl: (recordingId) => http.get(`/recordings/${recordingId}/playback-url`),
-  getLessonUploadUrl: (courseId, moduleId, lessonId, payload) => 
-    http.post(`/courses/${courseId}/curriculum/modules/${moduleId}/lessons/${lessonId}/recording/upload-url`, payload),
+  getLessonUploadUrl: (courseId, moduleId, lessonId, payload) =>
+    http.post(
+      `/courses/${courseId}/curriculum/modules/${moduleId}/lessons/${lessonId}/recording/upload-url`,
+      payload,
+    ),
 
   completeLessonRecordingUpload: (courseId, moduleId, lessonId, recordingId) =>
-    http.post(`/courses/${courseId}/curriculum/modules/${moduleId}/lessons/${lessonId}/recording/${recordingId}/complete`),
+    http.post(
+      `/courses/${courseId}/curriculum/modules/${moduleId}/lessons/${lessonId}/recording/${recordingId}/complete`,
+    ),
 
   uploadLessonRecordingDirect: (courseId, moduleId, lessonId, file, onUploadProgress) => {
     const formData = new FormData();
@@ -36,7 +41,7 @@ export const courseService = {
       {
         headers: { 'Content-Type': 'multipart/form-data' },
         onUploadProgress,
-      }
+      },
     );
   },
 

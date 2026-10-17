@@ -21,7 +21,9 @@ export const LiveGalleryGrid = ({
   };
 
   return (
-    <div className={`w-full h-full p-4 grid ${getGridCols(participants.length)} gap-4 items-center justify-center overflow-y-auto`}>
+    <div
+      className={`w-full h-full p-4 grid ${getGridCols(participants.length)} gap-4 items-center justify-center overflow-y-auto`}
+    >
       {participants.map((p) => {
         const isLocalHost = p.isLocal && isInstructor;
         const isRemoteHost = !p.isLocal && p.isInstructor;
@@ -41,7 +43,7 @@ export const LiveGalleryGrid = ({
                 muted
                 className={`absolute inset-0 w-full h-full ${
                   aspectFitMode === 'contain' ? 'object-contain' : 'object-cover'
-                } ${!isScreenSharing ? '-scale-x-100' : ''} ${(isVideoEnabled || isScreenSharing) ? 'block' : 'hidden'}`}
+                } ${!isScreenSharing ? '-scale-x-100' : ''} ${isVideoEnabled || isScreenSharing ? 'block' : 'hidden'}`}
               />
             )}
 
@@ -70,7 +72,7 @@ export const LiveGalleryGrid = ({
             {/* Avatar when video is off */}
             {((isLocalHost && !isVideoEnabled && !isScreenSharing) ||
               (isRemoteHost && !remoteStreamActive) ||
-              (!p.isInstructor)) && (
+              !p.isInstructor) && (
               <div className="flex flex-col items-center justify-center gap-2 p-4 text-center">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-2xl font-bold text-white shadow-lg ring-4 ring-slate-800">
                   {p.name?.charAt(0)?.toUpperCase() || 'U'}

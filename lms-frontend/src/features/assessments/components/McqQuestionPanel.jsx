@@ -1,7 +1,13 @@
 import React, { useEffect } from 'react';
 import {
-  CheckCircle2, Circle, HelpCircle, RotateCcw,
-  Sparkles, Check, CheckCheck, Loader2
+  CheckCircle2,
+  Circle,
+  HelpCircle,
+  RotateCcw,
+  Sparkles,
+  Check,
+  CheckCheck,
+  Loader2,
 } from 'lucide-react';
 import Badge from '../../../components/common/Badge';
 import { DIFFICULTY_TONE } from '../constants/assessmentConstants';
@@ -249,7 +255,22 @@ export const McqQuestionPanel = ({
             Select One Correct Answer
           </span>
           <span style={{ fontSize: 12, color: '#64748b' }}>
-            Tip: You can also press keys <kbd className="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700 text-gray-300 font-mono text-xs">A</kbd>–<kbd className="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700 text-gray-300 font-mono text-xs">D</kbd> or <kbd className="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700 text-gray-300 font-mono text-xs">1</kbd>–<kbd className="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700 text-gray-300 font-mono text-xs">4</kbd>
+            Tip: You can also press keys{' '}
+            <kbd className="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700 text-gray-300 font-mono text-xs">
+              A
+            </kbd>
+            –
+            <kbd className="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700 text-gray-300 font-mono text-xs">
+              D
+            </kbd>{' '}
+            or{' '}
+            <kbd className="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700 text-gray-300 font-mono text-xs">
+              1
+            </kbd>
+            –
+            <kbd className="px-1.5 py-0.5 rounded bg-gray-800 border border-gray-700 text-gray-300 font-mono text-xs">
+              4
+            </kbd>
           </span>
         </div>
 
@@ -270,9 +291,7 @@ export const McqQuestionPanel = ({
                   padding: '18px 20px',
                   borderRadius: 12,
                   cursor: 'pointer',
-                  border: isSelected
-                    ? '2px solid #6366f1'
-                    : '1px solid rgba(255, 255, 255, 0.08)',
+                  border: isSelected ? '2px solid #6366f1' : '1px solid rgba(255, 255, 255, 0.08)',
                   background: isSelected
                     ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(79, 70, 229, 0.08) 100%)'
                     : 'rgba(255, 255, 255, 0.02)',

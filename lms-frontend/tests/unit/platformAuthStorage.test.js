@@ -24,13 +24,17 @@ describe('platformAuthStorage', () => {
   });
 
   it('recognises local-storage events for the platform session only', () => {
-    expect(platformAuthStorage.isPlatformTokenChange({
-      key: STORAGE_KEYS.PLATFORM_ACCESS_TOKEN,
-      storageArea: window.localStorage,
-    })).toBe(true);
-    expect(platformAuthStorage.isPlatformTokenChange({
-      key: STORAGE_KEYS.ACCESS_TOKEN,
-      storageArea: window.localStorage,
-    })).toBe(false);
+    expect(
+      platformAuthStorage.isPlatformTokenChange({
+        key: STORAGE_KEYS.PLATFORM_ACCESS_TOKEN,
+        storageArea: window.localStorage,
+      }),
+    ).toBe(true);
+    expect(
+      platformAuthStorage.isPlatformTokenChange({
+        key: STORAGE_KEYS.ACCESS_TOKEN,
+        storageArea: window.localStorage,
+      }),
+    ).toBe(false);
   });
 });

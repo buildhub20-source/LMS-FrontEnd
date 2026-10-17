@@ -1,7 +1,20 @@
 import {
-  Clock, BarChart2, HelpCircle, RefreshCw, CheckCircle, XCircle,
-  CalendarClock, AlarmClock, Zap, Hourglass, PlusCircle, ShieldAlert,
-  Calendar, Check, AlertCircle, Edit3
+  Clock,
+  BarChart2,
+  HelpCircle,
+  RefreshCw,
+  CheckCircle,
+  XCircle,
+  CalendarClock,
+  AlarmClock,
+  Zap,
+  Hourglass,
+  PlusCircle,
+  ShieldAlert,
+  Calendar,
+  Check,
+  AlertCircle,
+  Edit3,
 } from 'lucide-react';
 import { useAssessmentTimeState } from '../hooks/useAssessmentTimeState';
 import { formatDate } from '../../../utils/dateUtils';
@@ -15,7 +28,6 @@ import Badge from '../../../components/common/Badge';
  * and quick-action triggers for Admins and Instructors (e.g. Extend by 1h, 1d, or Close Now).
  */
 export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating = false }) => {
-
   const startTime = assessment?.startTime;
   const endTime = assessment?.endTime;
   const { state, countdown, windowPct, isClosingSoon } = useAssessmentTimeState(startTime, endTime);
@@ -79,7 +91,9 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
         border: isClosingSoon ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid var(--border)',
         borderRadius: 16,
         overflow: 'hidden',
-        boxShadow: isClosingSoon ? '0 0 20px rgba(239, 68, 68, 0.15)' : 'var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.05))',
+        boxShadow: isClosingSoon
+          ? '0 0 20px rgba(239, 68, 68, 0.15)'
+          : 'var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.05))',
         transition: 'all 0.3s ease',
       }}
     >
@@ -96,7 +110,14 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Hourglass size={16} style={{ color: '#6366f1' }} />
-          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.2px' }}>
+          <span
+            style={{
+              fontSize: 14,
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+              letterSpacing: '-0.2px',
+            }}
+          >
             Time & Details
           </span>
         </div>
@@ -128,7 +149,9 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
               padding: '12px 14px',
               borderRadius: 12,
               background: isClosingSoon ? 'rgba(239, 68, 68, 0.1)' : 'rgba(99, 102, 241, 0.08)',
-              border: isClosingSoon ? '1px solid rgba(239, 68, 68, 0.25)' : '1px solid rgba(99, 102, 241, 0.2)',
+              border: isClosingSoon
+                ? '1px solid rgba(239, 68, 68, 0.25)'
+                : '1px solid rgba(99, 102, 241, 0.2)',
               display: 'flex',
               flexDirection: 'column',
               gap: 8,
@@ -136,7 +159,11 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 600 }}>
-                {state === 'locked' ? 'Window Opens' : state === 'expired' ? 'Window Status' : 'Remaining Time'}
+                {state === 'locked'
+                  ? 'Window Opens'
+                  : state === 'expired'
+                    ? 'Window Status'
+                    : 'Remaining Time'}
               </span>
               <span
                 style={{
@@ -152,7 +179,15 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
 
             {/* Progress Bar for open window */}
             {state === 'open' || state === 'closing_soon' ? (
-              <div style={{ width: '100%', height: 6, background: 'var(--border)', borderRadius: 99, overflow: 'hidden' }}>
+              <div
+                style={{
+                  width: '100%',
+                  height: 6,
+                  background: 'var(--border)',
+                  borderRadius: 99,
+                  overflow: 'hidden',
+                }}
+              >
                 <div
                   style={{
                     height: '100%',
@@ -162,7 +197,9 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
                       : 'linear-gradient(90deg, #6366f1 0%, #3b82f6 100%)',
                     borderRadius: 99,
                     transition: 'width 1s linear',
-                    boxShadow: isClosingSoon ? '0 0 8px rgba(239,68,68,0.5)' : '0 0 8px rgba(99,102,241,0.5)',
+                    boxShadow: isClosingSoon
+                      ? '0 0 8px rgba(239,68,68,0.5)'
+                      : '0 0 8px rgba(99,102,241,0.5)',
                   }}
                 />
               </div>
@@ -172,8 +209,22 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
 
         {/* Stats Grid */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontSize: 13,
+            }}
+          >
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                color: 'var(--text-secondary)',
+              }}
+            >
               <Clock size={14} style={{ color: '#38bdf8' }} /> Duration
             </span>
             <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
@@ -181,8 +232,22 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
             </span>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontSize: 13,
+            }}
+          >
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                color: 'var(--text-secondary)',
+              }}
+            >
               <BarChart2 size={14} style={{ color: '#818cf8' }} /> Total Marks
             </span>
             <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
@@ -190,8 +255,22 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
             </span>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontSize: 13,
+            }}
+          >
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                color: 'var(--text-secondary)',
+              }}
+            >
               <RefreshCw size={14} style={{ color: '#fbbf24' }} /> Max Attempts
             </span>
             <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
@@ -199,8 +278,22 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
             </span>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontSize: 13,
+            }}
+          >
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                color: 'var(--text-secondary)',
+              }}
+            >
               <HelpCircle size={14} style={{ color: '#34d399' }} /> Questions
             </span>
             <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
@@ -209,8 +302,22 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
           </div>
 
           {startTime && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                fontSize: 13,
+              }}
+            >
+              <span
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  color: 'var(--text-secondary)',
+                }}
+              >
                 <CheckCircle size={14} style={{ color: '#34d399' }} /> Window Opens
               </span>
               <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>
@@ -220,8 +327,22 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
           )}
 
           {endTime && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-secondary)' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                fontSize: 13,
+              }}
+            >
+              <span
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  color: 'var(--text-secondary)',
+                }}
+              >
                 <XCircle size={14} style={{ color: '#f87171' }} /> Window Closes
               </span>
               <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>
@@ -234,7 +355,19 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
         {/* Quick Time Triggers for Instructor/Admin */}
         {(onExtend || onClose) && (
           <div style={{ borderTop: '1px solid var(--border)', paddingTop: 14 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10, fontSize: 12, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                marginBottom: 10,
+                fontSize: 12,
+                fontWeight: 700,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
               <Zap size={13} style={{ color: '#fbbf24' }} /> Time Triggers
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>

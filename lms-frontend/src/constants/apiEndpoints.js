@@ -94,10 +94,14 @@ export const API_ENDPOINTS = Object.freeze({
     saveDraft: (attemptId) => `/student/assessments/attempts/${attemptId}/submissions`,
     result: (attemptId) => `/student/assessments/attempts/${attemptId}`,
     report: (attemptId) => `/student/assessments/attempts/${attemptId}/report`,
-    recordingUploadUrl: (attemptId) => `/student/assessments/attempts/${attemptId}/recording/upload-url`,
-    completeRecording: (attemptId) => `/student/assessments/attempts/${attemptId}/recording/complete`,
-    uploadRecordingDirect: (attemptId) => `/student/assessments/attempts/${attemptId}/recording/upload`,
-    recordingPlaybackUrl: (attemptId) => `/student/assessments/attempts/${attemptId}/recording/playback-url`,
+    recordingUploadUrl: (attemptId) =>
+      `/student/assessments/attempts/${attemptId}/recording/upload-url`,
+    completeRecording: (attemptId) =>
+      `/student/assessments/attempts/${attemptId}/recording/complete`,
+    uploadRecordingDirect: (attemptId) =>
+      `/student/assessments/attempts/${attemptId}/recording/upload`,
+    recordingPlaybackUrl: (attemptId) =>
+      `/student/assessments/attempts/${attemptId}/recording/playback-url`,
   },
   adminAssessments: {
     base: '/admin/assessments',
@@ -115,7 +119,8 @@ export const API_ENDPOINTS = Object.freeze({
     resultAnalytics: (id) => `/admin/assessments/${id}/result-analytics`,
     extend: (id) => `/admin/assessments/${id}/extend`,
     schedule: (id) => `/admin/assessments/${id}/schedule`,
-    retest: (assessmentId, studentId) => `/admin/assessments/${assessmentId}/students/${studentId}/retest`,
+    retest: (assessmentId, studentId) =>
+      `/admin/assessments/${assessmentId}/students/${studentId}/retest`,
     rubrics: '/admin/assessments/rubrics',
     rubricById: (id) => `/admin/assessments/rubrics/${id}`,
     pendingGrading: '/admin/assessments/grading/pending',

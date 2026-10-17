@@ -1,9 +1,23 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
-  X, Sparkles, Plus, CheckCircle2, ArrowRight, Layers, FileText,
-  Clock, Award, AlertCircle, RefreshCw, ChevronRight, ExternalLink,
-  BookOpen, Code2, ListFilter, Trash2
+  X,
+  Sparkles,
+  Plus,
+  CheckCircle2,
+  ArrowRight,
+  Layers,
+  FileText,
+  Clock,
+  Award,
+  AlertCircle,
+  RefreshCw,
+  ChevronRight,
+  ExternalLink,
+  BookOpen,
+  Code2,
+  ListFilter,
+  Trash2,
 } from 'lucide-react';
 import Button from '../../../components/common/Button';
 import Badge from '../../../components/common/Badge';
@@ -56,16 +70,21 @@ export default function ExportToAssessmentModal({
       // Auto-generate a descriptive title based on selected questions
       const now = new Date();
       const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      const types = Array.from(new Set(selectedQuestions.map(q => q.questionType)));
-      const typeLabel = types.length === 1
-        ? (types[0] === 'CODING' ? 'Coding Assessment' : 'MCQ Assessment')
-        : 'Comprehensive Assessment';
+      const types = Array.from(new Set(selectedQuestions.map((q) => q.questionType)));
+      const typeLabel =
+        types.length === 1
+          ? types[0] === 'CODING'
+            ? 'Coding Assessment'
+            : 'MCQ Assessment'
+          : 'Comprehensive Assessment';
       setTitle(`${typeLabel} - ${dateStr} (${selectedQuestions.length} Questions)`);
-      setDescription(`Generated from Question Bank on ${now.toLocaleString()} with ${selectedQuestions.length} curated problems.`);
+      setDescription(
+        `Generated from Question Bank on ${now.toLocaleString()} with ${selectedQuestions.length} curated problems.`,
+      );
 
       // Calculate reasonable duration (e.g. 15 mins per coding problem, 2 mins per MCQ)
       let estimatedMinutes = 0;
-      selectedQuestions.forEach(q => {
+      selectedQuestions.forEach((q) => {
         if (q.questionType === 'CODING') estimatedMinutes += 20;
         else estimatedMinutes += 3;
       });
@@ -105,7 +124,7 @@ export default function ExportToAssessmentModal({
   }, [questionsToExport]);
 
   const handleRemoveQuestion = (id) => {
-    setQuestionsToExport(prev => prev.filter(q => q.id !== id));
+    setQuestionsToExport((prev) => prev.filter((q) => q.id !== id));
   };
 
   const prepareQuestionPayload = (q) => ({
@@ -180,7 +199,7 @@ export default function ExportToAssessmentModal({
           setIsProcessing(false);
           return;
         }
-        const existing = existingAssessments.find(a => a.id === targetAssessmentId);
+        const existing = existingAssessments.find((a) => a.id === targetAssessmentId);
         targetAssessmentTitle = existing?.title || 'Target Assessment';
 
         // Check if published: backend requires unpublish before adding questions
@@ -200,7 +219,9 @@ export default function ExportToAssessmentModal({
         addedCount++;
       }
 
-      toast.success(`Successfully exported ${addedCount} questions into "${targetAssessmentTitle}"! 🎉`);
+      toast.success(
+        `Successfully exported ${addedCount} questions into "${targetAssessmentTitle}"! 🎉`,
+      );
 
       setCreatedResult({
         id: targetAssessmentId,
@@ -212,7 +233,9 @@ export default function ExportToAssessmentModal({
       onSuccess?.();
     } catch (err) {
       console.error('Export to Assessment failed:', err);
-      toast.error(err?.response?.data?.message || err?.message || 'Failed to export questions to assessment.');
+      toast.error(
+        err?.response?.data?.message || err?.message || 'Failed to export questions to assessment.',
+      );
     } finally {
       setIsProcessing(false);
       setProgressText('');
@@ -281,7 +304,14 @@ export default function ExportToAssessmentModal({
               <Sparkles size={18} />
             </div>
             <div>
-              <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text-primary, #f9fafb)' }}>
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: 'var(--text-primary, #f9fafb)',
+                }}
+              >
                 Transform to Assessment
               </h2>
               <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted, #9ca3af)' }}>
@@ -311,7 +341,15 @@ export default function ExportToAssessmentModal({
         </div>
 
         {/* Modal Body */}
-        <div style={{ padding: 24, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div
+          style={{
+            padding: 24,
+            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 20,
+          }}
+        >
           {createdResult ? (
             /* Success View */
             <div
@@ -340,11 +378,19 @@ export default function ExportToAssessmentModal({
               </div>
 
               <div>
-                <h3 style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>
+                <h3
+                  style={{
+                    margin: '0 0 6px',
+                    fontSize: 20,
+                    fontWeight: 700,
+                    color: 'var(--text-primary)',
+                  }}
+                >
                   Assessment Ready!
                 </h3>
                 <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)', maxWidth: 440 }}>
-                  Successfully added <strong>{createdResult.count} questions</strong> ({createdResult.totalMarks} total pts) into:
+                  Successfully added <strong>{createdResult.count} questions</strong> (
+                  {createdResult.totalMarks} total pts) into:
                 </p>
                 <div
                   style={{
@@ -364,10 +410,7 @@ export default function ExportToAssessmentModal({
               </div>
 
               <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
-                <Button
-                  variant="secondary"
-                  onClick={onClose}
-                >
+                <Button variant="secondary" onClick={onClose}>
                   Close & Stay Here
                 </Button>
                 <Button
@@ -405,12 +448,14 @@ export default function ExportToAssessmentModal({
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <Badge tone="primary">{questionsToExport.length} Questions Selected</Badge>
                   <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-                    • Total Marks: <strong style={{ color: 'var(--text-primary)' }}>{totalMarks} pts</strong>
+                    • Total Marks:{' '}
+                    <strong style={{ color: 'var(--text-primary)' }}>{totalMarks} pts</strong>
                   </span>
                 </div>
 
                 <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                  {questionsToExport.filter(q => q.questionType === 'CODING').length} Coding • {questionsToExport.filter(q => q.questionType === 'MULTIPLE_CHOICE').length} MCQ
+                  {questionsToExport.filter((q) => q.questionType === 'CODING').length} Coding •{' '}
+                  {questionsToExport.filter((q) => q.questionType === 'MULTIPLE_CHOICE').length} MCQ
                 </span>
               </div>
 
@@ -545,7 +590,10 @@ export default function ExportToAssessmentModal({
                       style={{ width: 16, height: 16, cursor: 'pointer' }}
                       disabled={isProcessing}
                     />
-                    <label htmlFor="rand-q-check" style={{ fontSize: 13, color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                    <label
+                      htmlFor="rand-q-check"
+                      style={{ fontSize: 13, color: 'var(--text-secondary)', cursor: 'pointer' }}
+                    >
                       Randomize questions order for each student
                     </label>
                   </div>
@@ -557,7 +605,14 @@ export default function ExportToAssessmentModal({
                       Select Existing Target Assessment <span style={{ color: '#ef4444' }}>*</span>
                     </label>
                     {loadingExisting ? (
-                      <div style={{ padding: 12, textAlign: 'center', fontSize: 13, color: 'var(--text-muted)' }}>
+                      <div
+                        style={{
+                          padding: 12,
+                          textAlign: 'center',
+                          fontSize: 13,
+                          color: 'var(--text-muted)',
+                        }}
+                      >
                         Loading assessments...
                       </div>
                     ) : existingAssessments.length === 0 ? (
@@ -571,7 +626,8 @@ export default function ExportToAssessmentModal({
                           fontSize: 13,
                         }}
                       >
-                        No existing assessments found. Please choose &ldquo;Create New Assessment&rdquo;.
+                        No existing assessments found. Please choose &ldquo;Create New
+                        Assessment&rdquo;.
                       </div>
                     ) : (
                       <select
@@ -588,7 +644,8 @@ export default function ExportToAssessmentModal({
                       </select>
                     )}
                     <p style={{ margin: '6px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>
-                      Selected questions will be appended to this assessment. If the assessment is published, it will be safely reverted to draft to attach the new questions.
+                      Selected questions will be appended to this assessment. If the assessment is
+                      published, it will be safely reverted to draft to attach the new questions.
                     </p>
                   </div>
                 </div>
@@ -596,7 +653,14 @@ export default function ExportToAssessmentModal({
 
               {/* Selected Questions Mini-List (collapsible preview) */}
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: 8,
+                  }}
+                >
                   <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
                     Questions to be Exported ({questionsToExport.length})
                   </span>
@@ -631,7 +695,14 @@ export default function ExportToAssessmentModal({
                           fontSize: 12,
                         }}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, overflow: 'hidden' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            overflow: 'hidden',
+                          }}
+                        >
                           <span
                             style={{
                               display: 'inline-flex',
@@ -667,7 +738,8 @@ export default function ExportToAssessmentModal({
                           style={{
                             border: 'none',
                             background: 'transparent',
-                            color: questionsToExport.length <= 1 ? 'var(--border-color)' : '#ef4444',
+                            color:
+                              questionsToExport.length <= 1 ? 'var(--border-color)' : '#ef4444',
                             cursor: questionsToExport.length <= 1 ? 'not-allowed' : 'pointer',
                             padding: 2,
                             display: 'flex',
@@ -718,11 +790,7 @@ export default function ExportToAssessmentModal({
               background: 'var(--surface-medium, rgba(255, 255, 255, 0.02))',
             }}
           >
-            <Button
-              variant="secondary"
-              onClick={onClose}
-              disabled={isProcessing}
-            >
+            <Button variant="secondary" onClick={onClose} disabled={isProcessing}>
               Cancel
             </Button>
             <Button

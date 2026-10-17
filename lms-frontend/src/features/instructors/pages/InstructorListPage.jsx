@@ -1,8 +1,24 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Users, BookOpen, Calendar, Clock, Search, LayoutGrid, LayoutList,
-  GraduationCap, Award, Layers, ExternalLink, RefreshCw, TrendingUp, Plus, Edit2, Mail, Phone, ShieldCheck
+  Users,
+  BookOpen,
+  Calendar,
+  Clock,
+  Search,
+  LayoutGrid,
+  LayoutList,
+  GraduationCap,
+  Award,
+  Layers,
+  ExternalLink,
+  RefreshCw,
+  TrendingUp,
+  Plus,
+  Edit2,
+  Mail,
+  Phone,
+  ShieldCheck,
 } from 'lucide-react';
 import AdminButton from '../../../components/ui/AdminButton';
 import AdminPagination from '../../../components/ui/AdminPagination';
@@ -15,7 +31,15 @@ import {
 import { ROUTES } from '../../../constants/routes';
 
 function getInitials(str = '') {
-  return str.split(' ').filter(Boolean).slice(0, 2).map((w) => w[0] ?? '').join('').toUpperCase() || 'IN';
+  return (
+    str
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((w) => w[0] ?? '')
+      .join('')
+      .toUpperCase() || 'IN'
+  );
 }
 
 function InstructorAvatar({ name = '', size = 44 }) {
@@ -44,10 +68,30 @@ function InstructorAvatar({ name = '', size = 44 }) {
 }
 
 const ENGAGEMENT_CONFIG = {
-  FULL_TIME: { label: 'Full Time', bg: 'rgba(16, 185, 129, 0.18)', color: '#34d399', border: 'rgba(16, 185, 129, 0.35)' },
-  PART_TIME: { label: 'Part Time', bg: 'rgba(59, 130, 246, 0.18)', color: '#60a5fa', border: 'rgba(59, 130, 246, 0.35)' },
-  CONTRACT: { label: 'Contract', bg: 'rgba(245, 158, 11, 0.18)', color: '#fbbf24', border: 'rgba(245, 158, 11, 0.35)' },
-  VISITING: { label: 'Visiting', bg: 'rgba(168, 85, 247, 0.18)', color: '#c084fc', border: 'rgba(168, 85, 247, 0.35)' },
+  FULL_TIME: {
+    label: 'Full Time',
+    bg: 'rgba(16, 185, 129, 0.18)',
+    color: '#34d399',
+    border: 'rgba(16, 185, 129, 0.35)',
+  },
+  PART_TIME: {
+    label: 'Part Time',
+    bg: 'rgba(59, 130, 246, 0.18)',
+    color: '#60a5fa',
+    border: 'rgba(59, 130, 246, 0.35)',
+  },
+  CONTRACT: {
+    label: 'Contract',
+    bg: 'rgba(245, 158, 11, 0.18)',
+    color: '#fbbf24',
+    border: 'rgba(245, 158, 11, 0.35)',
+  },
+  VISITING: {
+    label: 'Visiting',
+    bg: 'rgba(168, 85, 247, 0.18)',
+    color: '#c084fc',
+    border: 'rgba(168, 85, 247, 0.35)',
+  },
 };
 
 function EngagementPill({ type }) {
@@ -129,9 +173,24 @@ function AccountBadge({ row }) {
 
 /* ── Skeleton Card ── */
 function SkeletonCard() {
-  const s = { background: 'var(--skeleton-bg, #e2e8f0)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' };
+  const s = {
+    background: 'var(--skeleton-bg, #e2e8f0)',
+    borderRadius: 8,
+    animation: 'pulse 1.5s ease-in-out infinite',
+  };
   return (
-    <div style={{ background: 'var(--card, #ffffff)', border: '1px solid var(--border, #e2e8f0)', borderRadius: 16, padding: 22, display: 'flex', flexDirection: 'column', gap: 14, boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))' }}>
+    <div
+      style={{
+        background: 'var(--card, #ffffff)',
+        border: '1px solid var(--border, #e2e8f0)',
+        borderRadius: 16,
+        padding: 22,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 14,
+        boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
+      }}
+    >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ ...s, width: 80, height: 24, borderRadius: 6 }} />
         <div style={{ ...s, width: 80, height: 24, borderRadius: 99 }} />
@@ -173,12 +232,16 @@ export const InstructorListPage = () => {
     }
   });
 
-
   const {
     data: pageData,
     isLoading,
     refetch,
-  } = useInstructors({ search, employmentType: employmentType || undefined, page, size: PAGE_SIZE });
+  } = useInstructors({
+    search,
+    employmentType: employmentType || undefined,
+    page,
+    size: PAGE_SIZE,
+  });
 
   const instructors = useMemo(() => pageData?.content || [], [pageData]);
   const totalPages = pageData?.totalPages ?? 0;
@@ -200,11 +263,20 @@ export const InstructorListPage = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: 24,
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+              letterSpacing: '-0.5px',
+            }}
+          >
             Instructors & Faculty
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)' }}>
-            Everyone who teaches at the centre. Manage faculty credentials, engagement types, and assigned cohorts.
+            Everyone who teaches at the centre. Manage faculty credentials, engagement types, and
+            assigned cohorts.
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -234,10 +306,42 @@ export const InstructorListPage = () => {
         }}
       >
         {[
-          { label: 'Total Faculty', val: stats.total, sub: 'Registered institution educators', icon: Users, tone: '#3b82f6', bg: 'var(--card-blue)', border: 'var(--card-blue-border)' },
-          { label: 'Full-Time Staff', val: stats.fullTime, sub: 'Core curriculum instructors', icon: Award, tone: '#10b981', bg: 'var(--card-green)', border: 'var(--card-green-border)' },
-          { label: 'Active Faculty', val: stats.active, sub: 'Teaching & evaluating cohorts', icon: TrendingUp, tone: '#f59e0b', bg: 'var(--card-yellow)', border: 'var(--card-yellow-border)' },
-          { label: 'Avg Experience', val: `${stats.avgExp} yrs`, sub: 'Cumulative technical depth', icon: Clock, tone: '#8b5cf6', bg: 'var(--card-purple)', border: 'var(--card-purple-border)' },
+          {
+            label: 'Total Faculty',
+            val: stats.total,
+            sub: 'Registered institution educators',
+            icon: Users,
+            tone: '#3b82f6',
+            bg: 'var(--card-blue)',
+            border: 'var(--card-blue-border)',
+          },
+          {
+            label: 'Full-Time Staff',
+            val: stats.fullTime,
+            sub: 'Core curriculum instructors',
+            icon: Award,
+            tone: '#10b981',
+            bg: 'var(--card-green)',
+            border: 'var(--card-green-border)',
+          },
+          {
+            label: 'Active Faculty',
+            val: stats.active,
+            sub: 'Teaching & evaluating cohorts',
+            icon: TrendingUp,
+            tone: '#f59e0b',
+            bg: 'var(--card-yellow)',
+            border: 'var(--card-yellow-border)',
+          },
+          {
+            label: 'Avg Experience',
+            val: `${stats.avgExp} yrs`,
+            sub: 'Cumulative technical depth',
+            icon: Clock,
+            tone: '#8b5cf6',
+            bg: 'var(--card-purple)',
+            border: 'var(--card-purple-border)',
+          },
         ].map((m, idx) => {
           const Icon = m.icon;
           return (
@@ -255,10 +359,27 @@ export const InstructorListPage = () => {
               }}
             >
               <div>
-                <p style={{ margin: 0, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)' }}>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 11,
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: 'var(--text-secondary)',
+                  }}
+                >
                   {m.label}
                 </p>
-                <div style={{ fontSize: 26, fontWeight: 800, color: 'var(--text-primary)', marginTop: 4, letterSpacing: '-0.02em' }}>
+                <div
+                  style={{
+                    fontSize: 26,
+                    fontWeight: 800,
+                    color: 'var(--text-primary)',
+                    marginTop: 4,
+                    letterSpacing: '-0.02em',
+                  }}
+                >
                   {m.val}
                 </div>
                 <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
@@ -331,13 +452,29 @@ export const InstructorListPage = () => {
                 outline: 'none',
                 transition: 'border-color 0.2s, background 0.2s',
               }}
-              onFocus={(e) => { e.target.style.borderColor = 'var(--primary, #22c55e)'; e.target.style.background = 'var(--card, #ffffff)'; }}
-              onBlur={(e) => { e.target.style.borderColor = 'var(--border, #e2e8f0)'; e.target.style.background = 'var(--color-bg, #f5f7fa)'; }}
+              onFocus={(e) => {
+                e.target.style.borderColor = 'var(--primary, #22c55e)';
+                e.target.style.background = 'var(--card, #ffffff)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'var(--border, #e2e8f0)';
+                e.target.style.background = 'var(--color-bg, #f5f7fa)';
+              }}
             />
           </div>
 
           {/* Engagement Status Pills */}
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', background: 'var(--color-bg, #f5f7fa)', padding: 4, borderRadius: 99, border: '1px solid var(--border, #e2e8f0)' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: 6,
+              flexWrap: 'wrap',
+              background: 'var(--color-bg, #f5f7fa)',
+              padding: 4,
+              borderRadius: 99,
+              border: '1px solid var(--border, #e2e8f0)',
+            }}
+          >
             {ENGAGEMENT_FILTERS.map((f) => {
               const active = employmentType === f.id;
               return (
@@ -355,13 +492,19 @@ export const InstructorListPage = () => {
                     cursor: 'pointer',
                     fontFamily: 'inherit',
                     background: active ? 'var(--text-primary, #1a1a2e)' : 'transparent',
-                    color: active ? 'var(--color-surface, #ffffff)' : 'var(--text-secondary, #64748b)',
+                    color: active
+                      ? 'var(--color-surface, #ffffff)'
+                      : 'var(--text-secondary, #64748b)',
                     border: 'none',
                     boxShadow: active ? '0 1px 4px rgba(0,0,0,0.12)' : 'none',
                     transition: 'all 0.15s ease',
                   }}
-                  onMouseEnter={(e) => { if (!active) e.currentTarget.style.color = 'var(--text-primary, #1a1a2e)'; }}
-                  onMouseLeave={(e) => { if (!active) e.currentTarget.style.color = 'var(--text-secondary, #64748b)'; }}
+                  onMouseEnter={(e) => {
+                    if (!active) e.currentTarget.style.color = 'var(--text-primary, #1a1a2e)';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!active) e.currentTarget.style.color = 'var(--text-secondary, #64748b)';
+                  }}
                 >
                   {f.label}
                 </button>
@@ -389,7 +532,11 @@ export const InstructorListPage = () => {
                   key={id}
                   onClick={() => {
                     setViewMode(id);
-                    try { localStorage.setItem('lms_instructor_view_mode', id); } catch { /* storage may be unavailable */ }
+                    try {
+                      localStorage.setItem('lms_instructor_view_mode', id);
+                    } catch {
+                      /* storage may be unavailable */
+                    }
                   }}
                   title={title}
                   style={{
@@ -400,7 +547,10 @@ export const InstructorListPage = () => {
                     display: 'flex',
                     alignItems: 'center',
                     background: viewMode === id ? 'var(--card, #ffffff)' : 'transparent',
-                    color: viewMode === id ? 'var(--text-primary, #1a1a2e)' : 'var(--text-muted, #94a3b8)',
+                    color:
+                      viewMode === id
+                        ? 'var(--text-primary, #1a1a2e)'
+                        : 'var(--text-muted, #94a3b8)',
                     boxShadow: viewMode === id ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                     transition: 'all 0.15s',
                   }}
@@ -415,19 +565,48 @@ export const InstructorListPage = () => {
 
       {/* Main Content Section */}
       {isLoading ? (
-        <div style={{ display: 'grid', gap: 20, gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))' }}>
-          {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+        <div
+          style={{
+            display: 'grid',
+            gap: 20,
+            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+          }}
+        >
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
         </div>
       ) : instructors.length === 0 ? (
-        <div style={{ padding: 48, textAlign: 'center', background: 'var(--lms-card)', borderRadius: 16, border: '1px solid var(--border-color)' }}>
+        <div
+          style={{
+            padding: 48,
+            textAlign: 'center',
+            background: 'var(--lms-card)',
+            borderRadius: 16,
+            border: '1px solid var(--border-color)',
+          }}
+        >
           <GraduationCap size={48} style={{ color: 'var(--text-muted)', margin: '0 auto 16px' }} />
-          <p style={{ margin: '0 0 8px', fontWeight: 600, color: 'var(--text-primary)', fontSize: 18 }}>No instructors found</p>
+          <p
+            style={{
+              margin: '0 0 8px',
+              fontWeight: 600,
+              color: 'var(--text-primary)',
+              fontSize: 18,
+            }}
+          >
+            No instructors found
+          </p>
           <p style={{ margin: '0 0 20px', color: 'var(--text-muted)', fontSize: 14 }}>
             {search || employmentType
               ? 'Try adjusting your search query or reset engagement filters.'
               : 'Onboard your first instructor to see them here.'}
           </p>
-          <AdminButton variant="primary" icon={<Plus className="h-4 w-4" />} onClick={() => navigate(ROUTES.INSTRUCTOR_CREATE)}>
+          <AdminButton
+            variant="primary"
+            icon={<Plus className="h-4 w-4" />}
+            onClick={() => navigate(ROUTES.INSTRUCTOR_CREATE)}
+          >
             Add New Instructor
           </AdminButton>
         </div>
@@ -468,7 +647,15 @@ export const InstructorListPage = () => {
               }}
             >
               {/* Header: Employee Code & Engagement */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 14 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 10,
+                  marginBottom: 14,
+                }}
+              >
                 <span
                   style={{
                     padding: '3px 8px',
@@ -507,9 +694,20 @@ export const InstructorListPage = () => {
                   >
                     {row.fullName}
                   </h3>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 5,
+                      fontSize: 12,
+                      color: 'var(--text-muted)',
+                      marginTop: 2,
+                    }}
+                  >
                     <Mail size={12} color="var(--text-muted)" />
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <span
+                      style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                    >
                       {row.email}
                     </span>
                   </div>
@@ -530,22 +728,42 @@ export const InstructorListPage = () => {
                   gap: 6,
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--color-primary, #6366f1)', fontWeight: 600 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    color: 'var(--color-primary, #6366f1)',
+                    fontWeight: 600,
+                  }}
+                >
                   <BookOpen size={13} />
                   <span>{row.specialization || 'Technical Instructor'}</span>
                 </div>
                 {row.institution && (
                   <div style={{ color: 'var(--text-muted)', fontSize: 11 }}>
-                    {row.highestQualification ? `${row.highestQualification} • ` : ''}{row.institution}
+                    {row.highestQualification ? `${row.highestQualification} • ` : ''}
+                    {row.institution}
                   </div>
                 )}
               </div>
 
               {/* Metadata row */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-secondary)', marginBottom: 16 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  fontSize: 12,
+                  color: 'var(--text-secondary)',
+                  marginBottom: 16,
+                }}
+              >
                 <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                   <Clock size={13} color="var(--color-primary, #6366f1)" />
-                  <span>{row.yearsOfExperience != null ? `${row.yearsOfExperience} yrs exp.` : 'Senior'}</span>
+                  <span>
+                    {row.yearsOfExperience != null ? `${row.yearsOfExperience} yrs exp.` : 'Senior'}
+                  </span>
                 </span>
                 {row.phone && (
                   <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -612,8 +830,14 @@ export const InstructorListPage = () => {
                     gap: 5,
                     transition: 'all 0.2s',
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--background)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'var(--card)';
+                    e.currentTarget.style.color = 'var(--text-primary)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'var(--background)';
+                    e.currentTarget.style.color = 'var(--text-secondary)';
+                  }}
                 >
                   <Edit2 size={13} />
                   <span>Edit</span>
@@ -634,21 +858,87 @@ export const InstructorListPage = () => {
           }}
         >
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}>
+            <table
+              style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}
+            >
               <thead>
-                <tr style={{ borderBottom: '1px solid var(--border)', backgroundColor: 'var(--background)' }}>
-                  <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>Faculty Member</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 600, color: 'var(--text-secondary)' }}>Employee ID</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 600, color: 'var(--text-secondary)' }}>Specialization & Background</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 600, color: 'var(--text-secondary)' }}>Engagement</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 600, color: 'var(--text-secondary)' }}>Experience & Contact</th>
-                  <th style={{ padding: '14px 18px', fontWeight: 600, color: 'var(--text-secondary)' }}>Status</th>
-                  <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)', textAlign: 'right' }}>Actions</th>
+                <tr
+                  style={{
+                    borderBottom: '1px solid var(--border)',
+                    backgroundColor: 'var(--background)',
+                  }}
+                >
+                  <th
+                    style={{
+                      padding: '14px 20px',
+                      fontWeight: 600,
+                      color: 'var(--text-secondary)',
+                    }}
+                  >
+                    Faculty Member
+                  </th>
+                  <th
+                    style={{
+                      padding: '14px 18px',
+                      fontWeight: 600,
+                      color: 'var(--text-secondary)',
+                    }}
+                  >
+                    Employee ID
+                  </th>
+                  <th
+                    style={{
+                      padding: '14px 18px',
+                      fontWeight: 600,
+                      color: 'var(--text-secondary)',
+                    }}
+                  >
+                    Specialization & Background
+                  </th>
+                  <th
+                    style={{
+                      padding: '14px 18px',
+                      fontWeight: 600,
+                      color: 'var(--text-secondary)',
+                    }}
+                  >
+                    Engagement
+                  </th>
+                  <th
+                    style={{
+                      padding: '14px 18px',
+                      fontWeight: 600,
+                      color: 'var(--text-secondary)',
+                    }}
+                  >
+                    Experience & Contact
+                  </th>
+                  <th
+                    style={{
+                      padding: '14px 18px',
+                      fontWeight: 600,
+                      color: 'var(--text-secondary)',
+                    }}
+                  >
+                    Status
+                  </th>
+                  <th
+                    style={{
+                      padding: '14px 20px',
+                      fontWeight: 600,
+                      color: 'var(--text-secondary)',
+                      textAlign: 'right',
+                    }}
+                  >
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {instructors.map((row) => {
-                  const backgroundSubtitle = [row.qualification, row.institution].filter(Boolean).join(' • ');
+                  const backgroundSubtitle = [row.qualification, row.institution]
+                    .filter(Boolean)
+                    .join(' • ');
                   return (
                     <tr
                       key={row.id}
@@ -658,16 +948,37 @@ export const InstructorListPage = () => {
                         transition: 'background-color 0.15s ease',
                         cursor: 'pointer',
                       }}
-                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--background)'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = 'var(--background)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      }}
                     >
                       {/* Faculty Member */}
                       <td style={{ padding: '14px 20px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                           <InstructorAvatar name={row.fullName} size={38} />
                           <div>
-                            <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: 14 }}>{row.fullName}</div>
-                            <div style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
+                            <div
+                              style={{
+                                fontWeight: 600,
+                                color: 'var(--text-primary)',
+                                fontSize: 14,
+                              }}
+                            >
+                              {row.fullName}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: 12,
+                                color: 'var(--text-muted)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 4,
+                                marginTop: 2,
+                              }}
+                            >
                               <Mail size={12} style={{ color: 'var(--text-muted)' }} />
                               <span>{row.email}</span>
                             </div>
@@ -696,7 +1007,13 @@ export const InstructorListPage = () => {
 
                       {/* Specialization & Background */}
                       <td style={{ padding: '14px 18px', maxWidth: 280 }}>
-                        <div style={{ fontWeight: 600, color: 'var(--color-primary, #6366f1)', fontSize: 13 }}>
+                        <div
+                          style={{
+                            fontWeight: 600,
+                            color: 'var(--color-primary, #6366f1)',
+                            fontSize: 13,
+                          }}
+                        >
                           {row.specialization || 'Technical Instructor'}
                         </div>
                         {backgroundSubtitle && (
@@ -725,13 +1042,29 @@ export const InstructorListPage = () => {
                       <td style={{ padding: '14px 18px' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                           {row.yearsOfExperience != null && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-primary)' }}>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 6,
+                                fontSize: 12,
+                                color: 'var(--text-primary)',
+                              }}
+                            >
                               <Clock size={12} style={{ color: 'var(--color-primary, #6366f1)' }} />
                               <span>{row.yearsOfExperience} yrs exp.</span>
                             </div>
                           )}
                           {row.phone && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--text-muted)' }}>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 6,
+                                fontSize: 11,
+                                color: 'var(--text-muted)',
+                              }}
+                            >
                               <Phone size={11} style={{ color: '#10b981' }} />
                               <span>{row.phone}</span>
                             </div>
@@ -746,7 +1079,10 @@ export const InstructorListPage = () => {
 
                       {/* Actions */}
                       <td style={{ padding: '14px 20px', textAlign: 'right' }}>
-                        <div style={{ display: 'inline-flex', gap: 8 }} onClick={(e) => e.stopPropagation()}>
+                        <div
+                          style={{ display: 'inline-flex', gap: 8 }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <button
                             onClick={() => navigate(ROUTES.INSTRUCTOR_DETAILS(row.id))}
                             style={{
@@ -781,8 +1117,14 @@ export const InstructorListPage = () => {
                               gap: 4,
                               transition: 'all 0.15s',
                             }}
-                            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--card)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--background)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = 'var(--card)';
+                              e.currentTarget.style.color = 'var(--text-primary)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = 'var(--background)';
+                              e.currentTarget.style.color = 'var(--text-secondary)';
+                            }}
                           >
                             <Edit2 size={12} />
                             <span>Edit</span>

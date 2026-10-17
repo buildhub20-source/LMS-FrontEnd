@@ -29,7 +29,7 @@ export const Header = ({ onToggleSidebar, tabNav }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const isStudent = (user?.roles ?? []).some(
-    (r) => (typeof r === 'string' ? r : r?.name) === 'STUDENT'
+    (r) => (typeof r === 'string' ? r : r?.name) === 'STUDENT',
   );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { unreadCount: socketUnreadCount } = useNotificationSocket();
@@ -56,7 +56,12 @@ export const Header = ({ onToggleSidebar, tabNav }) => {
 
   const getInitials = (name) => {
     if (!name) return '?';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   return (
@@ -79,9 +84,7 @@ export const Header = ({ onToggleSidebar, tabNav }) => {
       </button>
 
       {/* Tab Navigation (centered) */}
-      <div className="flex-1 flex justify-center">
-        {tabNav}
-      </div>
+      <div className="flex-1 flex justify-center">{tabNav}</div>
 
       {/* Right-side actions */}
       <div className="flex items-center gap-2">
@@ -162,8 +165,10 @@ export const Header = ({ onToggleSidebar, tabNav }) => {
             >
               <Avatar className="h-8 w-8 border-2" style={{ borderColor: 'var(--border)' }}>
                 {user?.avatarUrl && <AvatarImage src={user.avatarUrl} alt={user?.fullName} />}
-                <AvatarFallback className="text-xs font-semibold"
-                  style={{ background: 'var(--primary)', color: 'var(--primary-foreground)' }}>
+                <AvatarFallback
+                  className="text-xs font-semibold"
+                  style={{ background: 'var(--primary)', color: 'var(--primary-foreground)' }}
+                >
                   {getInitials(user?.fullName || user?.email)}
                 </AvatarFallback>
               </Avatar>
@@ -171,12 +176,13 @@ export const Header = ({ onToggleSidebar, tabNav }) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-lg">
             <div className="px-2.5 py-2">
-              <p className="text-xs font-semibold truncate leading-tight" style={{ color: 'var(--foreground)' }}>
+              <p
+                className="text-xs font-semibold truncate leading-tight"
+                style={{ color: 'var(--foreground)' }}
+              >
                 {user?.fullName || user?.name || 'User'}
               </p>
-              <p className="text-[11px] truncate opacity-60 leading-tight">
-                {user?.email}
-              </p>
+              <p className="text-[11px] truncate opacity-60 leading-tight">{user?.email}</p>
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
@@ -187,7 +193,10 @@ export const Header = ({ onToggleSidebar, tabNav }) => {
             </DropdownMenuItem>
             {isStudent && (
               <DropdownMenuItem asChild>
-                <Link to={ROUTES.NOTES_BOOKMARKS || '#'} className="cursor-pointer flex items-center gap-2 text-xs">
+                <Link
+                  to={ROUTES.NOTES_BOOKMARKS || '#'}
+                  className="cursor-pointer flex items-center gap-2 text-xs"
+                >
                   <Bookmark size={14} />
                   <span>Saved & Notes</span>
                 </Link>

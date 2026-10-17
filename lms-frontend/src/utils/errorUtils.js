@@ -80,7 +80,8 @@ export const categorizeAuthError = (error) => {
       code: code || 'TENANT_NOT_FOUND',
       type: 'TENANT_NOT_FOUND',
       title: 'Workspace Not Found',
-      message: 'This learning workspace does not exist. Please check your workspace URL or subdomain.',
+      message:
+        'This learning workspace does not exist. Please check your workspace URL or subdomain.',
     };
   }
 
@@ -112,7 +113,8 @@ export const categorizeAuthError = (error) => {
         type: 'TENANT_INACTIVE',
         title: 'Workspace Inactive',
         message:
-          rawMsg || 'This learning workspace is currently inactive or suspended. Contact an administrator.',
+          rawMsg ||
+          'This learning workspace is currently inactive or suspended. Contact an administrator.',
       };
     }
 

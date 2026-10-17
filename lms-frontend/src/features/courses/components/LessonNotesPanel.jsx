@@ -68,7 +68,9 @@ export const LessonNotesPanel = ({
       try {
         localStorage.setItem(storageKey, noteContent);
         setLastSaved(new Date());
-      } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
+      } catch {
+        /* Best-effort browser cleanup; failure must not block the workflow. */
+      }
     }, 600);
     return () => clearTimeout(timer);
   }, [noteContent, storageKey]);
@@ -98,7 +100,9 @@ export const LessonNotesPanel = ({
       setNoteContent('');
       try {
         localStorage.removeItem(storageKey);
-      } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
+      } catch {
+        /* Best-effort browser cleanup; failure must not block the workflow. */
+      }
     }
   }, [storageKey]);
 
@@ -117,7 +121,9 @@ export const LessonNotesPanel = ({
               content,
             };
           }
-        } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
+        } catch {
+          /* Best-effort browser cleanup; failure must not block the workflow. */
+        }
         return null;
       })
       .filter(Boolean);
@@ -179,7 +185,7 @@ export const LessonNotesPanel = ({
         >
           <Clock size={11} />
           {timeStr}
-        </button>
+        </button>,
       );
       lastIdx = match.index + match[0].length;
     }
@@ -227,7 +233,8 @@ export const LessonNotesPanel = ({
               fontWeight: 600,
               border: 'none',
               cursor: 'pointer',
-              background: activeSubTab === 'current' ? 'var(--color-primary-500, #3b82f6)' : 'transparent',
+              background:
+                activeSubTab === 'current' ? 'var(--color-primary-500, #3b82f6)' : 'transparent',
               color: activeSubTab === 'current' ? '#fff' : 'var(--text-muted, #a1a1aa)',
             }}
           >
@@ -246,7 +253,8 @@ export const LessonNotesPanel = ({
               fontWeight: 600,
               border: 'none',
               cursor: 'pointer',
-              background: activeSubTab === 'all' ? 'var(--color-primary-500, #3b82f6)' : 'transparent',
+              background:
+                activeSubTab === 'all' ? 'var(--color-primary-500, #3b82f6)' : 'transparent',
               color: activeSubTab === 'all' ? '#fff' : 'var(--text-muted, #a1a1aa)',
             }}
           >
@@ -372,7 +380,9 @@ export const LessonNotesPanel = ({
               }}
             >
               <Save size={11} />
-              {lastSaved ? `Autosaved ${lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Ready'}
+              {lastSaved
+                ? `Autosaved ${lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                : 'Ready'}
             </span>
           </div>
 
@@ -412,7 +422,14 @@ export const LessonNotesPanel = ({
                 lineHeight: 1.6,
               }}
             >
-              <span style={{ fontSize: 11, color: 'var(--text-muted, #71717a)', display: 'block', marginBottom: 4 }}>
+              <span
+                style={{
+                  fontSize: 11,
+                  color: 'var(--text-muted, #71717a)',
+                  display: 'block',
+                  marginBottom: 4,
+                }}
+              >
                 Interactive Timestamps Preview (click to seek):
               </span>
               <div style={{ color: 'var(--text-secondary, #d4d4d8)', whiteSpace: 'pre-wrap' }}>
@@ -466,7 +483,9 @@ export const LessonNotesPanel = ({
                     marginBottom: 6,
                   }}
                 >
-                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary, #f4f4f5)' }}>
+                  <span
+                    style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary, #f4f4f5)' }}
+                  >
                     {item.lessonTitle}
                   </span>
                   {onSelectLesson && (

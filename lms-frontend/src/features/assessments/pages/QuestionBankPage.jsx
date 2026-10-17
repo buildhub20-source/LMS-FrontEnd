@@ -1,9 +1,27 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
-  BookOpen, Search, Filter, Plus, Code2, CheckCircle2,
-  ListFilter, Sparkles, Copy, Check, Eye, Trash2, Tag,
-  Clock, Database, Layers, ArrowUpRight, CheckSquare, Square,
-  Upload, Download, FileText
+  BookOpen,
+  Search,
+  Filter,
+  Plus,
+  Code2,
+  CheckCircle2,
+  ListFilter,
+  Sparkles,
+  Copy,
+  Check,
+  Eye,
+  Trash2,
+  Tag,
+  Clock,
+  Database,
+  Layers,
+  ArrowUpRight,
+  CheckSquare,
+  Square,
+  Upload,
+  Download,
+  FileText,
 } from 'lucide-react';
 import Button from '../../../components/common/Button';
 import Badge from '../../../components/common/Badge';
@@ -56,7 +74,7 @@ export default function QuestionBankPage() {
   };
 
   const toggleSelect = (id) => {
-    setSelectedIds(prev => {
+    setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
@@ -68,12 +86,12 @@ export default function QuestionBankPage() {
     if (selectedIds.size === questions.length) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(questions.map(q => q.id)));
+      setSelectedIds(new Set(questions.map((q) => q.id)));
     }
   };
 
   const handleExportSelected = () => {
-    const toExport = questions.filter(q => selectedIds.has(q.id));
+    const toExport = questions.filter((q) => selectedIds.has(q.id));
     if (toExport.length === 0) {
       // Default to all currently filtered questions
       setExportQuestionsList(questions);
@@ -89,9 +107,8 @@ export default function QuestionBankPage() {
   };
 
   const handleExportFile = (format) => {
-    const toExport = selectedIds.size > 0
-      ? questions.filter((q) => selectedIds.has(q.id))
-      : questions;
+    const toExport =
+      selectedIds.size > 0 ? questions.filter((q) => selectedIds.has(q.id)) : questions;
 
     if (toExport.length === 0) {
       toast.error('No questions available to export.');
@@ -154,9 +171,17 @@ export default function QuestionBankPage() {
 
   return (
     <div style={{ width: '100%', minHeight: '80vh' }}>
-      
       {/* ── Page Header ── */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 24 }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 16,
+          marginBottom: 24,
+        }}
+      >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
             <div
@@ -192,7 +217,8 @@ export default function QuestionBankPage() {
             </span>
           </div>
           <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)' }}>
-            Standardized repository of coding challenges, algorithmic exercises, and multiple choice questions ready to transform into assessments.
+            Standardized repository of coding challenges, algorithmic exercises, and multiple choice
+            questions ready to transform into assessments.
           </p>
         </div>
 
@@ -272,7 +298,6 @@ export default function QuestionBankPage() {
         </div>
       </div>
 
-
       {/* ── Quick Stats Strip ── */}
       <div
         style={{
@@ -283,8 +308,17 @@ export default function QuestionBankPage() {
         }}
       >
         <div style={statCardStyle}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-            <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>Questions Available</span>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 6,
+            }}
+          >
+            <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>
+              Questions Available
+            </span>
             <Layers size={16} color="#3b82f6" />
           </div>
           <span style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-primary)' }}>
@@ -293,23 +327,37 @@ export default function QuestionBankPage() {
         </div>
 
         <div style={statCardStyle}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-            <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>Coding Challenges</span>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 6,
+            }}
+          >
+            <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>
+              Coding Challenges
+            </span>
             <Code2 size={16} color="#10b981" />
           </div>
-          <span style={{ fontSize: 24, fontWeight: 800, color: '#10b981' }}>
-            {stats.coding}
-          </span>
+          <span style={{ fontSize: 24, fontWeight: 800, color: '#10b981' }}>{stats.coding}</span>
         </div>
 
         <div style={statCardStyle}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-            <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>MCQ Pools</span>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 6,
+            }}
+          >
+            <span style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>
+              MCQ Pools
+            </span>
             <ListFilter size={16} color="#a855f7" />
           </div>
-          <span style={{ fontSize: 24, fontWeight: 800, color: '#a855f7' }}>
-            {stats.mcq}
-          </span>
+          <span style={{ fontSize: 24, fontWeight: 800, color: '#a855f7' }}>{stats.mcq}</span>
         </div>
       </div>
 
@@ -475,8 +523,12 @@ export default function QuestionBankPage() {
                 gap: 6,
                 padding: '7px 14px',
                 borderRadius: 8,
-                border: selectedIds.size > 0 ? '1px solid #3b82f6' : '1px solid var(--border-color)',
-                background: selectedIds.size > 0 ? '#3b82f6' : 'var(--surface-medium, rgba(255, 255, 255, 0.04))',
+                border:
+                  selectedIds.size > 0 ? '1px solid #3b82f6' : '1px solid var(--border-color)',
+                background:
+                  selectedIds.size > 0
+                    ? '#3b82f6'
+                    : 'var(--surface-medium, rgba(255, 255, 255, 0.04))',
                 color: selectedIds.size > 0 ? '#ffffff' : 'var(--text-primary)',
                 fontWeight: 600,
                 fontSize: 13,
@@ -534,8 +586,8 @@ export default function QuestionBankPage() {
               q.difficulty === 'EASY'
                 ? '#10b981'
                 : q.difficulty === 'MEDIUM'
-                ? '#f59e0b'
-                : '#ef4444';
+                  ? '#f59e0b'
+                  : '#ef4444';
 
             return (
               <div
@@ -548,13 +600,17 @@ export default function QuestionBankPage() {
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 14,
-                  boxShadow: isSelected ? '0 0 0 1px #3b82f6, 0 4px 12px rgba(59, 130, 246, 0.1)' : '0 2px 4px rgba(0,0,0,0.03)',
+                  boxShadow: isSelected
+                    ? '0 0 0 1px #3b82f6, 0 4px 12px rgba(59, 130, 246, 0.1)'
+                    : '0 2px 4px rgba(0,0,0,0.03)',
                   transition: 'all 0.15s ease',
                   position: 'relative',
                 }}
               >
                 {/* Top Row: Selection Checkbox, Format & Difficulty Badges */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <label
                       style={{
@@ -582,7 +638,9 @@ export default function QuestionBankPage() {
                         fontWeight: 600,
                         padding: '2px 8px',
                         borderRadius: 6,
-                        background: isCoding ? 'rgba(59, 130, 246, 0.12)' : 'rgba(168, 85, 247, 0.12)',
+                        background: isCoding
+                          ? 'rgba(59, 130, 246, 0.12)'
+                          : 'rgba(168, 85, 247, 0.12)',
                         color: isCoding ? '#3b82f6' : '#a855f7',
                       }}
                     >
@@ -675,7 +733,9 @@ export default function QuestionBankPage() {
                       ? `${q.testCases?.length || 0} Test Cases (${q.testCases?.filter((t) => t.sample).length || 0} visible)`
                       : `${q.options?.length || 0} Answer Options`}
                   </span>
-                  <span>{isCoding ? `${q.timeLimitMs}ms / ${q.memoryLimitMb}MB` : 'Instant Grading'}</span>
+                  <span>
+                    {isCoding ? `${q.timeLimitMs}ms / ${q.memoryLimitMb}MB` : 'Instant Grading'}
+                  </span>
                 </div>
 
                 {/* Bottom Actions */}

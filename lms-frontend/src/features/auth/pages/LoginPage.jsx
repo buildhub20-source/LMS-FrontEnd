@@ -29,11 +29,13 @@ export const LoginPage = () => {
       errorMessage={error?.message}
       onDismissError={clearError}
       isSubmitting={isSubmitting}
-      description={platformLogin
-        ? 'Sign in to manage tenant databases and their lifecycle.'
-        : tenantSlug
-          ? `Sign in to the ${tenantSlug} learning workspace.`
-          : 'Open a tenant workspace URL to sign in.'}
+      description={
+        platformLogin
+          ? 'Sign in to manage tenant databases and their lifecycle.'
+          : tenantSlug
+            ? `Sign in to the ${tenantSlug} learning workspace.`
+            : 'Open a tenant workspace URL to sign in.'
+      }
       showTenantSlug={false}
     />
   );

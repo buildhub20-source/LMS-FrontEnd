@@ -82,8 +82,12 @@ export const CourseTable = ({ onDelete, onDuplicate, ...props }) => {
               gap: 4,
               transition: 'all 0.15s ease',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--surface-medium, rgba(255,255,255,0.05))'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--surface-medium, rgba(255,255,255,0.05))';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+            }}
           >
             <Copy size={12} />
             <span>Duplicate</span>
@@ -107,8 +111,12 @@ export const CourseTable = ({ onDelete, onDuplicate, ...props }) => {
               justifyContent: 'center',
               transition: 'all 0.15s ease',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)'; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)';
+            }}
           >
             <Trash2 size={13} />
           </button>

@@ -1,9 +1,20 @@
 import { useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Building2, Globe, Mail, ShieldCheck, Settings, CreditCard,
-  Users, BookOpen, GraduationCap, Clock, ArrowUpRight,
-  ExternalLink, Sparkles, ChevronRight
+  Building2,
+  Globe,
+  Mail,
+  ShieldCheck,
+  Settings,
+  CreditCard,
+  Users,
+  BookOpen,
+  GraduationCap,
+  Clock,
+  ArrowUpRight,
+  ExternalLink,
+  Sparkles,
+  ChevronRight,
 } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
@@ -60,50 +71,95 @@ export const OrganizationPage = () => {
         </Button>
       }
     >
-      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
-        {/* ── Organization Hero Card ── */}
-        <div style={{
-          background: 'linear-gradient(135deg, #064e3b 0%, #047857 50%, #059669 100%)',
-          borderRadius: 20,
-          padding: '32px 36px',
-          color: '#ffffff',
-          boxShadow: '0 20px 40px rgba(5, 150, 105, 0.2)',
-          position: 'relative',
-          overflow: 'hidden',
+      <div
+        style={{
+          maxWidth: 1100,
+          margin: '0 auto',
           display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
+          flexDirection: 'column',
           gap: 24,
-        }}>
+        }}
+      >
+        {/* ── Organization Hero Card ── */}
+        <div
+          style={{
+            background: 'linear-gradient(135deg, #064e3b 0%, #047857 50%, #059669 100%)',
+            borderRadius: 20,
+            padding: '32px 36px',
+            color: '#ffffff',
+            boxShadow: '0 20px 40px rgba(5, 150, 105, 0.2)',
+            position: 'relative',
+            overflow: 'hidden',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 24,
+          }}
+        >
           {/* Decorative background glow */}
-          <div style={{
-            position: 'absolute', top: -50, right: -50, width: 220, height: 220,
-            borderRadius: '50%', background: 'rgba(255,255,255,0.06)', pointerEvents: 'none',
-          }} />
+          <div
+            style={{
+              position: 'absolute',
+              top: -50,
+              right: -50,
+              width: 220,
+              height: 220,
+              borderRadius: '50%',
+              background: 'rgba(255,255,255,0.06)',
+              pointerEvents: 'none',
+            }}
+          />
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20, position: 'relative', zIndex: 1 }}>
-            <div style={{
-              width: 68,
-              height: 68,
-              borderRadius: 16,
-              background: 'rgba(255,255,255,0.15)',
-              backdropFilter: 'blur(8px)',
-              border: '1.5px solid rgba(255,255,255,0.3)',
+          <div
+            style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
-            }}>
+              gap: 20,
+              position: 'relative',
+              zIndex: 1,
+            }}
+          >
+            <div
+              style={{
+                width: 68,
+                height: 68,
+                borderRadius: 16,
+                background: 'rgba(255,255,255,0.15)',
+                backdropFilter: 'blur(8px)',
+                border: '1.5px solid rgba(255,255,255,0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
+              }}
+            >
               <Building2 size={34} style={{ color: '#fbbf24' }} />
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, letterSpacing: '-0.02em', color: '#f0f9ff' }}>
+                <h1
+                  style={{
+                    margin: 0,
+                    fontSize: 24,
+                    fontWeight: 800,
+                    letterSpacing: '-0.02em',
+                    color: '#f0f9ff',
+                  }}
+                >
                   {org.name}
                 </h1>
               </div>
-              <p style={{ margin: '6px 0 0', fontSize: 13, opacity: 0.85, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <p
+                style={{
+                  margin: '6px 0 0',
+                  fontSize: 13,
+                  opacity: 0.85,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
                 <Globe size={13} /> {org.domain}
                 <span style={{ opacity: 0.5 }}>•</span>
                 <Mail size={13} /> {org.contactEmail}
@@ -137,118 +193,216 @@ export const OrganizationPage = () => {
         </div>
 
         {/* ── Key Metrics Grid ── */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: 16,
-        }}>
-          {/* Learners Card */}
-          <div style={{
-            background: 'var(--bg-primary)',
-            border: '1px solid var(--border-color)',
-            borderRadius: 14,
-            padding: 20,
-            display: 'flex',
-            alignItems: 'center',
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
             gap: 16,
-            boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
-          }}>
-            <div style={{
-              width: 46, height: 46, borderRadius: 12,
-              background: 'var(--color-info-light, rgba(59,130,246,0.12))', color: 'var(--color-info, #3b82f6)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
+          }}
+        >
+          {/* Learners Card */}
+          <div
+            style={{
+              background: 'var(--bg-primary)',
+              border: '1px solid var(--border-color)',
+              borderRadius: 14,
+              padding: 20,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 16,
+              boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
+            }}
+          >
+            <div
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 12,
+                background: 'var(--color-info-light, rgba(59,130,246,0.12))',
+                color: 'var(--color-info, #3b82f6)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <GraduationCap size={22} />
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  color: 'var(--text-muted)',
+                }}
+              >
                 Active Learners
               </p>
-              <p style={{ margin: '2px 0 0', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+              <p
+                style={{
+                  margin: '2px 0 0',
+                  fontSize: 20,
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                }}
+              >
                 {org.learners}
               </p>
             </div>
           </div>
 
           {/* Instructors Card */}
-          <div style={{
-            background: 'var(--bg-primary)',
-            border: '1px solid var(--border-color)',
-            borderRadius: 14,
-            padding: 20,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 16,
-            boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
-          }}>
-            <div style={{
-              width: 46, height: 46, borderRadius: 12,
-              background: 'rgba(16,185,129,0.12)', color: '#10b981',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
+          <div
+            style={{
+              background: 'var(--bg-primary)',
+              border: '1px solid var(--border-color)',
+              borderRadius: 14,
+              padding: 20,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 16,
+              boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
+            }}
+          >
+            <div
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 12,
+                background: 'rgba(16,185,129,0.12)',
+                color: '#10b981',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <Users size={22} />
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  color: 'var(--text-muted)',
+                }}
+              >
                 Instructors
               </p>
-              <p style={{ margin: '2px 0 0', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+              <p
+                style={{
+                  margin: '2px 0 0',
+                  fontSize: 20,
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                }}
+              >
                 {org.instructors}
               </p>
             </div>
           </div>
 
           {/* Published Courses */}
-          <div style={{
-            background: 'var(--bg-primary)',
-            border: '1px solid var(--border-color)',
-            borderRadius: 14,
-            padding: 20,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 16,
-            boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
-          }}>
-            <div style={{
-              width: 46, height: 46, borderRadius: 12,
-              background: 'rgba(245,158,11,0.12)', color: '#f59e0b',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
+          <div
+            style={{
+              background: 'var(--bg-primary)',
+              border: '1px solid var(--border-color)',
+              borderRadius: 14,
+              padding: 20,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 16,
+              boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
+            }}
+          >
+            <div
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 12,
+                background: 'rgba(245,158,11,0.12)',
+                color: '#f59e0b',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <BookOpen size={22} />
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  color: 'var(--text-muted)',
+                }}
+              >
                 Published Courses
               </p>
-              <p style={{ margin: '2px 0 0', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+              <p
+                style={{
+                  margin: '2px 0 0',
+                  fontSize: 20,
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                }}
+              >
                 {org.publishedCourses}
               </p>
             </div>
           </div>
 
           {/* Members */}
-          <div style={{
-            background: 'var(--bg-primary)',
-            border: '1px solid var(--border-color)',
-            borderRadius: 14,
-            padding: 20,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 16,
-            boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
-          }}>
-            <div style={{
-              width: 46, height: 46, borderRadius: 12,
-              background: 'rgba(14,165,233,0.12)', color: '#0ea5e9',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
+          <div
+            style={{
+              background: 'var(--bg-primary)',
+              border: '1px solid var(--border-color)',
+              borderRadius: 14,
+              padding: 20,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 16,
+              boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
+            }}
+          >
+            <div
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 12,
+                background: 'rgba(14,165,233,0.12)',
+                color: '#0ea5e9',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <Building2 size={22} />
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  color: 'var(--text-muted)',
+                }}
+              >
                 Total Members
               </p>
-              <p style={{ margin: '2px 0 0', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+              <p
+                style={{
+                  margin: '2px 0 0',
+                  fontSize: 20,
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                }}
+              >
                 {org.members}
               </p>
             </div>
@@ -256,11 +410,13 @@ export const OrganizationPage = () => {
         </div>
 
         {/* ── Quick Management Hub ── */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: 20,
-        }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: 20,
+          }}
+        >
           {/* Settings Card */}
           <div
             onClick={() => navigate(ROUTES.ORGANIZATION_SETTINGS)}
@@ -276,24 +432,48 @@ export const OrganizationPage = () => {
               justifyContent: 'space-between',
               gap: 16,
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = '';
+              e.currentTarget.style.boxShadow = '';
+            }}
           >
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-              <div style={{
-                width: 44, height: 44, borderRadius: 12,
-                background: 'var(--color-info-light, rgba(59,130,246,0.12))', color: 'var(--color-info, #3b82f6)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
+            <div
+              style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}
+            >
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 12,
+                  background: 'var(--color-info-light, rgba(59,130,246,0.12))',
+                  color: 'var(--color-info, #3b82f6)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
                 <Settings size={22} />
               </div>
               <ChevronRight size={18} style={{ color: 'var(--text-muted)' }} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+              <h3
+                style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}
+              >
                 Organization Settings
               </h3>
-              <p style={{ margin: '6px 0 0', fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              <p
+                style={{
+                  margin: '6px 0 0',
+                  fontSize: 13,
+                  color: 'var(--text-muted)',
+                  lineHeight: 1.5,
+                }}
+              >
                 Configure branding, custom domain, single sign-on (SSO), and email notifications.
               </p>
             </div>
@@ -314,24 +494,48 @@ export const OrganizationPage = () => {
               justifyContent: 'space-between',
               gap: 16,
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = '';
+              e.currentTarget.style.boxShadow = '';
+            }}
           >
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-              <div style={{
-                width: 44, height: 44, borderRadius: 12,
-                background: 'rgba(245,158,11,0.12)', color: '#f59e0b',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
+            <div
+              style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}
+            >
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 12,
+                  background: 'rgba(245,158,11,0.12)',
+                  color: '#f59e0b',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
                 <CreditCard size={22} />
               </div>
               <ChevronRight size={18} style={{ color: 'var(--text-muted)' }} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+              <h3
+                style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}
+              >
                 Subscription & Plans
               </h3>
-              <p style={{ margin: '6px 0 0', fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              <p
+                style={{
+                  margin: '6px 0 0',
+                  fontSize: 13,
+                  color: 'var(--text-muted)',
+                  lineHeight: 1.5,
+                }}
+              >
                 Manage your billing frequency, view invoices, and compare tier features.
               </p>
             </div>
@@ -352,24 +556,48 @@ export const OrganizationPage = () => {
               justifyContent: 'space-between',
               gap: 16,
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = '';
+              e.currentTarget.style.boxShadow = '';
+            }}
           >
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-              <div style={{
-                width: 44, height: 44, borderRadius: 12,
-                background: 'rgba(16,185,129,0.12)', color: '#10b981',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
+            <div
+              style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}
+            >
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 12,
+                  background: 'rgba(16,185,129,0.12)',
+                  color: '#10b981',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
                 <ShieldCheck size={22} />
               </div>
               <ChevronRight size={18} style={{ color: 'var(--text-muted)' }} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+              <h3
+                style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}
+              >
                 Roles & Access Control
               </h3>
-              <p style={{ margin: '6px 0 0', fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              <p
+                style={{
+                  margin: '6px 0 0',
+                  fontSize: 13,
+                  color: 'var(--text-muted)',
+                  lineHeight: 1.5,
+                }}
+              >
                 Fine-tune permissions for Instructors, Administrators, and Student roles.
               </p>
             </div>

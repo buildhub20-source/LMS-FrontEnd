@@ -9,7 +9,16 @@
 /* Global resets — these MUST NOT set background/color directly
    since globals.css @layer base handles that via shadcn tokens. */
 body {
-  font-family: var(--font-sans, 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif);
+  font-family: var(
+    --font-sans,
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'SF Pro Text',
+    'Segoe UI',
+    Roboto,
+    sans-serif
+  );
   font-size: 14px;
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
@@ -19,15 +28,29 @@ body {
   padding: 0;
 }
 
-a { color: var(--muted-foreground); }
+a {
+  color: var(--muted-foreground);
+}
 
 /* ── Legacy utility classes ──────────────────────────── */
-.bg-surface-dark { background: var(--card) !important; }
-.bg-surface-medium { background: var(--muted) !important; }
-.text-primary { color: var(--foreground) !important; }
-.text-secondary { color: var(--muted-foreground) !important; }
-.text-muted { color: var(--muted-foreground) !important; }
-.rounded { border-radius: var(--radius) !important; }
+.bg-surface-dark {
+  background: var(--card) !important;
+}
+.bg-surface-medium {
+  background: var(--muted) !important;
+}
+.text-primary {
+  color: var(--foreground) !important;
+}
+.text-secondary {
+  color: var(--muted-foreground) !important;
+}
+.text-muted {
+  color: var(--muted-foreground) !important;
+}
+.rounded {
+  border-radius: var(--radius) !important;
+}
 
 /* ── Legacy button classes ───────────────────────────── */
 .btn-primary {
@@ -39,7 +62,9 @@ a { color: var(--muted-foreground); }
   cursor: pointer;
   font-weight: 500;
 }
-.btn-primary:hover { opacity: 0.9; }
+.btn-primary:hover {
+  opacity: 0.9;
+}
 
 .btn-secondary {
   background: var(--card);
@@ -49,7 +74,9 @@ a { color: var(--muted-foreground); }
   border-radius: var(--radius);
   cursor: pointer;
 }
-.btn-secondary:hover { background: var(--muted); }
+.btn-secondary:hover {
+  background: var(--muted);
+}
 
 /* ── Legacy card class ───────────────────────────────── */
 .card {
@@ -61,7 +88,10 @@ a { color: var(--muted-foreground); }
 }
 
 /* ── Legacy table classes ────────────────────────────── */
-.table { width: 100%; border-collapse: collapse; }
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
 .table th {
   background: var(--muted);
   color: var(--foreground);
@@ -74,7 +104,9 @@ a { color: var(--muted-foreground); }
   border-top: 1px solid var(--border);
   color: var(--muted-foreground);
 }
-.table tr:hover { background: var(--muted); }
+.table tr:hover {
+  background: var(--muted);
+}
 
 /* ── Legacy input class ──────────────────────────────── */
 .input {
@@ -84,14 +116,19 @@ a { color: var(--muted-foreground); }
   border-radius: var(--radius);
   padding: 0.5rem 0.75rem;
 }
-.input::placeholder { color: var(--muted-foreground); }
-.input:focus { outline: none; border-color: var(--primary); }
+.input::placeholder {
+  color: var(--muted-foreground);
+}
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
 
 /* ── Modal backdrop ──────────────────────────────────── */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
 }
 

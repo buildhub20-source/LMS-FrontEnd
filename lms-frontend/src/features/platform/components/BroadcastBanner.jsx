@@ -36,10 +36,30 @@ export const BroadcastBanner = () => {
   };
 
   const typeConfig = {
-    INFO: { bg: 'rgba(56, 189, 248, 0.15)', border: 'rgba(56, 189, 248, 0.3)', color: '#38bdf8', icon: Info },
-    WARNING: { bg: 'rgba(234, 179, 8, 0.15)', border: 'rgba(234, 179, 8, 0.3)', color: '#facc15', icon: AlertTriangle },
-    CRITICAL: { bg: 'rgba(239, 68, 68, 0.15)', border: 'rgba(239, 68, 68, 0.3)', color: '#f87171', icon: AlertTriangle },
-    MAINTENANCE: { bg: 'rgba(192, 132, 252, 0.15)', border: 'rgba(192, 132, 252, 0.3)', color: '#c084fc', icon: Megaphone },
+    INFO: {
+      bg: 'rgba(56, 189, 248, 0.15)',
+      border: 'rgba(56, 189, 248, 0.3)',
+      color: '#38bdf8',
+      icon: Info,
+    },
+    WARNING: {
+      bg: 'rgba(234, 179, 8, 0.15)',
+      border: 'rgba(234, 179, 8, 0.3)',
+      color: '#facc15',
+      icon: AlertTriangle,
+    },
+    CRITICAL: {
+      bg: 'rgba(239, 68, 68, 0.15)',
+      border: 'rgba(239, 68, 68, 0.3)',
+      color: '#f87171',
+      icon: AlertTriangle,
+    },
+    MAINTENANCE: {
+      bg: 'rgba(192, 132, 252, 0.15)',
+      border: 'rgba(192, 132, 252, 0.3)',
+      color: '#c084fc',
+      icon: Megaphone,
+    },
   };
 
   const config = typeConfig[current.type] || typeConfig.INFO;
@@ -60,7 +80,16 @@ export const BroadcastBanner = () => {
         color: 'var(--text-primary)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0, flex: 1, paddingRight: 12 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          minWidth: 0,
+          flex: 1,
+          paddingRight: 12,
+        }}
+      >
         <Icon size={16} style={{ color: config.color, flexShrink: 0 }} />
         <span
           style={{
@@ -79,7 +108,14 @@ export const BroadcastBanner = () => {
           {current.type}
         </span>
         <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{current.title}:</span>
-        <span style={{ color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <span
+          style={{
+            color: 'var(--text-secondary)',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
           {current.message}
         </span>
       </div>

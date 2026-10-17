@@ -1,7 +1,16 @@
 import React, { useState, useRef } from 'react';
 import {
-  Upload, FileText, CheckCircle2, AlertTriangle, X, Download,
-  Layers, Code2, Check, FileCheck, ArrowRight
+  Upload,
+  FileText,
+  CheckCircle2,
+  AlertTriangle,
+  X,
+  Download,
+  Layers,
+  Code2,
+  Check,
+  FileCheck,
+  ArrowRight,
 } from 'lucide-react';
 import Button from '../../../components/common/Button';
 import Badge from '../../../components/common/Badge';
@@ -9,7 +18,7 @@ import { questionBankService } from '../services/questionBankService';
 
 /**
  * ImportQuestionsFileModal
- * 
+ *
  * Supports drag-and-drop or browsing of .json and .csv question files.
  * Provides real-time client-side validation, error reports, preview table,
  * and sample template downloads.
@@ -59,7 +68,13 @@ export default function ImportQuestionsFileModal({
     if (ext !== 'json' && ext !== 'csv') {
       setParsedData({
         questions: [],
-        errors: [{ index: 0, title: file.name, reason: 'Unsupported file type. Please upload a .json or .csv file.' }]
+        errors: [
+          {
+            index: 0,
+            title: file.name,
+            reason: 'Unsupported file type. Please upload a .json or .csv file.',
+          },
+        ],
       });
       setSelectedFile(file);
       return;
@@ -73,7 +88,7 @@ export default function ImportQuestionsFileModal({
     } catch (err) {
       setParsedData({
         questions: [],
-        errors: [{ index: 0, title: file.name, reason: 'Failed to parse file: ' + err.message }]
+        errors: [{ index: 0, title: file.name, reason: 'Failed to parse file: ' + err.message }],
       });
     } finally {
       setParsing(false);
@@ -176,7 +191,14 @@ export default function ImportQuestionsFileModal({
               <Upload size={20} />
             </div>
             <div>
-              <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text-primary, #fff)' }}>
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: 'var(--text-primary, #fff)',
+                }}
+              >
                 Import Questions (CSV / JSON)
               </h2>
               <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted, #94a3b8)' }}>
@@ -204,8 +226,16 @@ export default function ImportQuestionsFileModal({
         </div>
 
         {/* Content Body */}
-        <div style={{ padding: 24, overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: 20 }}>
-          
+        <div
+          style={{
+            padding: 24,
+            overflowY: 'auto',
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 20,
+          }}
+        >
           {/* Download sample templates banner */}
           <div
             style={{
@@ -221,7 +251,16 @@ export default function ImportQuestionsFileModal({
             }}
           >
             <div>
-              <div style={{ fontWeight: 600, fontSize: 14, color: '#60a5fa', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div
+                style={{
+                  fontWeight: 600,
+                  fontSize: 14,
+                  color: '#60a5fa',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
                 <FileText size={16} /> Need a formatted template?
               </div>
               <div style={{ fontSize: 12, color: 'var(--text-muted, #94a3b8)', marginTop: 2 }}>
@@ -281,7 +320,9 @@ export default function ImportQuestionsFileModal({
               onClick={() => fileInputRef.current?.click()}
               style={{
                 border: `2px dashed ${dragActive ? '#3b82f6' : 'var(--border-color, #334155)'}`,
-                background: dragActive ? 'rgba(59, 130, 246, 0.05)' : 'var(--surface-dark, #0d0d12)',
+                background: dragActive
+                  ? 'rgba(59, 130, 246, 0.05)'
+                  : 'var(--surface-dark, #0d0d12)',
                 borderRadius: 14,
                 padding: '40px 24px',
                 textAlign: 'center',
@@ -311,11 +352,19 @@ export default function ImportQuestionsFileModal({
               >
                 <Upload size={28} />
               </div>
-              <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 600, color: 'var(--text-primary, #fff)' }}>
+              <h3
+                style={{
+                  margin: '0 0 6px',
+                  fontSize: 16,
+                  fontWeight: 600,
+                  color: 'var(--text-primary, #fff)',
+                }}
+              >
                 Drag & Drop your question file here
               </h3>
               <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted, #94a3b8)' }}>
-                Supports <strong style={{ color: '#fff' }}>.CSV</strong> and <strong style={{ color: '#fff' }}>.JSON</strong> (batch array format)
+                Supports <strong style={{ color: '#fff' }}>.CSV</strong> and{' '}
+                <strong style={{ color: '#fff' }}>.JSON</strong> (batch array format)
               </p>
             </div>
           ) : (
@@ -333,7 +382,9 @@ export default function ImportQuestionsFileModal({
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <FileCheck size={24} color="#10b981" />
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary, #fff)' }}>
+                  <div
+                    style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary, #fff)' }}
+                  >
                     {selectedFile.name}
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--text-muted, #94a3b8)' }}>
@@ -360,7 +411,13 @@ export default function ImportQuestionsFileModal({
 
           {/* Parsing State */}
           {parsing && (
-            <div style={{ textAlign: 'center', padding: '24px 0', color: 'var(--text-muted, #94a3b8)' }}>
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '24px 0',
+                color: 'var(--text-muted, #94a3b8)',
+              }}
+            >
               Parsing and validating questions...
             </div>
           )}
@@ -383,8 +440,12 @@ export default function ImportQuestionsFileModal({
                 >
                   <CheckCircle2 size={24} color="#10b981" />
                   <div>
-                    <div style={{ fontSize: 20, fontWeight: 800, color: '#10b981' }}>{validCount}</div>
-                    <div style={{ fontSize: 12, color: 'var(--text-muted, #94a3b8)' }}>Valid Questions Ready to Import</div>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: '#10b981' }}>
+                      {validCount}
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted, #94a3b8)' }}>
+                      Valid Questions Ready to Import
+                    </div>
                   </div>
                 </div>
 
@@ -392,7 +453,8 @@ export default function ImportQuestionsFileModal({
                   style={{
                     padding: 14,
                     borderRadius: 10,
-                    background: errorCount > 0 ? 'rgba(239, 68, 68, 0.08)' : 'rgba(255, 255, 255, 0.03)',
+                    background:
+                      errorCount > 0 ? 'rgba(239, 68, 68, 0.08)' : 'rgba(255, 255, 255, 0.03)',
                     border: `1px solid ${errorCount > 0 ? 'rgba(239, 68, 68, 0.25)' : 'var(--border-color, #334155)'}`,
                     display: 'flex',
                     alignItems: 'center',
@@ -401,10 +463,18 @@ export default function ImportQuestionsFileModal({
                 >
                   <AlertTriangle size={24} color={errorCount > 0 ? '#ef4444' : '#64748b'} />
                   <div>
-                    <div style={{ fontSize: 20, fontWeight: 800, color: errorCount > 0 ? '#ef4444' : '#64748b' }}>
+                    <div
+                      style={{
+                        fontSize: 20,
+                        fontWeight: 800,
+                        color: errorCount > 0 ? '#ef4444' : '#64748b',
+                      }}
+                    >
                       {errorCount}
                     </div>
-                    <div style={{ fontSize: 12, color: 'var(--text-muted, #94a3b8)' }}>Invalid / Skipped Entries</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted, #94a3b8)' }}>
+                      Invalid / Skipped Entries
+                    </div>
                   </div>
                 </div>
               </div>
@@ -426,7 +496,11 @@ export default function ImportQuestionsFileModal({
                   </div>
                   {parsedData.errors.map((err, idx) => (
                     <div key={idx} style={{ fontSize: 12, color: '#f87171', marginBottom: 4 }}>
-                      • <strong>Row/Index #{err.index} ({err.title}):</strong> {err.reason}
+                      •{' '}
+                      <strong>
+                        Row/Index #{err.index} ({err.title}):
+                      </strong>{' '}
+                      {err.reason}
                     </div>
                   ))}
                 </div>
@@ -435,7 +509,14 @@ export default function ImportQuestionsFileModal({
               {/* Preview of Valid Questions */}
               {validCount > 0 && (
                 <div>
-                  <h4 style={{ margin: '0 0 10px', fontSize: 14, fontWeight: 600, color: 'var(--text-primary, #fff)' }}>
+                  <h4
+                    style={{
+                      margin: '0 0 10px',
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: 'var(--text-primary, #fff)',
+                    }}
+                  >
                     Preview Valid Questions ({validCount}):
                   </h4>
                   <div
@@ -447,13 +528,33 @@ export default function ImportQuestionsFileModal({
                       background: 'var(--surface-dark, #0d0d12)',
                     }}
                   >
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, textAlign: 'left' }}>
+                    <table
+                      style={{
+                        width: '100%',
+                        borderCollapse: 'collapse',
+                        fontSize: 13,
+                        textAlign: 'left',
+                      }}
+                    >
                       <thead>
-                        <tr style={{ borderBottom: '1px solid var(--border-color, #27272a)', background: 'rgba(255,255,255,0.03)' }}>
-                          <th style={{ padding: '8px 12px', color: 'var(--text-muted, #94a3b8)' }}>Title</th>
-                          <th style={{ padding: '8px 12px', color: 'var(--text-muted, #94a3b8)' }}>Type</th>
-                          <th style={{ padding: '8px 12px', color: 'var(--text-muted, #94a3b8)' }}>Difficulty</th>
-                          <th style={{ padding: '8px 12px', color: 'var(--text-muted, #94a3b8)' }}>Marks</th>
+                        <tr
+                          style={{
+                            borderBottom: '1px solid var(--border-color, #27272a)',
+                            background: 'rgba(255,255,255,0.03)',
+                          }}
+                        >
+                          <th style={{ padding: '8px 12px', color: 'var(--text-muted, #94a3b8)' }}>
+                            Title
+                          </th>
+                          <th style={{ padding: '8px 12px', color: 'var(--text-muted, #94a3b8)' }}>
+                            Type
+                          </th>
+                          <th style={{ padding: '8px 12px', color: 'var(--text-muted, #94a3b8)' }}>
+                            Difficulty
+                          </th>
+                          <th style={{ padding: '8px 12px', color: 'var(--text-muted, #94a3b8)' }}>
+                            Marks
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -461,10 +562,19 @@ export default function ImportQuestionsFileModal({
                           <tr
                             key={idx}
                             style={{
-                              borderBottom: idx < validCount - 1 ? '1px solid var(--border-color, #1e293b)' : 'none',
+                              borderBottom:
+                                idx < validCount - 1
+                                  ? '1px solid var(--border-color, #1e293b)'
+                                  : 'none',
                             }}
                           >
-                            <td style={{ padding: '8px 12px', fontWeight: 500, color: 'var(--text-primary, #fff)' }}>
+                            <td
+                              style={{
+                                padding: '8px 12px',
+                                fontWeight: 500,
+                                color: 'var(--text-primary, #fff)',
+                              }}
+                            >
                               {q.title}
                             </td>
                             <td style={{ padding: '8px 12px' }}>
@@ -478,14 +588,20 @@ export default function ImportQuestionsFileModal({
                                   q.difficulty === 'EASY'
                                     ? 'success'
                                     : q.difficulty === 'HARD'
-                                    ? 'error'
-                                    : 'warning'
+                                      ? 'error'
+                                      : 'warning'
                                 }
                               >
                                 {q.difficulty}
                               </Badge>
                             </td>
-                            <td style={{ padding: '8px 12px', color: 'var(--text-primary, #fff)', fontWeight: 600 }}>
+                            <td
+                              style={{
+                                padding: '8px 12px',
+                                color: 'var(--text-primary, #fff)',
+                                fontWeight: 600,
+                              }}
+                            >
                               {q.marks} pts
                             </td>
                           </tr>
@@ -497,7 +613,6 @@ export default function ImportQuestionsFileModal({
               )}
             </div>
           )}
-
         </div>
 
         {/* Footer Actions */}
@@ -526,7 +641,6 @@ export default function ImportQuestionsFileModal({
             <ArrowRight size={16} />
           </Button>
         </div>
-
       </div>
     </div>
   );

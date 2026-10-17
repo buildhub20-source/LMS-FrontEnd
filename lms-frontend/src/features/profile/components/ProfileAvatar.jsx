@@ -135,14 +135,20 @@ export const ProfileAvatar = ({ user, onUpload, isUploading }) => {
           </Button>
         </div>
 
-        <p style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.85)', marginTop: 6, margin: '6px 0 0', textShadow: '0 1px 2px rgba(0,0,0,0.2)' }}>
+        <p
+          style={{
+            fontSize: 12,
+            color: 'rgba(255, 255, 255, 0.85)',
+            marginTop: 6,
+            margin: '6px 0 0',
+            textShadow: '0 1px 2px rgba(0,0,0,0.2)',
+          }}
+        >
           PNG, JPG, or GIF up to 5MB. Square ratio works best.
         </p>
 
         {error && (
-          <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4, fontWeight: 500 }}>
-            {error}
-          </p>
+          <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4, fontWeight: 500 }}>{error}</p>
         )}
       </div>
 

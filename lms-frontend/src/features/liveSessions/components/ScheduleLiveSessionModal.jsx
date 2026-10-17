@@ -51,8 +51,12 @@ export const ScheduleLiveSessionModal = ({
               <Video className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Schedule Live Class</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Create an interactive live video classroom</p>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                Schedule Live Class
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Create an interactive live video classroom
+              </p>
             </div>
           </div>
           <button
@@ -75,7 +79,9 @@ export const ScheduleLiveSessionModal = ({
                 onChange={(e) => setCourseId(e.target.value)}
                 className="w-full px-3.5 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               >
-                <option value="" disabled>Select course...</option>
+                <option value="" disabled>
+                  Select course...
+                </option>
                 {courses.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.title}
@@ -145,12 +151,7 @@ export const ScheduleLiveSessionModal = ({
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={isSubmitting}
-            >
+            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
               Cancel
             </Button>
             <Button

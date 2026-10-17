@@ -14,7 +14,8 @@ const SEED_RESOURCES = [
   {
     id: 'a0000001-0000-0000-0000-000000000001',
     title: 'React 19 Hooks & Architecture Patterns',
-    description: 'Master compiler optimizations, Server Actions, useActionState, and clean state architecture.',
+    description:
+      'Master compiler optimizations, Server Actions, useActionState, and clean state architecture.',
     category: 'CHEATSHEET',
     fileKey: 'resources/cheatsheets/React_19_Hooks_Architecture.pdf',
     fileName: 'React_19_Hooks_Architecture.pdf',
@@ -46,7 +47,8 @@ const SEED_RESOURCES = [
   {
     id: 'a0000001-0000-0000-0000-000000000002',
     title: 'Java Collections & Big-O Guide',
-    description: 'Deep dive into HashMap vs TreeMap, amortized complexity, and high-performance collection algorithms.',
+    description:
+      'Deep dive into HashMap vs TreeMap, amortized complexity, and high-performance collection algorithms.',
     category: 'ACADEMIC_GUIDE',
     fileKey: 'resources/guides/Java_Collections_Big_O.pdf',
     fileName: 'Java_Collections_Big_O.pdf',
@@ -75,7 +77,8 @@ const SEED_RESOURCES = [
   {
     id: 'a0000001-0000-0000-0000-000000000003',
     title: 'SQL Performance & Indexing Guide',
-    description: 'B-Tree indexes, composite keys, partition pruning, and EXPLAIN ANALYZE tuning techniques.',
+    description:
+      'B-Tree indexes, composite keys, partition pruning, and EXPLAIN ANALYZE tuning techniques.',
     category: 'CHEATSHEET',
     fileKey: 'resources/cheatsheets/SQL_Performance_Indexing.pdf',
     fileName: 'SQL_Performance_Indexing.pdf',
@@ -103,7 +106,8 @@ const SEED_RESOURCES = [
   {
     id: 'a0000001-0000-0000-0000-000000000004',
     title: 'Campus Exam & Proctoring Guidelines',
-    description: 'Official academic integrity handbook, lockdown browser instructions, and proctoring requirements.',
+    description:
+      'Official academic integrity handbook, lockdown browser instructions, and proctoring requirements.',
     category: 'POLICY_EXAM',
     fileKey: 'resources/policies/Campus_Exam_Policy_Handbook.pdf',
     fileName: 'Campus_Exam_Policy_Handbook.pdf',
@@ -131,7 +135,8 @@ const SEED_RESOURCES = [
   {
     id: 'a0000001-0000-0000-0000-000000000005',
     title: 'Git & GitHub Collaboration Workflow',
-    description: 'Branching models, atomic commits, pull request review etiquette, and merge conflict resolution.',
+    description:
+      'Branching models, atomic commits, pull request review etiquette, and merge conflict resolution.',
     category: 'SOFTWARE_KIT',
     fileKey: 'resources/software/Git_GitHub_Collaboration_Kit.zip',
     fileName: 'Git_GitHub_Collaboration_Kit.zip',
@@ -247,7 +252,10 @@ export const resourceService = {
         };
       }
     } catch (backendUploadErr) {
-      console.warn('Backend direct multipart upload failed, attempting presigned PUT:', backendUploadErr?.message);
+      console.warn(
+        'Backend direct multipart upload failed, attempting presigned PUT:',
+        backendUploadErr?.message,
+      );
     }
 
     // 2. Fallback path: Presigned direct PUT to Cloudflare R2
@@ -304,7 +312,7 @@ export const resourceService = {
         const backendIds = new Set(normalized.map((b) => b.id));
         const unsynced = local.filter((l) => !backendIds.has(l.id) && l.id?.startsWith('res-'));
         const combined = [...unsynced, ...normalized].sort(
-          (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+          (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0),
         );
         saveStored(combined);
         return combined;
@@ -327,7 +335,7 @@ export const resourceService = {
         (r) =>
           r.title?.toLowerCase().includes(q) ||
           r.description?.toLowerCase().includes(q) ||
-          (r.author || r.authorName)?.toLowerCase().includes(q)
+          (r.author || r.authorName)?.toLowerCase().includes(q),
       );
     }
     return items.map(normalizeResource);
@@ -351,7 +359,8 @@ export const resourceService = {
   /** Create a new resource with optional R2 file upload */
   create: async (payload) => {
     let fileKey = payload.fileKey;
-    let fileName = payload.fileName || `${payload.title}.${payload.fileType?.toLowerCase() || 'pdf'}`;
+    let fileName =
+      payload.fileName || `${payload.title}.${payload.fileType?.toLowerCase() || 'pdf'}`;
     let fileSize = payload.fileSize || '1.2 MB';
     let fileSizeBytes = payload.fileSizeBytes;
     let fileType = payload.fileType || 'PDF';
@@ -359,7 +368,11 @@ export const resourceService = {
     // If a physical file was provided, upload to Cloudflare R2 first
     if (payload.file && typeof payload.file === 'object' && payload.file.name) {
       try {
-        const uploadResult = await resourceService.uploadFileToR2(payload.file, payload.category, payload.onProgress);
+        const uploadResult = await resourceService.uploadFileToR2(
+          payload.file,
+          payload.category,
+          payload.onProgress,
+        );
         fileKey = uploadResult.fileKey;
         fileName = uploadResult.fileName;
         fileSize = uploadResult.fileSize;
@@ -485,7 +498,8 @@ export const resourceService = {
           const blobUrl = window.URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = blobUrl;
-          link.download = resource.fileName || `${resource.title}.${resource.fileType?.toLowerCase() || 'pdf'}`;
+          link.download =
+            resource.fileName || `${resource.title}.${resource.fileType?.toLowerCase() || 'pdf'}`;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
@@ -504,7 +518,10 @@ export const resourceService = {
           return true;
         }
       } catch (streamErr) {
-        console.warn('Backend stream download failed, attempting presigned download URL:', streamErr?.message);
+        console.warn(
+          'Backend stream download failed, attempting presigned download URL:',
+          streamErr?.message,
+        );
       }
     }
 
@@ -516,7 +533,10 @@ export const resourceService = {
       if (downloadUrl && downloadUrl.startsWith('http')) {
         const link = document.createElement('a');
         link.href = downloadUrl;
-        link.download = res?.fileName || resource.fileName || `${resource.title}.${resource.fileType?.toLowerCase() || 'pdf'}`;
+        link.download =
+          res?.fileName ||
+          resource.fileName ||
+          `${resource.title}.${resource.fileType?.toLowerCase() || 'pdf'}`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -542,8 +562,17 @@ export const resourceService = {
         saveStored([...items]);
       }
 
-      const content = resource.content || `# ${resource.title}\n\n${resource.description || 'Study Guide & Toolkit Asset.'}`;
-      const ext = resource.fileType === 'ZIP' ? 'zip' : resource.fileType === 'MD' ? 'md' : resource.fileType === 'DOCX' ? 'docx' : 'pdf';
+      const content =
+        resource.content ||
+        `# ${resource.title}\n\n${resource.description || 'Study Guide & Toolkit Asset.'}`;
+      const ext =
+        resource.fileType === 'ZIP'
+          ? 'zip'
+          : resource.fileType === 'MD'
+            ? 'md'
+            : resource.fileType === 'DOCX'
+              ? 'docx'
+              : 'pdf';
       const filename = `${resource.title.replace(/[^a-zA-Z0-9_-]/g, '_')}.${ext}`;
 
       const blob = new Blob([content], { type: 'application/octet-stream' });

@@ -63,7 +63,15 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
       }}
     >
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 12,
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div
             style={{
@@ -85,7 +93,9 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
               Hall of Fame &amp; Category Champions
             </h3>
             <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
-              {firstAssessment ? `Top performers for "${firstAssessment.title}"` : 'Global assessment leaders & badges'}
+              {firstAssessment
+                ? `Top performers for "${firstAssessment.title}"`
+                : 'Global assessment leaders & badges'}
             </p>
           </div>
         </div>
@@ -107,7 +117,13 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
       </div>
 
       {/* Podium Cards / Top Performers Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14 }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: 14,
+        }}
+      >
         {/* 1st Place Gold */}
         <div
           style={{
@@ -139,7 +155,14 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
             🥇
           </div>
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#eab308', textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: '#eab308',
+                textTransform: 'uppercase',
+              }}
+            >
               Rank #1 • Gold MVP
             </div>
             <div
@@ -160,7 +183,11 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
           </div>
           {top1?.badges?.[0] && (
             <div style={{ position: 'absolute', top: 10, right: 10 }}>
-              <LeetCodeBadge badge={top1.badges[0]} size="xs" onClick={(b) => setSelectedBadge(b)} />
+              <LeetCodeBadge
+                badge={top1.badges[0]}
+                size="xs"
+                onClick={(b) => setSelectedBadge(b)}
+              />
             </div>
           )}
         </div>
@@ -196,7 +223,14 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
             ⚔️
           </div>
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#818cf8', textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: '#818cf8',
+                textTransform: 'uppercase',
+              }}
+            >
               Algorithm Knight
             </div>
             <div
@@ -212,7 +246,9 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
               {codingChampion?.studentName || 'Awaiting Submissions'}
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-              {codingChampion ? `${codingChampion.currentCategoryScore.percentage}% algorithms` : 'No attempts yet'}
+              {codingChampion
+                ? `${codingChampion.currentCategoryScore.percentage}% algorithms`
+                : 'No attempts yet'}
             </div>
           </div>
           <div style={{ position: 'absolute', top: 10, right: 10 }}>
@@ -255,7 +291,14 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
             🗄️
           </div>
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#60a5fa', textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: '#60a5fa',
+                textTransform: 'uppercase',
+              }}
+            >
               SQL Grandmaster
             </div>
             <div
@@ -271,7 +314,9 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
               {sqlChampion?.studentName || 'Awaiting Submissions'}
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-              {sqlChampion ? `${sqlChampion.currentCategoryScore.percentage}% queries` : 'No attempts yet'}
+              {sqlChampion
+                ? `${sqlChampion.currentCategoryScore.percentage}% queries`
+                : 'No attempts yet'}
             </div>
           </div>
           <div style={{ position: 'absolute', top: 10, right: 10 }}>
@@ -286,10 +331,7 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
 
       {/* Badge Lore Modal */}
       {selectedBadge && (
-        <BadgeDetailModal
-          badge={selectedBadge}
-          onClose={() => setSelectedBadge(null)}
-        />
+        <BadgeDetailModal badge={selectedBadge} onClose={() => setSelectedBadge(null)} />
       )}
     </div>
   );

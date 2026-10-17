@@ -32,7 +32,9 @@ export const InstructorEnrollmentListPage = () => {
       header: 'Status',
       accessor: 'status',
       render: (status) => (
-        <Badge variant={status === 'ACTIVE' ? 'success' : status === 'COMPLETED' ? 'info' : 'warning'}>
+        <Badge
+          variant={status === 'ACTIVE' ? 'success' : status === 'COMPLETED' ? 'info' : 'warning'}
+        >
           {status}
         </Badge>
       ),

@@ -145,12 +145,13 @@ export const StudentDashboardPage = () => {
   const maxHours = Math.max(1, ...weeklyTrends.map((d) => d.hours || 0));
 
   // Quick download helper for study cheatsheets
-  
 
   const stats = [
     {
       label: 'Courses in Progress',
-      value: analytics?.inProgressCount ?? (courses.filter((c) => (c.progressPercent || 0) < 100).length || courses.length),
+      value:
+        analytics?.inProgressCount ??
+        (courses.filter((c) => (c.progressPercent || 0) < 100).length || courses.length),
       subtext: `${courses.length} total enrolled`,
       icon: <BookOpen size={20} className="text-emerald-400" />,
       color: 'var(--color-primary-500)',
@@ -158,7 +159,9 @@ export const StudentDashboardPage = () => {
     },
     {
       label: 'Completed Courses',
-      value: analytics?.completedCount ?? (courses.filter((c) => (c.progressPercent || 0) >= 100).length || 0),
+      value:
+        analytics?.completedCount ??
+        (courses.filter((c) => (c.progressPercent || 0) >= 100).length || 0),
       subtext: 'Unlock completion certificates',
       icon: <CheckCircle2 size={20} className="text-emerald-400" />,
       color: '#10b981',
@@ -190,7 +193,8 @@ export const StudentDashboardPage = () => {
       tagColor: '#3b82f6',
       tagBg: 'rgba(59, 130, 246, 0.12)',
       title: 'Proctored Assessments are Live',
-      detail: 'Java Collections & SQL Optimization are open for testing. Make sure webcam permissions are granted.',
+      detail:
+        'Java Collections & SQL Optimization are open for testing. Make sure webcam permissions are granted.',
       date: 'Today, 2:30 PM',
     },
     {
@@ -199,7 +203,8 @@ export const StudentDashboardPage = () => {
       tagColor: '#10b981',
       tagBg: 'rgba(16, 185, 129, 0.12)',
       title: 'React 19 Hooks & Architectural Patterns Added',
-      detail: 'New practical exercises and reference study guides have been published in your module curriculum.',
+      detail:
+        'New practical exercises and reference study guides have been published in your module curriculum.',
       date: 'Yesterday',
     },
     {
@@ -208,18 +213,28 @@ export const StudentDashboardPage = () => {
       tagColor: '#f59e0b',
       tagBg: 'rgba(245, 158, 11, 0.12)',
       title: 'Verifiable Digital Credentials Enabled',
-      detail: 'Completed course certificates now feature instant cryptographic QR verification for LinkedIn sharing.',
+      detail:
+        'Completed course certificates now feature instant cryptographic QR verification for LinkedIn sharing.',
       date: 'Sep 11, 2026',
     },
   ];
 
   // Gamification Badges
   return (
-    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 20, paddingBottom: 40 }}>
+    <div
+      style={{
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 20,
+        paddingBottom: 40,
+      }}
+    >
       {/* ── Hero Greeting Banner ── */}
       <div
         style={{
-          background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.12) 0%, rgba(16, 185, 129, 0.1) 50%, rgba(34, 197, 94, 0.06) 100%)',
+          background:
+            'linear-gradient(135deg, rgba(34, 197, 94, 0.12) 0%, rgba(16, 185, 129, 0.1) 50%, rgba(34, 197, 94, 0.06) 100%)',
           border: '1px solid var(--border-color)',
           borderRadius: 20,
           padding: '28px 32px',
@@ -255,11 +270,28 @@ export const StudentDashboardPage = () => {
               {analytics?.streakDays ?? 4} Day Streak!
             </span>
           </div>
-          <h1 style={{ margin: '0 0 6px', fontSize: 28, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
+          <h1
+            style={{
+              margin: '0 0 6px',
+              fontSize: 28,
+              fontWeight: 800,
+              color: 'var(--text-primary)',
+              letterSpacing: '-0.5px',
+            }}
+          >
             {greeting}, {studentName}! 🚀
           </h1>
-          <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)', maxWidth: 540, lineHeight: 1.5 }}>
-            Ready to continue your mastery? Keep momentum going by finishing your active module or taking your pending assessment.
+          <p
+            style={{
+              margin: 0,
+              fontSize: 14,
+              color: 'var(--text-secondary)',
+              maxWidth: 540,
+              lineHeight: 1.5,
+            }}
+          >
+            Ready to continue your mastery? Keep momentum going by finishing your active module or
+            taking your pending assessment.
           </p>
         </div>
 
@@ -354,12 +386,23 @@ export const StudentDashboardPage = () => {
               minHeight: 110,
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+            <div
+              style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}
+            >
               <div>
-                <p style={{ margin: '0 0 4px', fontSize: 13, color: 'var(--text-muted)', fontWeight: 500 }}>
+                <p
+                  style={{
+                    margin: '0 0 4px',
+                    fontSize: 13,
+                    color: 'var(--text-muted)',
+                    fontWeight: 500,
+                  }}
+                >
                   {item.label}
                 </p>
-                <h3 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: 'var(--text-primary)' }}>
+                <h3
+                  style={{ margin: 0, fontSize: 24, fontWeight: 800, color: 'var(--text-primary)' }}
+                >
                   {analyticsLoading ? '...' : item.value}
                 </h3>
               </div>
@@ -378,7 +421,14 @@ export const StudentDashboardPage = () => {
                 {item.icon}
               </div>
             </div>
-            <p style={{ margin: '8px 0 0', fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500 }}>
+            <p
+              style={{
+                margin: '8px 0 0',
+                fontSize: 11,
+                color: 'var(--text-secondary)',
+                fontWeight: 500,
+              }}
+            >
               {item.subtext}
             </p>
           </div>
@@ -386,7 +436,14 @@ export const StudentDashboardPage = () => {
       </div>
 
       {/* ── 2-Column: Continue Learning Hero & Weekly Activity ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.4fr) minmax(0, 1fr)', gap: 24, alignItems: 'start' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1.4fr) minmax(0, 1fr)',
+          gap: 24,
+          alignItems: 'start',
+        }}
+      >
         {/* Left: Continue Learning Banner */}
         <div
           style={{
@@ -402,7 +459,9 @@ export const StudentDashboardPage = () => {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <Sparkles size={18} className="text-amber-400" />
-              <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+              <h2
+                style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}
+              >
                 Continue Learning
               </h2>
             </div>
@@ -506,7 +565,8 @@ export const StudentDashboardPage = () => {
                       overflow: 'hidden',
                     }}
                   >
-                    {continueCourse.description || 'Resume from where you left off and finish your next module.'}
+                    {continueCourse.description ||
+                      'Resume from where you left off and finish your next module.'}
                   </p>
                 </div>
               </div>
@@ -528,7 +588,14 @@ export const StudentDashboardPage = () => {
                     {continueCourse.progressPercent ?? 0}%
                   </span>
                 </div>
-                <div style={{ height: 6, background: 'var(--border-color)', borderRadius: 99, overflow: 'hidden' }}>
+                <div
+                  style={{
+                    height: 6,
+                    background: 'var(--border-color)',
+                    borderRadius: 99,
+                    overflow: 'hidden',
+                  }}
+                >
                   <div
                     style={{
                       height: '100%',
@@ -578,7 +645,14 @@ export const StudentDashboardPage = () => {
               }}
             >
               <BookOpen size={36} style={{ color: 'var(--text-muted)', margin: '0 auto 12px' }} />
-              <h4 style={{ margin: '0 0 6px', fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
+              <h4
+                style={{
+                  margin: '0 0 6px',
+                  fontSize: 15,
+                  fontWeight: 700,
+                  color: 'var(--text-primary)',
+                }}
+              >
                 No active courses yet
               </h4>
               <p style={{ margin: '0 0 16px', fontSize: 13, color: 'var(--text-muted)' }}>
@@ -618,7 +692,9 @@ export const StudentDashboardPage = () => {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <TrendingUp size={18} className="text-emerald-400" />
-              <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+              <h2
+                style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}
+              >
                 Weekly Study Time
               </h2>
             </div>
@@ -660,7 +736,8 @@ export const StudentDashboardPage = () => {
                       width: '70%',
                       maxWidth: 24,
                       height: `${Math.max(8, heightPct)}px`,
-                      background: d.hours > 0 ? 'var(--color-primary-500, #3b82f6)' : 'var(--surface-medium)',
+                      background:
+                        d.hours > 0 ? 'var(--color-primary-500, #3b82f6)' : 'var(--surface-medium)',
                       borderRadius: '6px 6px 0 0',
                       transition: 'height 0.4s ease',
                     }}
@@ -734,7 +811,13 @@ export const StudentDashboardPage = () => {
             <p style={{ margin: '4px 0 0' }}>No pending assessments due right now.</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 14 }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: 14,
+            }}
+          >
             {assessments.map((a) => (
               <div
                 key={a.id}
@@ -772,7 +855,14 @@ export const StudentDashboardPage = () => {
                       </span>
                     )}
                   </div>
-                  <h4 style={{ margin: '0 0 4px', fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
+                  <h4
+                    style={{
+                      margin: '0 0 4px',
+                      fontSize: 15,
+                      fontWeight: 700,
+                      color: 'var(--text-primary)',
+                    }}
+                  >
                     {a.title}
                   </h4>
                   <p
@@ -786,11 +876,20 @@ export const StudentDashboardPage = () => {
                       overflow: 'hidden',
                     }}
                   >
-                    {a.description || 'Test your knowledge on this module with automated test-case evaluation.'}
+                    {a.description ||
+                      'Test your knowledge on this module with automated test-case evaluation.'}
                   </p>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8, borderTop: '1px solid var(--border-color)' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingTop: 8,
+                    borderTop: '1px solid var(--border-color)',
+                  }}
+                >
                   <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)' }}>
                     Total: {a.totalMarks || 100} Marks
                   </span>
@@ -820,11 +919,16 @@ export const StudentDashboardPage = () => {
       </div>
 
       {/* ── NEW SECTION: Daily Target, Announcements & Achievements ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.4fr) minmax(0, 1fr)', gap: 24, alignItems: 'start' }}>
-        
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1.4fr) minmax(0, 1fr)',
+          gap: 24,
+          alignItems: 'start',
+        }}
+      >
         {/* Left Column: Daily Target & Campus Noticeboard */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          
           {/* Daily Learning Goal Card */}
           <div
             style={{
@@ -840,7 +944,9 @@ export const StudentDashboardPage = () => {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Target size={18} className="text-emerald-400" />
-                <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
+                <h3
+                  style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}
+                >
                   Today&apos;s Study Goal
                 </h3>
               </div>
@@ -849,7 +955,14 @@ export const StudentDashboardPage = () => {
               </span>
             </div>
 
-            <div style={{ height: 8, background: 'var(--surface-medium)', borderRadius: 99, overflow: 'hidden' }}>
+            <div
+              style={{
+                height: 8,
+                background: 'var(--surface-medium)',
+                borderRadius: 99,
+                overflow: 'hidden',
+              }}
+            >
               <div
                 style={{
                   height: '100%',
@@ -860,7 +973,14 @@ export const StudentDashboardPage = () => {
               />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12 }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                fontSize: 12,
+              }}
+            >
               <span style={{ color: 'var(--text-muted)' }}>
                 🔥 10 more minutes to hit your goal & secure your 5-day streak!
               </span>
@@ -901,7 +1021,9 @@ export const StudentDashboardPage = () => {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Bell size={18} className="text-amber-400" />
-                <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
+                <h3
+                  style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}
+                >
                   Campus & Batch Noticeboard
                 </h3>
               </div>
@@ -932,7 +1054,13 @@ export const StudentDashboardPage = () => {
                     gap: 6,
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
                     <span
                       style={{
                         padding: '2px 8px',
@@ -945,14 +1073,26 @@ export const StudentDashboardPage = () => {
                     >
                       {item.tag}
                     </span>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                      {item.date}
-                    </span>
+                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.date}</span>
                   </div>
-                  <h4 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
+                  <h4
+                    style={{
+                      margin: 0,
+                      fontSize: 13,
+                      fontWeight: 700,
+                      color: 'var(--text-primary)',
+                    }}
+                  >
                     {item.title}
                   </h4>
-                  <p style={{ margin: 0, fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 12,
+                      color: 'var(--text-secondary)',
+                      lineHeight: 1.5,
+                    }}
+                  >
                     {item.detail}
                   </p>
                 </div>
@@ -963,7 +1103,6 @@ export const StudentDashboardPage = () => {
 
         {/* Right Column: Gamification Badges & Quick Study Toolkit */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          
           {/* LeetCode Skill Badges & Category Standings */}
           <div
             style={{
@@ -979,7 +1118,9 @@ export const StudentDashboardPage = () => {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Trophy size={18} className="text-yellow-400" />
-                <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
+                <h3
+                  style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}
+                >
                   Skill Badges &amp; Category Standings
                 </h3>
               </div>
@@ -1008,13 +1149,21 @@ export const StudentDashboardPage = () => {
                   onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
                   onMouseLeave={(e) => (e.currentTarget.style.transform = 'none')}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
                     <LeetCodeBadge badge={b} size="xs" interactive={false} />
                     <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)' }}>
                       {b.tier.label}
                     </span>
                   </div>
-                  <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.3 }}>
+                  <p
+                    style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.3 }}
+                  >
                     {b.criteria}
                   </p>
                 </div>
@@ -1033,27 +1182,76 @@ export const StudentDashboardPage = () => {
                 gap: 10,
               }}
             >
-              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase' }}>
+              <div
+                style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: 'var(--text-primary)',
+                  textTransform: 'uppercase',
+                }}
+              >
                 Category Skill Percentile
               </div>
 
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: 11,
+                    marginBottom: 4,
+                  }}
+                >
                   <span style={{ color: 'var(--text-secondary)' }}>💻 Algorithms &amp; Coding</span>
                   <strong style={{ color: '#a855f7' }}>Top 12% (Knight)</strong>
                 </div>
-                <div style={{ height: 5, borderRadius: 99, background: 'var(--border-color)', overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: '88%', background: '#a855f7', borderRadius: 99 }} />
+                <div
+                  style={{
+                    height: 5,
+                    borderRadius: 99,
+                    background: 'var(--border-color)',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div
+                    style={{
+                      height: '100%',
+                      width: '88%',
+                      background: '#a855f7',
+                      borderRadius: 99,
+                    }}
+                  />
                 </div>
               </div>
 
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: 11,
+                    marginBottom: 4,
+                  }}
+                >
                   <span style={{ color: 'var(--text-secondary)' }}>🗄️ Database &amp; SQL</span>
                   <strong style={{ color: '#3b82f6' }}>Top 15% (Grandmaster)</strong>
                 </div>
-                <div style={{ height: 5, borderRadius: 99, background: 'var(--border-color)', overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: '85%', background: '#3b82f6', borderRadius: 99 }} />
+                <div
+                  style={{
+                    height: 5,
+                    borderRadius: 99,
+                    background: 'var(--border-color)',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div
+                    style={{
+                      height: '100%',
+                      width: '85%',
+                      background: '#3b82f6',
+                      borderRadius: 99,
+                    }}
+                  />
                 </div>
               </div>
             </div>
@@ -1074,31 +1272,52 @@ export const StudentDashboardPage = () => {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Download size={18} className="text-blue-400" />
-                <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
+                <h3
+                  style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}
+                >
                   Study Toolkit & Guides
                 </h3>
               </div>
-              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                Offline Reference
-              </span>
+              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Offline Reference</span>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {toolkitResources.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '16px 8px', color: 'var(--text-muted)', fontSize: 12 }}>
+                <div
+                  style={{
+                    textAlign: 'center',
+                    padding: '16px 8px',
+                    color: 'var(--text-muted)',
+                    fontSize: 12,
+                  }}
+                >
                   No campus guides uploaded yet.
                 </div>
               ) : (
                 <>
                   {toolkitResources.slice(0, 5).map((guide) => {
-                    const isNew = guide.createdAt && (Date.now() - new Date(guide.createdAt).getTime() < 7 * 24 * 3600 * 1000);
+                    const isNew =
+                      guide.createdAt &&
+                      Date.now() - new Date(guide.createdAt).getTime() < 7 * 24 * 3600 * 1000;
                     const fileTypeUpper = (guide.fileType || 'PDF').toUpperCase();
                     const badgeColor =
                       fileTypeUpper === 'DOCX' || fileTypeUpper === 'DOC'
-                        ? { bg: 'rgba(59, 130, 246, 0.15)', text: '#60a5fa', border: 'rgba(59, 130, 246, 0.3)' }
+                        ? {
+                            bg: 'rgba(59, 130, 246, 0.15)',
+                            text: '#60a5fa',
+                            border: 'rgba(59, 130, 246, 0.3)',
+                          }
                         : fileTypeUpper === 'ZIP' || fileTypeUpper === 'RAR'
-                        ? { bg: 'rgba(16, 185, 129, 0.15)', text: '#34d399', border: 'rgba(16, 185, 129, 0.3)' }
-                        : { bg: 'rgba(239, 68, 68, 0.15)', text: '#f87171', border: 'rgba(239, 68, 68, 0.3)' };
+                          ? {
+                              bg: 'rgba(16, 185, 129, 0.15)',
+                              text: '#34d399',
+                              border: 'rgba(16, 185, 129, 0.3)',
+                            }
+                          : {
+                              bg: 'rgba(239, 68, 68, 0.15)',
+                              text: '#f87171',
+                              border: 'rgba(239, 68, 68, 0.3)',
+                            };
 
                     return (
                       <div
@@ -1115,7 +1334,9 @@ export const StudentDashboardPage = () => {
                           transition: 'all 0.15s ease',
                         }}
                       >
-                        <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <div
+                          style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}
+                        >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                             <span
                               style={{
@@ -1131,7 +1352,17 @@ export const StudentDashboardPage = () => {
                             >
                               {fileTypeUpper}
                             </span>
-                            <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            <p
+                              style={{
+                                margin: 0,
+                                fontSize: 12,
+                                fontWeight: 700,
+                                color: 'var(--text-primary)',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                              }}
+                            >
                               {guide.title}
                             </p>
                             {isNew && (
@@ -1151,8 +1382,18 @@ export const StudentDashboardPage = () => {
                               </span>
                             )}
                           </div>
-                          <p style={{ margin: 0, fontSize: 10, color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {guide.description || `${guide.fileSize || 'Reference Guide'} • by ${guide.authorRole || 'Faculty'}`}
+                          <p
+                            style={{
+                              margin: 0,
+                              fontSize: 10,
+                              color: 'var(--text-muted)',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {guide.description ||
+                              `${guide.fileSize || 'Reference Guide'} • by ${guide.authorRole || 'Faculty'}`}
                           </p>
                         </div>
                         <button
@@ -1271,7 +1512,8 @@ export const StudentDashboardPage = () => {
                         Campus Study Toolkits & Reference Guides
                       </h3>
                       <p style={{ margin: 0, fontSize: 12, color: '#94a3b8' }}>
-                        {toolkitResources.length} official offline resources published for all students
+                        {toolkitResources.length} official offline resources published for all
+                        students
                       </p>
                     </div>
                   </div>
@@ -1294,12 +1536,26 @@ export const StudentDashboardPage = () => {
                 </div>
 
                 {/* Modal Controls (Search & Categories) */}
-                <div style={{ padding: '16px 24px', display: 'flex', flexDirection: 'column', gap: 12, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                <div
+                  style={{
+                    padding: '16px 24px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 12,
+                    borderBottom: '1px solid rgba(255,255,255,0.06)',
+                  }}
+                >
                   {/* Search Bar */}
                   <div style={{ position: 'relative', width: '100%' }}>
                     <Search
                       size={16}
-                      style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#64748b' }}
+                      style={{
+                        position: 'absolute',
+                        left: 12,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        color: '#64748b',
+                      }}
                     />
                     <input
                       type="text"
@@ -1338,8 +1594,14 @@ export const StudentDashboardPage = () => {
                           fontSize: 11,
                           fontWeight: 600,
                           cursor: 'pointer',
-                          border: toolkitCategoryFilter === cat.key ? '1px solid #3b82f6' : '1px solid rgba(255,255,255,0.08)',
-                          background: toolkitCategoryFilter === cat.key ? '#2563eb' : 'rgba(255,255,255,0.03)',
+                          border:
+                            toolkitCategoryFilter === cat.key
+                              ? '1px solid #3b82f6'
+                              : '1px solid rgba(255,255,255,0.08)',
+                          background:
+                            toolkitCategoryFilter === cat.key
+                              ? '#2563eb'
+                              : 'rgba(255,255,255,0.03)',
                           color: toolkitCategoryFilter === cat.key ? '#fff' : '#94a3b8',
                           transition: 'all 0.15s ease',
                         }}
@@ -1351,21 +1613,44 @@ export const StudentDashboardPage = () => {
                 </div>
 
                 {/* Modal Resource List */}
-                <div style={{ padding: '16px 24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
+                <div
+                  style={{
+                    padding: '16px 24px',
+                    overflowY: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 10,
+                    flex: 1,
+                  }}
+                >
                   {filteredModalGuides.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '36px 12px', color: '#64748b' }}>
                       No study guides match your query.
                     </div>
                   ) : (
                     filteredModalGuides.map((guide) => {
-                      const isNew = guide.createdAt && (Date.now() - new Date(guide.createdAt).getTime() < 7 * 24 * 3600 * 1000);
+                      const isNew =
+                        guide.createdAt &&
+                        Date.now() - new Date(guide.createdAt).getTime() < 7 * 24 * 3600 * 1000;
                       const fileTypeUpper = (guide.fileType || 'PDF').toUpperCase();
                       const badgeColor =
                         fileTypeUpper === 'DOCX' || fileTypeUpper === 'DOC'
-                          ? { bg: 'rgba(59, 130, 246, 0.15)', text: '#60a5fa', border: 'rgba(59, 130, 246, 0.3)' }
+                          ? {
+                              bg: 'rgba(59, 130, 246, 0.15)',
+                              text: '#60a5fa',
+                              border: 'rgba(59, 130, 246, 0.3)',
+                            }
                           : fileTypeUpper === 'ZIP' || fileTypeUpper === 'RAR'
-                          ? { bg: 'rgba(16, 185, 129, 0.15)', text: '#34d399', border: 'rgba(16, 185, 129, 0.3)' }
-                          : { bg: 'rgba(239, 68, 68, 0.15)', text: '#f87171', border: 'rgba(239, 68, 68, 0.3)' };
+                            ? {
+                                bg: 'rgba(16, 185, 129, 0.15)',
+                                text: '#34d399',
+                                border: 'rgba(16, 185, 129, 0.3)',
+                              }
+                            : {
+                                bg: 'rgba(239, 68, 68, 0.15)',
+                                text: '#f87171',
+                                border: 'rgba(239, 68, 68, 0.3)',
+                              };
 
                       return (
                         <div
@@ -1382,7 +1667,14 @@ export const StudentDashboardPage = () => {
                           }}
                         >
                           <div style={{ minWidth: 0, flex: 1 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 8,
+                                marginBottom: 4,
+                              }}
+                            >
                               <span
                                 style={{
                                   fontSize: 10,
@@ -1396,7 +1688,9 @@ export const StudentDashboardPage = () => {
                               >
                                 {fileTypeUpper}
                               </span>
-                              <h4 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#fff' }}>
+                              <h4
+                                style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#fff' }}
+                              >
                                 {guide.title}
                               </h4>
                               {isNew && (
@@ -1415,13 +1709,31 @@ export const StudentDashboardPage = () => {
                                 </span>
                               )}
                             </div>
-                            <p style={{ margin: '0 0 6px', fontSize: 12, color: '#94a3b8', lineHeight: 1.4 }}>
+                            <p
+                              style={{
+                                margin: '0 0 6px',
+                                fontSize: 12,
+                                color: '#94a3b8',
+                                lineHeight: 1.4,
+                              }}
+                            >
                               {guide.description || 'Supplementary institutional learning toolkit.'}
                             </p>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 11, color: '#64748b' }}>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 12,
+                                fontSize: 11,
+                                color: '#64748b',
+                              }}
+                            >
                               <span>{guide.fileSize || 'Unknown size'}</span>
                               <span>•</span>
-                              <span>Published by {guide.author || guide.authorName || 'Faculty'} ({guide.authorRole || 'Admin'})</span>
+                              <span>
+                                Published by {guide.author || guide.authorName || 'Faculty'} (
+                                {guide.authorRole || 'Admin'})
+                              </span>
                               {guide.downloadsCount > 0 && (
                                 <>
                                   <span>•</span>
@@ -1465,10 +1777,7 @@ export const StudentDashboardPage = () => {
 
       {/* Badge Lore & Criteria Modal */}
       {selectedBadge && (
-        <BadgeDetailModal
-          badge={selectedBadge}
-          onClose={() => setSelectedBadge(null)}
-        />
+        <BadgeDetailModal badge={selectedBadge} onClose={() => setSelectedBadge(null)} />
       )}
     </div>
   );

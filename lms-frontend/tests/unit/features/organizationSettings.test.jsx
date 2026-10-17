@@ -11,7 +11,9 @@ const { toast, tenantService, analyticsService } = vi.hoisted(() => ({
 }));
 vi.mock('../../../src/components/feedback/Toast', () => ({ useToast: () => toast }));
 vi.mock('../../../src/features/tenants/services/tenantService', () => ({ default: tenantService }));
-vi.mock('../../../src/features/analytics/services/analyticsService', () => ({ default: analyticsService }));
+vi.mock('../../../src/features/analytics/services/analyticsService', () => ({
+  default: analyticsService,
+}));
 
 import { OrganizationSettingsPage } from '../../../src/features/tenants/pages/OrganizationSettingsPage';
 import { OrganizationPage } from '../../../src/features/tenants/pages/OrganizationPage';
@@ -27,7 +29,9 @@ const realSettings = {
 
 const renderPage = (page) =>
   render(
-    <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+    <QueryClientProvider
+      client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}
+    >
       <MemoryRouter>{page}</MemoryRouter>
     </QueryClientProvider>,
   );
@@ -48,7 +52,10 @@ describe('OrganizationSettingsPage', () => {
   });
 
   it('sends only the fields the admin changed', async () => {
-    tenantService.updateSettings.mockResolvedValue({ ...realSettings, supportEmail: 'office@srp.edu.in' });
+    tenantService.updateSettings.mockResolvedValue({
+      ...realSettings,
+      supportEmail: 'office@srp.edu.in',
+    });
     renderPage(<OrganizationSettingsPage />);
 
     const email = await screen.findByLabelText('Support Email');
@@ -57,14 +64,19 @@ describe('OrganizationSettingsPage', () => {
     await userEvent.click(screen.getByRole('button', { name: /save changes/i }));
 
     await waitFor(() =>
-      expect(tenantService.updateSettings).toHaveBeenCalledWith({ supportEmail: 'office@srp.edu.in' }),
+      expect(tenantService.updateSettings).toHaveBeenCalledWith({
+        supportEmail: 'office@srp.edu.in',
+      }),
     );
     expect(toast.success).toHaveBeenCalled();
   });
 
   it('reports a failed save instead of claiming success', async () => {
     tenantService.updateSettings.mockRejectedValue({
-      response: { status: 400, data: { message: 'supportEmail: must be a well-formed email address' } },
+      response: {
+        status: 400,
+        data: { message: 'supportEmail: must be a well-formed email address' },
+      },
     });
     renderPage(<OrganizationSettingsPage />);
 
@@ -72,7 +84,9 @@ describe('OrganizationSettingsPage', () => {
     await userEvent.type(name, ' College');
     await userEvent.click(screen.getByRole('button', { name: /save changes/i }));
 
-    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('supportEmail: must be a well-formed email address'));
+    await waitFor(() =>
+      expect(toast.error).toHaveBeenCalledWith('supportEmail: must be a well-formed email address'),
+    );
     expect(toast.success).not.toHaveBeenCalled();
   });
 });

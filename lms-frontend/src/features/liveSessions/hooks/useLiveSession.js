@@ -7,7 +7,7 @@ export const useCourseLiveSessions = (courseId) => {
     queryKey: ['course-live-sessions', courseId],
     queryFn: async () => {
       const res = await liveSessionApi.getCourseSessions(courseId);
-      return Array.isArray(res) ? res : (res?.data || []);
+      return Array.isArray(res) ? res : res?.data || [];
     },
     enabled: Boolean(courseId),
     refetchInterval: 15000, // periodically refresh live status
@@ -19,7 +19,7 @@ export const useAllLiveSessions = (filters = {}) => {
     queryKey: ['all-live-sessions', filters],
     queryFn: async () => {
       const res = await liveSessionApi.getAllSessions(filters);
-      return Array.isArray(res) ? res : (res?.data || []);
+      return Array.isArray(res) ? res : res?.data || [];
     },
     refetchInterval: 15000,
   });
@@ -41,7 +41,7 @@ export const useLiveSessionAttendance = (sessionId) => {
     queryKey: ['live-session-attendance', sessionId],
     queryFn: async () => {
       const res = await liveSessionApi.getSessionAttendance(sessionId);
-      return Array.isArray(res) ? res : (res?.data || []);
+      return Array.isArray(res) ? res : res?.data || [];
     },
     enabled: Boolean(sessionId),
     refetchInterval: 10000,

@@ -37,7 +37,7 @@ describe('AdminQuestionForm update existing questions', () => {
           onSubmit={onSubmit}
           submitLabel="Update question"
         />
-      </ToastProvider>
+      </ToastProvider>,
     );
 
     const updateBtn = screen.getByRole('button', { name: /update question/i });
@@ -45,9 +45,12 @@ describe('AdminQuestionForm update existing questions', () => {
 
     fireEvent.click(updateBtn);
 
-    await waitFor(() => {
-      expect(onSubmit).toHaveBeenCalled();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(onSubmit).toHaveBeenCalled();
+      },
+      { timeout: 3000 },
+    );
 
     const submitted = onSubmit.mock.calls[0][0];
     expect(submitted.title).toBe('Reverse a Linked List');
@@ -70,7 +73,12 @@ describe('AdminQuestionForm update existing questions', () => {
       memoryLimitMb: 256,
       testCases: [],
       options: [
-        { id: 'opt-1', optionText: 'Ability to take multiple forms', isCorrect: true, explanation: 'Core OOP pillar' },
+        {
+          id: 'opt-1',
+          optionText: 'Ability to take multiple forms',
+          isCorrect: true,
+          explanation: 'Core OOP pillar',
+        },
         { id: 'opt-2', optionText: 'A compiler error', isCorrect: false, explanation: '' },
       ],
     };
@@ -82,7 +90,7 @@ describe('AdminQuestionForm update existing questions', () => {
           onSubmit={onSubmit}
           submitLabel="Update question"
         />
-      </ToastProvider>
+      </ToastProvider>,
     );
 
     const updateBtn = screen.getByRole('button', { name: /update question/i });
@@ -90,9 +98,12 @@ describe('AdminQuestionForm update existing questions', () => {
 
     fireEvent.click(updateBtn);
 
-    await waitFor(() => {
-      expect(onSubmit).toHaveBeenCalled();
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(onSubmit).toHaveBeenCalled();
+      },
+      { timeout: 3000 },
+    );
 
     const submitted = onSubmit.mock.calls[0][0];
     expect(submitted.title).toBe('What is Polymorphism?');

@@ -24,7 +24,8 @@ const unwrap = (r) => r?.data ?? r;
 
 export const notificationService = {
   list: (params) => notificationApi.get('/', { params }).then(unwrap),
-  getUnreadCount: () => notificationApi.get('/unread-count').then((r) => r?.data?.count ?? r?.count ?? 0),
+  getUnreadCount: () =>
+    notificationApi.get('/unread-count').then((r) => r?.data?.count ?? r?.count ?? 0),
   markRead: (id) => notificationApi.patch(`/${id}/read`).then(unwrap),
   markAllRead: () => notificationApi.patch('/read-all').then(unwrap),
 };

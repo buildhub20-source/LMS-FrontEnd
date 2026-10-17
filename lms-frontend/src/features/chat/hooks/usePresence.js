@@ -33,14 +33,17 @@ export function usePresence() {
     setLastSeenMap(chatSocketService.getLastSeenMap());
 
     const unsubs = [
-      chatSocketService.on(SERVER_EVENTS.AUTHENTICATED, ({ onlineUserIds: online = [], lastSeen = {} }) => {
-        if (Array.isArray(online)) {
-          setOnlineUserIds(new Set(online.map((id) => String(id))));
-        }
-        if (lastSeen && typeof lastSeen === 'object') {
-          setLastSeenMap({ ...lastSeen });
-        }
-      }),
+      chatSocketService.on(
+        SERVER_EVENTS.AUTHENTICATED,
+        ({ onlineUserIds: online = [], lastSeen = {} }) => {
+          if (Array.isArray(online)) {
+            setOnlineUserIds(new Set(online.map((id) => String(id))));
+          }
+          if (lastSeen && typeof lastSeen === 'object') {
+            setLastSeenMap({ ...lastSeen });
+          }
+        },
+      ),
 
       chatSocketService.on(SERVER_EVENTS.USER_PRESENCE, ({ userId, status, lastSeen }) => {
         if (!userId) return;
@@ -75,21 +78,30 @@ export function usePresence() {
     };
   }, []);
 
-  const isOnline = useCallback((userId) => {
-    if (!userId) return false;
-    return onlineUserIds.has(String(userId));
-  }, [onlineUserIds]);
+  const isOnline = useCallback(
+    (userId) => {
+      if (!userId) return false;
+      return onlineUserIds.has(String(userId));
+    },
+    [onlineUserIds],
+  );
 
-  const getLastSeen = useCallback((userId) => {
-    if (!userId) return null;
-    return lastSeenMap[String(userId)] || null;
-  }, [lastSeenMap]);
+  const getLastSeen = useCallback(
+    (userId) => {
+      if (!userId) return null;
+      return lastSeenMap[String(userId)] || null;
+    },
+    [lastSeenMap],
+  );
 
-  const formatPresence = useCallback((userId) => {
-    if (isOnline(userId)) return 'Active now';
-    const lastSeen = getLastSeen(userId);
-    return formatLastSeenTime(lastSeen);
-  }, [isOnline, getLastSeen]);
+  const formatPresence = useCallback(
+    (userId) => {
+      if (isOnline(userId)) return 'Active now';
+      const lastSeen = getLastSeen(userId);
+      return formatLastSeenTime(lastSeen);
+    },
+    [isOnline, getLastSeen],
+  );
 
   return {
     onlineUserIds,

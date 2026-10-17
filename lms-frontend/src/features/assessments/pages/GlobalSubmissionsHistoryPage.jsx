@@ -1,10 +1,26 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import {
-  Trophy, Award, Download, Calendar, Search, Filter,
-  CheckCircle2, XCircle, Clock, Sparkles, BookOpen,
-  ArrowUpRight, Users, ChevronRight, BarChart2, ShieldCheck,
-  FileText, ExternalLink, ArrowLeft, X
+  Trophy,
+  Award,
+  Download,
+  Calendar,
+  Search,
+  Filter,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Sparkles,
+  BookOpen,
+  ArrowUpRight,
+  Users,
+  ChevronRight,
+  BarChart2,
+  ShieldCheck,
+  FileText,
+  ExternalLink,
+  ArrowLeft,
+  X,
 } from 'lucide-react';
 import { useAdminAssessments } from '../hooks/useAdminAssessments';
 import adminAssessmentService from '../services/adminAssessmentService';
@@ -45,7 +61,9 @@ export const GlobalSubmissionsHistoryPage = () => {
   }, [searchParams]);
 
   // 1. Fetch all assessments
-  const { data: assessmentsData, isLoading: assessmentsLoading } = useAdminAssessments({ size: 100 });
+  const { data: assessmentsData, isLoading: assessmentsLoading } = useAdminAssessments({
+    size: 100,
+  });
   const assessments = useMemo(() => {
     const raw =
       assessmentsData?.content ||
@@ -88,8 +106,8 @@ export const GlobalSubmissionsHistoryPage = () => {
               assessmentStatus: a.status,
             }));
           })
-          .catch(() => [])
-      )
+          .catch(() => []),
+      ),
     )
       .then((results) => {
         if (!isMounted) return;
@@ -217,13 +235,28 @@ export const GlobalSubmissionsHistoryPage = () => {
       // Category filter (based on assessment title keywords)
       if (selectedCategory !== 'ALL') {
         const title = (sub.assessmentTitle || '').toUpperCase();
-        if (selectedCategory === 'CODING' && !title.includes('CODE') && !title.includes('ALGORITHM') && !title.includes('PROGRAM')) {
+        if (
+          selectedCategory === 'CODING' &&
+          !title.includes('CODE') &&
+          !title.includes('ALGORITHM') &&
+          !title.includes('PROGRAM')
+        ) {
           return false;
         }
-        if (selectedCategory === 'SQL' && !title.includes('SQL') && !title.includes('DATABASE') && !title.includes('DATA')) {
+        if (
+          selectedCategory === 'SQL' &&
+          !title.includes('SQL') &&
+          !title.includes('DATABASE') &&
+          !title.includes('DATA')
+        ) {
           return false;
         }
-        if (selectedCategory === 'QUIZ' && !title.includes('QUIZ') && !title.includes('APTITUDE') && !title.includes('MCQ')) {
+        if (
+          selectedCategory === 'QUIZ' &&
+          !title.includes('QUIZ') &&
+          !title.includes('APTITUDE') &&
+          !title.includes('MCQ')
+        ) {
           return false;
         }
       }
@@ -241,7 +274,16 @@ export const GlobalSubmissionsHistoryPage = () => {
 
       return true;
     });
-  }, [allSubmissions, selectedAssessmentId, selectedMonth, selectedDate, selectedDatePreset, selectedCategory, selectedStatus, searchTerm]);
+  }, [
+    allSubmissions,
+    selectedAssessmentId,
+    selectedMonth,
+    selectedDate,
+    selectedDatePreset,
+    selectedCategory,
+    selectedStatus,
+    searchTerm,
+  ]);
 
   // Ranked submissions for the podium and badges
   const rankedSubmissions = useMemo(() => {
@@ -405,11 +447,14 @@ export const GlobalSubmissionsHistoryPage = () => {
                 <Trophy size={22} />
               </div>
               <div>
-                <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }}>
+                <h1
+                  style={{ margin: 0, fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }}
+                >
                   Global Assessment Submissions &amp; History
                 </h1>
                 <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
-                  Complete record of all assessments solved, candidate scores, dates, and LeetCode honors.
+                  Complete record of all assessments solved, candidate scores, dates, and LeetCode
+                  honors.
                 </p>
               </div>
             </div>
@@ -435,10 +480,12 @@ export const GlobalSubmissionsHistoryPage = () => {
                 opacity: rankedSubmissions.length === 0 ? 0.6 : 1,
               }}
               onMouseEnter={(e) => {
-                if (rankedSubmissions.length > 0) e.currentTarget.style.background = 'var(--border-color, #3f3f46)';
+                if (rankedSubmissions.length > 0)
+                  e.currentTarget.style.background = 'var(--border-color, #3f3f46)';
               }}
               onMouseLeave={(e) => {
-                if (rankedSubmissions.length > 0) e.currentTarget.style.background = 'var(--bg-secondary, #27272a)';
+                if (rankedSubmissions.length > 0)
+                  e.currentTarget.style.background = 'var(--bg-secondary, #27272a)';
               }}
             >
               <Download size={15} /> Export History (CSV)
@@ -484,7 +531,14 @@ export const GlobalSubmissionsHistoryPage = () => {
             <CheckCircle2 size={22} />
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+              }}
+            >
               Assessments Solved
             </div>
             <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }}>
@@ -523,7 +577,14 @@ export const GlobalSubmissionsHistoryPage = () => {
             <ShieldCheck size={22} />
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+              }}
+            >
               Average Pass Rate
             </div>
             <div style={{ fontSize: 22, fontWeight: 800, color: '#10b981' }}>
@@ -562,15 +623,20 @@ export const GlobalSubmissionsHistoryPage = () => {
             <Sparkles size={22} />
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+              }}
+            >
               Badges Awarded
             </div>
             <div style={{ fontSize: 22, fontWeight: 800, color: '#f59e0b' }}>
               {metrics.badgesCount}
             </div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-              LeetCode honors unlocked
-            </div>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>LeetCode honors unlocked</div>
           </div>
         </div>
 
@@ -601,15 +667,20 @@ export const GlobalSubmissionsHistoryPage = () => {
             <Users size={22} />
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+              }}
+            >
               Active Learners
             </div>
             <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }}>
               {new Set(rankedSubmissions.map((s) => s.studentId)).size}
             </div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-              Unique student solvers
-            </div>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Unique student solvers</div>
           </div>
         </div>
       </div>
@@ -629,7 +700,14 @@ export const GlobalSubmissionsHistoryPage = () => {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
           {/* Assessment Filter */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 220 }}>
-            <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+            <label
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+              }}
+            >
               Assessment
             </label>
             <select
@@ -657,7 +735,14 @@ export const GlobalSubmissionsHistoryPage = () => {
 
           {/* Month Filter */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 160 }}>
-            <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+            <label
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+              }}
+            >
               Month &amp; Time
             </label>
             <select
@@ -691,7 +776,14 @@ export const GlobalSubmissionsHistoryPage = () => {
 
           {/* Specific Date Filter */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 170 }}>
-            <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+            <label
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+              }}
+            >
               Specific Date
             </label>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -735,7 +827,14 @@ export const GlobalSubmissionsHistoryPage = () => {
 
           {/* Domain / Category Filter */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 170 }}>
-            <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+            <label
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+              }}
+            >
               Domain
             </label>
             <select
@@ -761,7 +860,14 @@ export const GlobalSubmissionsHistoryPage = () => {
 
           {/* Status Filter */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 140 }}>
-            <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+            <label
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+              }}
+            >
               Outcome
             </label>
             <select
@@ -788,7 +894,14 @@ export const GlobalSubmissionsHistoryPage = () => {
 
           {/* Search Box */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 200 }}>
-            <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+            <label
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+              }}
+            >
               Search Candidate / Assessment
             </label>
             <div style={{ position: 'relative' }}>
@@ -833,7 +946,15 @@ export const GlobalSubmissionsHistoryPage = () => {
             borderTop: '1px solid var(--border-color, #27272a)',
           }}
         >
-          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', marginRight: 4 }}>
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              color: 'var(--text-muted)',
+              textTransform: 'uppercase',
+              marginRight: 4,
+            }}
+          >
             Quick Dates:
           </span>
           {[
@@ -858,7 +979,9 @@ export const GlobalSubmissionsHistoryPage = () => {
                   fontSize: 12,
                   fontWeight: 600,
                   border: isActive ? '1px solid #f59e0b' : '1px solid var(--border-color, #3f3f46)',
-                  background: isActive ? 'rgba(245, 158, 11, 0.15)' : 'var(--bg-secondary, #27272a)',
+                  background: isActive
+                    ? 'rgba(245, 158, 11, 0.15)'
+                    : 'var(--bg-secondary, #27272a)',
                   color: isActive ? '#f59e0b' : 'var(--text-muted)',
                   cursor: 'pointer',
                   transition: 'all 0.15s',
@@ -883,12 +1006,22 @@ export const GlobalSubmissionsHistoryPage = () => {
               }}
             >
               <span style={{ fontSize: 11, color: '#60a5fa' }}>
-                Filtered: <strong>{assessments.find((a) => a.id === selectedAssessmentId)?.title || selectedAssessmentId}</strong>
+                Filtered:{' '}
+                <strong>
+                  {assessments.find((a) => a.id === selectedAssessmentId)?.title ||
+                    selectedAssessmentId}
+                </strong>
               </span>
               <button
                 type="button"
                 onClick={() => setSelectedAssessmentId('ALL')}
-                style={{ background: 'transparent', border: 'none', color: '#93c5fd', cursor: 'pointer', padding: 0 }}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#93c5fd',
+                  cursor: 'pointer',
+                  padding: 0,
+                }}
                 title="Clear assessment filter"
               >
                 <X size={12} />
@@ -897,11 +1030,25 @@ export const GlobalSubmissionsHistoryPage = () => {
           )}
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12, color: 'var(--text-muted)' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            fontSize: 12,
+            color: 'var(--text-muted)',
+          }}
+        >
           <span>
             Displaying <strong>{rankedSubmissions.length}</strong> solved records matching filters
           </span>
-          {(selectedAssessmentId !== 'ALL' || selectedMonth !== 'ALL' || selectedDate || selectedDatePreset !== 'ALL' || selectedCategory !== 'ALL' || selectedStatus !== 'ALL' || searchTerm) && (
+          {(selectedAssessmentId !== 'ALL' ||
+            selectedMonth !== 'ALL' ||
+            selectedDate ||
+            selectedDatePreset !== 'ALL' ||
+            selectedCategory !== 'ALL' ||
+            selectedStatus !== 'ALL' ||
+            searchTerm) && (
             <button
               onClick={() => {
                 setSelectedAssessmentId('ALL');
@@ -939,10 +1086,28 @@ export const GlobalSubmissionsHistoryPage = () => {
           }}
         >
           <div style={{ textAlign: 'center', marginBottom: 24 }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#f59e0b', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                color: '#f59e0b',
+                fontSize: 13,
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
               <Sparkles size={14} /> Honors Podium
             </div>
-            <h3 style={{ margin: '4px 0 0', fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
+            <h3
+              style={{
+                margin: '4px 0 0',
+                fontSize: 18,
+                fontWeight: 700,
+                color: 'var(--text-primary)',
+              }}
+            >
               Top Performers in Selected View
             </h3>
           </div>
@@ -958,7 +1123,14 @@ export const GlobalSubmissionsHistoryPage = () => {
           >
             {/* Rank 2 (Silver) */}
             {top2 && (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 220 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  width: 220,
+                }}
+              >
                 <div style={{ position: 'relative', marginBottom: 12 }}>
                   <div
                     style={{
@@ -998,17 +1170,33 @@ export const GlobalSubmissionsHistoryPage = () => {
                     2
                   </div>
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center' }}>
+                <div
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 700,
+                    color: 'var(--text-primary)',
+                    textAlign: 'center',
+                  }}
+                >
                   {top2.studentName || 'Student #2'}
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8, textAlign: 'center' }}>
-                  {top2.score} / {top2.assessmentTotalMarks || 100} ({Math.round(((top2.score || 0) / (top2.assessmentTotalMarks || 100)) * 100)}%)
+                <div
+                  style={{
+                    fontSize: 12,
+                    color: 'var(--text-muted)',
+                    marginBottom: 8,
+                    textAlign: 'center',
+                  }}
+                >
+                  {top2.score} / {top2.assessmentTotalMarks || 100} (
+                  {Math.round(((top2.score || 0) / (top2.assessmentTotalMarks || 100)) * 100)}%)
                 </div>
                 <div
                   style={{
                     width: '100%',
                     height: 80,
-                    background: 'linear-gradient(180deg, rgba(148, 163, 184, 0.25) 0%, rgba(100, 116, 139, 0.08) 100%)',
+                    background:
+                      'linear-gradient(180deg, rgba(148, 163, 184, 0.25) 0%, rgba(100, 116, 139, 0.08) 100%)',
                     borderRadius: '12px 12px 0 0',
                     border: '1px solid rgba(148, 163, 184, 0.35)',
                     display: 'flex',
@@ -1025,7 +1213,15 @@ export const GlobalSubmissionsHistoryPage = () => {
 
             {/* Rank 1 (Gold - Center) */}
             {top1 && (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 250, transform: 'translateY(-10px)' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  width: 250,
+                  transform: 'translateY(-10px)',
+                }}
+              >
                 <span style={{ fontSize: 28, marginBottom: 4 }}>👑</span>
                 <div style={{ position: 'relative', marginBottom: 12 }}>
                   <div
@@ -1067,17 +1263,34 @@ export const GlobalSubmissionsHistoryPage = () => {
                     1
                   </div>
                 </div>
-                <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)', textAlign: 'center' }}>
+                <div
+                  style={{
+                    fontSize: 15,
+                    fontWeight: 800,
+                    color: 'var(--text-primary)',
+                    textAlign: 'center',
+                  }}
+                >
                   {top1.studentName || 'Champion'}
                 </div>
-                <div style={{ fontSize: 12, color: '#f59e0b', fontWeight: 600, marginBottom: 8, textAlign: 'center' }}>
-                  {top1.score} / {top1.assessmentTotalMarks || 100} ({Math.round(((top1.score || 0) / (top1.assessmentTotalMarks || 100)) * 100)}%)
+                <div
+                  style={{
+                    fontSize: 12,
+                    color: '#f59e0b',
+                    fontWeight: 600,
+                    marginBottom: 8,
+                    textAlign: 'center',
+                  }}
+                >
+                  {top1.score} / {top1.assessmentTotalMarks || 100} (
+                  {Math.round(((top1.score || 0) / (top1.assessmentTotalMarks || 100)) * 100)}%)
                 </div>
                 <div
                   style={{
                     width: '100%',
                     height: 110,
-                    background: 'linear-gradient(180deg, rgba(245, 158, 11, 0.35) 0%, rgba(217, 119, 6, 0.1) 100%)',
+                    background:
+                      'linear-gradient(180deg, rgba(245, 158, 11, 0.35) 0%, rgba(217, 119, 6, 0.1) 100%)',
                     borderRadius: '14px 14px 0 0',
                     border: '1.5px solid rgba(245, 158, 11, 0.55)',
                     display: 'flex',
@@ -1088,9 +1301,15 @@ export const GlobalSubmissionsHistoryPage = () => {
                   }}
                 >
                   <span style={{ fontSize: 26 }}>🥇</span>
-                  <span style={{ fontSize: 13, fontWeight: 800, color: '#fef08a' }}>GOLD CHAMPION</span>
+                  <span style={{ fontSize: 13, fontWeight: 800, color: '#fef08a' }}>
+                    GOLD CHAMPION
+                  </span>
                   {top1.badges?.[0] && (
-                    <LeetCodeBadge badge={top1.badges[0]} size="xs" onClick={(b) => setSelectedBadge(b)} />
+                    <LeetCodeBadge
+                      badge={top1.badges[0]}
+                      size="xs"
+                      onClick={(b) => setSelectedBadge(b)}
+                    />
                   )}
                 </div>
               </div>
@@ -1098,7 +1317,14 @@ export const GlobalSubmissionsHistoryPage = () => {
 
             {/* Rank 3 (Bronze) */}
             {top3 && (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 220 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  width: 220,
+                }}
+              >
                 <div style={{ position: 'relative', marginBottom: 12 }}>
                   <div
                     style={{
@@ -1138,17 +1364,33 @@ export const GlobalSubmissionsHistoryPage = () => {
                     3
                   </div>
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center' }}>
+                <div
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 700,
+                    color: 'var(--text-primary)',
+                    textAlign: 'center',
+                  }}
+                >
                   {top3.studentName || 'Student #3'}
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8, textAlign: 'center' }}>
-                  {top3.score} / {top3.assessmentTotalMarks || 100} ({Math.round(((top3.score || 0) / (top3.assessmentTotalMarks || 100)) * 100)}%)
+                <div
+                  style={{
+                    fontSize: 12,
+                    color: 'var(--text-muted)',
+                    marginBottom: 8,
+                    textAlign: 'center',
+                  }}
+                >
+                  {top3.score} / {top3.assessmentTotalMarks || 100} (
+                  {Math.round(((top3.score || 0) / (top3.assessmentTotalMarks || 100)) * 100)}%)
                 </div>
                 <div
                   style={{
                     width: '100%',
                     height: 65,
-                    background: 'linear-gradient(180deg, rgba(217, 119, 6, 0.25) 0%, rgba(120, 53, 15, 0.08) 100%)',
+                    background:
+                      'linear-gradient(180deg, rgba(217, 119, 6, 0.25) 0%, rgba(120, 53, 15, 0.08) 100%)',
                     borderRadius: '12px 12px 0 0',
                     border: '1px solid rgba(217, 119, 6, 0.35)',
                     display: 'flex',
@@ -1177,9 +1419,17 @@ export const GlobalSubmissionsHistoryPage = () => {
         }}
       >
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, textAlign: 'left' }}>
+          <table
+            style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, textAlign: 'left' }}
+          >
             <thead>
-              <tr style={{ background: 'var(--bg-secondary, #27272a)', borderBottom: '1px solid var(--border-color, #3f3f46)', color: 'var(--text-muted)' }}>
+              <tr
+                style={{
+                  background: 'var(--bg-secondary, #27272a)',
+                  borderBottom: '1px solid var(--border-color, #3f3f46)',
+                  color: 'var(--text-muted)',
+                }}
+              >
                 <th style={{ padding: '14px 16px', fontWeight: 600, width: 70 }}>Rank</th>
                 <th style={{ padding: '14px 16px', fontWeight: 600 }}>Student</th>
                 <th style={{ padding: '14px 16px', fontWeight: 600 }}>Assessment</th>
@@ -1194,9 +1444,19 @@ export const GlobalSubmissionsHistoryPage = () => {
             <tbody>
               {rankedSubmissions.length === 0 ? (
                 <tr>
-                  <td colSpan={9} style={{ padding: 48, textAlign: 'center', color: 'var(--text-muted)' }}>
+                  <td
+                    colSpan={9}
+                    style={{ padding: 48, textAlign: 'center', color: 'var(--text-muted)' }}
+                  >
                     <div style={{ fontSize: 36, marginBottom: 8 }}>📝</div>
-                    <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--text-primary)', marginBottom: 4 }}>
+                    <div
+                      style={{
+                        fontWeight: 600,
+                        fontSize: 15,
+                        color: 'var(--text-primary)',
+                        marginBottom: 4,
+                      }}
+                    >
                       No Assessment Submissions Found
                     </div>
                     <div>Try adjusting your month, assessment, or keyword filters.</div>
@@ -1218,20 +1478,22 @@ export const GlobalSubmissionsHistoryPage = () => {
                         background: isTop1
                           ? 'rgba(245, 158, 11, 0.04)'
                           : isTop2
-                          ? 'rgba(148, 163, 184, 0.03)'
-                          : isTop3
-                          ? 'rgba(217, 119, 6, 0.03)'
-                          : 'transparent',
+                            ? 'rgba(148, 163, 184, 0.03)'
+                            : isTop3
+                              ? 'rgba(217, 119, 6, 0.03)'
+                              : 'transparent',
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-secondary, #27272a)')}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background = 'var(--bg-secondary, #27272a)')
+                      }
                       onMouseLeave={(e) => {
                         e.currentTarget.style.background = isTop1
                           ? 'rgba(245, 158, 11, 0.04)'
                           : isTop2
-                          ? 'rgba(148, 163, 184, 0.03)'
-                          : isTop3
-                          ? 'rgba(217, 119, 6, 0.03)'
-                          : 'transparent';
+                            ? 'rgba(148, 163, 184, 0.03)'
+                            : isTop3
+                              ? 'rgba(217, 119, 6, 0.03)'
+                              : 'transparent';
                       }}
                     >
                       {/* Rank */}
@@ -1249,7 +1511,13 @@ export const GlobalSubmissionsHistoryPage = () => {
                               width: 32,
                               height: 32,
                               borderRadius: '50%',
-                              background: isTop1 ? '#f59e0b' : isTop2 ? '#94a3b8' : isTop3 ? '#d97706' : 'var(--border-color, #3f3f46)',
+                              background: isTop1
+                                ? '#f59e0b'
+                                : isTop2
+                                  ? '#94a3b8'
+                                  : isTop3
+                                    ? '#d97706'
+                                    : 'var(--border-color, #3f3f46)',
                               color: '#fff',
                               display: 'flex',
                               alignItems: 'center',
@@ -1285,7 +1553,14 @@ export const GlobalSubmissionsHistoryPage = () => {
                             gap: 4,
                           }}
                         >
-                          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 180 }}>
+                          <span
+                            style={{
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              maxWidth: 180,
+                            }}
+                          >
                             {s.assessmentTitle}
                           </span>
                           <ExternalLink size={12} style={{ color: 'var(--text-muted)' }} />
@@ -1310,21 +1585,42 @@ export const GlobalSubmissionsHistoryPage = () => {
 
                       {/* Score Obtained */}
                       <td style={{ padding: '14px 16px' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: 120 }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                        <div
+                          style={{ display: 'flex', flexDirection: 'column', gap: 4, width: 120 }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              fontSize: 12,
+                            }}
+                          >
                             <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
                               {s.score || 0} / {s.assessmentTotalMarks || 100}
                             </span>
-                            <span style={{ fontWeight: 600, color: pct >= 80 ? '#10b981' : pct >= 50 ? '#f59e0b' : '#ef4444' }}>
+                            <span
+                              style={{
+                                fontWeight: 600,
+                                color: pct >= 80 ? '#10b981' : pct >= 50 ? '#f59e0b' : '#ef4444',
+                              }}
+                            >
                               {pct}%
                             </span>
                           </div>
-                          <div style={{ height: 5, borderRadius: 99, background: 'var(--border-color, #3f3f46)', overflow: 'hidden' }}>
+                          <div
+                            style={{
+                              height: 5,
+                              borderRadius: 99,
+                              background: 'var(--border-color, #3f3f46)',
+                              overflow: 'hidden',
+                            }}
+                          >
                             <div
                               style={{
                                 height: '100%',
                                 width: `${Math.min(100, pct)}%`,
-                                background: pct >= 80 ? '#10b981' : pct >= 50 ? '#f59e0b' : '#ef4444',
+                                background:
+                                  pct >= 80 ? '#10b981' : pct >= 50 ? '#f59e0b' : '#ef4444',
                                 borderRadius: 99,
                               }}
                             />
@@ -1345,16 +1641,18 @@ export const GlobalSubmissionsHistoryPage = () => {
                               s.gradeLetter === 'A+' || s.gradeLetter === 'A'
                                 ? 'rgba(16, 185, 129, 0.15)'
                                 : s.gradeLetter === 'B'
-                                ? 'rgba(59, 130, 246, 0.15)'
-                                : 'rgba(148, 163, 184, 0.15)',
+                                  ? 'rgba(59, 130, 246, 0.15)'
+                                  : 'rgba(148, 163, 184, 0.15)',
                             color:
                               s.gradeLetter === 'A+' || s.gradeLetter === 'A'
                                 ? '#10b981'
                                 : s.gradeLetter === 'B'
-                                ? '#3b82f6'
-                                : 'var(--text-muted)',
+                                  ? '#3b82f6'
+                                  : 'var(--text-muted)',
                             border: `1px solid ${
-                              s.gradeLetter === 'A+' || s.gradeLetter === 'A' ? '#10b98140' : '#3b82f640'
+                              s.gradeLetter === 'A+' || s.gradeLetter === 'A'
+                                ? '#10b98140'
+                                : '#3b82f640'
                             }`,
                           }}
                         >
@@ -1373,7 +1671,9 @@ export const GlobalSubmissionsHistoryPage = () => {
                             borderRadius: 6,
                             fontSize: 11,
                             fontWeight: 700,
-                            background: s.passed ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
+                            background: s.passed
+                              ? 'rgba(16, 185, 129, 0.12)'
+                              : 'rgba(239, 68, 68, 0.12)',
                             color: s.passed ? '#10b981' : '#ef4444',
                           }}
                         >
@@ -1386,16 +1686,24 @@ export const GlobalSubmissionsHistoryPage = () => {
                       <td style={{ padding: '14px 16px' }}>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                           {s.badges && s.badges.length > 0 ? (
-                            s.badges.slice(0, 2).map((b) => (
-                              <LeetCodeBadge
-                                key={b.id}
-                                badge={b}
-                                size="xs"
-                                onClick={(badge) => setSelectedBadge(badge)}
-                              />
-                            ))
+                            s.badges
+                              .slice(0, 2)
+                              .map((b) => (
+                                <LeetCodeBadge
+                                  key={b.id}
+                                  badge={b}
+                                  size="xs"
+                                  onClick={(badge) => setSelectedBadge(badge)}
+                                />
+                              ))
                           ) : (
-                            <span style={{ fontSize: 11, color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                            <span
+                              style={{
+                                fontSize: 11,
+                                color: 'var(--text-muted)',
+                                fontStyle: 'italic',
+                              }}
+                            >
                               No badges
                             </span>
                           )}
@@ -1430,10 +1738,7 @@ export const GlobalSubmissionsHistoryPage = () => {
 
       {/* ── 6. Badge Detail Modal ── */}
       {selectedBadge && (
-        <BadgeDetailModal
-          badge={selectedBadge}
-          onClose={() => setSelectedBadge(null)}
-        />
+        <BadgeDetailModal badge={selectedBadge} onClose={() => setSelectedBadge(null)} />
       )}
     </div>
   );

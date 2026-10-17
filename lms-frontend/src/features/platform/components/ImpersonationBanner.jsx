@@ -49,7 +49,9 @@ export const ImpersonationBanner = () => {
         clearInterval(interval);
         localStorage.removeItem('lms_impersonation');
         tokenStorage.clear();
-        alert('Your 30-minute temporary debug session has expired. You are being returned to the Platform Control Plane.');
+        alert(
+          'Your 30-minute temporary debug session has expired. You are being returned to the Platform Control Plane.',
+        );
         window.location.href = impersonation.returnUrl || ROUTES.PLATFORM_TENANTS;
       }
     }, 1000);
@@ -90,8 +92,18 @@ export const ImpersonationBanner = () => {
         transition: 'background 0.3s ease',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, letterSpacing: '-0.2px' }}>
+      <div
+        style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flexWrap: 'wrap' }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            fontWeight: 700,
+            letterSpacing: '-0.2px',
+          }}
+        >
           <Wrench size={16} style={{ color: '#ffffff' }} />
           <span>TEMPORARY DEBUG ACCESS (30M)</span>
         </div>
@@ -151,7 +163,9 @@ export const ImpersonationBanner = () => {
             fontSize: 12,
             fontFamily: 'monospace',
             letterSpacing: '0.05em',
-            border: isUrgent ? '1px solid rgba(254, 202, 202, 0.5)' : '1px solid rgba(254, 243, 199, 0.3)',
+            border: isUrgent
+              ? '1px solid rgba(254, 202, 202, 0.5)'
+              : '1px solid rgba(254, 243, 199, 0.3)',
           }}
         >
           <Clock size={13} className={isUrgent ? 'animate-pulse' : ''} />

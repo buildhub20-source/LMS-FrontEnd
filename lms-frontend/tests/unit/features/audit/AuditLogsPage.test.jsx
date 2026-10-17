@@ -49,7 +49,9 @@ describe('AuditLogsPage', () => {
     render(<AuditLogsPage />);
 
     expect(await screen.findByText('Something went wrong')).toBeInTheDocument();
-    expect(await screen.findByText('Cannot reach the server. Check your connection.')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Cannot reach the server. Check your connection.'),
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /try again/i })).toBeInTheDocument();
   });
 });

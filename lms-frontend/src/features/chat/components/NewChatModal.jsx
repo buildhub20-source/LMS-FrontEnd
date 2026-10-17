@@ -79,7 +79,7 @@ export default function NewChatModal({ isOpen, onClose, onChannelCreated }) {
       const channel = await chatService.createGroupChannel(
         groupName.trim(),
         groupDesc.trim() || undefined,
-        Array.from(selectedUserIds)
+        Array.from(selectedUserIds),
       );
       onChannelCreated(channel);
       onClose();
@@ -123,7 +123,12 @@ export default function NewChatModal({ isOpen, onClose, onChannelCreated }) {
               <span>New Group</span>
             </button>
           </div>
-          <button className="chat-modal__close" onClick={onClose} type="button" aria-label="Close modal">
+          <button
+            className="chat-modal__close"
+            onClick={onClose}
+            type="button"
+            aria-label="Close modal"
+          >
             <X size={20} />
           </button>
         </div>
@@ -166,7 +171,8 @@ export default function NewChatModal({ isOpen, onClose, onChannelCreated }) {
               ) : (
                 users.map((user) => {
                   const displayName = user.name || (user.email ? user.email.split('@')[0] : 'User');
-                  const initial = user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || '?';
+                  const initial =
+                    user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || '?';
                   const avatarIdx = getAvatarColorIndex(user.name || user.email || user.id);
                   return (
                     <div
@@ -174,7 +180,9 @@ export default function NewChatModal({ isOpen, onClose, onChannelCreated }) {
                       className="chat-modal__user-item"
                       onClick={() => !isSubmitting && handleStartDirect(user)}
                     >
-                      <div className={`chat-modal__avatar chat-avatar--gradient-${avatarIdx}`}>{initial}</div>
+                      <div className={`chat-modal__avatar chat-avatar--gradient-${avatarIdx}`}>
+                        {initial}
+                      </div>
                       <div className="chat-modal__user-info">
                         <div className="chat-modal__user-name">{displayName}</div>
                         {user.email && <div className="chat-modal__user-email">{user.email}</div>}
@@ -220,10 +228,12 @@ export default function NewChatModal({ isOpen, onClose, onChannelCreated }) {
               {isLoading ? (
                 <UserListSkeleton count={5} />
               ) : (
-                Array.isArray(users) && users.map((user) => {
+                Array.isArray(users) &&
+                users.map((user) => {
                   const isSelected = selectedUserIds.has(user.id);
                   const displayName = user.name || (user.email ? user.email.split('@')[0] : 'User');
-                  const initial = user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || '?';
+                  const initial =
+                    user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || '?';
                   const avatarIdx = getAvatarColorIndex(user.name || user.email || user.id);
                   return (
                     <div
@@ -231,12 +241,16 @@ export default function NewChatModal({ isOpen, onClose, onChannelCreated }) {
                       className={`chat-modal__user-item ${isSelected ? 'chat-modal__user-item--selected' : ''}`}
                       onClick={() => toggleUserSelection(user.id)}
                     >
-                      <div className={`chat-modal__avatar chat-avatar--gradient-${avatarIdx}`}>{initial}</div>
+                      <div className={`chat-modal__avatar chat-avatar--gradient-${avatarIdx}`}>
+                        {initial}
+                      </div>
                       <div className="chat-modal__user-info">
                         <div className="chat-modal__user-name">{displayName}</div>
                         {user.email && <div className="chat-modal__user-email">{user.email}</div>}
                       </div>
-                      <div className={`chat-modal__checkbox ${isSelected ? 'chat-modal__checkbox--checked' : ''}`}>
+                      <div
+                        className={`chat-modal__checkbox ${isSelected ? 'chat-modal__checkbox--checked' : ''}`}
+                      >
                         {isSelected && <Check size={14} />}
                       </div>
                     </div>

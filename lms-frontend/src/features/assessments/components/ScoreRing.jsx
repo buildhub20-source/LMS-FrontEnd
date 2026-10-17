@@ -18,21 +18,14 @@ export const ScoreRing = ({
 }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const filled = circumference * Math.max(0, Math.min(100, percentage)) / 100;
+  const filled = (circumference * Math.max(0, Math.min(100, percentage))) / 100;
   const gap = circumference - filled;
 
   const trackColor = 'rgba(148,163,184,0.15)';
-  const fillColor = passed
-    ? 'url(#scoreGradientPass)'
-    : 'url(#scoreGradientFail)';
+  const fillColor = passed ? 'url(#scoreGradientPass)' : 'url(#scoreGradientFail)';
 
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox={`0 0 ${size} ${size}`}
-      style={{ flexShrink: 0 }}
-    >
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ flexShrink: 0 }}>
       <defs>
         <linearGradient id="scoreGradientPass" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#10b981" />

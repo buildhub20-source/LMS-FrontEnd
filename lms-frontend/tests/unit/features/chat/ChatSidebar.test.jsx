@@ -40,7 +40,7 @@ describe('ChatSidebar - Direct Messages and Channel Names', () => {
         channels={dummyDirectChannels}
         activeChannelId="dm-1"
         onSelectChannel={vi.fn()}
-      />
+      />,
     );
 
     // Verify actual names are displayed
@@ -59,7 +59,7 @@ describe('ChatSidebar - Direct Messages and Channel Names', () => {
         channels={dummyDirectChannels}
         activeChannelId="dm-1"
         onSelectChannel={vi.fn()}
-      />
+      />,
     );
 
     const searchInput = screen.getByPlaceholderText('Search channels...');
@@ -81,7 +81,7 @@ describe('ChatSidebar - Direct Messages and Channel Names', () => {
         activeChannelId="dm-1"
         onSelectChannel={vi.fn()}
         presence={mockPresence}
-      />
+      />,
     );
 
     expect(screen.getByTitle('Online')).toBeInTheDocument();

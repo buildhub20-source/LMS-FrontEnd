@@ -173,7 +173,9 @@ export const PhotoUploadField = ({
               type="button"
               variant="secondary"
               size="sm"
-              leftIcon={uploading ? <Loader2 className={styles.spinner} size={14} /> : <Upload size={14} />}
+              leftIcon={
+                uploading ? <Loader2 className={styles.spinner} size={14} /> : <Upload size={14} />
+              }
               disabled={uploading}
               onClick={() => inputRef.current?.click()}
             >

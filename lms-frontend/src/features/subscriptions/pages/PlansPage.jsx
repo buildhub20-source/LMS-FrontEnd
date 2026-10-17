@@ -1,8 +1,14 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
-  Check, Sparkles, Zap, Shield, ArrowLeft,
-  ChevronRight, Star, HelpCircle
+  Check,
+  Sparkles,
+  Zap,
+  Shield,
+  ArrowLeft,
+  ChevronRight,
+  Star,
+  HelpCircle,
 } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Button from '../../../components/common/Button';
@@ -85,7 +91,9 @@ export const PlansPage = () => {
       // await subscriptionService.changePlan({ planId: selectedPlan.id, annual: isAnnual });
       throw new Error('Billing API not yet implemented');
     } catch {
-      toast.error('Plan changes are not available yet. Please contact your platform administrator.');
+      toast.error(
+        'Plan changes are not available yet. Please contact your platform administrator.',
+      );
       setIsModalOpen(false);
     } finally {
       setIsUpdating(false);
@@ -106,10 +114,29 @@ export const PlansPage = () => {
         </Button>
       }
     >
-      <div style={{ maxWidth: 1150, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
+      <div
+        style={{
+          maxWidth: 1150,
+          margin: '0 auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 32,
+        }}
+      >
         {/* Breadcrumb */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)' }}>
-          <Link to={ROUTES.SUBSCRIPTION} style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            fontSize: 13,
+            color: 'var(--text-muted)',
+          }}
+        >
+          <Link
+            to={ROUTES.SUBSCRIPTION}
+            style={{ color: 'var(--text-muted)', textDecoration: 'none' }}
+          >
             Subscription
           </Link>
           <ChevronRight size={13} />
@@ -118,10 +145,13 @@ export const PlansPage = () => {
 
         {/* ── Monthly / Annual Billing Toggle ── */}
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 14 }}>
-          <span style={{
-            fontSize: 14, fontWeight: isAnnual ? 500 : 700,
-            color: isAnnual ? 'var(--text-muted)' : 'var(--text-primary)',
-          }}>
+          <span
+            style={{
+              fontSize: 14,
+              fontWeight: isAnnual ? 500 : 700,
+              color: isAnnual ? 'var(--text-muted)' : 'var(--text-primary)',
+            }}
+          >
             Monthly Billing
           </span>
 
@@ -140,45 +170,54 @@ export const PlansPage = () => {
               padding: 3,
             }}
           >
-            <div style={{
-              width: 22,
-              height: 22,
-              borderRadius: '50%',
-              background: '#ffffff',
-              transform: isAnnual ? 'translateX(22px)' : 'translateX(0)',
-              transition: 'transform 0.2s ease',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-            }} />
+            <div
+              style={{
+                width: 22,
+                height: 22,
+                borderRadius: '50%',
+                background: '#ffffff',
+                transform: isAnnual ? 'translateX(22px)' : 'translateX(0)',
+                transition: 'transform 0.2s ease',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+              }}
+            />
           </button>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{
-              fontSize: 14, fontWeight: isAnnual ? 700 : 500,
-              color: isAnnual ? 'var(--text-primary)' : 'var(--text-muted)',
-            }}>
+            <span
+              style={{
+                fontSize: 14,
+                fontWeight: isAnnual ? 700 : 500,
+                color: isAnnual ? 'var(--text-primary)' : 'var(--text-muted)',
+              }}
+            >
               Annual Billing
             </span>
-            <span style={{
-              fontSize: 11,
-              fontWeight: 700,
-              background: 'rgba(34, 197, 94, 0.15)',
-              color: 'var(--color-success, #22c55e)',
-              padding: '2px 8px',
-              borderRadius: 12,
-              letterSpacing: '0.02em',
-            }}>
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                background: 'rgba(34, 197, 94, 0.15)',
+                color: 'var(--color-success, #22c55e)',
+                padding: '2px 8px',
+                borderRadius: 12,
+                letterSpacing: '0.02em',
+              }}
+            >
               Save 20%
             </span>
           </div>
         </div>
 
         {/* ── Plan Cards Grid ── */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: 24,
-          alignItems: 'stretch',
-        }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: 24,
+            alignItems: 'stretch',
+          }}
+        >
           {PLANS.map((plan) => {
             const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
 
@@ -190,51 +229,95 @@ export const PlansPage = () => {
                   border: plan.isPopular
                     ? '2px solid var(--primary)'
                     : plan.isCurrent
-                    ? '2px solid var(--color-success, #22c55e)'
-                    : '1px solid var(--border-color)',
+                      ? '2px solid var(--color-success, #22c55e)'
+                      : '1px solid var(--border-color)',
                   borderRadius: 18,
                   padding: 30,
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                   gap: 24,
-                  boxShadow: plan.isPopular ? '0 12px 30px color-mix(in srgb, var(--primary) 15%, transparent)' : '0 4px 16px rgba(0,0,0,0.03)',
+                  boxShadow: plan.isPopular
+                    ? '0 12px 30px color-mix(in srgb, var(--primary) 15%, transparent)'
+                    : '0 4px 16px rgba(0,0,0,0.03)',
                   position: 'relative',
                 }}
               >
                 {/* Popular / Current Ribbon */}
                 {plan.isPopular && (
-                  <div style={{
-                    position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)',
-                    background: 'var(--primary)', color: 'var(--primary-foreground, #ffffff)', fontSize: 11, fontWeight: 800,
-                    padding: '3px 14px', borderRadius: 20, letterSpacing: '0.06em', textTransform: 'uppercase',
-                    display: 'flex', alignItems: 'center', gap: 4,
-                  }}>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: -13,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      background: 'var(--primary)',
+                      color: 'var(--primary-foreground, #ffffff)',
+                      fontSize: 11,
+                      fontWeight: 800,
+                      padding: '3px 14px',
+                      borderRadius: 20,
+                      letterSpacing: '0.06em',
+                      textTransform: 'uppercase',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                    }}
+                  >
                     <Star size={11} fill="#ffffff" /> Most Popular
                   </div>
                 )}
                 {plan.isCurrent && (
-                  <div style={{
-                    position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)',
-                    background: 'var(--color-success, #22c55e)', color: '#ffffff', fontSize: 11, fontWeight: 800,
-                    padding: '3px 14px', borderRadius: 20, letterSpacing: '0.06em', textTransform: 'uppercase',
-                    display: 'flex', alignItems: 'center', gap: 4,
-                  }}>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: -13,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      background: 'var(--color-success, #22c55e)',
+                      color: '#ffffff',
+                      fontSize: 11,
+                      fontWeight: 800,
+                      padding: '3px 14px',
+                      borderRadius: 20,
+                      letterSpacing: '0.06em',
+                      textTransform: 'uppercase',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                    }}
+                  >
                     <Check size={11} /> Current Plan
                   </div>
                 )}
 
                 {/* Top Section */}
                 <div>
-                  <h3 style={{ margin: '0 0 6px', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+                  <h3
+                    style={{
+                      margin: '0 0 6px',
+                      fontSize: 20,
+                      fontWeight: 800,
+                      color: 'var(--text-primary)',
+                    }}
+                  >
                     {plan.name}
                   </h3>
-                  <p style={{ margin: '0 0 20px', fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                  <p
+                    style={{
+                      margin: '0 0 20px',
+                      fontSize: 13,
+                      color: 'var(--text-muted)',
+                      lineHeight: 1.4,
+                    }}
+                  >
                     {plan.tagline}
                   </p>
 
                   {/* Price */}
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 24 }}>
+                  <div
+                    style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 24 }}
+                  >
                     <span style={{ fontSize: 36, fontWeight: 900, color: 'var(--text-primary)' }}>
                       ${price}
                     </span>
@@ -244,13 +327,46 @@ export const PlansPage = () => {
                   </div>
 
                   {/* Features List */}
-                  <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    <p style={{ margin: 0, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
+                  <div
+                    style={{
+                      borderTop: '1px solid var(--border-color)',
+                      paddingTop: 20,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 12,
+                    }}
+                  >
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 12,
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        color: 'var(--text-muted)',
+                        letterSpacing: '0.05em',
+                      }}
+                    >
                       Included Features:
                     </p>
                     {plan.features.map((feat, idx) => (
-                      <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13, color: 'var(--text-primary)' }}>
-                        <Check size={16} style={{ color: 'var(--color-success, #22c55e)', flexShrink: 0, marginTop: 2 }} />
+                      <div
+                        key={idx}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: 10,
+                          fontSize: 13,
+                          color: 'var(--text-primary)',
+                        }}
+                      >
+                        <Check
+                          size={16}
+                          style={{
+                            color: 'var(--color-success, #22c55e)',
+                            flexShrink: 0,
+                            marginTop: 2,
+                          }}
+                        />
                         <span>{feat}</span>
                       </div>
                     ))}
@@ -274,13 +390,13 @@ export const PlansPage = () => {
                       background: plan.isCurrent
                         ? 'rgba(16, 185, 129, 0.1)'
                         : plan.isPopular
-                        ? '#6366f1'
-                        : 'var(--surface-medium)',
+                          ? '#6366f1'
+                          : 'var(--surface-medium)',
                       color: plan.isCurrent
                         ? '#10b981'
                         : plan.isPopular
-                        ? '#ffffff'
-                        : 'var(--text-primary)',
+                          ? '#ffffff'
+                          : 'var(--text-primary)',
                       transition: 'opacity 0.15s ease',
                     }}
                   >

@@ -1,6 +1,17 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Users, UserPlus, Trash2, Archive, ArchiveRestore, Shield, Edit2, Check, Search } from 'lucide-react';
+import {
+  X,
+  Users,
+  UserPlus,
+  Trash2,
+  Archive,
+  ArchiveRestore,
+  Shield,
+  Edit2,
+  Check,
+  Search,
+} from 'lucide-react';
 import chatService from '../services/chatService';
 import { CHANNEL_TYPES } from '../constants/chatConstants';
 import { MemberRosterSkeleton } from './ChatSkeletons';
@@ -48,7 +59,8 @@ export default function ChannelDetailsModal({
     setEditDesc(channel.description || '');
 
     setIsLoadingMembers(true);
-    chatService.getMembers(channel.id)
+    chatService
+      .getMembers(channel.id)
       .then((data) => {
         const list = Array.isArray(data) ? data : (data?.data ?? []);
         setMembers(list);
@@ -65,7 +77,8 @@ export default function ChannelDetailsModal({
     if (!isAddingMember) return;
     const timer = setTimeout(() => {
       setIsSearchingUsers(true);
-      chatService.getUsers(userSearch)
+      chatService
+        .getUsers(userSearch)
         .then((data) => {
           const list = Array.isArray(data) ? data : (data?.data ?? []);
           // Exclude already existing members
@@ -84,13 +97,15 @@ export default function ChannelDetailsModal({
   const isArchived = Boolean(channel.is_archived || channel.isArchived);
 
   // Check if current user has admin/owner rights
-  const currentMember = members.find((m) => String(m.user_id || m.userId || m.id) === String(currentUser?.id));
-  const isOwnerOrAdmin = !isDirect && (
-    channel.creator_id === currentUser?.id ||
-    currentMember?.role === 'owner' ||
-    currentMember?.role === 'admin' ||
-    currentUser?.role === 'ADMIN'
+  const currentMember = members.find(
+    (m) => String(m.user_id || m.userId || m.id) === String(currentUser?.id),
   );
+  const isOwnerOrAdmin =
+    !isDirect &&
+    (channel.creator_id === currentUser?.id ||
+      currentMember?.role === 'owner' ||
+      currentMember?.role === 'admin' ||
+      currentUser?.role === 'ADMIN');
 
   // Save edited info
   const handleSaveInfo = async (e) => {
@@ -136,7 +151,9 @@ export default function ChannelDetailsModal({
     setError(null);
     try {
       await chatService.removeMember(channel.id, userId);
-      setMembers((prev) => prev.filter((m) => String(m.user_id || m.userId || m.id) !== String(userId)));
+      setMembers((prev) =>
+        prev.filter((m) => String(m.user_id || m.userId || m.id) !== String(userId)),
+      );
     } catch (err) {
       console.error('Failed to remove member:', err);
       setError(err?.response?.data?.error || 'Failed to remove member');
@@ -152,7 +169,12 @@ export default function ChannelDetailsModal({
       const updated = isArchived
         ? await chatService.unarchiveChannel(channel.id)
         : await chatService.archiveChannel(channel.id);
-      onChannelUpdated?.({ ...channel, is_archived: !isArchived, isArchived: !isArchived, ...updated });
+      onChannelUpdated?.({
+        ...channel,
+        is_archived: !isArchived,
+        isArchived: !isArchived,
+        ...updated,
+      });
     } catch (err) {
       console.error(`Failed to ${actionText} channel:`, err);
       setError(err?.response?.data?.error || `Failed to ${actionText} channel`);
@@ -232,9 +254,7 @@ export default function ChannelDetailsModal({
             ) : (
               <div className="chat-details-info">
                 <p className="chat-details-name">{channel.name || 'Unnamed Channel'}</p>
-                {channel.description && (
-                  <p className="chat-details-desc">{channel.description}</p>
-                )}
+                {channel.description && <p className="chat-details-desc">{channel.description}</p>}
               </div>
             )}
           </div>
@@ -284,9 +304,7 @@ export default function ChannelDetailsModal({
                     </button>
                   </div>
 
-                  {isSearchingUsers && (
-                    <div className="chat-modal__loading">Searching...</div>
-                  )}
+                  {isSearchingUsers && <div className="chat-modal__loading">Searching...</div>}
                   {!isSearchingUsers && userSearch && searchUsers.length === 0 && (
                     <div className="chat-modal__empty">No matching users</div>
                   )}
@@ -298,7 +316,9 @@ export default function ChannelDetailsModal({
                           className="chat-modal__user-item"
                           onClick={() => handleAddMember(u.id)}
                         >
-                          <div className="chat-modal__avatar">{u.name?.[0]?.toUpperCase() || '?'}</div>
+                          <div className="chat-modal__avatar">
+                            {u.name?.[0]?.toUpperCase() || '?'}
+                          </div>
                           <div className="chat-modal__user-info">
                             <span className="chat-modal__user-name">{u.name || u.email}</span>
                             {u.email && <span className="chat-modal__user-email">{u.email}</span>}
@@ -329,9 +349,7 @@ export default function ChannelDetailsModal({
                     return (
                       <div key={memberId} className="chat-details-member-item">
                         <div className="chat-details-member-avatar-wrap">
-                          <div className="chat-modal__avatar">
-                            {initial}
-                          </div>
+                          <div className="chat-modal__avatar">{initial}</div>
                           <span
                             className={`chat-presence-dot ${
                               online ? 'chat-presence-dot--online' : 'chat-presence-dot--offline'
@@ -342,9 +360,7 @@ export default function ChannelDetailsModal({
 
                         <div className="chat-details-member-info">
                           <div className="chat-details-member-name-row">
-                            <span className="chat-details-member-name">
-                              {name}
-                            </span>
+                            <span className="chat-details-member-name">{name}</span>
                             {isSelf && <span className="chat-self-badge">you</span>}
                             {isOwner && (
                               <span className="chat-owner-badge" title="Channel Owner">

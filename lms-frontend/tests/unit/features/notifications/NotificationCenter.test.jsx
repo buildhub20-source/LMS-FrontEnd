@@ -90,7 +90,7 @@ describe('NotificationCenter & Real-Time Popover', () => {
         notifications={sampleNotifications}
         unreadCount={2}
       />,
-      { wrapper: createWrapper() }
+      { wrapper: createWrapper() },
     );
     expect(container.firstChild).toBeNull();
   });
@@ -103,7 +103,7 @@ describe('NotificationCenter & Real-Time Popover', () => {
         notifications={sampleNotifications}
         unreadCount={2}
       />,
-      { wrapper: createWrapper() }
+      { wrapper: createWrapper() },
     );
 
     expect(screen.getByText('Notifications')).toBeInTheDocument();
@@ -120,7 +120,7 @@ describe('NotificationCenter & Real-Time Popover', () => {
         notifications={sampleNotifications}
         unreadCount={2}
       />,
-      { wrapper: createWrapper() }
+      { wrapper: createWrapper() },
     );
 
     // Click Unread tab
@@ -147,7 +147,7 @@ describe('NotificationCenter & Real-Time Popover', () => {
         notifications={sampleNotifications}
         unreadCount={2}
       />,
-      { wrapper: createWrapper() }
+      { wrapper: createWrapper() },
     );
 
     const firstItem = screen.getByText('Direct Message');
@@ -168,7 +168,7 @@ describe('NotificationCenter & Real-Time Popover', () => {
         notifications={sampleNotifications}
         unreadCount={2}
       />,
-      { wrapper: createWrapper() }
+      { wrapper: createWrapper() },
     );
 
     const markAllBtn = screen.getByRole('button', { name: /Mark all read/i });
@@ -188,7 +188,7 @@ describe('NotificationCenter & Real-Time Popover', () => {
         notifications={sampleNotifications}
         unreadCount={2}
       />,
-      { wrapper: createWrapper() }
+      { wrapper: createWrapper() },
     );
 
     const viewAllBtn = screen.getByRole('button', { name: /View all in Notifications/i });
@@ -200,13 +200,8 @@ describe('NotificationCenter & Real-Time Popover', () => {
 
   it('renders empty state when there are no notifications', () => {
     render(
-      <NotificationDropdown
-        isOpen={true}
-        onClose={vi.fn()}
-        notifications={[]}
-        unreadCount={0}
-      />,
-      { wrapper: createWrapper() }
+      <NotificationDropdown isOpen={true} onClose={vi.fn()} notifications={[]} unreadCount={0} />,
+      { wrapper: createWrapper() },
     );
 
     expect(screen.getByText('No notifications found')).toBeInTheDocument();
@@ -251,9 +246,8 @@ describe('Header Notification Bell Integration', () => {
 
 describe('Microsoft Teams Style Notification Toast & Deduplication', () => {
   it('deduplicates notifications with the same ID', async () => {
-    const { default: teamsToastService } = await import(
-      '../../../../src/features/notifications/services/teamsToastService'
-    );
+    const { default: teamsToastService } =
+      await import('../../../../src/features/notifications/services/teamsToastService');
     teamsToastService.clear();
 
     const notif = {
@@ -273,12 +267,10 @@ describe('Microsoft Teams Style Notification Toast & Deduplication', () => {
   });
 
   it('renders Teams notification card and opens inline reply on clicking Reply', async () => {
-    const { default: TeamsNotificationHost } = await import(
-      '../../../../src/features/notifications/components/TeamsNotificationToast'
-    );
-    const { default: teamsToastService } = await import(
-      '../../../../src/features/notifications/services/teamsToastService'
-    );
+    const { default: TeamsNotificationHost } =
+      await import('../../../../src/features/notifications/components/TeamsNotificationToast');
+    const { default: teamsToastService } =
+      await import('../../../../src/features/notifications/services/teamsToastService');
     const { act } = await import('@testing-library/react');
     teamsToastService.clear();
 
@@ -323,5 +315,3 @@ describe('Microsoft Teams Style Notification Toast & Deduplication', () => {
     teamsToastService.clear();
   });
 });
-
-

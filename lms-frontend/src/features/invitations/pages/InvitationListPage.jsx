@@ -430,142 +430,170 @@ export const InvitationListPage = () => {
                     <col style={{ width: '10%' }} />
                   </colgroup>
                   <tbody className="divide-y divide-slate-100">
-                  {invitations.map((inv) => (
-                    <tr
-                      key={inv.id}
-                      style={{
-                        borderBottom: '1px solid var(--border-subtle)',
-                        transition: 'background 0.1s ease',
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                    >
-                      <td style={{ padding: '14px 24px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <div
-                            style={{
-                              width: 36,
-                              height: 36,
-                              borderRadius: '50%',
-                              background: 'var(--surface-medium)',
-                              border: '1px solid var(--border-color)',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: 13,
-                              fontWeight: 700,
-                              color: 'var(--text-secondary)',
-                              flexShrink: 0,
-                            }}
-                          >
-                            {getInitials(inv.name ?? '')}
-                          </div>
-                          <div>
-                            <p
-                              style={{
-                                margin: 0,
-                                fontSize: 14,
-                                fontWeight: 600,
-                                color: 'var(--text-primary)',
-                              }}
-                            >
-                              {inv.name}
-                            </p>
-                            <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
-                              {inv.email}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td style={{ padding: '14px 24px' }}>
-                        <StatusBadge status={inv.status} />
-                      </td>
-                      <td style={{ padding: '14px 24px' }}>
-                        <span
-                          style={{
-                            borderRadius: 6,
-                            background: 'var(--surface-medium)',
-                            border: '1px solid var(--border-color)',
-                            padding: '2px 8px',
-                            fontSize: 12,
-                            fontWeight: 600,
-                            color: 'var(--text-secondary)',
-                          }}
-                        >
-                          {inv.roleName ?? '—'}
-                        </span>
-                      </td>
-                      <td style={{ padding: '14px 24px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          {isExpired(inv) ? (
-                            <Clock size={14} color="var(--text-muted)" />
-                          ) : (
-                            <CheckCircle2 size={14} color="#4ade80" />
-                          )}
-                          <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                            {formatDate(inv.expiresAt)}
-                          </span>
-                        </div>
-                      </td>
-                      <td
-                        style={{ padding: '14px 24px', fontSize: 13, color: 'var(--text-muted)' }}
+                    {invitations.map((inv) => (
+                      <tr
+                        key={inv.id}
+                        style={{
+                          borderBottom: '1px solid var(--border-subtle)',
+                          transition: 'background 0.1s ease',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                       >
-                        {inv.invitedBy ?? '—'}
-                      </td>
-                      <td style={{ padding: '14px 24px', textAlign: 'right' }}>
-                        <PermissionGuard
-                          required={[PERMISSIONS.INVITATION_WRITE]}
-                          fallback={
-                            <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>—</span>
-                          }
-                        >
-                          <div style={{ position: 'relative', display: 'inline-block' }}>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (openMenuId === inv.id) {
-                                  setOpenMenuId(null);
-                                } else {
-                                  // Detect if near bottom of viewport → open upward
-                                  const rect = e.currentTarget.getBoundingClientRect();
-                                  setMenuOpenUpward(window.innerHeight - rect.bottom < 180);
-                                  setOpenMenuId(inv.id);
-                                }
-                              }}
+                        <td style={{ padding: '14px 24px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                            <div
                               style={{
-                                background: 'transparent',
-                                border: 'none',
-                                cursor: 'pointer',
-                                color: 'var(--text-muted)',
-                                padding: 6,
-                                borderRadius: 6,
+                                width: 36,
+                                height: 36,
+                                borderRadius: '50%',
+                                background: 'var(--surface-medium)',
+                                border: '1px solid var(--border-color)',
                                 display: 'flex',
                                 alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: 13,
+                                fontWeight: 700,
+                                color: 'var(--text-secondary)',
+                                flexShrink: 0,
                               }}
                             >
-                              <MoreVertical size={16} />
-                            </button>
-                            {openMenuId === inv.id && (
-                              <div
+                              {getInitials(inv.name ?? '')}
+                            </div>
+                            <div>
+                              <p
                                 style={{
-                                  position: 'absolute',
-                                  right: 0,
-                                  ...(menuOpenUpward
-                                    ? { bottom: 32, top: 'auto' }
-                                    : { top: 36, bottom: 'auto' }),
-                                  zIndex: 50,
-                                  width: 160,
-                                  borderRadius: 8,
-                                  border: '1px solid var(--border-color)',
-                                  background: 'var(--surface-dark)',
-                                  padding: '4px 0',
-                                  boxShadow: '0 8px 30px rgba(0,0,0,0.35)',
+                                  margin: 0,
+                                  fontSize: 14,
+                                  fontWeight: 600,
+                                  color: 'var(--text-primary)',
                                 }}
                               >
-                                {inv.status === 'PENDING' && (
+                                {inv.name}
+                              </p>
+                              <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
+                                {inv.email}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{ padding: '14px 24px' }}>
+                          <StatusBadge status={inv.status} />
+                        </td>
+                        <td style={{ padding: '14px 24px' }}>
+                          <span
+                            style={{
+                              borderRadius: 6,
+                              background: 'var(--surface-medium)',
+                              border: '1px solid var(--border-color)',
+                              padding: '2px 8px',
+                              fontSize: 12,
+                              fontWeight: 600,
+                              color: 'var(--text-secondary)',
+                            }}
+                          >
+                            {inv.roleName ?? '—'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '14px 24px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            {isExpired(inv) ? (
+                              <Clock size={14} color="var(--text-muted)" />
+                            ) : (
+                              <CheckCircle2 size={14} color="#4ade80" />
+                            )}
+                            <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+                              {formatDate(inv.expiresAt)}
+                            </span>
+                          </div>
+                        </td>
+                        <td
+                          style={{ padding: '14px 24px', fontSize: 13, color: 'var(--text-muted)' }}
+                        >
+                          {inv.invitedBy ?? '—'}
+                        </td>
+                        <td style={{ padding: '14px 24px', textAlign: 'right' }}>
+                          <PermissionGuard
+                            required={[PERMISSIONS.INVITATION_WRITE]}
+                            fallback={
+                              <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>—</span>
+                            }
+                          >
+                            <div style={{ position: 'relative', display: 'inline-block' }}>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (openMenuId === inv.id) {
+                                    setOpenMenuId(null);
+                                  } else {
+                                    // Detect if near bottom of viewport → open upward
+                                    const rect = e.currentTarget.getBoundingClientRect();
+                                    setMenuOpenUpward(window.innerHeight - rect.bottom < 180);
+                                    setOpenMenuId(inv.id);
+                                  }
+                                }}
+                                style={{
+                                  background: 'transparent',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  color: 'var(--text-muted)',
+                                  padding: 6,
+                                  borderRadius: 6,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                <MoreVertical size={16} />
+                              </button>
+                              {openMenuId === inv.id && (
+                                <div
+                                  style={{
+                                    position: 'absolute',
+                                    right: 0,
+                                    ...(menuOpenUpward
+                                      ? { bottom: 32, top: 'auto' }
+                                      : { top: 36, bottom: 'auto' }),
+                                    zIndex: 50,
+                                    width: 160,
+                                    borderRadius: 8,
+                                    border: '1px solid var(--border-color)',
+                                    background: 'var(--surface-dark)',
+                                    padding: '4px 0',
+                                    boxShadow: '0 8px 30px rgba(0,0,0,0.35)',
+                                  }}
+                                >
+                                  {inv.status === 'PENDING' && (
+                                    <button
+                                      onClick={() => {
+                                        setResendTarget(inv);
+                                        setOpenMenuId(null);
+                                      }}
+                                      style={{
+                                        display: 'flex',
+                                        width: '100%',
+                                        alignItems: 'center',
+                                        gap: 10,
+                                        padding: '8px 12px',
+                                        fontSize: 13,
+                                        color: 'var(--text-secondary)',
+                                        background: 'transparent',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        textAlign: 'left',
+                                      }}
+                                      onMouseEnter={(e) =>
+                                        (e.currentTarget.style.background = 'var(--hover-bg)')
+                                      }
+                                      onMouseLeave={(e) =>
+                                        (e.currentTarget.style.background = 'transparent')
+                                      }
+                                    >
+                                      <Send size={14} /> Resend
+                                    </button>
+                                  )}
                                   <button
                                     onClick={() => {
-                                      setResendTarget(inv);
+                                      setRevokeTarget(inv);
                                       setOpenMenuId(null);
                                     }}
                                     style={{
@@ -575,56 +603,28 @@ export const InvitationListPage = () => {
                                       gap: 10,
                                       padding: '8px 12px',
                                       fontSize: 13,
-                                      color: 'var(--text-secondary)',
+                                      color: '#f87171',
                                       background: 'transparent',
                                       border: 'none',
                                       cursor: 'pointer',
                                       textAlign: 'left',
                                     }}
                                     onMouseEnter={(e) =>
-                                      (e.currentTarget.style.background = 'var(--hover-bg)')
+                                      (e.currentTarget.style.background = 'rgba(239,68,68,0.08)')
                                     }
                                     onMouseLeave={(e) =>
                                       (e.currentTarget.style.background = 'transparent')
                                     }
                                   >
-                                    <Send size={14} /> Resend
+                                    <Trash2 size={14} /> Revoke
                                   </button>
-                                )}
-                                <button
-                                  onClick={() => {
-                                    setRevokeTarget(inv);
-                                    setOpenMenuId(null);
-                                  }}
-                                  style={{
-                                    display: 'flex',
-                                    width: '100%',
-                                    alignItems: 'center',
-                                    gap: 10,
-                                    padding: '8px 12px',
-                                    fontSize: 13,
-                                    color: '#f87171',
-                                    background: 'transparent',
-                                    border: 'none',
-                                    cursor: 'pointer',
-                                    textAlign: 'left',
-                                  }}
-                                  onMouseEnter={(e) =>
-                                    (e.currentTarget.style.background = 'rgba(239,68,68,0.08)')
-                                  }
-                                  onMouseLeave={(e) =>
-                                    (e.currentTarget.style.background = 'transparent')
-                                  }
-                                >
-                                  <Trash2 size={14} /> Revoke
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </PermissionGuard>
-                      </td>
-                    </tr>
-                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </PermissionGuard>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -679,7 +679,13 @@ export const InvitationListPage = () => {
             </div>
 
             {/* Pagination — always visible at bottom */}
-            <div style={{ borderTop: '1px solid var(--border-color)', padding: '12px 24px', flexShrink: 0 }}>
+            <div
+              style={{
+                borderTop: '1px solid var(--border-color)',
+                padding: '12px 24px',
+                flexShrink: 0,
+              }}
+            >
               <AdminPagination
                 page={page}
                 totalPages={totalPages}
@@ -785,9 +791,7 @@ export const InvitationListPage = () => {
                     border: rolesDropdownOpen
                       ? '1px solid var(--brand-primary, #6366f1)'
                       : '1px solid var(--border-color)',
-                    boxShadow: rolesDropdownOpen
-                      ? '0 0 0 2px rgba(99,102,241,0.15)'
-                      : 'none',
+                    boxShadow: rolesDropdownOpen ? '0 0 0 2px rgba(99,102,241,0.15)' : 'none',
                     borderRadius: 8,
                     fontSize: 14,
                     color: createRoleName ? 'var(--text-primary)' : 'var(--text-muted)',
@@ -861,9 +865,7 @@ export const InvitationListPage = () => {
                               gap: 12,
                               padding: '8px 12px',
                               borderRadius: 8,
-                              background: isSelected
-                                ? 'var(--hover-bg)'
-                                : 'transparent',
+                              background: isSelected ? 'var(--hover-bg)' : 'transparent',
                               border: 'none',
                               cursor: 'pointer',
                               textAlign: 'left',
@@ -915,12 +917,18 @@ export const InvitationListPage = () => {
                                     lineHeight: 1.3,
                                   }}
                                 >
-                                  {role.description || ROLE_DESCRIPTIONS[role.name] || 'Platform role'}
+                                  {role.description ||
+                                    ROLE_DESCRIPTIONS[role.name] ||
+                                    'Platform role'}
                                 </p>
                               </div>
                             </div>
                             {isSelected && (
-                              <Check size={16} color="var(--text-primary)" style={{ flexShrink: 0 }} />
+                              <Check
+                                size={16}
+                                color="var(--text-primary)"
+                                style={{ flexShrink: 0 }}
+                              />
                             )}
                           </button>
                         );

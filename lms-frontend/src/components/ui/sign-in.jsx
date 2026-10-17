@@ -1,7 +1,19 @@
 import { useState, useRef } from 'react';
 import {
-  Eye, EyeOff, AlertCircle, Lock, Building2, ServerOff, WifiOff,
-  ShieldAlert, X, BarChart3, Info, GraduationCap, ChevronDown, TrendingUp
+  Eye,
+  EyeOff,
+  AlertCircle,
+  Lock,
+  Building2,
+  ServerOff,
+  WifiOff,
+  ShieldAlert,
+  X,
+  BarChart3,
+  Info,
+  GraduationCap,
+  ChevronDown,
+  TrendingUp,
 } from 'lucide-react';
 import appConfig from '../../config/appConfig';
 
@@ -33,11 +45,30 @@ export const VertexLogo = ({ size = 26, color = 'currentColor', className = '' }
 // 1. Class Schedule & Deadlines (Calendar)
 const ScheduleIcon = ({ size = 15 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-    <rect x="3" y="4" width="18" height="17" rx="3" fill="#ffffff" stroke="#4285F4" strokeWidth="2" />
+    <rect
+      x="3"
+      y="4"
+      width="18"
+      height="17"
+      rx="3"
+      fill="#ffffff"
+      stroke="#4285F4"
+      strokeWidth="2"
+    />
     <path d="M3 9H21" stroke="#4285F4" strokeWidth="2" strokeLinecap="round" />
     <path d="M8 2V5" stroke="#EA4335" strokeWidth="2" strokeLinecap="round" />
     <path d="M16 2V5" stroke="#34A853" strokeWidth="2" strokeLinecap="round" />
-    <text x="12" y="17" textAnchor="middle" fontSize="7.5" fontWeight="800" fill="#1e293b" fontFamily="-apple-system, sans-serif">31</text>
+    <text
+      x="12"
+      y="17"
+      textAnchor="middle"
+      fontSize="7.5"
+      fontWeight="800"
+      fill="#1e293b"
+      fontFamily="-apple-system, sans-serif"
+    >
+      31
+    </text>
   </svg>
 );
 
@@ -60,7 +91,13 @@ const CertificateBadgeIcon = ({ size = 15 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
     <circle cx="12" cy="9" r="6" fill="#F59E0B" stroke="#D97706" strokeWidth="1.5" />
     <path d="M8.5 13.5L7 21L12 18L17 21L15.5 13.5" fill="#D97706" />
-    <path d="M10 9L11.5 10.5L14.5 7.5" stroke="#FFFFFF" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    <path
+      d="M10 9L11.5 10.5L14.5 7.5"
+      stroke="#FFFFFF"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 );
 
@@ -77,23 +114,32 @@ const LiveClassIcon = ({ size = 15 }) => (
 const AITutorIcon = ({ size = 15 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
     <path d="M12 2L14.4 7.6L20 10L14.4 12.4L12 18L9.6 12.4L4 10L9.6 7.6L12 2Z" fill="#8B5CF6" />
-    <path d="M19 16L20.2 18.8L23 20L20.2 21.2L19 24L17.8 21.2L15 20L17.8 18.8L19 16Z" fill="#A78BFA" />
+    <path
+      d="M19 16L20.2 18.8L23 20L20.2 21.2L19 24L17.8 21.2L15 20L17.8 18.8L19 16Z"
+      fill="#A78BFA"
+    />
   </svg>
 );
-
 
 /* ── Error rendering ──────────────────────────────────────────────── */
 const renderErrorIcon = (type) => {
   const cls = 'h-4 w-4 shrink-0';
   switch (type) {
-    case 'CREDENTIALS':      return <AlertCircle className={`${cls} text-red-400`} />;
-    case 'ACCOUNT_LOCKED':   return <Lock className={`${cls} text-amber-400`} />;
+    case 'CREDENTIALS':
+      return <AlertCircle className={`${cls} text-red-400`} />;
+    case 'ACCOUNT_LOCKED':
+      return <Lock className={`${cls} text-amber-400`} />;
     case 'TENANT_NOT_FOUND':
-    case 'TENANT_INACTIVE':  return <Building2 className={`${cls} text-orange-400`} />;
-    case 'SERVER_ERROR':     return <ServerOff className={`${cls} text-red-400`} />;
-    case 'NETWORK_ERROR':    return <WifiOff className={`${cls} text-rose-400`} />;
-    case 'RATE_LIMIT':       return <ShieldAlert className={`${cls} text-amber-400`} />;
-    default:                 return <AlertCircle className={`${cls} text-red-400`} />;
+    case 'TENANT_INACTIVE':
+      return <Building2 className={`${cls} text-orange-400`} />;
+    case 'SERVER_ERROR':
+      return <ServerOff className={`${cls} text-red-400`} />;
+    case 'NETWORK_ERROR':
+      return <WifiOff className={`${cls} text-rose-400`} />;
+    case 'RATE_LIMIT':
+      return <ShieldAlert className={`${cls} text-amber-400`} />;
+    default:
+      return <AlertCircle className={`${cls} text-red-400`} />;
   }
 };
 
@@ -294,18 +340,39 @@ const LMSPerformanceShowcase = () => {
             ? '0 32px 64px -12px rgba(10, 35, 55, 0.45), 0 10px 24px -6px rgba(10, 35, 55, 0.2)'
             : '0 24px 48px -10px rgba(10, 35, 55, 0.38), 0 8px 18px -4px rgba(10, 35, 55, 0.18)',
           border: '1px solid rgba(255, 255, 255, 0.95)',
-          transition: isHovered ? 'transform 0.1s ease-out, box-shadow 0.2s ease' : 'transform 0.4s ease, box-shadow 0.4s ease',
+          transition: isHovered
+            ? 'transform 0.1s ease-out, box-shadow 0.2s ease'
+            : 'transform 0.4s ease, box-shadow 0.4s ease',
           position: 'relative',
           zIndex: 10,
         }}
       >
         {/* Card Header: Icon + Title + Live Status Badge + Cohort Filter Selector + Info Icon */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 11 }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 11,
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-            <div style={{ width: 22, height: 22, borderRadius: 6, background: 'rgba(74, 222, 128, 0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div
+              style={{
+                width: 22,
+                height: 22,
+                borderRadius: 6,
+                background: 'rgba(74, 222, 128, 0.14)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <BarChart3 size={13} color="#16a34a" />
             </div>
-            <span style={{ fontSize: 11.5, fontWeight: 700, color: '#0f172a' }}>Learning Performance</span>
+            <span style={{ fontSize: 11.5, fontWeight: 700, color: '#0f172a' }}>
+              Learning Performance
+            </span>
             <span
               style={{
                 fontSize: 8.5,
@@ -353,17 +420,72 @@ const LMSPerformanceShowcase = () => {
         </div>
 
         {/* Grouped Bar Chart Area */}
-        <div style={{ position: 'relative', height: 116, borderBottom: '1px solid #e2e8f0', paddingBottom: 6 }}>
+        <div
+          style={{
+            position: 'relative',
+            height: 116,
+            borderBottom: '1px solid #e2e8f0',
+            paddingBottom: 6,
+          }}
+        >
           {/* Subtle Grid Lines with Y-axis markers */}
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, borderBottom: '1px dashed #f1f5f9', display: 'flex', justifyContent: 'flex-end' }}>
-            <span style={{ fontSize: 7, color: '#94a3b8', paddingRight: 2, transform: 'translateY(-4px)' }}>100%</span>
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              borderBottom: '1px dashed #f1f5f9',
+              display: 'flex',
+              justifyContent: 'flex-end',
+            }}
+          >
+            <span
+              style={{
+                fontSize: 7,
+                color: '#94a3b8',
+                paddingRight: 2,
+                transform: 'translateY(-4px)',
+              }}
+            >
+              100%
+            </span>
           </div>
-          <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, borderBottom: '1px dashed #f1f5f9', display: 'flex', justifyContent: 'flex-end' }}>
-            <span style={{ fontSize: 7, color: '#94a3b8', paddingRight: 2, transform: 'translateY(-4px)' }}>50%</span>
+          <div
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: 0,
+              right: 0,
+              borderBottom: '1px dashed #f1f5f9',
+              display: 'flex',
+              justifyContent: 'flex-end',
+            }}
+          >
+            <span
+              style={{
+                fontSize: 7,
+                color: '#94a3b8',
+                paddingRight: 2,
+                transform: 'translateY(-4px)',
+              }}
+            >
+              50%
+            </span>
           </div>
 
           {/* Columns Container */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', height: '100%', alignItems: 'flex-end', padding: '0 8px', position: 'relative', zIndex: 2 }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              height: '100%',
+              alignItems: 'flex-end',
+              padding: '0 8px',
+              position: 'relative',
+              zIndex: 2,
+            }}
+          >
             {/* Col 1: Web Development */}
             <div
               className="vertex-col-webdev"
@@ -383,9 +505,35 @@ const LMSPerformanceShowcase = () => {
                 background: activeCourse === 'webdev' ? 'rgba(74, 222, 128, 0.15)' : 'transparent',
               }}
             >
-              <div className="vertex-bar-wave-1" style={{ width: 5.5, height: '54%', background: '#4ade80', borderRadius: '3px 3px 0 0', boxShadow: '0 2px 4px rgba(74, 222, 128, 0.2)' }} />
-              <div className="vertex-bar-wave-2" style={{ width: 5.5, height: '86%', background: '#60a5fa', borderRadius: '3px 3px 0 0', boxShadow: '0 2px 4px rgba(96, 165, 250, 0.2)' }} />
-              <div className="vertex-bar-wave-3" style={{ width: 5.5, height: '72%', background: '#1c1e2e', borderRadius: '3px 3px 0 0' }} />
+              <div
+                className="vertex-bar-wave-1"
+                style={{
+                  width: 5.5,
+                  height: '54%',
+                  background: '#4ade80',
+                  borderRadius: '3px 3px 0 0',
+                  boxShadow: '0 2px 4px rgba(74, 222, 128, 0.2)',
+                }}
+              />
+              <div
+                className="vertex-bar-wave-2"
+                style={{
+                  width: 5.5,
+                  height: '86%',
+                  background: '#60a5fa',
+                  borderRadius: '3px 3px 0 0',
+                  boxShadow: '0 2px 4px rgba(96, 165, 250, 0.2)',
+                }}
+              />
+              <div
+                className="vertex-bar-wave-3"
+                style={{
+                  width: 5.5,
+                  height: '72%',
+                  background: '#1c1e2e',
+                  borderRadius: '3px 3px 0 0',
+                }}
+              />
             </div>
 
             {/* Col 2: Data Science (CHOREOGRAPHED & HIGHLIGHTED) */}
@@ -406,9 +554,35 @@ const LMSPerformanceShowcase = () => {
                 transition: 'background 0.2s ease, box-shadow 0.2s ease',
               }}
             >
-              <div className="vertex-bar-wave-1" style={{ width: 5.5, height: '64%', background: '#4ade80', borderRadius: '3px 3px 0 0', boxShadow: '0 2px 6px rgba(74, 222, 128, 0.25)' }} />
-              <div className="vertex-bar-wave-2" style={{ width: 5.5, height: '96%', background: '#60a5fa', borderRadius: '3px 3px 0 0', boxShadow: '0 2px 6px rgba(96, 165, 250, 0.25)' }} />
-              <div className="vertex-bar-wave-3" style={{ width: 5.5, height: '56%', background: '#1c1e2e', borderRadius: '3px 3px 0 0' }} />
+              <div
+                className="vertex-bar-wave-1"
+                style={{
+                  width: 5.5,
+                  height: '64%',
+                  background: '#4ade80',
+                  borderRadius: '3px 3px 0 0',
+                  boxShadow: '0 2px 6px rgba(74, 222, 128, 0.25)',
+                }}
+              />
+              <div
+                className="vertex-bar-wave-2"
+                style={{
+                  width: 5.5,
+                  height: '96%',
+                  background: '#60a5fa',
+                  borderRadius: '3px 3px 0 0',
+                  boxShadow: '0 2px 6px rgba(96, 165, 250, 0.25)',
+                }}
+              />
+              <div
+                className="vertex-bar-wave-3"
+                style={{
+                  width: 5.5,
+                  height: '56%',
+                  background: '#1c1e2e',
+                  borderRadius: '3px 3px 0 0',
+                }}
+              />
             </div>
 
             {/* Col 3: UI/UX Design */}
@@ -430,9 +604,33 @@ const LMSPerformanceShowcase = () => {
                 background: activeCourse === 'uiux' ? 'rgba(74, 222, 128, 0.15)' : 'transparent',
               }}
             >
-              <div className="vertex-bar-wave-3" style={{ width: 5.5, height: '38%', background: '#4ade80', borderRadius: '3px 3px 0 0' }} />
-              <div className="vertex-bar-wave-1" style={{ width: 5.5, height: '50%', background: '#60a5fa', borderRadius: '3px 3px 0 0' }} />
-              <div className="vertex-bar-wave-2" style={{ width: 5.5, height: '42%', background: '#1c1e2e', borderRadius: '3px 3px 0 0' }} />
+              <div
+                className="vertex-bar-wave-3"
+                style={{
+                  width: 5.5,
+                  height: '38%',
+                  background: '#4ade80',
+                  borderRadius: '3px 3px 0 0',
+                }}
+              />
+              <div
+                className="vertex-bar-wave-1"
+                style={{
+                  width: 5.5,
+                  height: '50%',
+                  background: '#60a5fa',
+                  borderRadius: '3px 3px 0 0',
+                }}
+              />
+              <div
+                className="vertex-bar-wave-2"
+                style={{
+                  width: 5.5,
+                  height: '42%',
+                  background: '#1c1e2e',
+                  borderRadius: '3px 3px 0 0',
+                }}
+              />
             </div>
 
             {/* Col 4: Cloud DevOps */}
@@ -454,9 +652,33 @@ const LMSPerformanceShowcase = () => {
                 background: activeCourse === 'cloud' ? 'rgba(74, 222, 128, 0.15)' : 'transparent',
               }}
             >
-              <div className="vertex-bar-wave-2" style={{ width: 5.5, height: '46%', background: '#4ade80', borderRadius: '3px 3px 0 0' }} />
-              <div className="vertex-bar-wave-3" style={{ width: 5.5, height: '82%', background: '#60a5fa', borderRadius: '3px 3px 0 0' }} />
-              <div className="vertex-bar-wave-1" style={{ width: 5.5, height: '70%', background: '#1c1e2e', borderRadius: '3px 3px 0 0' }} />
+              <div
+                className="vertex-bar-wave-2"
+                style={{
+                  width: 5.5,
+                  height: '46%',
+                  background: '#4ade80',
+                  borderRadius: '3px 3px 0 0',
+                }}
+              />
+              <div
+                className="vertex-bar-wave-3"
+                style={{
+                  width: 5.5,
+                  height: '82%',
+                  background: '#60a5fa',
+                  borderRadius: '3px 3px 0 0',
+                }}
+              />
+              <div
+                className="vertex-bar-wave-1"
+                style={{
+                  width: 5.5,
+                  height: '70%',
+                  background: '#1c1e2e',
+                  borderRadius: '3px 3px 0 0',
+                }}
+              />
             </div>
           </div>
 
@@ -496,7 +718,14 @@ const LMSPerformanceShowcase = () => {
               }}
             />
             {/* Top row: Module name + Score badge */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 6,
+              }}
+            >
               <span style={{ fontSize: 9.5, fontWeight: 800, color: '#0f172a' }}>Data Science</span>
               <span
                 style={{
@@ -514,28 +743,95 @@ const LMSPerformanceShowcase = () => {
             </div>
 
             {/* Bottom row: Breakdown metrics */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, paddingTop: 1 }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 8,
+                paddingTop: 1,
+              }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: 3.5 }}>
-                <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#4ade80' }} className="vertex-metric-dot" />
-                <span style={{ fontSize: 8, color: '#64748b', fontWeight: 600 }}>Quiz: <b style={{ color: '#0f172a' }}>88%</b></span>
+                <div
+                  style={{ width: 5, height: 5, borderRadius: '50%', background: '#4ade80' }}
+                  className="vertex-metric-dot"
+                />
+                <span style={{ fontSize: 8, color: '#64748b', fontWeight: 600 }}>
+                  Quiz: <b style={{ color: '#0f172a' }}>88%</b>
+                </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 3.5 }}>
-                <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#1c1e2e' }} className="vertex-metric-dot" />
-                <span style={{ fontSize: 8, color: '#64748b', fontWeight: 600 }}>Attd: <b style={{ color: '#0f172a' }}>96%</b></span>
+                <div
+                  style={{ width: 5, height: 5, borderRadius: '50%', background: '#1c1e2e' }}
+                  className="vertex-metric-dot"
+                />
+                <span style={{ fontSize: 8, color: '#64748b', fontWeight: 600 }}>
+                  Attd: <b style={{ color: '#0f172a' }}>96%</b>
+                </span>
               </div>
             </div>
           </div>
         </div>
 
         {/* X-Axis Course Module Labels */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6, padding: '0 4px' }}>
-          <span style={{ fontSize: 8, color: '#64748b', fontWeight: 600, width: 54, textAlign: 'center' }}>Web Dev</span>
-          <span style={{ fontSize: 8, color: '#0f172a', fontWeight: 800, width: 62, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginTop: 6,
+            padding: '0 4px',
+          }}
+        >
+          <span
+            style={{
+              fontSize: 8,
+              color: '#64748b',
+              fontWeight: 600,
+              width: 54,
+              textAlign: 'center',
+            }}
+          >
+            Web Dev
+          </span>
+          <span
+            style={{
+              fontSize: 8,
+              color: '#0f172a',
+              fontWeight: 800,
+              width: 62,
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 2,
+            }}
+          >
             Data Science
             <span style={{ width: 14, height: 2, background: '#4ade80', borderRadius: 99 }} />
           </span>
-          <span style={{ fontSize: 8, color: '#64748b', fontWeight: 600, width: 54, textAlign: 'center' }}>UI/UX Design</span>
-          <span style={{ fontSize: 8, color: '#64748b', fontWeight: 600, width: 50, textAlign: 'center' }}>Cloud DevOps</span>
+          <span
+            style={{
+              fontSize: 8,
+              color: '#64748b',
+              fontWeight: 600,
+              width: 54,
+              textAlign: 'center',
+            }}
+          >
+            UI/UX Design
+          </span>
+          <span
+            style={{
+              fontSize: 8,
+              color: '#64748b',
+              fontWeight: 600,
+              width: 50,
+              textAlign: 'center',
+            }}
+          >
+            Cloud DevOps
+          </span>
         </div>
 
         {/* Card Footer: Cohort Learning Velocity */}
@@ -551,7 +847,9 @@ const LMSPerformanceShowcase = () => {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <TrendingUp size={11} color="#16a34a" />
-            <span style={{ fontSize: 8.5, fontWeight: 700, color: '#16a34a' }}>Cohort Velocity +14.8%</span>
+            <span style={{ fontSize: 8.5, fontWeight: 700, color: '#16a34a' }}>
+              Cohort Velocity +14.8%
+            </span>
           </div>
           <span style={{ fontSize: 8, color: '#94a3b8', fontWeight: 600 }}>Avg Pace 4.2h / wk</span>
         </div>
@@ -580,11 +878,20 @@ export const SignInPage = ({
 
   const brandName = (appConfig.name || 'LMS').replace(/\s*\(dev\)/i, '').trim();
 
-  const errorDetails = error && typeof error === 'object'
-    ? { title: error.title || 'Sign In Failed', message: error.message || errorMessage || 'An error occurred.', type: error.type || 'UNKNOWN' }
-    : (typeof error === 'string' && error) || errorMessage
-      ? { title: 'Sign In Failed', message: typeof error === 'string' ? error : errorMessage, type: 'UNKNOWN' }
-      : null;
+  const errorDetails =
+    error && typeof error === 'object'
+      ? {
+          title: error.title || 'Sign In Failed',
+          message: error.message || errorMessage || 'An error occurred.',
+          type: error.type || 'UNKNOWN',
+        }
+      : (typeof error === 'string' && error) || errorMessage
+        ? {
+            title: 'Sign In Failed',
+            message: typeof error === 'string' ? error : errorMessage,
+            type: 'UNKNOWN',
+          }
+        : null;
 
   return (
     <div
@@ -841,7 +1148,8 @@ export const SignInPage = ({
           `,
           backgroundSize: '56px 56px',
           maskImage: 'radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, transparent 75%)',
-          WebkitMaskImage: 'radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, transparent 75%)',
+          WebkitMaskImage:
+            'radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, transparent 75%)',
           pointerEvents: 'none',
         }}
       />
@@ -850,8 +1158,10 @@ export const SignInPage = ({
       <div
         className="vertex-deco-circle"
         style={{
-          top: '4%', left: '3%',
-          width: 120, height: 120,
+          top: '4%',
+          left: '3%',
+          width: 120,
+          height: 120,
           background: 'rgba(74, 222, 128, 0.1)',
           animation: 'floatCircle1 14s ease-in-out infinite',
         }}
@@ -859,8 +1169,10 @@ export const SignInPage = ({
       <div
         className="vertex-deco-circle"
         style={{
-          top: '7%', right: '8%',
-          width: 72, height: 72,
+          top: '7%',
+          right: '8%',
+          width: 72,
+          height: 72,
           background: 'rgba(251, 191, 36, 0.08)',
           animation: 'floatCircle2 11s ease-in-out infinite',
         }}
@@ -868,8 +1180,10 @@ export const SignInPage = ({
       <div
         className="vertex-deco-circle"
         style={{
-          bottom: '14%', left: '5%',
-          width: 64, height: 64,
+          bottom: '14%',
+          left: '5%',
+          width: 64,
+          height: 64,
           background: 'rgba(96, 165, 250, 0.08)',
           animation: 'floatCircle2 13s ease-in-out infinite',
         }}
@@ -877,8 +1191,10 @@ export const SignInPage = ({
       <div
         className="vertex-deco-circle"
         style={{
-          bottom: '5%', right: '6%',
-          width: 130, height: 130,
+          bottom: '5%',
+          right: '6%',
+          width: 130,
+          height: 130,
           background: 'rgba(74, 222, 128, 0.06)',
           animation: 'floatCircle1 16s ease-in-out infinite',
         }}
@@ -893,7 +1209,8 @@ export const SignInPage = ({
           minHeight: 640,
           background: '#12141f',
           borderRadius: 20,
-          boxShadow: '0 30px 80px -15px rgba(0, 0, 0, 0.7), 0 12px 28px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px #2a2c42',
+          boxShadow:
+            '0 30px 80px -15px rgba(0, 0, 0, 0.7), 0 12px 28px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px #2a2c42',
           overflow: 'hidden',
           display: 'flex',
           flexWrap: 'wrap',
@@ -959,7 +1276,9 @@ export const SignInPage = ({
               >
                 <GraduationCap size={18} color="#4ade80" />
               </div>
-              <span style={{ fontSize: 13, fontWeight: 800, color: '#ffffff', letterSpacing: '0.04em' }}>
+              <span
+                style={{ fontSize: 13, fontWeight: 800, color: '#ffffff', letterSpacing: '0.04em' }}
+              >
                 {brandName}
               </span>
             </div>
@@ -975,7 +1294,9 @@ export const SignInPage = ({
                 letterSpacing: '-0.02em',
               }}
             >
-              Unlock The Full Power<br />of Modern Learning
+              Unlock The Full Power
+              <br />
+              of Modern Learning
             </h1>
 
             {/* Subtitle */}
@@ -988,7 +1309,8 @@ export const SignInPage = ({
                 maxWidth: 360,
               }}
             >
-              Smart curriculum workflows, live cohort sessions, interactive quizzes, and verified skill credentials
+              Smart curriculum workflows, live cohort sessions, interactive quizzes, and verified
+              skill credentials
             </p>
           </div>
 
@@ -1038,7 +1360,8 @@ export const SignInPage = ({
               left: 0,
               width: 96,
               height: 96,
-              backgroundImage: 'repeating-linear-gradient(45deg, rgba(42, 44, 66, 0.5), rgba(42, 44, 66, 0.5) 1px, transparent 1px, transparent 6px)',
+              backgroundImage:
+                'repeating-linear-gradient(45deg, rgba(42, 44, 66, 0.5), rgba(42, 44, 66, 0.5) 1px, transparent 1px, transparent 6px)',
               pointerEvents: 'none',
               opacity: 0.9,
             }}
@@ -1050,7 +1373,8 @@ export const SignInPage = ({
               right: 0,
               width: 96,
               height: 96,
-              backgroundImage: 'repeating-linear-gradient(45deg, rgba(42, 44, 66, 0.5), rgba(42, 44, 66, 0.5) 1px, transparent 1px, transparent 6px)',
+              backgroundImage:
+                'repeating-linear-gradient(45deg, rgba(42, 44, 66, 0.5), rgba(42, 44, 66, 0.5) 1px, transparent 1px, transparent 6px)',
               pointerEvents: 'none',
               opacity: 0.9,
             }}
@@ -1133,7 +1457,9 @@ export const SignInPage = ({
                   <p style={{ margin: 0, fontSize: 11, fontWeight: 700, color: '#fca5a5' }}>
                     {errorDetails.title}
                   </p>
-                  <p style={{ margin: '2px 0 0', fontSize: 11, color: '#f87171', lineHeight: 1.35 }}>
+                  <p
+                    style={{ margin: '2px 0 0', fontSize: 11, color: '#f87171', lineHeight: 1.35 }}
+                  >
                     {errorDetails.message}
                   </p>
                 </div>
@@ -1157,12 +1483,22 @@ export const SignInPage = ({
             )}
 
             {/* Form */}
-            <form onSubmit={onSignIn} noValidate style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <form
+              onSubmit={onSignIn}
+              noValidate
+              style={{ display: 'flex', flexDirection: 'column', gap: 14 }}
+            >
               {/* Email */}
               <div>
                 <label
                   htmlFor="email"
-                  style={{ display: 'block', fontSize: 11, fontWeight: 500, color: '#b8b8cc', marginBottom: 5 }}
+                  style={{
+                    display: 'block',
+                    fontSize: 11,
+                    fontWeight: 500,
+                    color: '#b8b8cc',
+                    marginBottom: 5,
+                  }}
                 >
                   Email
                 </label>
@@ -1187,11 +1523,11 @@ export const SignInPage = ({
                     boxSizing: 'border-box',
                     transition: 'border-color 0.15s, box-shadow 0.15s',
                   }}
-                  onFocus={e => {
+                  onFocus={(e) => {
                     e.currentTarget.style.borderColor = '#4ade80';
                     e.currentTarget.style.boxShadow = '0 0 0 3px rgba(74, 222, 128, 0.18)';
                   }}
-                  onBlur={e => {
+                  onBlur={(e) => {
                     e.currentTarget.style.borderColor = '#2a2c42';
                     e.currentTarget.style.boxShadow = 'none';
                   }}
@@ -1200,7 +1536,14 @@ export const SignInPage = ({
 
               {/* Password */}
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: 5,
+                  }}
+                >
                   <label
                     htmlFor="password"
                     style={{ fontSize: 11, fontWeight: 500, color: '#b8b8cc' }}
@@ -1222,8 +1565,8 @@ export const SignInPage = ({
                         cursor: 'pointer',
                         transition: 'color 0.15s',
                       }}
-                      onMouseEnter={e => e.currentTarget.style.color = '#4ade80'}
-                      onMouseLeave={e => e.currentTarget.style.color = '#94a3b8'}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = '#4ade80')}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
                     >
                       Forgot?
                     </button>
@@ -1252,18 +1595,18 @@ export const SignInPage = ({
                       boxSizing: 'border-box',
                       transition: 'border-color 0.15s, box-shadow 0.15s',
                     }}
-                    onFocus={e => {
+                    onFocus={(e) => {
                       e.currentTarget.style.borderColor = '#4ade80';
                       e.currentTarget.style.boxShadow = '0 0 0 3px rgba(74, 222, 128, 0.18)';
                     }}
-                    onBlur={e => {
+                    onBlur={(e) => {
                       e.currentTarget.style.borderColor = '#2a2c42';
                       e.currentTarget.style.boxShadow = 'none';
                     }}
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(v => !v)}
+                    onClick={() => setShowPassword((v) => !v)}
                     style={{
                       position: 'absolute',
                       right: 9,
@@ -1278,8 +1621,8 @@ export const SignInPage = ({
                       alignItems: 'center',
                       transition: 'color 0.15s',
                     }}
-                    onMouseEnter={e => e.currentTarget.style.color = '#f0f0f5'}
-                    onMouseLeave={e => e.currentTarget.style.color = '#94a3b8'}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = '#f0f0f5')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
                     title={showPassword ? 'Hide password' : 'Show password'}
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
@@ -1293,9 +1636,16 @@ export const SignInPage = ({
                 <div>
                   <label
                     htmlFor="tenantSlug"
-                    style={{ display: 'block', fontSize: 11, fontWeight: 500, color: '#b8b8cc', marginBottom: 5 }}
+                    style={{
+                      display: 'block',
+                      fontSize: 11,
+                      fontWeight: 500,
+                      color: '#b8b8cc',
+                      marginBottom: 5,
+                    }}
                   >
-                    Learning Workspace / Campus <span style={{ fontWeight: 400, color: '#6e6e88' }}>(optional)</span>
+                    Learning Workspace / Campus{' '}
+                    <span style={{ fontWeight: 400, color: '#6e6e88' }}>(optional)</span>
                   </label>
                   <input
                     id="tenantSlug"
@@ -1316,16 +1666,18 @@ export const SignInPage = ({
                       boxSizing: 'border-box',
                       transition: 'border-color 0.15s, box-shadow 0.15s',
                     }}
-                    onFocus={e => {
+                    onFocus={(e) => {
                       e.currentTarget.style.borderColor = '#4ade80';
                       e.currentTarget.style.boxShadow = '0 0 0 3px rgba(74, 222, 128, 0.18)';
                     }}
-                    onBlur={e => {
+                    onBlur={(e) => {
                       e.currentTarget.style.borderColor = '#2a2c42';
                       e.currentTarget.style.boxShadow = 'none';
                     }}
                   />
-                  <p style={{ margin: '3px 0 0', fontSize: 10, color: '#6e6e88' }}>{tenantSlugHint}</p>
+                  <p style={{ margin: '3px 0 0', fontSize: 10, color: '#6e6e88' }}>
+                    {tenantSlugHint}
+                  </p>
                 </div>
               )}
 
@@ -1336,7 +1688,7 @@ export const SignInPage = ({
                   id="rememberMe"
                   name="rememberMe"
                   checked={rememberMe}
-                  onChange={e => setRememberMe(e.target.checked)}
+                  onChange={(e) => setRememberMe(e.target.checked)}
                   style={{
                     width: 15,
                     height: 15,
@@ -1344,7 +1696,10 @@ export const SignInPage = ({
                     cursor: 'pointer',
                   }}
                 />
-                <label htmlFor="rememberMe" style={{ fontSize: 12, color: '#94a3b8', cursor: 'pointer' }}>
+                <label
+                  htmlFor="rememberMe"
+                  style={{ fontSize: 12, color: '#94a3b8', cursor: 'pointer' }}
+                >
                   Remember for 30 days
                 </label>
               </div>
@@ -1372,17 +1727,19 @@ export const SignInPage = ({
                   transition: 'background 0.2s, transform 0.15s, box-shadow 0.2s, color 0.15s',
                   boxShadow: '0 4px 16px rgba(74, 222, 128, 0.35)',
                 }}
-                onMouseEnter={e => {
+                onMouseEnter={(e) => {
                   if (!isSubmitting) {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)';
+                    e.currentTarget.style.background =
+                      'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)';
                     e.currentTarget.style.color = '#ffffff';
                     e.currentTarget.style.transform = 'translateY(-1px)';
                     e.currentTarget.style.boxShadow = '0 6px 22px rgba(74, 222, 128, 0.45)';
                   }
                 }}
-                onMouseLeave={e => {
+                onMouseLeave={(e) => {
                   if (!isSubmitting) {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, #4ade80 0%, #22c55e 100%)';
+                    e.currentTarget.style.background =
+                      'linear-gradient(135deg, #4ade80 0%, #22c55e 100%)';
                     e.currentTarget.style.color = '#0f1117';
                     e.currentTarget.style.transform = '';
                     e.currentTarget.style.boxShadow = '0 4px 16px rgba(74, 222, 128, 0.35)';
@@ -1391,9 +1748,28 @@ export const SignInPage = ({
               >
                 {isSubmitting ? (
                   <>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ animation: 'spin 1s linear infinite' }}>
-                      <circle cx="12" cy="12" r="10" stroke="rgba(15,17,23,0.3)" strokeWidth="3" fill="none" />
-                      <path d="M12 2a10 10 0 0 1 10 10" stroke="#0f1117" strokeWidth="3" strokeLinecap="round" fill="none" />
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      style={{ animation: 'spin 1s linear infinite' }}
+                    >
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="rgba(15,17,23,0.3)"
+                        strokeWidth="3"
+                        fill="none"
+                      />
+                      <path
+                        d="M12 2a10 10 0 0 1 10 10"
+                        stroke="#0f1117"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        fill="none"
+                      />
                     </svg>
                     <span>Signing in…</span>
                   </>

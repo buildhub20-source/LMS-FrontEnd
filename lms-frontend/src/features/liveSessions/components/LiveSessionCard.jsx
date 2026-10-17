@@ -1,9 +1,27 @@
 import { useNavigate } from 'react-router-dom';
-import { Video, Calendar, Clock, Users, Play, StopCircle, ArrowRight, CheckCircle2, Film } from 'lucide-react';
+import {
+  Video,
+  Calendar,
+  Clock,
+  Users,
+  Play,
+  StopCircle,
+  ArrowRight,
+  CheckCircle2,
+  Film,
+} from 'lucide-react';
 import Button from '../../../components/common/Button';
 import { ROUTES } from '../../../constants/routes';
 
-export const LiveSessionCard = ({ session, isInstructor, onStart, onEnd, isStarting, isEnding, className = '' }) => {
+export const LiveSessionCard = ({
+  session,
+  isInstructor,
+  onStart,
+  onEnd,
+  isStarting,
+  isEnding,
+  className = '',
+}) => {
   const navigate = useNavigate();
 
   const isLive = session.status === 'LIVE';
@@ -66,7 +84,8 @@ export const LiveSessionCard = ({ session, isInstructor, onStart, onEnd, isStart
         </div>
 
         <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 min-h-[40px] leading-relaxed">
-          {session.description || 'Live interactive session covering course curriculum, Q&A, and practical exercises.'}
+          {session.description ||
+            'Live interactive session covering course curriculum, Q&A, and practical exercises.'}
         </p>
       </div>
 
@@ -83,7 +102,12 @@ export const LiveSessionCard = ({ session, isInstructor, onStart, onEnd, isStart
         {session.instructorName && (
           <div className="flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span>Instructor: <strong className="font-medium text-slate-700 dark:text-slate-300">{session.instructorName}</strong></span>
+            <span>
+              Instructor:{' '}
+              <strong className="font-medium text-slate-700 dark:text-slate-300">
+                {session.instructorName}
+              </strong>
+            </span>
           </div>
         )}
       </div>
@@ -92,12 +116,7 @@ export const LiveSessionCard = ({ session, isInstructor, onStart, onEnd, isStart
       <div className="flex items-center justify-between gap-3 pt-1 mt-auto">
         <div>
           {isEnded && isInstructor && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleViewAttendance}
-              className="text-xs"
-            >
+            <Button variant="outline" size="sm" onClick={handleViewAttendance} className="text-xs">
               View Attendance
             </Button>
           )}

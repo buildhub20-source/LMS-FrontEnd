@@ -184,8 +184,12 @@ export default function NotificationDropdown({
                 borderRadius: 4,
                 transition: 'opacity 0.15s ease',
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.75'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = '0.75';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '1';
+              }}
             >
               <CheckCheck size={14} />
               <span>Mark all read</span>
@@ -259,9 +263,16 @@ export default function NotificationDropdown({
                 fontSize: '0.84rem',
               }}
             >
-              <Bell size={28} style={{ margin: '0 auto 10px', opacity: 0.4, color: 'var(--muted-foreground)' }} />
-              <p style={{ margin: 0, fontWeight: 500, color: 'var(--foreground)' }}>No notifications found</p>
-              <span style={{ fontSize: '0.76rem', color: 'var(--muted-foreground)' }}>You&apos;re all caught up!</span>
+              <Bell
+                size={28}
+                style={{ margin: '0 auto 10px', opacity: 0.4, color: 'var(--muted-foreground)' }}
+              />
+              <p style={{ margin: 0, fontWeight: 500, color: 'var(--foreground)' }}>
+                No notifications found
+              </p>
+              <span style={{ fontSize: '0.76rem', color: 'var(--muted-foreground)' }}>
+                You&apos;re all caught up!
+              </span>
             </div>
           ) : (
             filteredItems.map((item) => {
@@ -288,9 +299,7 @@ export default function NotificationDropdown({
                       : 'var(--muted)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = isUnread
-                      ? 'var(--accent)'
-                      : 'transparent';
+                    e.currentTarget.style.background = isUnread ? 'var(--accent)' : 'transparent';
                   }}
                 >
                   {/* Icon avatar */}
@@ -337,7 +346,13 @@ export default function NotificationDropdown({
                           : item.title}
                       </span>
                       {relativeTime && (
-                        <span style={{ fontSize: '0.7rem', color: 'var(--muted-foreground)', flexShrink: 0 }}>
+                        <span
+                          style={{
+                            fontSize: '0.7rem',
+                            color: 'var(--muted-foreground)',
+                            flexShrink: 0,
+                          }}
+                        >
                           {relativeTime}
                         </span>
                       )}
@@ -409,8 +424,12 @@ export default function NotificationDropdown({
               borderRadius: 6,
               transition: 'opacity 0.15s ease',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.75'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = '0.75';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = '1';
+            }}
           >
             <span>View all in Notifications</span>
             <ChevronRight size={14} />

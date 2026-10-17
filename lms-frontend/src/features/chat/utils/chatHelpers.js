@@ -19,8 +19,11 @@ export function formatMessageTime(timestamp) {
     return `Yesterday ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
   }
 
-  return date.toLocaleDateString([], { month: 'short', day: 'numeric' }) +
-    ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return (
+    date.toLocaleDateString([], { month: 'short', day: 'numeric' }) +
+    ' ' +
+    date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  );
 }
 
 /**
@@ -57,8 +60,8 @@ export function getChannelDisplayName(channel, currentUserId = null, members = [
   const memberList = Array.isArray(channel.members)
     ? channel.members
     : Array.isArray(members)
-    ? members
-    : [];
+      ? members
+      : [];
 
   if (memberList.length > 0) {
     const otherMember = currentUserId
@@ -81,13 +84,20 @@ export function getChannelDisplayName(channel, currentUserId = null, members = [
  */
 export function getChannelIcon(type) {
   switch (type) {
-    case CHANNEL_TYPES.ORG: return '🏢';
-    case CHANNEL_TYPES.COURSE: return '📚';
-    case CHANNEL_TYPES.DIRECT: return '💬';
-    case CHANNEL_TYPES.GROUP: return '👥';
-    case CHANNEL_TYPES.ANNOUNCEMENT: return '📢';
-    case CHANNEL_TYPES.LIVE_SESSION: return '🔴';
-    default: return '#';
+    case CHANNEL_TYPES.ORG:
+      return '🏢';
+    case CHANNEL_TYPES.COURSE:
+      return '📚';
+    case CHANNEL_TYPES.DIRECT:
+      return '💬';
+    case CHANNEL_TYPES.GROUP:
+      return '👥';
+    case CHANNEL_TYPES.ANNOUNCEMENT:
+      return '📢';
+    case CHANNEL_TYPES.LIVE_SESSION:
+      return '🔴';
+    default:
+      return '#';
   }
 }
 
@@ -135,4 +145,3 @@ export function getAvatarColorIndex(nameOrId) {
   }
   return Math.abs(hash) % 6;
 }
-

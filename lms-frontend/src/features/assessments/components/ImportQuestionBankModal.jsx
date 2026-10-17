@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import {
-  X, Search, Filter, BookOpen, Code2, CheckCircle2,
-  ListFilter, Sparkles, ChevronRight, Check, Eye
+  X,
+  Search,
+  Filter,
+  BookOpen,
+  Code2,
+  CheckCircle2,
+  ListFilter,
+  Sparkles,
+  ChevronRight,
+  Check,
+  Eye,
 } from 'lucide-react';
 import Button from '../../../components/common/Button';
 import Badge from '../../../components/common/Badge';
@@ -10,7 +19,7 @@ import QuestionPreviewModal from './QuestionPreviewModal';
 
 /**
  * ImportQuestionBankModal
- * 
+ *
  * Allows instructors to search, browse, preview, and select questions
  * from the global question bank to import directly into an assessment.
  */
@@ -155,11 +164,19 @@ export default function ImportQuestionBankModal({
                 <BookOpen size={18} />
               </div>
               <div>
-                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary, #fff)' }}>
+                <h3
+                  style={{
+                    margin: 0,
+                    fontSize: 16,
+                    fontWeight: 700,
+                    color: 'var(--text-primary, #fff)',
+                  }}
+                >
                   Import from Question Bank
                 </h3>
                 <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-muted, #a1a1aa)' }}>
-                  Select from curated, pre-tested question templates across algorithms, system design, and MCQ pools.
+                  Select from curated, pre-tested question templates across algorithms, system
+                  design, and MCQ pools.
                 </p>
               </div>
             </div>
@@ -320,14 +337,33 @@ export default function ImportQuestionBankModal({
                       style={{
                         padding: '12px 14px',
                         borderRadius: 10,
-                        border: isSelected ? '2px solid #3b82f6' : '1px solid var(--border-color, #27272a)',
-                        background: isSelected ? 'rgba(59, 130, 246, 0.08)' : 'var(--lms-card, #13131a)',
+                        border: isSelected
+                          ? '2px solid #3b82f6'
+                          : '1px solid var(--border-color, #27272a)',
+                        background: isSelected
+                          ? 'rgba(59, 130, 246, 0.08)'
+                          : 'var(--lms-card, #13131a)',
                         cursor: 'pointer',
                         transition: 'all 0.12s ease',
                       }}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                        <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary, #fff)', flex: 1, marginRight: 8 }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'flex-start',
+                          marginBottom: 6,
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: 14,
+                            fontWeight: 600,
+                            color: 'var(--text-primary, #fff)',
+                            flex: 1,
+                            marginRight: 8,
+                          }}
+                        >
                           {q.title}
                         </span>
                         <span
@@ -336,20 +372,42 @@ export default function ImportQuestionBankModal({
                             fontWeight: 700,
                             padding: '2px 6px',
                             borderRadius: 4,
-                            background: q.difficulty === 'EASY' ? 'rgba(16, 185, 129, 0.15)' : q.difficulty === 'MEDIUM' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                            color: q.difficulty === 'EASY' ? '#10b981' : q.difficulty === 'MEDIUM' ? '#f59e0b' : '#ef4444',
+                            background:
+                              q.difficulty === 'EASY'
+                                ? 'rgba(16, 185, 129, 0.15)'
+                                : q.difficulty === 'MEDIUM'
+                                  ? 'rgba(245, 158, 11, 0.15)'
+                                  : 'rgba(239, 68, 68, 0.15)',
+                            color:
+                              q.difficulty === 'EASY'
+                                ? '#10b981'
+                                : q.difficulty === 'MEDIUM'
+                                  ? '#f59e0b'
+                                  : '#ef4444',
                           }}
                         >
                           {q.difficulty}
                         </span>
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--text-muted, #71717a)' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                          fontSize: 12,
+                          color: 'var(--text-muted, #71717a)',
+                        }}
+                      >
                         <span>{q.questionType === 'CODING' ? '💻 Coding' : '🔘 MCQ'}</span>
                         <span>•</span>
                         <span>{q.marks} pts</span>
                         <span>•</span>
-                        <span>{q.questionType === 'CODING' ? `${q.testCases?.length || 0} cases` : `${q.options?.length || 0} options`}</span>
+                        <span>
+                          {q.questionType === 'CODING'
+                            ? `${q.testCases?.length || 0} cases`
+                            : `${q.options?.length || 0} options`}
+                        </span>
                       </div>
                     </div>
                   );
@@ -370,9 +428,23 @@ export default function ImportQuestionBankModal({
             >
               {selectedQuestion ? (
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      marginBottom: 12,
+                    }}
+                  >
                     <div>
-                      <h4 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text-primary, #fff)' }}>
+                      <h4
+                        style={{
+                          margin: 0,
+                          fontSize: 18,
+                          fontWeight: 700,
+                          color: 'var(--text-primary, #fff)',
+                        }}
+                      >
                         {selectedQuestion.title}
                       </h4>
                       <div style={{ display: 'flex', gap: 8, marginTop: 6, flexWrap: 'wrap' }}>
@@ -422,7 +494,14 @@ export default function ImportQuestionBankModal({
 
                   {selectedQuestion.questionType === 'CODING' ? (
                     <div>
-                      <h5 style={{ margin: '0 0 8px', fontSize: 13, fontWeight: 700, color: 'var(--text-primary, #fff)' }}>
+                      <h5
+                        style={{
+                          margin: '0 0 8px',
+                          fontSize: 13,
+                          fontWeight: 700,
+                          color: 'var(--text-primary, #fff)',
+                        }}
+                      >
                         Test Cases ({selectedQuestion.testCases?.length || 0}):
                       </h5>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -438,7 +517,13 @@ export default function ImportQuestionBankModal({
                               fontFamily: 'monospace',
                             }}
                           >
-                            <div style={{ color: tc.sample ? '#10b981' : '#a855f7', fontWeight: 600, marginBottom: 4 }}>
+                            <div
+                              style={{
+                                color: tc.sample ? '#10b981' : '#a855f7',
+                                fontWeight: 600,
+                                marginBottom: 4,
+                              }}
+                            >
                               {tc.sample ? 'Visible Sample Case' : 'Graded Hidden Case'}
                             </div>
                             <div>Input: {tc.inputData}</div>
@@ -449,7 +534,14 @@ export default function ImportQuestionBankModal({
                     </div>
                   ) : (
                     <div>
-                      <h5 style={{ margin: '0 0 8px', fontSize: 13, fontWeight: 700, color: 'var(--text-primary, #fff)' }}>
+                      <h5
+                        style={{
+                          margin: '0 0 8px',
+                          fontSize: 13,
+                          fontWeight: 700,
+                          color: 'var(--text-primary, #fff)',
+                        }}
+                      >
                         Options:
                       </h5>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -459,8 +551,12 @@ export default function ImportQuestionBankModal({
                             style={{
                               padding: '8px 12px',
                               borderRadius: 8,
-                              background: opt.isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'var(--surface-dark, #0d0d12)',
-                              border: opt.isCorrect ? '1px solid #10b981' : '1px solid var(--border-color, #27272a)',
+                              background: opt.isCorrect
+                                ? 'rgba(16, 185, 129, 0.1)'
+                                : 'var(--surface-dark, #0d0d12)',
+                              border: opt.isCorrect
+                                ? '1px solid #10b981'
+                                : '1px solid var(--border-color, #27272a)',
                               fontSize: 13,
                               color: 'var(--text-primary, #fff)',
                               display: 'flex',
@@ -470,7 +566,9 @@ export default function ImportQuestionBankModal({
                           >
                             <strong>{String.fromCharCode(65 + idx)}.</strong>
                             <span>{opt.optionText}</span>
-                            {opt.isCorrect && <Check size={14} color="#10b981" style={{ marginLeft: 'auto' }} />}
+                            {opt.isCorrect && (
+                              <Check size={14} color="#10b981" style={{ marginLeft: 'auto' }} />
+                            )}
                           </div>
                         ))}
                       </div>

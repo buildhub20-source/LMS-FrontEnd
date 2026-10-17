@@ -112,7 +112,9 @@
   border-bottom: 1px solid var(--color-border);
 }
 
-.helpItem:last-child { border-bottom: none; }
+.helpItem:last-child {
+  border-bottom: none;
+}
 
 .helpDot {
   width: 6px;
@@ -161,10 +163,17 @@
   font-size: 0.78rem;
 }
 
-.previewRow:last-child { border-bottom: none; }
+.previewRow:last-child {
+  border-bottom: none;
+}
 
-.previewLabel { color: var(--color-primary-600); }
-.previewVal { font-weight: 700; color: var(--color-primary-700); }
+.previewLabel {
+  color: var(--color-primary-600);
+}
+.previewVal {
+  font-weight: 700;
+  color: var(--color-primary-700);
+}
 
 /* ── Actions ─────────────────────────────────────────── */
 .actions {
@@ -181,27 +190,35 @@
 /* ── Dark mode ───────────────────────────────────────── */
 [data-theme='dark'] .sectionIcon,
 html.dark .sectionIcon {
-  background: rgba(59,111,224,0.15);
+  background: rgba(59, 111, 224, 0.15);
   color: #8fb4ff;
 }
 
 [data-theme='dark'] .previewCard,
 html.dark .previewCard {
-  background: linear-gradient(135deg, rgba(59,111,224,0.1), rgba(109,40,217,0.07));
-  border-color: rgba(59,111,224,0.25);
+  background: linear-gradient(135deg, rgba(59, 111, 224, 0.1), rgba(109, 40, 217, 0.07));
+  border-color: rgba(59, 111, 224, 0.25);
 }
 
 [data-theme='dark'] .previewTitle,
-html.dark .previewTitle { color: #8fb4ff; }
+html.dark .previewTitle {
+  color: #8fb4ff;
+}
 
 [data-theme='dark'] .previewLabel,
-html.dark .previewLabel { color: #6b9bff; }
+html.dark .previewLabel {
+  color: #6b9bff;
+}
 
 [data-theme='dark'] .previewVal,
-html.dark .previewVal { color: #a5c8ff; }
+html.dark .previewVal {
+  color: #a5c8ff;
+}
 
 [data-theme='dark'] .previewRow,
-html.dark .previewRow { border-bottom-color: rgba(59,111,224,0.15); }
+html.dark .previewRow {
+  border-bottom-color: rgba(59, 111, 224, 0.15);
+}
 
 [data-theme='dark'] .helpCard,
 html.dark .helpCard {
@@ -210,7 +227,9 @@ html.dark .helpCard {
 }
 
 [data-theme='dark'] .helpDot,
-html.dark .helpDot { background: #8fb4ff; }
+html.dark .helpDot {
+  background: #8fb4ff;
+}
 
 [data-theme='dark'] .actions,
 html.dark .actions {
@@ -219,7 +238,13 @@ html.dark .actions {
 }
 
 @media (max-width: 900px) {
-  .page { grid-template-columns: 1fr; }
-  .sideCol { position: static; }
-  .row2 { grid-template-columns: 1fr; }
+  .page {
+    grid-template-columns: 1fr;
+  }
+  .sideCol {
+    position: static;
+  }
+  .row2 {
+    grid-template-columns: 1fr;
+  }
 }

@@ -12,7 +12,6 @@ export const OrganizationBranding = ({ defaultValues = {}, onSubmit }) => {
   useEffect(() => {
     setPrimaryColor(defaultValues.primaryColor ?? '#3b6fe0');
     setLogoUrl(defaultValues.logoUrl ?? '');
-     
   }, [defaultValues.primaryColor, defaultValues.logoUrl]);
 
   const apply = () => {

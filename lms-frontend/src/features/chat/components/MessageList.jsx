@@ -59,9 +59,7 @@ export default function MessageList({
       )}
 
       {/* Skeletons on initial load */}
-      {messages.length === 0 && isLoading && (
-        <MessageFeedSkeleton count={6} />
-      )}
+      {messages.length === 0 && isLoading && <MessageFeedSkeleton count={6} />}
 
       {/* Messages */}
       {messages.length === 0 && !isLoading && (
@@ -91,7 +89,8 @@ export default function MessageList({
         const currentUserEmail = currentUser?.email?.toLowerCase();
         const otherTypingUsers = typingUsers.filter((u) => {
           if (currentUserId && String(u.userId) === String(currentUserId)) return false;
-          if (currentUserEmail && u.email && u.email.toLowerCase() === currentUserEmail) return false;
+          if (currentUserEmail && u.email && u.email.toLowerCase() === currentUserEmail)
+            return false;
           return true;
         });
 
@@ -100,7 +99,9 @@ export default function MessageList({
         return (
           <div className="chat-typing-indicator">
             <span className="chat-typing-indicator__dots">
-              <span /><span /><span />
+              <span />
+              <span />
+              <span />
             </span>
             <span className="chat-typing-indicator__text">
               {otherTypingUsers.map((u) => u.email?.split('@')[0]).join(', ')}

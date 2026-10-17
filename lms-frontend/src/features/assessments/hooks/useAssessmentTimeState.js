@@ -26,28 +26,68 @@ export const useAssessmentTimeState = (startTime, endTime) => {
     const end = endTime ? new Date(endTime).getTime() : null;
 
     if (!start && !end) {
-      return { state: 'open_ended', countdown: '', secondsLeft: Infinity, windowPct: 0, isClosingSoon: false, startsAt: null, endsAt: null };
+      return {
+        state: 'open_ended',
+        countdown: '',
+        secondsLeft: Infinity,
+        windowPct: 0,
+        isClosingSoon: false,
+        startsAt: null,
+        endsAt: null,
+      };
     }
 
     if (end && now > end) {
-      return { state: 'expired', countdown: 'Closed', secondsLeft: 0, windowPct: 100, isClosingSoon: false, startsAt: start ? new Date(start) : null, endsAt: new Date(end) };
+      return {
+        state: 'expired',
+        countdown: 'Closed',
+        secondsLeft: 0,
+        windowPct: 100,
+        isClosingSoon: false,
+        startsAt: start ? new Date(start) : null,
+        endsAt: new Date(end),
+      };
     }
 
     if (start && now < start) {
       const diff = Math.floor((start - now) / 1000);
-      return { state: 'locked', countdown: formatDuration(diff), secondsLeft: diff, windowPct: 0, isClosingSoon: false, startsAt: new Date(start), endsAt: end ? new Date(end) : null };
+      return {
+        state: 'locked',
+        countdown: formatDuration(diff),
+        secondsLeft: diff,
+        windowPct: 0,
+        isClosingSoon: false,
+        startsAt: new Date(start),
+        endsAt: end ? new Date(end) : null,
+      };
     }
 
     if (end) {
-      const totalWindow = end - (start ?? (end - 7 * 24 * 3600 * 1000));
-      const elapsed = now - (start ?? (end - 7 * 24 * 3600 * 1000));
+      const totalWindow = end - (start ?? end - 7 * 24 * 3600 * 1000);
+      const elapsed = now - (start ?? end - 7 * 24 * 3600 * 1000);
       const windowPct = Math.min(100, Math.round((elapsed / totalWindow) * 100));
       const diff = Math.floor((end - now) / 1000);
       const isClosingSoon = diff < 30 * 60;
-      return { state: isClosingSoon ? 'closing_soon' : 'open', countdown: formatDuration(diff), secondsLeft: diff, windowPct, isClosingSoon, startsAt: start ? new Date(start) : null, endsAt: new Date(end) };
+      return {
+        state: isClosingSoon ? 'closing_soon' : 'open',
+        countdown: formatDuration(diff),
+        secondsLeft: diff,
+        windowPct,
+        isClosingSoon,
+        startsAt: start ? new Date(start) : null,
+        endsAt: new Date(end),
+      };
     }
 
-    return { state: 'open', countdown: '', secondsLeft: Infinity, windowPct: 0, isClosingSoon: false, startsAt: start ? new Date(start) : null, endsAt: null };
+    return {
+      state: 'open',
+      countdown: '',
+      secondsLeft: Infinity,
+      windowPct: 0,
+      isClosingSoon: false,
+      startsAt: start ? new Date(start) : null,
+      endsAt: null,
+    };
   }, [startTime, endTime]);
 
   const [result, setResult] = useState(compute);
@@ -56,7 +96,9 @@ export const useAssessmentTimeState = (startTime, endTime) => {
     setResult(compute());
     const interval = setInterval(() => {
       const next = compute();
-      setResult((prev) => (prev.state === next.state && prev.countdown === next.countdown ? prev : next));
+      setResult((prev) =>
+        prev.state === next.state && prev.countdown === next.countdown ? prev : next,
+      );
     }, 1000);
     return () => clearInterval(interval);
   }, [compute]);

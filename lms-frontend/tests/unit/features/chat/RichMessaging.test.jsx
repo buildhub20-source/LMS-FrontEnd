@@ -49,7 +49,7 @@ describe('Phase 3: Rich Messaging & Presence', () => {
           onReply={vi.fn()}
           onEdit={vi.fn()}
           onDelete={vi.fn()}
-        />
+        />,
       );
 
       const mentionTag = screen.getByText('@Bob');
@@ -67,7 +67,7 @@ describe('Phase 3: Rich Messaging & Presence', () => {
           onEdit={vi.fn()}
           onDelete={vi.fn()}
           onToggleReaction={onToggleReaction}
-        />
+        />,
       );
 
       // Thumbs up chip
@@ -93,7 +93,7 @@ describe('Phase 3: Rich Messaging & Presence', () => {
           onEdit={vi.fn()}
           onDelete={vi.fn()}
           onToggleReaction={onToggleReaction}
-        />
+        />,
       );
 
       // Hover message to reveal action bar
@@ -125,7 +125,7 @@ describe('Phase 3: Rich Messaging & Presence', () => {
           onPin={onPin}
           onUnpin={onUnpin}
           isPinned={true}
-        />
+        />,
       );
 
       // Verify pinned badge
@@ -149,7 +149,7 @@ describe('Phase 3: Rich Messaging & Presence', () => {
           onPin={onPin}
           onUnpin={onUnpin}
           isPinned={false}
-        />
+        />,
       );
 
       fireEvent.mouseEnter(screen.getByText('Alice').closest('.chat-message'));
@@ -186,7 +186,7 @@ describe('Phase 3: Rich Messaging & Presence', () => {
           onJumpToMessage={onJump}
           onUnpin={onUnpin}
           canUnpin={true}
-        />
+        />,
       );
 
       expect(screen.getByText(/Important syllabus announcement/)).toBeInTheDocument();
@@ -205,7 +205,7 @@ describe('Phase 3: Rich Messaging & Presence', () => {
           onJumpToMessage={vi.fn()}
           onUnpin={onUnpin}
           canUnpin={true}
-        />
+        />,
       );
 
       const unpinBtn = screen.getByLabelText('Unpin');
@@ -216,22 +216,21 @@ describe('Phase 3: Rich Messaging & Presence', () => {
 
   describe('MessageComposer: Archived State & Mentions', () => {
     it('shows read-only archived indicator when isArchived is true', () => {
-      render(
-        <MessageComposer
-          onSend={vi.fn()}
-          onTyping={vi.fn()}
-          isArchived={true}
-        />
-      );
+      render(<MessageComposer onSend={vi.fn()} onTyping={vi.fn()} isArchived={true} />);
 
       expect(
-        screen.getByText(/This channel has been archived and is read-only/i)
+        screen.getByText(/This channel has been archived and is read-only/i),
       ).toBeInTheDocument();
       expect(screen.queryByPlaceholderText(/Type a message/i)).not.toBeInTheDocument();
     });
 
     it('suggests only the other person in direct message channels', () => {
-      const channel = { id: 'dm-1', type: 'DIRECT', otherUserName: 'Alice Smith', otherUserId: 'u-alice' };
+      const channel = {
+        id: 'dm-1',
+        type: 'DIRECT',
+        otherUserName: 'Alice Smith',
+        otherUserId: 'u-alice',
+      };
       const members = [
         { user_id: 'u-alice', name: 'Alice Smith', email: 'alice@example.com' },
         { user_id: 'u-me', name: 'Vinoth', email: 'vinoth@example.com' },
@@ -244,7 +243,7 @@ describe('Phase 3: Rich Messaging & Presence', () => {
           channel={channel}
           currentUser={{ id: 'u-me' }}
           members={members}
-        />
+        />,
       );
 
       // Trigger mention by typing @
@@ -272,7 +271,7 @@ describe('Phase 3: Rich Messaging & Presence', () => {
           channel={channel}
           currentUser={{ id: 'u-me' }}
           members={members}
-        />
+        />,
       );
 
       const input = screen.getByPlaceholderText(/Type a message/i);
@@ -287,9 +286,7 @@ describe('Phase 3: Rich Messaging & Presence', () => {
 
     it('opens mention popover when typing @ in composer', () => {
       const channel = { id: 'course-1', type: 'COURSE', name: 'React 101' };
-      const members = [
-        { user_id: 'u-alice', name: 'Alice', email: 'alice@example.com' },
-      ];
+      const members = [{ user_id: 'u-alice', name: 'Alice', email: 'alice@example.com' }];
 
       render(
         <MessageComposer
@@ -298,7 +295,7 @@ describe('Phase 3: Rich Messaging & Presence', () => {
           channel={channel}
           currentUser={{ id: 'u-me' }}
           members={members}
-        />
+        />,
       );
 
       const input = screen.getByPlaceholderText(/Type a message/i);
@@ -317,7 +314,7 @@ describe('Phase 3: Rich Messaging & Presence', () => {
           channel={channel}
           currentUser={{ id: 'u-me' }}
           members={[{ user_id: 'u-alice', name: 'Alice' }]}
-        />
+        />,
       );
 
       const input = screen.getByPlaceholderText(/Type a message/i);
@@ -329,7 +326,12 @@ describe('Phase 3: Rich Messaging & Presence', () => {
     it('extracts members from recent messages as fallback when members array is empty', () => {
       const channel = { id: 'dm-2', type: 'DIRECT' };
       const messages = [
-        { id: 'm-1', sender_id: 'u-vinoth-admin', sender_name: 'Vinoth_admin', sender_email: 'admin@lms.com' },
+        {
+          id: 'm-1',
+          sender_id: 'u-vinoth-admin',
+          sender_name: 'Vinoth_admin',
+          sender_email: 'admin@lms.com',
+        },
       ];
 
       render(
@@ -339,7 +341,7 @@ describe('Phase 3: Rich Messaging & Presence', () => {
           channel={channel}
           currentUser={{ id: 'u-me' }}
           messages={messages}
-        />
+        />,
       );
 
       const input = screen.getByPlaceholderText(/Type a message/i);

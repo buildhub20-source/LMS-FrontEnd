@@ -82,7 +82,8 @@ export const PlatformTenantPage = () => {
       setActionError('');
       refresh();
     },
-    onError: (error) => setActionError(error?.response?.data?.message ?? 'Tenant registration failed.'),
+    onError: (error) =>
+      setActionError(error?.response?.data?.message ?? 'Tenant registration failed.'),
   });
 
   const lifecycle = useMutation({
@@ -91,7 +92,8 @@ export const PlatformTenantPage = () => {
       setActionError('');
       refresh();
     },
-    onError: (error) => setActionError(error?.response?.data?.message ?? 'Tenant lifecycle action failed.'),
+    onError: (error) =>
+      setActionError(error?.response?.data?.message ?? 'Tenant lifecycle action failed.'),
   });
 
   const submit = (event) => {
@@ -111,7 +113,9 @@ export const PlatformTenantPage = () => {
         reason: finalReason,
         durationMinutes: 30,
       });
-      const expiresAt = response.expiresAt ? new Date(response.expiresAt).getTime() : Date.now() + 30 * 60 * 1000;
+      const expiresAt = response.expiresAt
+        ? new Date(response.expiresAt).getTime()
+        : Date.now() + 30 * 60 * 1000;
       localStorage.setItem(
         'lms_impersonation',
         JSON.stringify({
@@ -124,7 +128,7 @@ export const PlatformTenantPage = () => {
           expiresAt,
           durationMinutes: 30,
           returnUrl: '/platform/tenants',
-        })
+        }),
       );
       storage.set(STORAGE_KEYS.TENANT, { slug: response.tenantSlug });
       tokenStorage.setAccessToken(response.accessToken);
@@ -134,14 +138,25 @@ export const PlatformTenantPage = () => {
           : response.workspaceUrl || '/admin/analytics';
       window.location.href = destination;
     } catch (err) {
-      setActionError(err?.response?.data?.message || 'Failed to initialize temporary debug access.');
+      setActionError(
+        err?.response?.data?.message || 'Failed to initialize temporary debug access.',
+      );
       setImpersonatingTenantId(null);
       setDebugModalTenant(null);
     }
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 1400, margin: '0 auto', fontFamily: 'Inter, sans-serif' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 24,
+        maxWidth: 1400,
+        margin: '0 auto',
+        fontFamily: 'Inter, sans-serif',
+      }}
+    >
       {/* ── Page Header ── */}
       <div
         style={{
@@ -155,10 +170,26 @@ export const PlatformTenantPage = () => {
         }}
       >
         <div>
-          <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)' }}>
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              color: 'var(--text-muted)',
+            }}
+          >
             Environment Management
           </span>
-          <h1 style={{ margin: '4px 0 0', fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
+          <h1
+            style={{
+              margin: '4px 0 0',
+              fontSize: 24,
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+              letterSpacing: '-0.5px',
+            }}
+          >
             Workspaces & Databases
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
@@ -214,7 +245,15 @@ export const PlatformTenantPage = () => {
             gap: 16,
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 12, borderBottom: '1px solid var(--border-color)' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              paddingBottom: 12,
+              borderBottom: '1px solid var(--border-color)',
+            }}
+          >
             <ServerCog size={18} style={{ color: 'var(--text-secondary)' }} />
             <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
               Register a New Tenant Workspace
@@ -222,7 +261,13 @@ export const PlatformTenantPage = () => {
           </div>
 
           <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                gap: 14,
+              }}
+            >
               <AdminInput
                 label="Workspace Name"
                 placeholder="e.g. Acme Academy"
@@ -307,18 +352,35 @@ export const PlatformTenantPage = () => {
             <AdminTableSkeleton rows={4} cols={4} />
           </div>
         ) : tenants.isError ? (
-          <div style={{ padding: '32px 20px', textAlign: 'center', color: '#f87171', fontSize: 13 }}>
+          <div
+            style={{ padding: '32px 20px', textAlign: 'center', color: '#f87171', fontSize: 13 }}
+          >
             Unable to load tenants. Please refresh and check authorization.
           </div>
         ) : tenants.data?.length === 0 ? (
-          <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
-            No tenants registered yet. Use the &quot;Register Workspace&quot; button above to create one.
+          <div
+            style={{
+              padding: '40px 20px',
+              textAlign: 'center',
+              color: 'var(--text-muted)',
+              fontSize: 13,
+            }}
+          >
+            No tenants registered yet. Use the &quot;Register Workspace&quot; button above to create
+            one.
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}>
+            <table
+              style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}
+            >
               <thead>
-                <tr style={{ background: 'var(--surface-medium)', borderBottom: '1px solid var(--border-color)' }}>
+                <tr
+                  style={{
+                    background: 'var(--surface-medium)',
+                    borderBottom: '1px solid var(--border-color)',
+                  }}
+                >
                   {['Workspace', 'Status', 'Provisioned / Created', 'Control Actions'].map((h) => (
                     <th
                       key={h}
@@ -350,7 +412,14 @@ export const PlatformTenantPage = () => {
                   >
                     {/* Workspace details */}
                     <td style={{ padding: '14px 16px', verticalAlign: 'top' }}>
-                      <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
+                      <p
+                        style={{
+                          margin: 0,
+                          fontSize: 14,
+                          fontWeight: 600,
+                          color: 'var(--text-primary)',
+                        }}
+                      >
                         {tenant.name}
                       </p>
                       <span
@@ -389,23 +458,32 @@ export const PlatformTenantPage = () => {
                     </td>
 
                     {/* Status Badge */}
-                    <td style={{ padding: '14px 16px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
-                      <AdminBadge
-                        variant={statusBadgeVariant[tenant.status] || 'default'}
-                        dot
-                      >
+                    <td
+                      style={{ padding: '14px 16px', verticalAlign: 'top', whiteSpace: 'nowrap' }}
+                    >
+                      <AdminBadge variant={statusBadgeVariant[tenant.status] || 'default'} dot>
                         {tenant.status.replaceAll('_', ' ')}
                       </AdminBadge>
                     </td>
 
                     {/* Created date */}
-                    <td style={{ padding: '14px 16px', verticalAlign: 'top', color: 'var(--text-muted)', fontSize: 12, whiteSpace: 'nowrap' }}>
+                    <td
+                      style={{
+                        padding: '14px 16px',
+                        verticalAlign: 'top',
+                        color: 'var(--text-muted)',
+                        fontSize: 12,
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
                       {formatDate(tenant.provisionedAt ?? tenant.createdAt)}
                     </td>
 
                     {/* Actions */}
                     <td style={{ padding: '14px 16px', verticalAlign: 'top' }}>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
+                      <div
+                        style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}
+                      >
                         {/* 30-Minute Temporary Debug Access Button */}
                         {tenant.status === 'ACTIVE' && (
                           <AdminButton
@@ -444,7 +522,8 @@ export const PlatformTenantPage = () => {
                         </AdminButton>
 
                         {/* Lifecycle controls */}
-                        {(tenant.status === 'PROVISIONING' || tenant.status === 'PROVISION_FAILED') && (
+                        {(tenant.status === 'PROVISIONING' ||
+                          tenant.status === 'PROVISION_FAILED') && (
                           <AdminButton
                             size="sm"
                             onClick={() => runAction('provisionTenant', tenant.id)}
@@ -470,7 +549,7 @@ export const PlatformTenantPage = () => {
                               onClick={() => {
                                 if (
                                   window.confirm(
-                                    `Pause ${tenant.name}'s cloud database? LMS access will stop, but all tenant data is retained.`
+                                    `Pause ${tenant.name}'s cloud database? LMS access will stop, but all tenant data is retained.`,
                                   )
                                 )
                                   runAction('pauseCloudProject', tenant.id);
@@ -502,7 +581,7 @@ export const PlatformTenantPage = () => {
                             onClick={() => {
                               if (
                                 window.confirm(
-                                  `Schedule ${tenant.name} for deletion? This is recoverable for 30 days.`
+                                  `Schedule ${tenant.name} for deletion? This is recoverable for 30 days.`,
                                 )
                               ) {
                                 runAction('scheduleDeletion', tenant.id);
@@ -580,13 +659,23 @@ export const PlatformTenantPage = () => {
           >
             <Clock size={18} style={{ color: '#d97706', flexShrink: 0, marginTop: 2 }} />
             <div>
-              <strong style={{ color: '#d97706' }}>Strict 30-Minute Expiry:</strong> This debug session will automatically expire and be revoked from both backend and browser in 30 minutes. All actions are logged under the platform audit trail.
+              <strong style={{ color: '#d97706' }}>Strict 30-Minute Expiry:</strong> This debug
+              session will automatically expire and be revoked from both backend and browser in 30
+              minutes. All actions are logged under the platform audit trail.
             </div>
           </div>
 
           {/* Quick reason selection */}
           <div>
-            <label style={{ display: 'block', marginBottom: 8, fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
+            <label
+              style={{
+                display: 'block',
+                marginBottom: 8,
+                fontSize: 13,
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+              }}
+            >
               Diagnostic Reason / Purpose
             </label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
@@ -605,7 +694,9 @@ export const PlatformTenantPage = () => {
                       borderRadius: 20,
                       fontSize: 12,
                       fontWeight: 600,
-                      border: isSelected ? '1px solid var(--primary, #3b82f6)' : '1px solid var(--border-color)',
+                      border: isSelected
+                        ? '1px solid var(--primary, #3b82f6)'
+                        : '1px solid var(--border-color)',
                       background: isSelected ? 'var(--primary, #3b82f6)' : 'var(--surface-medium)',
                       color: isSelected ? '#ffffff' : 'var(--text-secondary)',
                       cursor: 'pointer',
@@ -621,7 +712,15 @@ export const PlatformTenantPage = () => {
 
           {/* Custom reason / ticket notes */}
           <div>
-            <label style={{ display: 'block', marginBottom: 6, fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
+            <label
+              style={{
+                display: 'block',
+                marginBottom: 6,
+                fontSize: 13,
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+              }}
+            >
               Custom Reason or Issue / Ticket # (Optional)
             </label>
             <AdminInput
