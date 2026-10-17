@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { loadSession, sessionExpired, selectAuthStatus } from '../../features/auth/store/authSlice';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { loadSession, sessionExpired } from '../../features/auth/store/authSlice';
 import Spinner from '../../components/common/Spinner';
 
 /**
@@ -9,10 +9,12 @@ import Spinner from '../../components/common/Spinner';
  */
 export const AuthProvider = ({ children }) => {
   const dispatch = useDispatch();
-  const status = useSelector(selectAuthStatus);
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    dispatch(loadSession());
+    dispatch(loadSession()).finally(() => {
+      setInitialized(true);
+    });
   }, [dispatch]);
 
   useEffect(() => {
@@ -21,7 +23,7 @@ export const AuthProvider = ({ children }) => {
     return () => window.removeEventListener('auth:session-expired', handler);
   }, [dispatch]);
 
-  if (status === 'idle' || status === 'loading') {
+  if (!initialized) {
     return <Spinner fullPage label="Loading your workspace" />;
   }
 

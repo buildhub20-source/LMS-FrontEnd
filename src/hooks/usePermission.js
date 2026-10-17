@@ -14,7 +14,7 @@ export const usePermission = () => {
   // Stable references keep the memoised callbacks below from changing every render.
   const permissions = useMemo(() => user?.permissions ?? EMPTY, [user]);
   const roles = useMemo(() => user?.roles ?? EMPTY, [user]);
-  const isSuperAdmin = roles.includes(ROLES.SUPER_ADMIN);
+  const isSuperAdmin = roles.includes(ROLES.SUPER_ADMIN) || roles.includes(ROLES.ADMIN);
 
   const hasPermission = useCallback(
     (permission) => isSuperAdmin || permissions.includes(permission),

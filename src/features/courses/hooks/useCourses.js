@@ -9,6 +9,7 @@ export const useCourses = (params = {}) =>
     placeholderData: (previous) => previous,
   });
 
+/** Only the authenticated student's enrollments belong in My Courses. */
 export const useMyCourses = (params = {}) =>
   useQuery({
     queryKey: [...QUERY_KEYS.COURSES, 'mine', params],
@@ -27,6 +28,14 @@ export const useUpdateCourse = (id) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload) => courseService.update(id, payload),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.COURSES }),
+  });
+};
+
+export const useDeleteCourse = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id) => courseService.remove(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.COURSES }),
   });
 };

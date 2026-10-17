@@ -3,9 +3,10 @@ import { PASSWORD_POLICY } from '../../../utils/validationUtils';
 
 export const profileSchema = z.object({
   fullName: z.string().trim().min(2, 'Enter your full name'),
-  jobTitle: z.string().trim().max(80).optional(),
-  bio: z.string().trim().max(500, 'Keep your bio under 500 characters').optional(),
-  timeZone: z.string().optional(),
+  phone: z.string().trim().max(20, 'Phone number is too long').optional().nullable(),
+  jobTitle: z.string().trim().max(80).optional().nullable(),
+  bio: z.string().trim().max(500, 'Keep your bio under 500 characters').optional().nullable(),
+  timeZone: z.string().optional().nullable(),
 });
 
 export const changePasswordSchema = z

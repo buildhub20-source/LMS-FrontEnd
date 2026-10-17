@@ -17,7 +17,7 @@ export const LoginForm = () => {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '', rememberMe: false },
+    defaultValues: { email: '', password: '', tenantSlug: '', rememberMe: false },
   });
 
   return (
@@ -39,6 +39,14 @@ export const LoginForm = () => {
         required
         error={errors.password?.message}
         {...register('password')}
+      />
+      <Input
+        label="Tenant slug"
+        type="text"
+        autoComplete="organization"
+        hint="Required when signing in to a tenant environment. Leave blank only for legacy single-tenant mode."
+        error={errors.tenantSlug?.message}
+        {...register('tenantSlug')}
       />
       <div className="u-flex u-items-center u-justify-between">
         <Checkbox label="Remember me" {...register('rememberMe')} />

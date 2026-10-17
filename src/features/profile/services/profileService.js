@@ -12,6 +12,9 @@ export const profileService = {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
+  getSessions: () => http.get(API_ENDPOINTS.auth.sessions),
+  revokeSession: (sessionId) => http.delete(API_ENDPOINTS.auth.revokeSession(sessionId)),
+  revokeAllSessions: () => http.post(API_ENDPOINTS.auth.logoutAll),
 };
 
 export default profileService;
