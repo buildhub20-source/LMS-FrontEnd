@@ -1,0 +1,105 @@
+/* ============================================================
+   Legacy Theme Compatibility
+   
+   This file provides backwards compatibility for components
+   that reference theme.css utility classes directly.
+   All values now resolve through the shadcn/compat token system.
+   ============================================================ */
+
+/* Global resets — these MUST NOT set background/color directly
+   since globals.css @layer base handles that via shadcn tokens. */
+body {
+  font-family: var(--font-sans, 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.011em;
+  margin: 0;
+  padding: 0;
+}
+
+a { color: var(--muted-foreground); }
+
+/* ── Legacy utility classes ──────────────────────────── */
+.bg-surface-dark { background: var(--card) !important; }
+.bg-surface-medium { background: var(--muted) !important; }
+.text-primary { color: var(--foreground) !important; }
+.text-secondary { color: var(--muted-foreground) !important; }
+.text-muted { color: var(--muted-foreground) !important; }
+.rounded { border-radius: var(--radius) !important; }
+
+/* ── Legacy button classes ───────────────────────────── */
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 500;
+}
+.btn-primary:hover { opacity: 0.9; }
+
+.btn-secondary {
+  background: var(--card);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.btn-secondary:hover { background: var(--muted); }
+
+/* ── Legacy card class ───────────────────────────────── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  box-shadow: var(--shadow-card);
+}
+
+/* ── Legacy table classes ────────────────────────────── */
+.table { width: 100%; border-collapse: collapse; }
+.table th {
+  background: var(--muted);
+  color: var(--foreground);
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+.table td {
+  padding: 0.5rem 1rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+.table tr:hover { background: var(--muted); }
+
+/* ── Legacy input class ──────────────────────────────── */
+.input {
+  background: var(--card);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+}
+.input::placeholder { color: var(--muted-foreground); }
+.input:focus { outline: none; border-color: var(--primary); }
+
+/* ── Modal backdrop ──────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+}
+
+/* ── Theme toggle ────────────────────────────────────── */
+.theme-toggle {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--foreground);
+}
