@@ -11,7 +11,8 @@ import {
 import PageContainer from '../../../components/layout/PageContainer';
 import analyticsService from '../services/analyticsService';
 import { useCourses } from '../../courses/hooks/useCourses';
-import { useAdminAssessments } from '../../assessments/hooks/useAdminAssessments';
+import ErrorState from '../../../components/common/ErrorState';
+import Spinner from '../../../components/common/Spinner';
 import DashboardLeaderboardWidget from '../../assessments/components/DashboardLeaderboardWidget';
 import { QUERY_KEYS } from '../../../constants/appConstants';
 import { ROUTES } from '../../../constants/routes';
@@ -21,7 +22,6 @@ export const InstructorAnalyticsPage = () => {
   const [timeHorizon, setTimeHorizon] = useState('7D');
   const [activeChartTab, setActiveChartTab] = useState('VELOCITY'); // 'VELOCITY' | 'COMPLETION' | 'GRADES'
   const [courseSearch, setCourseSearch] = useState('');
-  const [courseCategoryFilter, setCourseCategoryFilter] = useState('ALL');
   const [expandedCourseId, setExpandedCourseId] = useState(null);
   const [activityFilter, setActivityFilter] = useState('ALL');
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -43,23 +43,13 @@ export const InstructorAnalyticsPage = () => {
     return Array.isArray(list) ? list : [];
   }, [coursesData]);
 
-  // ── 3. Fetch Real Assessments ──
-  const { data: assessmentsData } = useAdminAssessments({ size: 20 });
-  const rawAssessments = useMemo(() => {
-    const list =
-      assessmentsData?.content ||
-      assessmentsData?.data?.content ||
-      (Array.isArray(assessmentsData) ? assessmentsData : []);
-    return Array.isArray(list) ? list : [];
-  }, [assessmentsData]);
-
   const stats = analyticsData?.data?.data || analyticsData?.data || analyticsData || {};
   
-  // Real or dynamically computed counts
-  const courseCount = rawCourses.length > 0 ? rawCourses.length : (stats.courseCount ?? stats.activeCourses ?? 5);
-  const learnerCount = stats.learnerCount ?? stats.totalStudents ?? 12;
-  const avgCompletion = stats.averageCompletion ?? 68;
-  const avgScore = stats.averageScore ?? 84;
+  // Only what the API reports; never placeholder numbers.
+  const courseCount = stats.courseCount ?? stats.activeCourses ?? rawCourses.length;
+  const learnerCount = stats.learnerCount ?? stats.totalStudents ?? 0;
+  const avgCompletion = stats.averageCompletion ?? 0;
+  const avgScore = stats.averageScore ?? 0;
   const pendingGrading = stats.pendingGradingCount ?? 0;
 
   const handleRefresh = async () => {
@@ -68,109 +58,15 @@ export const InstructorAnalyticsPage = () => {
     setTimeout(() => setIsRefreshing(false), 500);
   };
 
-  // ── Interactive Telemetry Data Points ──
-  const telemetryPoints = useMemo(() => {
-    if (activeChartTab === 'VELOCITY') {
-      if (timeHorizon === '24H') {
-        return [
-          { label: '00:00', value: 2 }, { label: '04:00', value: 1 },
-          { label: '08:00', value: 6 }, { label: '12:00', value: 14 },
-          { label: '16:00', value: 11 }, { label: '20:00', value: 8 },
-        ];
-      }
-      if (timeHorizon === '30D') {
-        return [
-          { label: 'Wk 1', value: 24 }, { label: 'Wk 2', value: 38 },
-          { label: 'Wk 3', value: 45 }, { label: 'Wk 4', value: 62 },
-        ];
-      }
-      // Default 7D
-      return [
-        { label: 'Mon', value: 8 }, { label: 'Tue', value: 12 },
-        { label: 'Wed', value: 15 }, { label: 'Thu', value: 28 },
-        { label: 'Fri', value: 22 }, { label: 'Sat', value: 18 },
-        { label: 'Sun', value: 25 },
-      ];
-    }
-    if (activeChartTab === 'COMPLETION') {
-      return [
-        { label: 'Module 1', value: 92 }, { label: 'Module 2', value: 85 },
-        { label: 'Module 3', value: 74 }, { label: 'Module 4', value: 68 },
-        { label: 'Module 5', value: 61 }, { label: 'Final Exam', value: 58 },
-      ];
-    }
-    // GRADES
-    return [
-      { label: 'A+ (90-100)', value: 34 }, { label: 'A (80-89)', value: 42 },
-      { label: 'B (70-79)', value: 16 }, { label: 'C (60-69)', value: 6 },
-      { label: '<60%', value: 2 },
-    ];
-  }, [activeChartTab, timeHorizon]);
+  // The API does not expose per-period engagement, retention or grade data yet,
+  // so the chart stays empty rather than showing sample figures.
+  const telemetryPoints = [];
 
-  // Max value for SVG scaling
-  const maxChartValue = useMemo(() => {
-    return Math.max(...telemetryPoints.map((p) => p.value), 10);
-  }, [telemetryPoints]);
+  const maxChartValue = Math.max(...telemetryPoints.map((p) => p.value), 10);
 
   // ── Curriculum Matrix Display ──
   const displayedCourses = useMemo(() => {
-    let list = rawCourses.length > 0 ? rawCourses : [
-      {
-        id: 'c-1',
-        title: 'Database Systems & SQL Optimization',
-        category: 'Database & SQL',
-        code: 'DB-301',
-        level: 'INTERMEDIATE',
-        status: 'PUBLISHED',
-        enrolledCount: 12,
-        completionRate: 78,
-        rating: 4.9,
-      },
-      {
-        id: 'c-2',
-        title: 'Advanced Spring Boot & Cloud Microservices',
-        category: 'Backend Development',
-        code: 'BE-402',
-        level: 'ADVANCED',
-        status: 'PUBLISHED',
-        enrolledCount: 10,
-        completionRate: 64,
-        rating: 4.8,
-      },
-      {
-        id: 'c-3',
-        title: 'Full-Stack React & Node Architecture',
-        category: 'Web Development',
-        code: 'FS-201',
-        level: 'ALL_LEVELS',
-        status: 'PUBLISHED',
-        enrolledCount: 14,
-        completionRate: 82,
-        rating: 5.0,
-      },
-      {
-        id: 'c-4',
-        title: 'Data Structures & Algorithmic Thinking',
-        category: 'Computer Science',
-        code: 'CS-101',
-        level: 'BEGINNER',
-        status: 'PUBLISHED',
-        enrolledCount: 18,
-        completionRate: 70,
-        rating: 4.9,
-      },
-      {
-        id: 'c-5',
-        title: 'Enterprise Cyber Security & Threat Analysis',
-        category: 'Cyber Security',
-        code: 'SEC-401',
-        level: 'ADVANCED',
-        status: 'DRAFT',
-        enrolledCount: 0,
-        completionRate: 0,
-        rating: null,
-      },
-    ];
+    let list = rawCourses;
 
     if (courseSearch.trim()) {
       const q = courseSearch.toLowerCase();
@@ -181,66 +77,15 @@ export const InstructorAnalyticsPage = () => {
       );
     }
 
-    if (courseCategoryFilter !== 'ALL') {
-      list = list.filter((c) => (c.category || '').toUpperCase().includes(courseCategoryFilter));
-    }
 
     return list;
-  }, [rawCourses, courseSearch, courseCategoryFilter]);
+  }, [rawCourses, courseSearch]);
 
-  // ── Live Stream Logs ──
-  const liveEvents = useMemo(() => {
-    const raw = [
-      {
-        id: 'ev-1',
-        time: '14:42:10',
-        relative: '2m ago',
-        type: 'SUBMISSION',
-        badgeColor: '#f59e0b',
-        title: 'Candidate Alice Chen completed "SQL Optimization Test"',
-        details: 'Score: 98/100 • Awarded SQL Master 🥇',
-      },
-      {
-        id: 'ev-2',
-        time: '14:28:40',
-        relative: '15m ago',
-        type: 'ENROLLMENT',
-        badgeColor: '#10b981',
-        title: 'Candidate David Miller registered',
-        details: 'Enrolled into "Advanced Spring Boot Microservices"',
-      },
-      {
-        id: 'ev-3',
-        time: '13:50:22',
-        relative: '54m ago',
-        type: 'HONORS',
-        badgeColor: '#a855f7',
-        title: 'Candidate Charlie unlocked "Speed Demon" ⚡',
-        details: 'Completed Algorithm Challenge in 14 minutes',
-      },
-      {
-        id: 'ev-4',
-        time: '12:30:15',
-        relative: '2h ago',
-        type: 'SUBMISSION',
-        badgeColor: '#f59e0b',
-        title: 'Candidate Bob completed "Algorithm Knight Challenge"',
-        details: 'Score: 92/100 • Ranked Silver #2 🥈',
-      },
-      {
-        id: 'ev-5',
-        time: '11:15:00',
-        relative: '3h ago',
-        type: 'SYSTEM',
-        badgeColor: '#06b6d4',
-        title: 'Telemetry Synced: 5 courses and 10 students active',
-        details: 'Zero errors logged across all evaluation containers',
-      },
-    ];
+  // No activity feed exists in the API yet.
+  const liveEvents = [];
 
-    if (activityFilter === 'ALL') return raw;
-    return raw.filter((ev) => ev.type === activityFilter);
-  }, [activityFilter]);
+  if (isLoading) return <Spinner />;
+  if (error) return <ErrorState error={error} onRetry={refetch} />;
 
   return (
     <PageContainer
@@ -740,6 +585,9 @@ export const InstructorAnalyticsPage = () => {
 
                 {/* Bars & Glow Points Container */}
                 <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: 140, position: 'relative', zIndex: 2 }}>
+                  {telemetryPoints.length === 0 && (
+                    <p style={{ margin: 'auto', fontSize: 13, color: 'var(--text-muted)', textAlign: 'center' }}>Not enough data to chart yet.</p>
+                  )}
                   {telemetryPoints.map((pt, i) => {
                     const heightPct = Math.max(12, Math.round((pt.value / maxChartValue) * 100));
                     const isHovered = activeHoverPoint === i;
@@ -887,6 +735,9 @@ export const InstructorAnalyticsPage = () => {
 
               {/* Course Health Rows */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {displayedCourses.length === 0 && (
+                  <p style={{ margin: 'auto', fontSize: 13, color: 'var(--text-muted)', textAlign: 'center' }}>No courses to show.</p>
+                )}
                 {displayedCourses.map((c) => {
                   const isExpanded = expandedCourseId === c.id;
                   const isDraft = c.status === 'DRAFT';
@@ -1204,6 +1055,9 @@ export const InstructorAnalyticsPage = () => {
                   fontFamily: 'monospace',
                 }}
               >
+                {liveEvents.length === 0 && (
+                  <p style={{ margin: 'auto', fontSize: 13, color: 'var(--text-muted)', textAlign: 'center' }}>No recent activity yet.</p>
+                )}
                 {liveEvents.map((ev) => (
                   <div
                     key={ev.id}
