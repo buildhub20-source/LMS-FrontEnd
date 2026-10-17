@@ -29,8 +29,8 @@ export const LiveRoom = ({
   const [isLiveKitConnected, setIsLiveKitConnected] = useState(false);
 
   // Local media states
-  const [isAudioEnabled, setIsAudioEnabled] = useState(isInstructor);
-  const [isVideoEnabled, setIsVideoEnabled] = useState(isInstructor);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [isHandRaised, setIsHandRaised] = useState(false);
 
@@ -405,7 +405,7 @@ export const LiveRoom = ({
         const stream = (event.streams && event.streams[0]) ? event.streams[0] : new MediaStream([event.track]);
         if (remoteVideoRef.current) {
           remoteVideoRef.current.srcObject = stream;
-          remoteVideoRef.current.muted = true;
+          remoteVideoRef.current.muted = false;
           remoteVideoRef.current.play()
             .then(() => setRemoteStreamActive(true))
             .catch(() => setRemoteStreamActive(true));
@@ -759,6 +759,21 @@ export const LiveRoom = ({
 
     const connectToRoom = async () => {
       try {
+        let liveKitHostname = '';
+        try {
+          liveKitHostname = new URL(serverUrl).hostname;
+        } catch {
+          liveKitHostname = '';
+        }
+        const isPlaceholderServer =
+          !token ||
+          !liveKitHostname ||
+          liveKitHostname === 'livekit.local' ||
+          liveKitHostname === 'livekit.cloud.local';
+        if (isPlaceholderServer) {
+          throw new Error('LiveKit is not configured; using the local WebRTC mesh.');
+        }
+
         const lkRoom = new Room({
           adaptiveStream: true,
           dynacast: true,
@@ -783,6 +798,11 @@ export const LiveRoom = ({
             el.dataset.participant = participant.identity;
             remoteVideoContainerRef.current?.appendChild(el);
             setRemoteStreamActive(true);
+          } else if (track.kind === Track.Kind.Audio) {
+            const el = track.attach();
+            el.autoplay = true;
+            el.dataset.participant = participant.identity;
+            remoteVideoContainerRef.current?.appendChild(el);
           }
         });
 
@@ -790,12 +810,26 @@ export const LiveRoom = ({
           track.detach().forEach((el) => el.remove());
         });
 
-        await lkRoom.connect(serverUrl, token);
+        let connectionTimer;
+        try {
+          await Promise.race([
+            lkRoom.connect(serverUrl, token),
+            new Promise((_, reject) => {
+              connectionTimer = setTimeout(
+                () => reject(new Error('LiveKit connection timed out.')),
+                8000
+              );
+            }),
+          ]);
+        } finally {
+          clearTimeout(connectionTimer);
+        }
 
         if (isInstructor) {
           try {
             const videoTrack = await createLocalVideoTrack({ facingMode: 'user' });
             await lkRoom.localParticipant.publishTrack(videoTrack);
+            setIsVideoEnabled(true);
             if (localVideoRef.current) {
               videoTrack.attach(localVideoRef.current);
             }
@@ -806,6 +840,7 @@ export const LiveRoom = ({
           try {
             const audioTrack = await createLocalAudioTrack();
             await lkRoom.localParticipant.publishTrack(audioTrack);
+            setIsAudioEnabled(true);
           } catch (e) {
             console.warn('LiveKit audio track error:', e.message);
           }
@@ -936,10 +971,17 @@ export const LiveRoom = ({
 
     if (nextState) {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
+        const cameraStream = await navigator.mediaDevices.getUserMedia({
           video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
           audio: false,
         });
+        const videoTrack = cameraStream.getVideoTracks()[0];
+        const stream = localStreamRef.current || new MediaStream();
+        stream.getVideoTracks().forEach((track) => {
+          track.stop();
+          stream.removeTrack(track);
+        });
+        if (videoTrack) stream.addTrack(videoTrack);
         localStreamRef.current = stream;
         if (localVideoRef.current && !isScreenSharing) {
           localVideoRef.current.srcObject = stream;
@@ -1058,8 +1100,12 @@ export const LiveRoom = ({
           localVideoRef.current.play().catch(() => {});
         }
 
+        const streamForPeers = new MediaStream([
+          ...displayStream.getVideoTracks(),
+          ...(localStreamRef.current?.getAudioTracks() || []),
+        ]);
         Object.keys(remotePeers).forEach((peerId) => {
-          startPeerConnection(peerId, displayStream);
+          startPeerConnection(peerId, streamForPeers);
         });
         startFrameBroadcast();
 
@@ -1318,7 +1364,6 @@ export const LiveRoom = ({
                     ref={remoteVideoRef}
                     autoPlay
                     playsInline
-                    muted
                     className={`absolute inset-0 w-full h-full z-0 ${
                       aspectFitMode === 'contain' ? 'object-contain' : 'object-cover'
                     } ${remoteStreamActive ? 'block' : 'hidden'}`}
@@ -1572,7 +1617,7 @@ export const LiveRoom = ({
         onToggleParticipants={() => setActiveSidebar((prev) => (prev === 'participants' ? null : 'participants'))}
         onLeave={onLeave}
         onEndSession={onEndSession}
-        canPublish={true}
+        canPublish={isInstructor}
         canPublishVideo={isInstructor}
         canShareScreen={isInstructor}
         layoutMode={layoutMode}

@@ -136,7 +136,7 @@ export default function ChatSidebar({
           <Search className="chat-sidebar__search-icon" size={15} />
           <input
             type="text"
-            placeholder="Search conversations..."
+            placeholder="Search channels..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="chat-sidebar__search-input"

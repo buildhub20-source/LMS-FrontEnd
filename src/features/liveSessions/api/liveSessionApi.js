@@ -54,6 +54,9 @@ export const liveSessionApi = {
   joinSession: (sessionId) =>
     http.post(API_ENDPOINTS.liveSessions.join(sessionId)),
 
+  leaveSession: (sessionId) =>
+    http.post(API_ENDPOINTS.liveSessions.leave(sessionId)),
+
   endSession: (sessionId) =>
     http.post(API_ENDPOINTS.liveSessions.end(sessionId)),
 

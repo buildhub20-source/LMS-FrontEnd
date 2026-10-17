@@ -3,7 +3,7 @@ import { Video, Calendar, Clock, Users, Play, StopCircle, ArrowRight, CheckCircl
 import Button from '../../../components/common/Button';
 import { ROUTES } from '../../../constants/routes';
 
-export const LiveSessionCard = ({ session, isInstructor, onStart, onEnd, isStarting, isEnding }) => {
+export const LiveSessionCard = ({ session, isInstructor, onStart, onEnd, isStarting, isEnding, className = '' }) => {
   const navigate = useNavigate();
 
   const isLive = session.status === 'LIVE';
@@ -30,60 +30,66 @@ export const LiveSessionCard = ({ session, isInstructor, onStart, onEnd, isStart
   };
 
   return (
-    <div className={`rounded-xl border p-5 transition-all duration-200 shadow-sm hover:shadow-md ${
-      isLive 
-        ? 'bg-rose-500/5 border-rose-500/30 ring-1 ring-rose-500/20' 
-        : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'
-    }`}>
-      <div className="flex items-start justify-between gap-4 mb-3">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
-            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 truncate">
-              {session.title}
-            </h3>
-            {isLive && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-500 text-white animate-pulse shadow-sm shadow-rose-500/30">
-                <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
-                LIVE NOW
-              </span>
-            )}
-            {isScheduled && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-                Scheduled
-              </span>
-            )}
-            {isEnded && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20">
-                Ended
-              </span>
-            )}
-          </div>
-          {session.description && (
-            <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">
-              {session.description}
-            </p>
+    <div
+      className={`rounded-xl border p-5 transition-all duration-200 shadow-sm hover:shadow-md flex flex-col justify-between h-full ${
+        isLive
+          ? 'bg-rose-500/5 border-rose-500/30 ring-1 ring-rose-500/20'
+          : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'
+      } ${className}`}
+    >
+      {/* ── Top Info Section: Title, Badge, Description ── */}
+      <div className="flex-1 flex flex-col mb-1">
+        <h3
+          className="text-base font-bold text-slate-900 dark:text-slate-100 truncate mb-1.5"
+          title={session.title}
+        >
+          {session.title}
+        </h3>
+
+        <div className="flex items-center gap-2 mb-2 min-h-[24px]">
+          {isLive && (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-500 text-white animate-pulse shadow-sm shadow-rose-500/30">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+              LIVE NOW
+            </span>
+          )}
+          {isScheduled && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+              Scheduled
+            </span>
+          )}
+          {isEnded && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20">
+              Ended
+            </span>
           )}
         </div>
+
+        <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 min-h-[40px] leading-relaxed">
+          {session.description || 'Live interactive session covering course curriculum, Q&A, and practical exercises.'}
+        </p>
       </div>
 
+      {/* ── Middle Telemetry / Metadata ── */}
       <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs text-slate-500 dark:text-slate-400 py-3 border-y border-slate-100 dark:border-slate-800/60 my-3">
         <div className="flex items-center gap-1.5">
-          <Calendar className="w-3.5 h-3.5 text-slate-400" />
+          <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
           <span>{formatTime(session.scheduledStart)}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <Clock className="w-3.5 h-3.5 text-slate-400" />
+          <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
           <span>Until {formatTime(session.scheduledEnd)}</span>
         </div>
         {session.instructorName && (
           <div className="flex items-center gap-1.5">
-            <Users className="w-3.5 h-3.5 text-slate-400" />
+            <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             <span>Instructor: <strong className="font-medium text-slate-700 dark:text-slate-300">{session.instructorName}</strong></span>
           </div>
         )}
       </div>
 
-      <div className="flex items-center justify-between gap-3 pt-1">
+      {/* ── Bottom Actions Footer ── */}
+      <div className="flex items-center justify-between gap-3 pt-1 mt-auto">
         <div>
           {isEnded && isInstructor && (
             <Button
@@ -108,7 +114,7 @@ export const LiveSessionCard = ({ session, isInstructor, onStart, onEnd, isStart
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ml-auto">
           {isLive ? (
             <>
               {isInstructor && (

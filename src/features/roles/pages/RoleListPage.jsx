@@ -15,6 +15,13 @@ import {
   Unlock,
   UserX,
   UserCheck,
+  GraduationCap,
+  Briefcase,
+  BookOpen,
+  Users,
+  CheckCircle2,
+  ArrowRight,
+  Shield,
 } from 'lucide-react';
 import AdminButton from '../../../components/ui/AdminButton';
 import AdminInput from '../../../components/ui/AdminInput';
@@ -59,6 +66,80 @@ const ROLE_BADGE_COLORS = {
   instructor: { bg: 'rgba(33, 150, 243, 0.15)', color: '#2196f3' },
   student: { bg: 'rgba(156, 39, 176, 0.15)', color: '#d05ce3' },
 };
+
+const ROLE_THEMES = {
+  admin: {
+    icon: ShieldCheck,
+    label: 'Administrator',
+    color: '#818cf8',
+    bg: 'rgba(99, 102, 241, 0.12)',
+    border: 'rgba(99, 102, 241, 0.3)',
+    glow: 'rgba(99, 102, 241, 0.2)',
+    tag: 'Full Platform Access',
+    accent: '#6366f1',
+    description: 'Complete unrestricted access to system configurations, billing, tenants, and logs.',
+  },
+  superadmin: {
+    icon: KeyRound,
+    label: 'Super Admin',
+    color: '#f43f5e',
+    bg: 'rgba(244, 63, 94, 0.12)',
+    border: 'rgba(244, 63, 94, 0.3)',
+    glow: 'rgba(244, 63, 94, 0.2)',
+    tag: 'Root System Control',
+    accent: '#f43f5e',
+    description: 'Root-level infrastructure privileges and high-security compliance audits.',
+  },
+  instructor: {
+    icon: GraduationCap,
+    label: 'Instructor',
+    color: '#34d399',
+    bg: 'rgba(16, 185, 129, 0.12)',
+    border: 'rgba(16, 185, 129, 0.3)',
+    glow: 'rgba(16, 185, 129, 0.2)',
+    tag: 'Courses & Live Classes',
+    accent: '#10b981',
+    description: 'Author courses, schedule live classrooms, evaluate assessments, and review students.',
+  },
+  manager: {
+    icon: Briefcase,
+    label: 'Manager',
+    color: '#fbbf24',
+    bg: 'rgba(245, 158, 11, 0.12)',
+    border: 'rgba(245, 158, 11, 0.3)',
+    glow: 'rgba(245, 158, 11, 0.2)',
+    tag: 'Operations & Reports',
+    accent: '#f59e0b',
+    description: 'Supervise cohorts, monitor course completion rates, and manage enrollment workflows.',
+  },
+  student: {
+    icon: BookOpen,
+    label: 'Student',
+    color: '#38bdf8',
+    bg: 'rgba(14, 165, 233, 0.12)',
+    border: 'rgba(14, 165, 233, 0.3)',
+    glow: 'rgba(14, 165, 233, 0.2)',
+    tag: 'Learning & Assessments',
+    accent: '#0ea5e9',
+    description: 'Enroll in academic courses, attend interactive live streams, and earn certifications.',
+  },
+  default: {
+    icon: Users,
+    label: 'Custom Role',
+    color: '#a78bfa',
+    bg: 'rgba(167, 139, 250, 0.12)',
+    border: 'rgba(167, 139, 250, 0.3)',
+    glow: 'rgba(167, 139, 250, 0.2)',
+    tag: 'Custom Privileges',
+    accent: '#8b5cf6',
+    description: 'Customized permission set tailored for specialized organizational responsibilities.',
+  },
+};
+
+function getRoleTheme(roleName = '') {
+  const key = String(roleName).toLowerCase().replace(/[^a-z]/g, '');
+  return ROLE_THEMES[key] || ROLE_THEMES.default;
+}
 
 function avatarColor(str = '') {
   const h = str.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
@@ -180,12 +261,12 @@ function AvatarStack({ users = [], max = 3 }) {
 /* ─── Status badge ─────────────────────────────────────────────────── */
 function StatusBadge({ user }) {
   const s = user.locked
-    ? { bg: 'rgba(234, 84, 85, 0.15)', color: '#ea5455', label: 'Locked' }
+    ? { bg: 'rgba(234, 84, 85, 0.15)', color: '#ea5455', label: 'Locked', dot: '#ea5455' }
     : !user.active
-      ? { bg: 'var(--surface-medium)', color: 'var(--text-muted)', label: 'Inactive' }
+      ? { bg: 'var(--surface-medium)', color: 'var(--text-muted)', label: 'Inactive', dot: '#94a3b8' }
       : !user.activated
-        ? { bg: 'rgba(255, 159, 67, 0.15)', color: '#ff9f43', label: 'Pending' }
-        : { bg: 'rgba(40, 199, 111, 0.15)', color: '#28c76f', label: 'Active' };
+        ? { bg: 'rgba(255, 159, 67, 0.15)', color: '#ff9f43', label: 'Pending', dot: '#ff9f43' }
+        : { bg: 'rgba(40, 199, 111, 0.15)', color: '#28c76f', label: 'Active', dot: '#28c76f' };
   return (
     <span
       style={{
@@ -195,66 +276,201 @@ function StatusBadge({ user }) {
         borderRadius: 999,
         fontSize: 12,
         fontWeight: 600,
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 6,
       }}
     >
+      <span
+        style={{
+          width: 6,
+          height: 6,
+          borderRadius: '50%',
+          background: s.dot,
+          boxShadow: user.active && user.activated && !user.locked ? `0 0 6px ${s.dot}` : 'none',
+        }}
+      />
       {s.label}
     </span>
   );
 }
 
 /* ─── Role card ────────────────────────────────────────────────────── */
-function RoleCard({ role, usersWithRole, onEdit, onDelete }) {
+function RoleCard({ role, usersWithRole, onEdit, onDelete, isFilterActive, onToggleFilter }) {
+  const theme = getRoleTheme(role.name);
+  const Icon = theme.icon;
+  const userCount = usersWithRole.length;
+  const permCount = role.permissions?.length ?? 0;
+
   return (
     <div
+      onClick={onToggleFilter}
       style={{
         background: M.card,
-        borderRadius: M.radius,
-        boxShadow: M.cardShadow,
-        padding: '20px 20px 16px',
+        borderRadius: 14,
+        border: isFilterActive ? `2px solid ${theme.accent}` : `1px solid ${M.border}`,
+        boxShadow: isFilterActive ? `0 0 24px ${theme.glow}` : M.cardShadow,
+        padding: '20px 20px 18px',
         display: 'flex',
         flexDirection: 'column',
-        gap: 14,
-        transition: 'transform 0.2s, box-shadow 0.2s',
+        justifyContent: 'space-between',
+        gap: 16,
+        cursor: 'pointer',
+        position: 'relative',
+        overflow: 'hidden',
+        transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-3px)';
-        e.currentTarget.style.boxShadow = M.shadow;
+        if (!isFilterActive) {
+          e.currentTarget.style.transform = 'translateY(-3px)';
+          e.currentTarget.style.borderColor = theme.border;
+          e.currentTarget.style.boxShadow = `0 8px 24px ${theme.glow}`;
+        }
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.transform = '';
-        e.currentTarget.style.boxShadow = M.cardShadow;
+        if (!isFilterActive) {
+          e.currentTarget.style.transform = '';
+          e.currentTarget.style.borderColor = M.border;
+          e.currentTarget.style.boxShadow = M.cardShadow;
+        }
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 13, color: M.textMuted }}>
-          Total {usersWithRole.length} user{usersWithRole.length !== 1 ? 's' : ''}
-        </span>
-        <AvatarStack users={usersWithRole} max={3} />
-      </div>
-      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-        <div>
-          <p style={{ fontSize: 16, fontWeight: 700, color: M.textMain, margin: 0 }}>{role.name}</p>
-          <PermissionGuard required={[PERMISSIONS.ROLE_WRITE]} fallback={null}>
-            <button
-              onClick={() => onEdit(role)}
+      {/* Top glowing ambient highlight */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 3,
+          background: `linear-gradient(90deg, ${theme.accent} 0%, transparent 100%)`,
+          opacity: isFilterActive ? 1 : 0.6,
+        }}
+      />
+
+      {/* Top row: Role Icon + User count & Avatar stack */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 10,
+              background: theme.bg,
+              border: `1px solid ${theme.border}`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: theme.color,
+              flexShrink: 0,
+            }}
+          >
+            <Icon size={20} />
+          </div>
+          <div>
+            <span
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                color: M.primary,
-                fontSize: 13,
-                fontWeight: 500,
-                padding: '2px 0',
-                marginTop: 2,
+                fontSize: 11,
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                color: theme.color,
+                display: 'block',
               }}
             >
-              <Pencil size={12} /> Edit Role
-            </button>
-          </PermissionGuard>
+              {theme.tag}
+            </span>
+            <span style={{ fontSize: 12, color: M.textMuted }}>
+              {userCount} user{userCount !== 1 ? 's' : ''} assigned
+            </span>
+          </div>
         </div>
+
+        <AvatarStack users={usersWithRole} max={3} />
+      </div>
+
+      {/* Middle row: Role title, capability description, permissions badge */}
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 4 }}>
+          <h3 style={{ fontSize: 18, fontWeight: 800, color: M.textMain, margin: 0, letterSpacing: '-0.01em' }}>
+            {role.name}
+          </h3>
+          {isFilterActive && (
+            <span
+              style={{
+                fontSize: 10,
+                fontWeight: 700,
+                padding: '2px 8px',
+                borderRadius: 999,
+                background: theme.accent,
+                color: '#fff',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+              }}
+            >
+              <CheckCircle2 size={10} /> Filtering Table
+            </span>
+          )}
+        </div>
+        <p style={{ margin: 0, fontSize: 12, color: M.textMuted, lineHeight: 1.5 }}>
+          {role.description || theme.description}
+        </p>
+
+        {permCount > 0 && (
+          <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: 'var(--text-secondary)',
+                background: 'var(--surface-medium)',
+                padding: '2px 8px',
+                borderRadius: 6,
+                border: `1px solid ${M.border}`,
+              }}
+            >
+              {permCount} permissions configured
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom row: Edit Role / Copy / Delete */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingTop: 12,
+          borderTop: `1px solid ${M.border}`,
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <PermissionGuard required={[PERMISSIONS.ROLE_WRITE]} fallback={null}>
+          <button
+            onClick={() => onEdit(role)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 5,
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: theme.color,
+              fontSize: 13,
+              fontWeight: 600,
+              padding: '4px 8px',
+              borderRadius: 6,
+              transition: 'background 0.15s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = theme.bg)}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+          >
+            <Pencil size={13} /> Edit Role
+          </button>
+        </PermissionGuard>
+
         <div style={{ display: 'flex', gap: 4 }}>
           <button
             onClick={() => navigator.clipboard?.writeText(role.name ?? '')}
@@ -266,11 +482,21 @@ function RoleCard({ role, usersWithRole, onEdit, onDelete }) {
               padding: 6,
               borderRadius: 6,
               color: M.textMuted,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.15s',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--hover-bg)';
+              e.currentTarget.style.color = M.textMain;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'none';
+              e.currentTarget.style.color = M.textMuted;
+            }}
           >
-            <Copy size={15} />
+            <Copy size={14} />
           </button>
           <PermissionGuard required={[PERMISSIONS.ROLE_WRITE]} fallback={null}>
             <button
@@ -283,9 +509,13 @@ function RoleCard({ role, usersWithRole, onEdit, onDelete }) {
                 padding: 6,
                 borderRadius: 6,
                 color: M.textMuted,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.15s',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(234, 84, 85, 0.1)';
+                e.currentTarget.style.background = 'rgba(234, 84, 85, 0.15)';
                 e.currentTarget.style.color = '#ea5455';
               }}
               onMouseLeave={(e) => {
@@ -293,7 +523,7 @@ function RoleCard({ role, usersWithRole, onEdit, onDelete }) {
                 e.currentTarget.style.color = M.textMuted;
               }}
             >
-              <Trash2 size={15} />
+              <Trash2 size={14} />
             </button>
           </PermissionGuard>
         </div>
@@ -567,13 +797,129 @@ export const RoleListPage = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-      {/* Page header */}
-      <div>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: M.textMain, margin: 0 }}>Roles List</h1>
-        <p style={{ fontSize: 14, color: M.textMuted, margin: '6px 0 0' }}>
-          A role provided access to predefined menus and features so that depending on assigned role
-          an administrator can have access to what he need
-        </p>
+      {/* Page header with Telemetry Ribbon */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 20 }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: M.primary,
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                background: 'rgba(115, 103, 240, 0.1)',
+                padding: '3px 10px',
+                borderRadius: 999,
+                border: '1px solid rgba(115, 103, 240, 0.25)',
+              }}
+            >
+              Access & Governance
+            </span>
+          </div>
+          <h1 style={{ fontSize: 26, fontWeight: 800, color: M.textMain, margin: 0, letterSpacing: '-0.02em' }}>
+            Roles & Permissions
+          </h1>
+          <p style={{ fontSize: 14, color: M.textMuted, margin: '6px 0 0', maxWidth: 650 }}>
+            Configure role-based access control (RBAC), govern system privileges, and audit assigned user responsibilities.
+          </p>
+        </div>
+
+        {/* Telemetry KPI Badges */}
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <div
+            style={{
+              background: 'var(--surface-dark)',
+              border: `1px solid ${M.border}`,
+              borderRadius: 12,
+              padding: '10px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+            }}
+          >
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 9,
+                background: 'rgba(99, 102, 241, 0.12)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#818cf8',
+              }}
+            >
+              <ShieldCheck size={18} />
+            </div>
+            <div>
+              <div style={{ fontSize: 11, color: M.textMuted, fontWeight: 600, textTransform: 'uppercase' }}>Roles</div>
+              <div style={{ fontSize: 17, fontWeight: 800, color: M.textMain }}>{roles.length}</div>
+            </div>
+          </div>
+
+          <div
+            style={{
+              background: 'var(--surface-dark)',
+              border: `1px solid ${M.border}`,
+              borderRadius: 12,
+              padding: '10px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+            }}
+          >
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 9,
+                background: 'rgba(16, 185, 129, 0.12)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#34d399',
+              }}
+            >
+              <Users size={18} />
+            </div>
+            <div>
+              <div style={{ fontSize: 11, color: M.textMuted, fontWeight: 600, textTransform: 'uppercase' }}>Total Users</div>
+              <div style={{ fontSize: 17, fontWeight: 800, color: M.textMain }}>{userTotal || users.length}</div>
+            </div>
+          </div>
+
+          <div
+            style={{
+              background: 'var(--surface-dark)',
+              border: `1px solid ${M.border}`,
+              borderRadius: 12,
+              padding: '10px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+            }}
+          >
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 9,
+                background: 'rgba(245, 158, 11, 0.12)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#fbbf24',
+              }}
+            >
+              <KeyRound size={18} />
+            </div>
+            <div>
+              <div style={{ fontSize: 11, color: M.textMuted, fontWeight: 600, textTransform: 'uppercase' }}>Permissions</div>
+              <div style={{ fontSize: 17, fontWeight: 800, color: M.textMain }}>{allPermissions.length}</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Role cards grid */}
@@ -607,6 +953,7 @@ export const RoleListPage = () => {
                   (role.name ?? '').toLowerCase(),
               ),
             );
+            const isFilterActive = roleFilter.toLowerCase() === (role.name ?? '').toLowerCase();
             return (
               <RoleCard
                 key={role.id}
@@ -614,79 +961,85 @@ export const RoleListPage = () => {
                 usersWithRole={usersWithRole}
                 onEdit={openEdit}
                 onDelete={() => setDeleteTarget(role)}
+                isFilterActive={isFilterActive}
+                onToggleFilter={() => {
+                  setRoleFilter((prev) =>
+                    prev.toLowerCase() === (role.name ?? '').toLowerCase() ? '' : role.name
+                  );
+                  setUserPage(0);
+                }}
               />
             );
           })}
-          {/* Add Role card */}
+
+          {/* Add Role card — Sleek Dashed Glass Card */}
           <div
+            onClick={openCreate}
             style={{
               background: M.card,
-              borderRadius: M.radius,
+              borderRadius: 14,
+              border: '1.5px dashed var(--border-color)',
               boxShadow: M.cardShadow,
-              padding: '20px 20px 16px',
+              padding: '24px 20px',
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'flex-end',
-              justifyContent: 'space-between',
-              minHeight: 130,
-              position: 'relative',
-              overflow: 'hidden',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              gap: 12,
+              minHeight: 180,
+              cursor: 'pointer',
+              transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = M.primary;
+              e.currentTarget.style.transform = 'translateY(-3px)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(115, 103, 240, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'var(--border-color)';
+              e.currentTarget.style.transform = '';
+              e.currentTarget.style.boxShadow = M.cardShadow;
             }}
           >
-            {/* 3D character illustration */}
-            <img
-              src="/add-role-character.jpg"
-              alt="Add role"
+            <div
               style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 12,
-                height: 120,
-                width: 'auto',
-                objectFit: 'contain',
-                pointerEvents: 'none',
-              }}
-            />
-            <PermissionGuard required={[PERMISSIONS.ROLE_WRITE]} fallback={null}>
-              <button
-                onClick={openCreate}
-                style={{
-                  background: M.primary,
-                  color: 'var(--lms-primary-foreground, #fff)',
-                  border: 'none',
-                  borderRadius: 6,
-                  padding: '8px 18px',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  transition: 'opacity 0.15s',
-                  position: 'relative',
-                  zIndex: 1,
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.85')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
-              >
-                <Plus size={15} /> Add Role
-              </button>
-            </PermissionGuard>
-            <p
-              style={{
-                fontSize: 13,
-                color: M.textMuted,
-                textAlign: 'right',
-                margin: 0,
-                lineHeight: 1.6,
-                position: 'relative',
-                zIndex: 1,
+                width: 46,
+                height: 46,
+                borderRadius: 12,
+                background: 'linear-gradient(135deg, #7367f0 0%, #a78bfa 100%)',
+                color: '#fff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 16px rgba(115, 103, 240, 0.35)',
               }}
             >
-              Add new role,
-              <br />
-              if it doesn&apos;t exist.
-            </p>
+              <Plus size={24} />
+            </div>
+            <div>
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: M.textMain }}>
+                Add Custom Role
+              </h3>
+              <p style={{ margin: '4px 0 0', fontSize: 12, color: M.textMuted }}>
+                Define custom permissions & access levels
+              </p>
+            </div>
+            <PermissionGuard required={[PERMISSIONS.ROLE_WRITE]} fallback={null}>
+              <span
+                style={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: M.primary,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  marginTop: 2,
+                }}
+              >
+                Create Role <ArrowRight size={13} />
+              </span>
+            </PermissionGuard>
           </div>
         </div>
       )}
@@ -700,14 +1053,83 @@ export const RoleListPage = () => {
           overflow: 'hidden',
         }}
       >
-        {/* Table section header */}
+        {/* Table section header & Quick Filter Tabs */}
         <div style={{ padding: '20px 24px 16px', borderBottom: `1px solid ${M.border}` }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, color: M.textMain, margin: 0 }}>
-            Total users with their roles
-          </h2>
-          <p style={{ fontSize: 13, color: M.textMuted, margin: '4px 0 0' }}>
-            Find all of your platform&apos;s user accounts and their associated roles.
-          </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 14 }}>
+            <div>
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: M.textMain, margin: 0 }}>
+                Platform Users & Role Assignments
+              </h2>
+              <p style={{ fontSize: 13, color: M.textMuted, margin: '4px 0 0' }}>
+                Inspect accounts, filter by assigned authority, and manage user statuses.
+              </p>
+            </div>
+
+            {/* Quick role filter pills */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+              <button
+                onClick={() => { setRoleFilter(''); setUserPage(0); }}
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: 999,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: !roleFilter ? M.primary : 'var(--surface-medium)',
+                  color: !roleFilter ? '#fff' : M.textMuted,
+                  transition: 'all 0.15s',
+                }}
+              >
+                All Users ({userTotal || users.length})
+              </button>
+              {roles.map((r) => {
+                const isSelected = roleFilter.toLowerCase() === (r.name ?? '').toLowerCase();
+                const theme = getRoleTheme(r.name);
+                const count = users.filter((u) =>
+                  (u.roles ?? []).some(
+                    (userR) => (typeof userR === 'string' ? userR : (userR.name ?? '')).toLowerCase() === (r.name ?? '').toLowerCase()
+                  )
+                ).length;
+                return (
+                  <button
+                    key={r.id}
+                    onClick={() => {
+                      setRoleFilter(isSelected ? '' : r.name);
+                      setUserPage(0);
+                    }}
+                    style={{
+                      padding: '5px 12px',
+                      borderRadius: 999,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      border: isSelected ? `1px solid ${theme.border}` : `1px solid ${M.border}`,
+                      cursor: 'pointer',
+                      background: isSelected ? theme.bg : 'var(--surface-medium)',
+                      color: isSelected ? theme.color : M.textMuted,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    <span>{r.name}</span>
+                    <span
+                      style={{
+                        fontSize: 10,
+                        padding: '1px 6px',
+                        borderRadius: 999,
+                        background: isSelected ? theme.accent : 'rgba(255,255,255,0.1)',
+                        color: isSelected ? '#fff' : M.textMuted,
+                      }}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
         {/* Toolbar */}
@@ -939,23 +1361,27 @@ export const RoleListPage = () => {
                           ) : (
                             userRoles.slice(0, 2).map((r, i) => {
                               const rName = typeof r === 'string' ? r : (r.name ?? '');
-                              const c = roleBadge(rName);
+                              const theme = getRoleTheme(rName);
+                              const RIcon = theme.icon;
                               return (
                                 <span
                                   key={i}
                                   style={{
-                                    background: c.bg,
-                                    color: c.color,
+                                    background: theme.bg,
+                                    color: theme.color,
+                                    border: `1px solid ${theme.border}`,
                                     padding: '2px 8px',
-                                    borderRadius: 4,
-                                    fontSize: 12,
-                                    fontWeight: 600,
+                                    borderRadius: 6,
+                                    fontSize: 11,
+                                    fontWeight: 700,
                                     display: 'inline-flex',
                                     alignItems: 'center',
-                                    gap: 4,
+                                    gap: 5,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.03em',
                                   }}
                                 >
-                                  <ShieldCheck size={11} />
+                                  <RIcon size={11} />
                                   {rName}
                                 </span>
                               );

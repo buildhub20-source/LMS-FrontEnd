@@ -152,9 +152,9 @@ export const StudentDashboardPage = () => {
       label: 'Courses in Progress',
       value: analytics?.inProgressCount ?? (courses.filter((c) => (c.progressPercent || 0) < 100).length || courses.length),
       subtext: `${courses.length} total enrolled`,
-      icon: <BookOpen size={20} className="text-blue-400" />,
-      color: '#3b82f6',
-      bg: 'rgba(59, 130, 246, 0.1)',
+      icon: <BookOpen size={20} className="text-emerald-400" />,
+      color: 'var(--color-primary-500)',
+      bg: 'rgba(34, 197, 94, 0.1)',
     },
     {
       label: 'Completed Courses',
@@ -259,8 +259,8 @@ export const StudentDashboardPage = () => {
       {/* ── Hero Greeting Banner ── */}
       <div
         style={{
-          background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(147, 51, 234, 0.15) 100%)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.12) 0%, rgba(16, 185, 129, 0.1) 50%, rgba(34, 197, 94, 0.06) 100%)',
+          border: '1px solid var(--border-color)',
           borderRadius: 20,
           padding: '28px 32px',
           display: 'flex',
@@ -274,7 +274,7 @@ export const StudentDashboardPage = () => {
       >
         <div style={{ zIndex: 2 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-primary-400, #60a5fa)' }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--dashboard-accent-text)' }}>
               STUDENT LEARNING MISSION CONTROL
             </span>
             <span
@@ -383,7 +383,7 @@ export const StudentDashboardPage = () => {
           <div
             key={item.label}
             style={{
-              background: 'var(--lms-card)',
+              background: 'var(--card)',
               border: '1px solid var(--border-color)',
               borderRadius: 16,
               padding: '20px 22px',

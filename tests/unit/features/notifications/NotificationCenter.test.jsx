@@ -1,9 +1,12 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
 import NotificationDropdown from '../../../../src/features/notifications/components/NotificationDropdown';
 import notificationService from '../../../../src/features/notifications/services/notificationService';
+import authReducer from '../../../../src/features/auth/store/authSlice';
 
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
@@ -27,11 +30,18 @@ function createWrapper() {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
-  return ({ children }) => (
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter>{children}</MemoryRouter>
-    </QueryClientProvider>
+  const store = configureStore({
+    reducer: { auth: authReducer },
+  });
+  const Wrapper = ({ children }) => (
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>{children}</MemoryRouter>
+      </QueryClientProvider>
+    </Provider>
   );
+  Wrapper.displayName = 'TestWrapper';
+  return Wrapper;
 }
 
 describe('NotificationCenter & Real-Time Popover', () => {

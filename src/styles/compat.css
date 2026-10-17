@@ -15,6 +15,7 @@
   --surface-medium: var(--muted);
   --surface-light: var(--background);
   --surface-extra-light: var(--card);
+  --surface-card: var(--card);
 
   /* ── Text tokens ───────────────────────────────────── */
   --text-primary: var(--foreground);
@@ -42,7 +43,14 @@
   --primary-color: var(--primary);
   --active-bg: var(--muted);
 
-  /* ── Dashboard accent palette (old blue → new green) ── */
+  /* ── Chart / Data Visualization Accent (indigo-blue) ─ */
+  /* Intentionally distinct from brand green; used only for charts/rings */
+  --chart-accent: #3b6fe0;
+  --chart-accent-soft: rgba(59, 111, 224, 0.1);
+  --chart-amber: #f59e0b;
+  --chart-emerald: #10b981;
+
+  /* ── Dashboard token palette (brand green) ─────────── */
   --dashboard-accent: var(--primary);
   --dashboard-accent-text: var(--color-green-600);
   --dashboard-accent-soft: var(--color-green-50);
@@ -67,6 +75,11 @@
 /* ── Dark theme overrides ────────────────────────────── */
 .dark,
 [data-theme='dark'] {
+  --surface-dark: var(--card);
+  --surface-medium: var(--muted);
+  --surface-card: var(--card);
+  --active-bg: var(--muted);
+
   --dashboard-accent-text: var(--color-green-500);
   --dashboard-accent-soft: rgba(34, 197, 94, 0.12);
 
@@ -84,4 +97,7 @@
 
   --skeleton-bg: #2a2c42;
   --skeleton-subtle: #232538;
+
+  --chart-accent: #6089e8;
+  --chart-accent-soft: rgba(96, 137, 232, 0.15);
 }

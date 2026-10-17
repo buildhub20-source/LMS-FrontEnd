@@ -36,7 +36,7 @@ const renderErrorIcon = (type) => {
 /* ── Testimonial Card ─────────────────────────────── */
 const TestimonialCard = ({ testimonial, delay }) => (
   <div className={`animate-testimonial ${delay} flex items-start gap-3 rounded-2xl p-4 backdrop-blur-xl`}
-    style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid var(--border)' }}>
+    style={{ background: 'var(--card)', border: '1px solid var(--border)', opacity: 0.95 }}>
     <img src={testimonial.avatarSrc} className="h-10 w-10 rounded-xl object-cover" alt="" />
     <div className="text-sm leading-snug">
       <p className="font-medium" style={{ color: 'var(--foreground)' }}>{testimonial.name}</p>
@@ -75,21 +75,21 @@ export const SignInPage = ({
       : null;
 
   return (
-    <div className="flex min-h-[100dvh] w-full" style={{ background: 'linear-gradient(135deg, #f0fdf4 0%, #f5f7fa 40%, #fef3f2 100%)' }}>
+    <div className="flex min-h-[100dvh] w-full" style={{ background: 'var(--background)' }}>
       {/* Decorative elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="absolute w-36 h-36 rounded-full opacity-25" style={{ top: '6%', left: '4%', background: '#bbf7d0' }} />
-        <div className="absolute w-24 h-24 rounded-full opacity-20" style={{ top: '12%', right: '8%', background: '#fde68a' }} />
-        <div className="absolute w-20 h-20 rounded-full opacity-20" style={{ bottom: '15%', left: '6%', background: '#f8bbd0' }} />
-        <div className="absolute w-28 h-28 rounded-full opacity-15" style={{ bottom: '8%', right: '12%', background: '#bbdefb' }} />
-        <div className="absolute w-14 h-14 rounded-full opacity-25" style={{ top: '45%', left: '18%', background: '#fde68a' }} />
-        <div className="absolute w-12 h-12 rounded-full opacity-30" style={{ top: '25%', right: '22%', background: '#f8bbd0' }} />
+        <div className="absolute w-36 h-36 rounded-full" style={{ top: '6%', left: '4%', background: 'var(--primary)', opacity: 0.12 }} />
+        <div className="absolute w-24 h-24 rounded-full" style={{ top: '12%', right: '8%', background: '#fde68a', opacity: 0.18 }} />
+        <div className="absolute w-20 h-20 rounded-full" style={{ bottom: '15%', left: '6%', background: '#f8bbd0', opacity: 0.18 }} />
+        <div className="absolute w-28 h-28 rounded-full" style={{ bottom: '8%', right: '12%', background: '#bbdefb', opacity: 0.15 }} />
+        <div className="absolute w-14 h-14 rounded-full" style={{ top: '45%', left: '18%', background: '#fde68a', opacity: 0.2 }} />
+        <div className="absolute w-12 h-12 rounded-full" style={{ top: '25%', right: '22%', background: 'var(--primary)', opacity: 0.15 }} />
         {/* Leaf decorations */}
-        <svg className="absolute opacity-12" style={{ top: '4%', right: '6%', width: 140, height: 140 }} viewBox="0 0 100 100">
+        <svg className="absolute" style={{ top: '4%', right: '6%', width: 140, height: 140, opacity: 0.1 }} viewBox="0 0 100 100">
           <ellipse cx="50" cy="50" rx="20" ry="45" fill="#86efac" transform="rotate(-30 50 50)" />
           <ellipse cx="65" cy="35" rx="15" ry="35" fill="#a7f3d0" transform="rotate(15 65 35)" />
         </svg>
-        <svg className="absolute opacity-12" style={{ bottom: '6%', left: '4%', width: 100, height: 100 }} viewBox="0 0 100 100">
+        <svg className="absolute" style={{ bottom: '6%', left: '4%', width: 100, height: 100, opacity: 0.1 }} viewBox="0 0 100 100">
           <ellipse cx="50" cy="50" rx="18" ry="40" fill="#86efac" transform="rotate(20 50 50)" />
         </svg>
       </div>
@@ -159,7 +159,7 @@ export const SignInPage = ({
                 </div>
                 {onDismissError && (
                   <button type="button" onClick={onDismissError}
-                    className="p-1 rounded-lg text-red-500 hover:bg-red-100 transition-colors" aria-label="Dismiss">
+                    className="p-1 rounded-lg text-red-500 hover:bg-red-100 transition-colors" aria-label="Dismiss error">
                     <X className="h-4 w-4" />
                   </button>
                 )}
@@ -221,6 +221,7 @@ export const SignInPage = ({
                 <span className="text-sm" style={{ color: 'var(--foreground)' }}>Remember me</span>
               </label>
               <button type="button" onClick={onResetPassword}
+                aria-label="Reset password"
                 className="text-sm font-medium transition-colors hover:underline"
                 style={{ background: 'none', border: 'none', color: 'var(--primary)' }}>
                 Forgot password?

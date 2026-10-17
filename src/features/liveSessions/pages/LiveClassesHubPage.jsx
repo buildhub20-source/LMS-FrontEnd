@@ -118,9 +118,11 @@ export const LiveClassesHubPage = () => {
   return (
     <div
       style={{
-        padding: '32px 36px',
-        maxWidth: 1400,
-        margin: '0 auto',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 28,
+        paddingBottom: 48,
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
       }}
     >
@@ -130,7 +132,6 @@ export const LiveClassesHubPage = () => {
           display: 'flex',
           flexDirection: 'column',
           gap: 16,
-          marginBottom: 32,
         }}
       >
         <div
@@ -553,30 +554,41 @@ export const LiveClassesHubPage = () => {
           }}
         >
           {filteredSessions.map((session) => (
-            <div key={session.id} style={{ display: 'flex', flexDirection: 'column' }}>
-              {session.courseTitle && (
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    fontSize: 11,
-                    fontWeight: 700,
-                    color: '#818cf8',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.04em',
-                    marginBottom: 6,
-                    paddingLeft: 4,
-                  }}
-                >
-                  <BookOpen size={12} /> {session.courseTitle}
-                </div>
-              )}
+            <div
+              key={session.id}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: '#818cf8',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  marginBottom: 8,
+                  paddingLeft: 4,
+                  minHeight: 20,
+                }}
+                title={session.courseTitle || 'Live Classroom Session'}
+              >
+                <BookOpen size={12} className="shrink-0" />
+                <span className="truncate">{session.courseTitle || 'Live Classroom Session'}</span>
+              </div>
               <LiveSessionCard
                 session={session}
                 isInstructor={isInstructorOrAdmin}
                 onStart={handleStartSession}
                 onEnd={handleEndSession}
+                isStarting={startMutation.isPending}
+                isEnding={endMutation.isPending}
+                className="flex-1"
               />
             </div>
           ))}
