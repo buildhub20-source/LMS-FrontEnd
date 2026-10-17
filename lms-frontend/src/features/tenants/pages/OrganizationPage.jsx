@@ -2,44 +2,49 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   Building2, Globe, Mail, ShieldCheck, Settings, CreditCard,
-  Users, BookOpen, GraduationCap, HardDrive, Clock, ArrowUpRight,
-  ExternalLink, Sparkles, CheckCircle2, ChevronRight
+  Users, BookOpen, GraduationCap, Clock, ArrowUpRight,
+  ExternalLink, Sparkles, ChevronRight
 } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
 import Button from '../../../components/common/Button';
 import Badge from '../../../components/common/Badge';
 import tenantService from '../services/tenantService';
+import analyticsService from '../../analytics/services/analyticsService';
 import { ROUTES } from '../../../constants/routes';
+import { QUERY_KEYS } from '../../../constants/appConstants';
+import { tenantSlugFromHostname } from '../../../utils/tenantHostname';
+
+const NOT_SET = 'Not set';
 
 export const OrganizationPage = () => {
   const navigate = useNavigate();
 
-  const { data: rawData } = useQuery({
+  const settings = useQuery({
     queryKey: ['tenant', 'current'],
-    queryFn: () => tenantService.getCurrent().catch(() => null),
+    queryFn: () => tenantService.getCurrent(),
+  });
+  const overview = useQuery({
+    queryKey: [...QUERY_KEYS.ANALYTICS, 'admin'],
+    queryFn: () => analyticsService.adminOverview(),
   });
 
-  const apiTenant = rawData?.data?.data ?? rawData?.data ?? rawData;
+  if (settings.isLoading) return <Spinner />;
 
-  // Fallback defaults for seamless rich UI experience
+  const apiOrg = settings.data ?? {};
+  const counts = overview.data ?? {};
+  const countOrDash = (value) =>
+    overview.isSuccess && Number.isFinite(Number(value)) ? Number(value).toLocaleString() : '—';
+
   const org = {
-    name: apiTenant?.name || 'Acme Learning Academy',
-    subdomain: apiTenant?.subdomain || 'acme-academy',
-    domain: apiTenant?.customDomain || 'learn.acme.edu',
-    contactEmail: apiTenant?.contactEmail || 'admin@acme-academy.com',
-    plan: apiTenant?.plan || 'Enterprise Pro',
-    status: apiTenant?.status || 'ACTIVE',
-    createdAt: apiTenant?.createdAt || '2025-01-15T08:00:00Z',
-    timezone: apiTenant?.timezone || 'UTC (GMT+0)',
-    totalStudents: apiTenant?.totalStudents || 1248,
-    totalInstructors: apiTenant?.totalInstructors || 42,
-    activeCourses: apiTenant?.activeCourses || 86,
-    storageUsedGb: apiTenant?.storageUsedGb || 148,
-    storageLimitGb: apiTenant?.storageLimitGb || 500,
+    name: apiOrg.name || 'Your organization',
+    domain: apiOrg.domain || tenantSlugFromHostname() || NOT_SET,
+    contactEmail: apiOrg.supportEmail || NOT_SET,
+    learners: countOrDash(counts.activeLearners),
+    instructors: countOrDash(counts.instructorCount),
+    publishedCourses: countOrDash(counts.publishedCourses),
+    members: countOrDash(counts.totalMembers),
   };
-
-  const storagePct = Math.round((org.storageUsedGb / org.storageLimitGb) * 100);
 
   return (
     <PageContainer
@@ -97,21 +102,6 @@ export const OrganizationPage = () => {
                 <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, letterSpacing: '-0.02em', color: '#f0f9ff' }}>
                   {org.name}
                 </h1>
-                <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  fontSize: 11,
-                  fontWeight: 700,
-                  background: 'rgba(34, 197, 94, 0.2)',
-                  border: '1px solid rgba(34, 197, 94, 0.4)',
-                  color: '#4ade80',
-                  padding: '3px 10px',
-                  borderRadius: 20,
-                  textTransform: 'uppercase',
-                }}>
-                  <CheckCircle2 size={12} /> {org.status}
-                </span>
               </div>
               <p style={{ margin: '6px 0 0', fontSize: 13, opacity: 0.85, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Globe size={13} /> {org.domain}
@@ -141,7 +131,7 @@ export const OrganizationPage = () => {
               }}
             >
               <Sparkles size={15} style={{ color: '#fbbf24' }} />
-              {org.plan} Plan
+              View subscription
             </button>
           </div>
         </div>
@@ -175,7 +165,7 @@ export const OrganizationPage = () => {
                 Active Learners
               </p>
               <p style={{ margin: '2px 0 0', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
-                {org.totalStudents.toLocaleString()}
+                {org.learners}
               </p>
             </div>
           </div>
@@ -203,7 +193,7 @@ export const OrganizationPage = () => {
                 Instructors
               </p>
               <p style={{ margin: '2px 0 0', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
-                {org.totalInstructors}
+                {org.instructors}
               </p>
             </div>
           </div>
@@ -228,43 +218,39 @@ export const OrganizationPage = () => {
             </div>
             <div>
               <p style={{ margin: 0, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-                Active Courses
+                Published Courses
               </p>
               <p style={{ margin: '2px 0 0', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
-                {org.activeCourses}
+                {org.publishedCourses}
               </p>
             </div>
           </div>
 
-          {/* Cloud Storage Meter */}
+          {/* Members */}
           <div style={{
             background: 'var(--bg-primary)',
             border: '1px solid var(--border-color)',
             borderRadius: 14,
             padding: 20,
             display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            gap: 8,
+            alignItems: 'center',
+            gap: 16,
             boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <HardDrive size={16} style={{ color: '#0ea5e9' }} />
-                <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-                  Storage Usage
-                </span>
-              </div>
-              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
-                {org.storageUsedGb} / {org.storageLimitGb} GB
-              </span>
+            <div style={{
+              width: 46, height: 46, borderRadius: 12,
+              background: 'rgba(14,165,233,0.12)', color: '#0ea5e9',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <Building2 size={22} />
             </div>
-            <div style={{ height: 6, background: 'var(--surface-medium)', borderRadius: 4, overflow: 'hidden' }}>
-              <div style={{
-                height: '100%', width: `${storagePct}%`,
-                background: 'linear-gradient(90deg, #0ea5e9, #3b82f6)',
-                borderRadius: 4,
-              }} />
+            <div>
+              <p style={{ margin: 0, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+                Total Members
+              </p>
+              <p style={{ margin: '2px 0 0', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
+                {org.members}
+              </p>
             </div>
           </div>
         </div>
