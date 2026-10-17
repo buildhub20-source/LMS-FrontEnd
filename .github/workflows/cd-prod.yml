@@ -22,6 +22,9 @@ jobs:
     name: Re-verify before release
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: lms-frontend
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,6 +33,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: lms-frontend/package-lock.json
       - run: npm ci
       - run: npm run lint
       - run: npm run test
@@ -60,7 +64,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: lms-frontend
           push: true
           tags: |
             ghcr.io/${{ github.repository }}/lms-frontend:latest
@@ -72,6 +76,11 @@ jobs:
             VITE_APP_ENV=production
             VITE_ENABLE_ANALYTICS=true
             VITE_SENTRY_DSN=${{ secrets.VITE_SENTRY_DSN }}
+            VITE_CHAT_SERVICE_URL=${{ vars.VITE_CHAT_SERVICE_URL }}
+            VITE_CHAT_WS_URL=${{ vars.VITE_CHAT_WS_URL }}
+            VITE_NOTIFICATION_SERVICE_URL=${{ vars.VITE_NOTIFICATION_SERVICE_URL }}
+            VITE_NOTIFICATION_WS_URL=${{ vars.VITE_NOTIFICATION_WS_URL }}
+            VITE_TENANT_BASE_DOMAIN=${{ vars.VITE_TENANT_BASE_DOMAIN }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

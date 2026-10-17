@@ -2,7 +2,7 @@ name: Deploy (dev)
 
 on:
   push:
-    branches: [develop]
+    branches: [dev]
   workflow_dispatch:
 
 concurrency:
@@ -35,7 +35,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: lms-frontend
           push: true
           tags: |
             ghcr.io/${{ github.repository }}/lms-frontend:dev
@@ -47,6 +47,11 @@ jobs:
             VITE_APP_ENV=development
             VITE_ENABLE_ANALYTICS=false
             VITE_SENTRY_DSN=${{ secrets.VITE_SENTRY_DSN }}
+            VITE_CHAT_SERVICE_URL=${{ vars.VITE_CHAT_SERVICE_URL }}
+            VITE_CHAT_WS_URL=${{ vars.VITE_CHAT_WS_URL }}
+            VITE_NOTIFICATION_SERVICE_URL=${{ vars.VITE_NOTIFICATION_SERVICE_URL }}
+            VITE_NOTIFICATION_WS_URL=${{ vars.VITE_NOTIFICATION_WS_URL }}
+            VITE_TENANT_BASE_DOMAIN=${{ vars.VITE_TENANT_BASE_DOMAIN }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

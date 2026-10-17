@@ -4,7 +4,14 @@
  */
 const raw = import.meta.env;
 
-const required = ['VITE_API_BASE_URL'];
+const required = [
+  'VITE_API_BASE_URL',
+  'VITE_CHAT_SERVICE_URL',
+  'VITE_CHAT_WS_URL',
+  'VITE_NOTIFICATION_SERVICE_URL',
+  'VITE_NOTIFICATION_WS_URL',
+  'VITE_TENANT_BASE_DOMAIN',
+];
 
 const missing = required.filter((key) => !raw[key]);
 if (missing.length > 0 && raw.PROD) {
