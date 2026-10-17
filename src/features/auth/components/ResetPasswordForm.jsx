@@ -14,7 +14,6 @@ export const ResetPasswordForm = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
 
   const {
     register,
@@ -22,23 +21,17 @@ export const ResetPasswordForm = () => {
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(resetPasswordSchema),
-    defaultValues: { token: searchParams.get('token') ?? '', newPassword: '', confirmPassword: '' },
+    defaultValues: { token: searchParams.get('token') ?? '', password: '', confirmPassword: '' },
   });
 
-  const onSubmit = async ({ token, newPassword }) => {
+  const onSubmit = async (values) => {
     try {
-      // Backend expects { token, newPassword } — do NOT send password or confirmPassword
-      await authService.resetPassword({ token, newPassword });
-      setSuccess(true);
-      setTimeout(() => navigate(ROUTES.LOGIN, { replace: true }), 2000);
+      await authService.resetPassword(values);
+      navigate(ROUTES.LOGIN, { replace: true });
     } catch (submitError) {
       setError(normalizeError(submitError));
     }
   };
-
-  if (success) {
-    return <Alert tone="success">Password updated! Redirecting you to sign in…</Alert>;
-  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="u-flex-col u-gap-4">
@@ -49,8 +42,8 @@ export const ResetPasswordForm = () => {
         type="password"
         autoComplete="new-password"
         required
-        error={errors.newPassword?.message}
-        {...register('newPassword')}
+        error={errors.password?.message}
+        {...register('password')}
       />
       <Input
         label="Confirm password"

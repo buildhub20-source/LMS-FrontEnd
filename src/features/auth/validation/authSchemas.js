@@ -14,20 +14,30 @@ const password = z
 export const loginSchema = z.object({
   email,
   password: z.string().min(1, 'Password is required'),
-  tenantSlug: z.string().trim().optional(),
   rememberMe: z.boolean().optional().default(false),
 });
 
 export const forgotPasswordSchema = z.object({ email });
 
-/** Used by ResetPasswordForm — field name MUST match backend ResetPasswordRequest.newPassword */
 export const resetPasswordSchema = z
   .object({
     token: z.string().min(1),
-    newPassword: password,
+    password,
     confirmPassword: z.string(),
   })
-  .refine((data) => data.newPassword === data.confirmPassword, {
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
+
+export const acceptInvitationSchema = z
+  .object({
+    token: z.string().min(1),
+    fullName: z.string().trim().min(2, 'Enter your full name'),
+    password,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
     path: ['confirmPassword'],
   });

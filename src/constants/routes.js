@@ -7,19 +7,10 @@ export const ROUTES = Object.freeze({
   ACCEPT_INVITATION: '/auth/accept-invitation',
   FORGOT_PASSWORD: '/auth/forgot-password',
   RESET_PASSWORD: '/auth/reset-password',
-  SET_PASSWORD: '/auth/set-password',
   UNAUTHORIZED: '/unauthorized',
   NOT_FOUND: '/404',
 
-  // Global platform control plane
-  PLATFORM_LOGIN: '/platform/login',
-  PLATFORM_DASHBOARD: '/platform/dashboard',
-  PLATFORM_TENANTS: '/platform/tenants',
-  PLATFORM_AUDIT_LOGS: '/platform/audit-logs',
-  PLATFORM_ANNOUNCEMENTS: '/platform/announcements',
-
   // Admin
-  ADMIN_DASHBOARD: '/admin/dashboard',
   ADMIN_ANALYTICS: '/admin/analytics',
   USERS: '/admin/users',
   USER_CREATE: '/admin/users/new',
@@ -29,15 +20,6 @@ export const ROUTES = Object.freeze({
   ROLE_DETAILS: (id = ':roleId') => `/admin/roles/${id}`,
   PERMISSIONS: '/admin/permissions',
   INVITATIONS: '/admin/invitations',
-  INSTRUCTORS: '/admin/instructors',
-  INSTRUCTOR_CREATE: '/admin/instructors/new',
-  INSTRUCTOR_DETAILS: (id = ':instructorId') => `/admin/instructors/${id}`,
-  INSTRUCTOR_EDIT: (id = ':instructorId') => `/admin/instructors/${id}/edit`,
-  BATCHES: '/admin/batches',
-  STUDENTS: '/admin/students',
-  STUDENT_CREATE: '/admin/students/new',
-  STUDENT_DETAILS: (id = ':studentId') => `/admin/students/${id}`,
-  STUDENT_EDIT: (id = ':studentId') => `/admin/students/${id}/edit`,
   ENROLLMENTS: '/admin/enrollments',
   ENROLLMENT_DETAILS: (id = ':enrollmentId') => `/admin/enrollments/${id}`,
   ORGANIZATION: '/admin/organization',
@@ -45,23 +27,6 @@ export const ROUTES = Object.freeze({
   SUBSCRIPTION: '/admin/subscription',
   PLANS: '/admin/subscription/plans',
   BILLING: '/admin/subscription/billing',
-  ADMIN_COURSES: '/admin/courses',
-  ADMIN_COURSE_CREATE: '/admin/courses/new',
-  ADMIN_COURSE_DETAILS: (id = ':courseId') => `/admin/courses/${id}`,
-  ADMIN_COURSE_EDIT: (id = ':courseId') => `/admin/courses/${id}/edit`,
-
-  AUDIT_LOGS: '/admin/audit-logs',
-
-  // Admin Assessments
-  ADMIN_ASSESSMENTS: '/admin/assessments',
-  ADMIN_ASSESSMENT_CREATE: '/admin/assessments/new',
-  ADMIN_ASSESSMENT_DETAILS: (id = ':assessmentId') => `/admin/assessments/${id}`,
-  ADMIN_ASSESSMENT_EDIT: (id = ':assessmentId') => `/admin/assessments/${id}/edit`,
-  ADMIN_SUBMISSIONS_HISTORY: '/admin/assessments/submissions-history',
-  ADMIN_GRADING: '/admin/assessments/grading',
-  ADMIN_RUBRICS: '/admin/assessments/rubrics',
-  ADMIN_GAMIFICATION: '/admin/gamification',
-  CAMPUS_RESOURCES: '/admin/resources',
 
   // Instructor
   INSTRUCTOR_ANALYTICS: '/instructor/analytics',
@@ -71,22 +36,10 @@ export const ROUTES = Object.freeze({
   COURSE_EDIT: (id = ':courseId') => `/instructor/courses/${id}/edit`,
   ASSESSMENTS: '/instructor/assessments',
   ASSESSMENT_CREATE: '/instructor/assessments/new',
-  INSTRUCTOR_ASSESSMENT_DETAILS: (id = ':assessmentId') => `/instructor/assessments/${id}`,
-  INSTRUCTOR_ASSESSMENT_EDIT: (id = ':assessmentId') => `/instructor/assessments/${id}/edit`,
-  INSTRUCTOR_SUBMISSIONS_HISTORY: '/instructor/assessments/submissions-history',
-  INSTRUCTOR_GRADING: '/instructor/assessments/grading',
-  INSTRUCTOR_RUBRICS: '/instructor/assessments/rubrics',
-  INSTRUCTOR_RESOURCES: '/instructor/resources',
-  INSTRUCTOR_ANNOUNCEMENTS: '/instructor/announcements',
-  INSTRUCTOR_QUESTION_BANK: '/instructor/question-bank',
-  INSTRUCTOR_BATCHES: '/instructor/batches',
-  INSTRUCTOR_CERTIFICATES: '/instructor/certificates',
-  ADMIN_QUESTION_BANK: '/admin/assessments/question-bank',
 
   // Student
   MY_COURSES: '/learn/my-courses',
-  STUDENT_ASSESSMENTS: '/learn/assessments',
-  MY_ASSESSMENTS: '/learn/assessments',
+  MY_ENROLLMENTS: '/learn/enrollments',
   LEARNING: (id = ':courseId') => `/learn/${id}`,
   LESSON: (c = ':courseId', l = ':lessonId') => `/learn/${c}/lessons/${l}`,
   COURSE_PLAYER: (id = ':courseId') => `/learn/${id}/player`,
@@ -95,29 +48,9 @@ export const ROUTES = Object.freeze({
   STUDENT_PROGRESS: '/learn/progress',
   CERTIFICATES: '/learn/certificates',
   CERTIFICATE_DETAILS: (id = ':certificateId') => `/learn/certificates/${id}`,
-  GAMIFICATION: '/learn/gamification',
-  CALENDAR: '/learn/calendar',
-  NOTES_BOOKMARKS: '/learn/notes',
-
-  // Public & Verification
-  PUBLIC_CERTIFICATE_VERIFY: '/verify',
-  PUBLIC_CERTIFICATE_VERIFY_SERIAL: (serial = ':serialNumber') => `/verify/${serial}`,
 
   // Shared
   NOTIFICATIONS: '/notifications',
   PROFILE: '/profile',
   SECURITY: '/profile/security',
-
-  // Chat
-  CHAT: '/chat',
-  CHAT_CHANNEL: (id = ':channelId') => `/chat/${id}`,
-
-  // Live Sessions
-  LIVE_SESSION_ROOM: (id = ':sessionId') => `/live/${id}/room`,
-  LIVE_SESSION_ATTENDANCE: (id = ':sessionId') => `/live/${id}/attendance`,
-  COURSE_LIVE_SESSIONS: (id = ':courseId') => `/courses/${id}/live`,
-  LIVE_CLASSES: '/live-classes',
-  INSTRUCTOR_LIVE_CLASSES: '/instructor/live-classes',
-  ADMIN_LIVE_CLASSES: '/admin/live-classes',
-  STUDENT_LIVE_CLASSES: '/learn/live-classes',
 });

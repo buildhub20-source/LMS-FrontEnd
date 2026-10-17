@@ -1,120 +1,69 @@
-import { useEffect } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import IconSidebar from '../components/layout/Sidebar/IconSidebar';
+import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
+import Sidebar from '../components/layout/Sidebar';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import Avatar from '../components/common/Avatar';
 import useAuth from '../features/auth/hooks/useAuth';
-import { ThemeProvider } from '../context/ThemeContext';
-import { ROUTES } from '../constants/routes';
-import RouteErrorBoundary from '../components/common/RouteErrorBoundary';
-import ImpersonationBanner from '../features/platform/components/ImpersonationBanner';
-import BroadcastBanner from '../features/platform/components/BroadcastBanner';
-import TeamsNotificationHost from '../features/notifications/components/TeamsNotificationToast';
-import chatSocketService from '../features/chat/services/chatSocketService';
-import chatUnreadService from '../features/chat/services/chatUnreadService';
 
 /**
- * AppShell — Figma-inspired layout.
+ * Shared chrome for every authenticated area.
+ * Role layouts differ only by the navigation they inject.
  *
- * Structure:
- * ┌──────────────────────────────────────────────────┐
- * │ [Icon Sidebar]  │  [Header with Tab Nav]         │
- * │   56px          │  ──────────────────────────── │
- * │   icons         │  [Main Content Area]           │
- * │   dark bg       │  Light pastel background       │
- * │                 │  ──────────────────────────── │
- * │                 │  [Footer]                      │
- * └──────────────────────────────────────────────────┘
+ * Layout: fixed sidebar (w-64 desktop) + flex column main (header / scrollable content / footer)
  */
-export const AppShell = ({ navigation, tabNav, title }) => {
+export const AppShell = ({ navigation, title }) => {
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
 
-  // Maintain active chat socket connection globally
-  useEffect(() => {
-    if (user) {
-      chatSocketService.connect();
-    }
-  }, [user]);
-
-  // Manage Browser Tab Unread Count
-  useEffect(() => {
-    if (!user) {
-      document.title = 'LMS';
-      return;
-    }
-
-    const userId = user.id || user.userId || user.sub;
-    chatUnreadService.init(userId);
-
-    const unsub = chatUnreadService.subscribe((totalUnread) => {
-      if (totalUnread > 0) {
-        document.title = `(${totalUnread}) LMS`;
-      } else {
-        document.title = 'LMS';
-      }
-    });
-
-    return () => {
-      unsub();
-    };
-  }, [user]);
-
-  const handleSignOut = async () => {
-    chatSocketService.disconnect();
-    chatUnreadService.reset();
-    document.title = 'LMS';
-    await logout();
-    navigate(ROUTES.LOGIN, { replace: true, state: {} });
-  };
+  const userCard = (
+    <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-3 py-2.5">
+      <Avatar name={user?.fullName ?? user?.email ?? ''} src={user?.avatarUrl} size="sm" />
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-semibold text-slate-900">
+          {user?.fullName ?? 'Administrator'}
+        </p>
+        <p className="truncate text-xs text-slate-500">{user?.email}</p>
+      </div>
+      <button
+        onClick={logout}
+        className="shrink-0 rounded-lg p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+        title="Sign out"
+        aria-label="Sign out"
+      >
+        <LogOut className="h-4 w-4" />
+      </button>
+    </div>
+  );
 
   return (
-    <ThemeProvider>
-      <div className="flex h-screen overflow-hidden" style={{ background: 'var(--background)' }}>
-        {/* Slim Icon Sidebar */}
-        <IconSidebar
-          items={navigation}
-          onLogout={handleSignOut}
-          user={user}
-        />
+    <div className="flex h-screen overflow-hidden bg-slate-50">
+      {/* Sidebar — fixed on desktop, slides in on mobile */}
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        footer={userCard}
+      >
+        {navigation}
+      </Sidebar>
 
-        {/* Main content column */}
-        <div className="flex flex-1 flex-col overflow-hidden">
-          <ImpersonationBanner />
-          <BroadcastBanner />
+      {/* Main content column */}
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <Header
+          title={title}
+          onToggleSidebar={() => setSidebarOpen((open) => !open)}
+        >
+          <Avatar name={user?.fullName ?? user?.email ?? ''} src={user?.avatarUrl} size="sm" />
+        </Header>
 
-          <Header
-            onToggleSidebar={() => {}}
-            tabNav={tabNav}
-          />
+        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
+          <Outlet />
+        </main>
 
-          <main
-            className="flex-1 overflow-y-auto p-6 relative"
-            style={{ background: 'var(--background)' }}
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={location.pathname}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.2, ease: 'easeOut' }}
-                className="h-full flex flex-col"
-              >
-                <RouteErrorBoundary>
-                  <Outlet />
-                </RouteErrorBoundary>
-              </motion.div>
-            </AnimatePresence>
-          </main>
-
-          <Footer />
-        </div>
+        <Footer />
       </div>
-      <TeamsNotificationHost />
-    </ThemeProvider>
+    </div>
   );
 };
 

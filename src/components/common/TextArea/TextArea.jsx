@@ -9,7 +9,7 @@ export const TextArea = forwardRef(
       error,
       rows = 4,
       maxLength,
-      value,
+      value = '',
       required = false,
       className = '',
       id,
@@ -33,7 +33,7 @@ export const TextArea = forwardRef(
           id={textAreaId}
           rows={rows}
           maxLength={maxLength}
-          {...(value !== undefined ? { value } : {})}
+          value={value}
           className={`${styles.control} ${error ? styles.invalid : ''}`}
           aria-invalid={Boolean(error)}
           required={required}
@@ -47,7 +47,7 @@ export const TextArea = forwardRef(
           ) : (
             hint
           )}
-          {maxLength ? ` ${(value ?? '').length}/${maxLength}` : ''}
+          {maxLength ? ` ${value.length}/${maxLength}` : ''}
         </span>
       </div>
     );

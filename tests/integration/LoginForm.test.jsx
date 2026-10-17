@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -10,11 +10,6 @@ import authService from '../../src/features/auth/services/authService';
 
 vi.mock('../../src/features/auth/services/authService', () => ({
   default: { login: vi.fn() },
-}));
-
-vi.mock('../../src/utils/tenantHostname', () => ({
-  isPlatformHostname: () => false,
-  tenantSlugFromHostname: () => 'lms',
 }));
 
 const renderForm = () => {
@@ -49,13 +44,10 @@ describe('LoginForm', () => {
     renderForm();
     await userEvent.type(screen.getByLabelText(/email/i), 'ada@example.com');
     await userEvent.type(screen.getByLabelText(/password/i), 'Str0ng!Passw0rd');
-    await userEvent.type(screen.getByLabelText(/tenant slug/i), 'lms');
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
-    await waitFor(() => {
-      expect(authService.login).toHaveBeenCalledWith(
-        expect.objectContaining({ email: 'ada@example.com', password: 'Str0ng!Passw0rd' }),
-      );
-    });
+    expect(authService.login).toHaveBeenCalledWith(
+      expect.objectContaining({ email: 'ada@example.com', password: 'Str0ng!Passw0rd' }),
+    );
   });
 });

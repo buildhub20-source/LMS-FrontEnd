@@ -11,8 +11,9 @@ import {
   ShieldCheck,
   Pencil,
   Mail,
-  Trash2,
+  Plus,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import AdminButton from '../../../components/ui/AdminButton';
 import AdminBadge from '../../../components/ui/AdminBadge';
 import AdminInput from '../../../components/ui/AdminInput';
@@ -24,6 +25,7 @@ import AdminPagination, {
 import { AdminTableSkeleton } from '../../../components/ui/AdminSkeleton';
 import PermissionGuard from '../../../guards/PermissionGuard';
 import { PERMISSIONS } from '../../../constants/permissions';
+import { ROUTES } from '../../../constants/routes';
 import userService from '../services/userService';
 import roleService from '../../roles/services/roleService';
 import { useToast } from '../../../components/feedback/Toast';
@@ -31,12 +33,7 @@ import { useToast } from '../../../components/feedback/Toast';
 /* ─── helpers ─── */
 
 function getInitials(name = '') {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
+  return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
 }
 
 const AVATAR_COLORS = [
@@ -48,69 +45,39 @@ const AVATAR_COLORS = [
   'bg-violet-100 text-violet-700',
 ];
 
-
+function avatarColor(name = '') {
+  const hash = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+}
 
 function formatDate(str) {
   if (!str) return '—';
   return new Date(str).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
+    year: 'numeric', month: 'short', day: 'numeric',
   });
 }
 
 function formatDateTime(str) {
   if (!str) return '—';
   return new Date(str).toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+    year: 'numeric', month: 'short', day: 'numeric',
+    hour: '2-digit', minute: '2-digit',
   });
 }
 
 function StatusBadge({ user }) {
-  if (user?.locked)
-    return (
-      <AdminBadge variant="danger" dot>
-        Locked
-      </AdminBadge>
-    );
-  if (!user?.active)
-    return (
-      <AdminBadge variant="neutral" dot>
-        Inactive
-      </AdminBadge>
-    );
-  return (
-    <AdminBadge variant="success" dot>
-      Active
-    </AdminBadge>
-  );
+  if (user?.locked) return <AdminBadge variant="danger" dot>Locked</AdminBadge>;
+  if (!user?.active) return <AdminBadge variant="neutral" dot>Inactive</AdminBadge>;
+  return <AdminBadge variant="success" dot>Active</AdminBadge>;
 }
 
 function MenuItem({ icon, label, onClick, danger = false }) {
   return (
     <button
       onClick={onClick}
-      style={{
-        display: 'flex',
-        width: '100%',
-        alignItems: 'center',
-        gap: 10,
-        padding: '8px 12px',
-        fontSize: 13,
-        textAlign: 'left',
-        background: 'transparent',
-        border: 'none',
-        cursor: 'pointer',
-        color: danger ? '#f87171' : 'var(--text-secondary)',
-      }}
-      onMouseEnter={(e) =>
-        (e.currentTarget.style.background = danger ? 'rgba(239,68,68,0.08)' : 'var(--hover-bg)')
-      }
-      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+      className={`flex w-full items-center gap-2.5 px-3 py-2 text-sm font-medium transition-colors ${
+        danger ? 'text-red-600 hover:bg-red-50' : 'text-slate-700 hover:bg-slate-50'
+      }`}
     >
       {icon}
       {label}
@@ -123,6 +90,7 @@ const STATUS_FILTERS = ['ALL', 'ACTIVE', 'LOCKED', 'INACTIVE'];
 /* ─── component ─── */
 
 export const UserListPage = () => {
+  const navigate = useNavigate();
   const { success: toastSuccess, error: toastError } = useToast();
 
   // List state
@@ -139,7 +107,6 @@ export const UserListPage = () => {
 
   // Action menu
   const [openMenuId, setOpenMenuId] = useState(null);
-  const [menuOpenUpward, setMenuOpenUpward] = useState(false);
 
   // Confirm action modal
   const [confirmAction, setConfirmAction] = useState(null);
@@ -175,17 +142,20 @@ export const UserListPage = () => {
         search: search || undefined,
         status: statusFilter === 'ALL' ? undefined : statusFilter,
       });
-      // userService normalizes all responses to { content, totalPages, totalElements }
-      const content = Array.isArray(res?.content)
-        ? res.content
-        : Array.isArray(res?.items)
-          ? res.items
-          : Array.isArray(res)
-            ? res
-            : [];
-      setUsers(content);
-      setTotalPages(res?.totalPages ?? (content.length > 0 ? 1 : 0));
-      setTotalElements(res?.totalElements ?? content.length);
+      // Support both paginated { items, total } and Spring { content, totalPages, totalElements }
+      if (Array.isArray(res?.content)) {
+        setUsers(res.content);
+        setTotalPages(res.totalPages ?? 0);
+        setTotalElements(res.totalElements ?? 0);
+      } else if (Array.isArray(res?.items)) {
+        setUsers(res.items);
+        setTotalPages(Math.ceil((res.total ?? 0) / pageSize));
+        setTotalElements(res.total ?? 0);
+      } else {
+        setUsers(Array.isArray(res) ? res : []);
+        setTotalPages(1);
+        setTotalElements(Array.isArray(res) ? res.length : 0);
+      }
     } catch (err) {
       setLoadError(err?.message ?? 'Failed to load users.');
     } finally {
@@ -193,10 +163,7 @@ export const UserListPage = () => {
     }
   }, [page, pageSize, search, statusFilter]);
 
-  useEffect(() => {
-    loadUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, pageSize, search, statusFilter]);
+  useEffect(() => { loadUsers(); }, [loadUsers]);
 
   // Close action menu on outside click
   useEffect(() => {
@@ -208,17 +175,9 @@ export const UserListPage = () => {
 
   /* ─── search / filter ─── */
 
-  const handleSearch = () => {
-    setPage(0);
-    setSearch(searchInput);
-  };
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleSearch();
-  };
-  const handleStatusFilter = (status) => {
-    setPage(0);
-    setStatusFilter(status);
-  };
+  const handleSearch = () => { setPage(0); setSearch(searchInput); };
+  const handleKeyDown = (e) => { if (e.key === 'Enter') handleSearch(); };
+  const handleStatusFilter = (status) => { setPage(0); setStatusFilter(status); };
 
   /* ─── confirm actions ─── */
 
@@ -227,12 +186,11 @@ export const UserListPage = () => {
     setConfirmAction((a) => ({ ...a, loading: true }));
     const { user: u, type } = confirmAction;
     try {
-      if (type === 'activate') await userService.activate(u.id);
+      if (type === 'activate')   await userService.activate(u.id);
       if (type === 'deactivate') await userService.deactivate(u.id);
-      if (type === 'lock') await userService.lock(u.id);
-      if (type === 'unlock') await userService.unlock(u.id);
-      if (type === 'delete') await userService.delete(u.id);
-      toastSuccess(type === 'delete' ? `${u.fullName} has been removed.` : `${u.fullName} has been ${type}d.`);
+      if (type === 'lock')       await userService.lock(u.id);
+      if (type === 'unlock')     await userService.unlock(u.id);
+      toastSuccess(`${u.fullName} has been ${type}d.`);
       setConfirmAction(null);
       loadUsers();
     } catch (err) {
@@ -260,8 +218,8 @@ export const UserListPage = () => {
 
   const openEditUser = (u) => {
     setEditUser(u);
-    setEditFirstName(u.name?.split(' ')[0] ?? u.firstName ?? '');
-    setEditLastName(u.name?.split(' ').slice(1).join(' ') ?? u.lastName ?? '');
+    setEditFirstName(u.firstName ?? '');
+    setEditLastName(u.lastName ?? '');
     setEditEmail(u.email ?? '');
   };
 
@@ -269,9 +227,11 @@ export const UserListPage = () => {
     if (!editUser) return;
     setEditSaving(true);
     try {
-      // Backend UpdateUserRequest accepts: name, phone, profileImageUrl
-      const name = [editFirstName, editLastName].filter(Boolean).join(' ').trim() || editFirstName;
-      await userService.update(editUser.id, { name });
+      await userService.update(editUser.id, {
+        firstName: editFirstName,
+        lastName: editLastName,
+        email: editEmail,
+      });
       toastSuccess(`${editUser.fullName}'s profile has been updated.`);
       setEditUser(null);
       loadUsers();
@@ -286,24 +246,11 @@ export const UserListPage = () => {
 
   const openEditRoles = async (u) => {
     setRolesUser(u);
-    // roles is Set<String> from backend — no IDs, just names.
-    // We'll match by role name when saving.
-    setSelectedRoleIds([]); // will be set to IDs after roles are loaded
+    setSelectedRoleIds((u.roles ?? []).map((r) => r.id));
     setRolesLoading(true);
     try {
       const roles = await roleService.list();
-      const roleList = Array.isArray(roles?.items)
-        ? roles.items
-        : Array.isArray(roles?.content)
-          ? roles.content
-          : Array.isArray(roles)
-            ? roles
-            : [];
-      setAllRoles(roleList);
-      // Pre-select roles by matching name to ID
-      const userRoleNames = Array.isArray(u.roles) ? u.roles : [];
-      const preSelected = roleList.filter((r) => userRoleNames.includes(r.name)).map((r) => r.id);
-      setSelectedRoleIds(preSelected);
+      setAllRoles(Array.isArray(roles?.items) ? roles.items : Array.isArray(roles?.content) ? roles.content : Array.isArray(roles) ? roles : []);
     } catch (err) {
       toastError(err?.message ?? 'Failed to load roles.');
     } finally {
@@ -313,7 +260,7 @@ export const UserListPage = () => {
 
   const toggleRole = (roleId) => {
     setSelectedRoleIds((prev) =>
-      prev.includes(roleId) ? prev.filter((id) => id !== roleId) : [...prev, roleId],
+      prev.includes(roleId) ? prev.filter((id) => id !== roleId) : [...prev, roleId]
     );
   };
 
@@ -332,42 +279,30 @@ export const UserListPage = () => {
     }
   };
 
-  const confirmLabels = {
-    activate: 'Activate',
-    deactivate: 'Deactivate',
-    lock: 'Lock',
-    unlock: 'Unlock',
-    delete: 'Remove User',
-  };
+  const confirmLabels = { activate: 'Activate', deactivate: 'Deactivate', lock: 'Lock', unlock: 'Unlock' };
   const confirmMessages = {
     activate: 'This user will regain access to the platform immediately.',
     deactivate: 'This user will lose access to the platform but their data is preserved.',
     lock: 'This user will be locked out and cannot sign in.',
     unlock: 'This user will be able to sign in again.',
-    delete: 'Are you sure you want to remove this user? This action will remove the user from the active platform user directory.',
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: 20 }}>
+    <div className="space-y-6">
       {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1
-            style={{
-              margin: 0,
-              fontSize: 24,
-              fontWeight: 700,
-              color: 'var(--text-primary)',
-              letterSpacing: '-0.5px',
-            }}
-          >
-            Users
-          </h1>
-          <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)' }}>
-            Manage user accounts, roles, and access status.
-          </p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Users</h1>
+          <p className="mt-1 text-slate-500">Manage user accounts, roles, and access status.</p>
         </div>
-
+        <PermissionGuard required={[PERMISSIONS.USER_WRITE]} fallback={null}>
+          <AdminButton
+            icon={<Plus className="h-4 w-4" />}
+            onClick={() => navigate(ROUTES.USER_CREATE)}
+          >
+            Add User
+          </AdminButton>
+        </PermissionGuard>
       </div>
 
       {/* Filters bar */}
@@ -382,24 +317,16 @@ export const UserListPage = () => {
               icon={<Search className="h-4 w-4" />}
             />
           </div>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <div className="flex gap-2 flex-wrap">
             {STATUS_FILTERS.map((s) => (
               <button
                 key={s}
                 onClick={() => handleStatusFilter(s)}
-                style={{
-                  borderRadius: 8,
-                  padding: '6px 14px',
-                  fontSize: 13,
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                  fontFamily: 'Inter, sans-serif',
-                  background: statusFilter === s ? '#ffffff' : 'var(--surface-medium)',
-                  color: statusFilter === s ? '#000000' : 'var(--text-secondary)',
-                  border:
-                    statusFilter === s ? '1px solid #ffffff' : '1px solid var(--border-color)',
-                }}
+                className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
+                  statusFilter === s
+                    ? 'bg-brand-600 text-white shadow-sm'
+                    : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                }`}
               >
                 {s === 'ALL' ? 'All' : s.charAt(0) + s.slice(1).toLowerCase()}
               </button>
@@ -411,17 +338,8 @@ export const UserListPage = () => {
         </div>
       </div>
 
-      {/* Table — fills remaining height */}
-      <div
-        className="card-base"
-        style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          minHeight: 0,
-        }}
-      >
+      {/* Table */}
+      <div className="card-base overflow-hidden">
         {loading ? (
           <div className="p-6">
             <AdminTableSkeleton rows={6} cols={5} />
@@ -441,461 +359,134 @@ export const UserListPage = () => {
         ) : (
           <>
             {/* Desktop table */}
-            <div
-              className="hidden md:flex"
-              style={{ flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}
-            >
-              {/* Fixed header */}
-              <table className="w-full" style={{ tableLayout: 'fixed' }}>
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full">
                 <thead>
-                  <tr
-                    style={{
-                      borderBottom: '1px solid var(--border-color)',
-                      background: 'var(--surface-medium)',
-                    }}
-                  >
-                    {['User', 'Status', 'Roles', 'Joined', 'Actions'].map((h, i) => (
-                      <th
-                        key={h}
-                        style={{
-                          padding: '12px 24px',
-                          textAlign: i === 4 ? 'right' : 'left',
-                          fontSize: 11,
-                          fontWeight: 600,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.8px',
-                          color: 'var(--text-muted)',
-                          width: i === 0 ? '30%' : i === 4 ? '10%' : 'auto',
-                        }}
-                      >
-                        {h}
-                      </th>
-                    ))}
+                  <tr className="border-b border-slate-100 bg-slate-50/50">
+                    <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">User</th>
+                    <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
+                    <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Roles</th>
+                    <th className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Joined</th>
+                    <th className="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
                   </tr>
                 </thead>
-              </table>
-              {/* Scrollable body */}
-              <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
-                <table className="w-full" style={{ tableLayout: 'fixed' }}>
-                  <colgroup>
-                    <col style={{ width: '30%' }} />
-                    <col />
-                    <col />
-                    <col />
-                    <col style={{ width: '10%' }} />
-                  </colgroup>
-                  <tbody style={{ display: 'table-row-group' }}>
+                <tbody className="divide-y divide-slate-100">
                   {users.map((u) => (
-                    <tr
-                      key={u.id}
-                      style={{
-                        borderBottom: '1px solid var(--border-subtle)',
-                        transition: 'background 0.1s ease',
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                    >
-                      <td style={{ padding: '14px 24px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <div
-                            style={{
-                              width: 36,
-                              height: 36,
-                              borderRadius: '50%',
-                              background: 'var(--surface-medium)',
-                              border: '1px solid var(--border-color)',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: 13,
-                              fontWeight: 700,
-                              color: 'var(--text-secondary)',
-                              flexShrink: 0,
-                            }}
-                          >
+                    <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold shrink-0 ${avatarColor(u.fullName ?? '')}`}>
                             {getInitials(u.fullName ?? u.email ?? '?')}
                           </div>
                           <div>
-                            <p
-                              style={{
-                                margin: 0,
-                                fontSize: 14,
-                                fontWeight: 600,
-                                color: 'var(--text-primary)',
-                              }}
-                            >
-                              {u.fullName}
-                            </p>
-                            <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
-                              {u.email}
-                            </p>
+                            <p className="text-sm font-semibold text-slate-900">{u.fullName}</p>
+                            <p className="text-xs text-slate-500">{u.email}</p>
                           </div>
                         </div>
                       </td>
-                      <td style={{ padding: '14px 24px' }}>
+                      <td className="px-6 py-4">
                         <StatusBadge user={u} />
                       </td>
-                      <td style={{ padding: '14px 24px' }}>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-wrap gap-1">
                           {(u.roles ?? []).length > 0 ? (
-                            (Array.isArray(u.roles) ? u.roles : [...(u.roles ?? [])]).map(
-                              (roleName) => (
-                                <span
-                                  key={roleName}
-                                  style={{
-                                    borderRadius: 6,
-                                    background: 'var(--surface-medium)',
-                                    border: '1px solid var(--border-color)',
-                                    padding: '2px 8px',
-                                    fontSize: 12,
-                                    fontWeight: 600,
-                                    color: 'var(--text-secondary)',
-                                  }}
-                                >
-                                  {roleName}
-                                </span>
-                              ),
-                            )
+                            u.roles.map((r) => (
+                              <span key={r.id} className="rounded-md bg-brand-50 border border-brand-200 px-2 py-0.5 text-xs font-medium text-brand-700">
+                                {r.name}
+                              </span>
+                            ))
                           ) : (
-                            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                              No roles
-                            </span>
+                            <span className="text-xs text-slate-400">No roles</span>
                           )}
                         </div>
                       </td>
-                      <td
-                        style={{ padding: '14px 24px', fontSize: 13, color: 'var(--text-muted)' }}
-                      >
-                        {formatDate(u.createdAt)}
-                      </td>
-                      <td style={{ padding: '14px 24px', textAlign: 'right' }}>
-                        <div style={{ position: 'relative', display: 'inline-block' }}>
+                      <td className="px-6 py-4 text-sm text-slate-500">{formatDate(u.createdAt)}</td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="relative inline-block">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (openMenuId === u.id) {
-                                setOpenMenuId(null);
-                              } else {
-                                const rect = e.currentTarget.getBoundingClientRect();
-                                setMenuOpenUpward(window.innerHeight - rect.bottom < 260);
-                                setOpenMenuId(u.id);
-                              }
+                              setOpenMenuId(openMenuId === u.id ? null : u.id);
                             }}
-                            style={{
-                              background: 'transparent',
-                              border: 'none',
-                              cursor: 'pointer',
-                              color: 'var(--text-muted)',
-                              padding: 6,
-                              borderRadius: 6,
-                              display: 'flex',
-                              alignItems: 'center',
-                            }}
+                            className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
                           >
-                            <MoreVertical size={16} />
+                            <MoreVertical className="h-4 w-4" />
                           </button>
                           {openMenuId === u.id && (
-                            <div
-                              style={{
-                                position: 'absolute',
-                                right: 0,
-                                ...(menuOpenUpward
-                                  ? { bottom: 32, top: 'auto' }
-                                  : { top: 36, bottom: 'auto' }),
-                                zIndex: 50,
-                                width: 160,
-                                borderRadius: 8,
-                                border: '1px solid var(--border-color)',
-                                background: 'var(--surface-dark)',
-                                padding: '4px 0',
-                                boxShadow: '0 8px 30px rgba(0,0,0,0.35)',
-                              }}
-                            >
+                            <div className="absolute right-0 top-10 z-20 w-52 rounded-xl border border-slate-200 bg-white py-1.5 shadow-soft animate-scale-in">
                               <PermissionGuard required={[PERMISSIONS.USER_WRITE]} fallback={null}>
                                 <>
                                   {u.locked ? (
-                                    <MenuItem
-                                      icon={<Unlock size={14} />}
-                                      label="Unlock"
-                                      onClick={() => {
-                                        setConfirmAction({
-                                          user: u,
-                                          type: 'unlock',
-                                          loading: false,
-                                        });
-                                        setOpenMenuId(null);
-                                      }}
-                                    />
+                                    <MenuItem icon={<Unlock className="h-4 w-4" />} label="Unlock" onClick={() => { setConfirmAction({ user: u, type: 'unlock', loading: false }); setOpenMenuId(null); }} />
                                   ) : (
-                                    <MenuItem
-                                      icon={<Lock size={14} />}
-                                      label="Lock"
-                                      danger
-                                      onClick={() => {
-                                        setConfirmAction({ user: u, type: 'lock', loading: false });
-                                        setOpenMenuId(null);
-                                      }}
-                                    />
+                                    <MenuItem icon={<Lock className="h-4 w-4" />} label="Lock" danger onClick={() => { setConfirmAction({ user: u, type: 'lock', loading: false }); setOpenMenuId(null); }} />
                                   )}
                                   {u.active ? (
-                                    <MenuItem
-                                      icon={<UserX size={14} />}
-                                      label="Deactivate"
-                                      danger
-                                      onClick={() => {
-                                        setConfirmAction({
-                                          user: u,
-                                          type: 'deactivate',
-                                          loading: false,
-                                        });
-                                        setOpenMenuId(null);
-                                      }}
-                                    />
+                                    <MenuItem icon={<UserX className="h-4 w-4" />} label="Deactivate" danger onClick={() => { setConfirmAction({ user: u, type: 'deactivate', loading: false }); setOpenMenuId(null); }} />
                                   ) : (
-                                    <MenuItem
-                                      icon={<UserCheck size={14} />}
-                                      label="Activate"
-                                      onClick={() => {
-                                        setConfirmAction({
-                                          user: u,
-                                          type: 'activate',
-                                          loading: false,
-                                        });
-                                        setOpenMenuId(null);
-                                      }}
-                                    />
+                                    <MenuItem icon={<UserCheck className="h-4 w-4" />} label="Activate" onClick={() => { setConfirmAction({ user: u, type: 'activate', loading: false }); setOpenMenuId(null); }} />
                                   )}
-                                  <div
-                                    style={{
-                                      margin: '4px 0',
-                                      borderTop: '1px solid var(--border-color)',
-                                    }}
-                                  />
-                                  <MenuItem
-                                    icon={<ShieldCheck size={14} />}
-                                    label="Edit Roles"
-                                    onClick={() => {
-                                      openEditRoles(u);
-                                      setOpenMenuId(null);
-                                    }}
-                                  />
-                                  <MenuItem
-                                    icon={<Pencil size={14} />}
-                                    label="Edit Profile"
-                                    onClick={() => {
-                                      openEditUser(u);
-                                      setOpenMenuId(null);
-                                    }}
-                                  />
-                                  <MenuItem
-                                    icon={<Trash2 size={14} />}
-                                    label="Remove"
-                                    danger
-                                    onClick={() => {
-                                      setConfirmAction({
-                                        user: u,
-                                        type: 'delete',
-                                        loading: false,
-                                      });
-                                      setOpenMenuId(null);
-                                    }}
-                                  />
-                                  <div
-                                    style={{
-                                      margin: '4px 0',
-                                      borderTop: '1px solid var(--border-color)',
-                                    }}
-                                  />
+                                  <div className="my-1 border-t border-slate-100" />
+                                  <MenuItem icon={<ShieldCheck className="h-4 w-4" />} label="Edit Roles" onClick={() => { openEditRoles(u); setOpenMenuId(null); }} />
+                                  <MenuItem icon={<Pencil className="h-4 w-4" />} label="Edit Profile" onClick={() => { openEditUser(u); setOpenMenuId(null); }} />
+                                  <div className="my-1 border-t border-slate-100" />
                                 </>
                               </PermissionGuard>
-                              <MenuItem
-                                icon={<History size={14} />}
-                                label="Status History"
-                                onClick={() => {
-                                  openStatusHistory(u);
-                                  setOpenMenuId(null);
-                                }}
-                              />
+                              <MenuItem icon={<History className="h-4 w-4" />} label="Status History" onClick={() => { openStatusHistory(u); setOpenMenuId(null); }} />
                             </div>
                           )}
                         </div>
                       </td>
                     </tr>
                   ))}
-                  </tbody>
-                </table>
-              </div>
+                </tbody>
+              </table>
             </div>
 
-            {/* Mobile cards — scrollable */}
-            <div className="md:hidden" style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+            {/* Mobile cards */}
+            <div className="md:hidden divide-y divide-slate-100">
               {users.map((u) => (
-                <div key={u.id} style={{ padding: 16 }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                    <div
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: '50%',
-                        background: 'var(--surface-medium)',
-                        border: '1px solid var(--border-color)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: 14,
-                        fontWeight: 700,
-                        color: 'var(--text-secondary)',
-                        flexShrink: 0,
-                      }}
-                    >
+                <div key={u.id} className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold shrink-0 ${avatarColor(u.fullName ?? '')}`}>
                       {getInitials(u.fullName ?? u.email ?? '?')}
                     </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p
-                        style={{
-                          margin: 0,
-                          fontSize: 14,
-                          fontWeight: 600,
-                          color: 'var(--text-primary)',
-                        }}
-                      >
-                        {u.fullName}
-                      </p>
-                      <p
-                        style={{
-                          margin: 0,
-                          fontSize: 12,
-                          color: 'var(--text-muted)',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {u.email}
-                      </p>
-                      <div
-                        style={{
-                          marginTop: 8,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 8,
-                          flexWrap: 'wrap',
-                        }}
-                      >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-slate-900">{u.fullName}</p>
+                      <p className="text-xs text-slate-500 truncate">{u.email}</p>
+                      <div className="mt-2 flex items-center gap-2 flex-wrap">
                         <StatusBadge user={u} />
-                        {(Array.isArray(u.roles) ? u.roles : [...(u.roles ?? [])]).map(
-                          (roleName) => (
-                            <span
-                              key={roleName}
-                              style={{
-                                borderRadius: 6,
-                                background: 'var(--surface-medium)',
-                                border: '1px solid var(--border-color)',
-                                padding: '2px 8px',
-                                fontSize: 12,
-                                fontWeight: 600,
-                                color: 'var(--text-secondary)',
-                              }}
-                            >
-                              {roleName}
-                            </span>
-                          ),
-                        )}
+                        {(u.roles ?? []).map((r) => (
+                          <span key={r.id} className="rounded-md bg-brand-50 border border-brand-200 px-2 py-0.5 text-xs font-medium text-brand-700">
+                            {r.name}
+                          </span>
+                        ))}
                       </div>
                     </div>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <PermissionGuard required={[PERMISSIONS.USER_WRITE]} fallback={null}>
                       <>
-                        {u.locked ? (
-                          <AdminButton
-                            size="sm"
-                            variant="outline"
-                            icon={<Unlock className="h-3.5 w-3.5" />}
-                            onClick={() =>
-                              setConfirmAction({ user: u, type: 'unlock', loading: false })
-                            }
-                          >
-                            Unlock
-                          </AdminButton>
-                        ) : (
-                          <AdminButton
-                            size="sm"
-                            variant="outline"
-                            icon={<Lock className="h-3.5 w-3.5" />}
-                            onClick={() =>
-                              setConfirmAction({ user: u, type: 'lock', loading: false })
-                            }
-                          >
-                            Lock
-                          </AdminButton>
-                        )}
-                        {u.active ? (
-                          <AdminButton
-                            size="sm"
-                            variant="outline"
-                            icon={<UserX className="h-3.5 w-3.5" />}
-                            onClick={() =>
-                              setConfirmAction({ user: u, type: 'deactivate', loading: false })
-                            }
-                          >
-                            Deactivate
-                          </AdminButton>
-                        ) : (
-                          <AdminButton
-                            size="sm"
-                            variant="outline"
-                            icon={<UserCheck className="h-3.5 w-3.5" />}
-                            onClick={() =>
-                              setConfirmAction({ user: u, type: 'activate', loading: false })
-                            }
-                          >
-                            Activate
-                          </AdminButton>
-                        )}
-                        <AdminButton
-                          size="sm"
-                          variant="outline"
-                          icon={<ShieldCheck className="h-3.5 w-3.5" />}
-                          onClick={() => openEditRoles(u)}
-                        >
-                          Roles
-                        </AdminButton>
-                        <AdminButton
-                          size="sm"
-                          variant="outline"
-                          icon={<Pencil className="h-3.5 w-3.5" />}
-                          onClick={() => openEditUser(u)}
-                        >
-                          Edit
-                        </AdminButton>
-                        <AdminButton
-                          size="sm"
-                          variant="outline"
-                          icon={<Trash2 className="h-3.5 w-3.5" />}
-                          onClick={() =>
-                            setConfirmAction({ user: u, type: 'delete', loading: false })
-                          }
-                        >
-                          Remove
-                        </AdminButton>
+                        {u.locked
+                          ? <AdminButton size="sm" variant="outline" icon={<Unlock className="h-3.5 w-3.5" />} onClick={() => setConfirmAction({ user: u, type: 'unlock', loading: false })}>Unlock</AdminButton>
+                          : <AdminButton size="sm" variant="outline" icon={<Lock className="h-3.5 w-3.5" />} onClick={() => setConfirmAction({ user: u, type: 'lock', loading: false })}>Lock</AdminButton>
+                        }
+                        {u.active
+                          ? <AdminButton size="sm" variant="outline" icon={<UserX className="h-3.5 w-3.5" />} onClick={() => setConfirmAction({ user: u, type: 'deactivate', loading: false })}>Deactivate</AdminButton>
+                          : <AdminButton size="sm" variant="outline" icon={<UserCheck className="h-3.5 w-3.5" />} onClick={() => setConfirmAction({ user: u, type: 'activate', loading: false })}>Activate</AdminButton>
+                        }
+                        <AdminButton size="sm" variant="outline" icon={<ShieldCheck className="h-3.5 w-3.5" />} onClick={() => openEditRoles(u)}>Roles</AdminButton>
+                        <AdminButton size="sm" variant="outline" icon={<Pencil className="h-3.5 w-3.5" />} onClick={() => openEditUser(u)}>Edit</AdminButton>
                       </>
                     </PermissionGuard>
-                    <AdminButton
-                      size="sm"
-                      variant="ghost"
-                      icon={<History className="h-3.5 w-3.5" />}
-                      onClick={() => openStatusHistory(u)}
-                    >
-                      History
-                    </AdminButton>
+                    <AdminButton size="sm" variant="ghost" icon={<History className="h-3.5 w-3.5" />} onClick={() => openStatusHistory(u)}>History</AdminButton>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Pagination — always visible at bottom */}
-            <div style={{ borderTop: '1px solid var(--border-color)', padding: '12px 24px', flexShrink: 0 }}>
+            {/* Pagination */}
+            <div className="border-t border-slate-100 px-6 py-4">
               <AdminPagination
                 page={page}
                 totalPages={totalPages}
@@ -917,11 +508,7 @@ export const UserListPage = () => {
           title={`${confirmLabels[confirmAction.type] ?? ''} ${confirmAction.user?.fullName ?? ''}`}
           message={confirmMessages[confirmAction.type] ?? ''}
           confirmLabel={confirmLabels[confirmAction.type] ?? 'Confirm'}
-          variant={
-            confirmAction.type === 'activate' || confirmAction.type === 'unlock'
-              ? 'primary'
-              : 'danger'
-          }
+          variant={confirmAction.type === 'activate' || confirmAction.type === 'unlock' ? 'primary' : 'danger'}
           loading={confirmAction.loading}
         />
       )}
@@ -950,69 +537,25 @@ export const UserListPage = () => {
               {statusHistory.history.map((item, i) => (
                 <div key={item.id ?? i} className="relative flex gap-4 pb-6 last:pb-0">
                   {i < statusHistory.history.length - 1 && (
-                    <div
-                      style={{
-                        position: 'absolute',
-                        left: 16,
-                        top: 36,
-                        bottom: 0,
-                        width: 1,
-                        background: 'var(--border-color)',
-                      }}
-                    />
+                    <div className="absolute left-4 top-9 bottom-0 w-px bg-slate-200" />
                   )}
-                  <div
-                    style={{
-                      display: 'flex',
-                      width: 32,
-                      height: 32,
-                      flexShrink: 0,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: '50%',
-                      background:
-                        item.action === 'LOCKED'
-                          ? 'rgba(239,68,68,0.1)'
-                          : item.action === 'DEACTIVATED'
-                            ? 'var(--surface-medium)'
-                            : item.action === 'UNLOCKED'
-                              ? 'rgba(16,185,129,0.1)'
-                              : 'rgba(59,130,246,0.1)',
-                      color:
-                        item.action === 'LOCKED'
-                          ? '#f87171'
-                          : item.action === 'DEACTIVATED'
-                            ? 'var(--text-secondary)'
-                            : item.action === 'UNLOCKED'
-                              ? '#34d399'
-                              : '#60a5fa',
-                    }}
-                  >
-                    {item.action === 'LOCKED' ? (
-                      <Lock size={16} />
-                    ) : item.action === 'UNLOCKED' ? (
-                      <Unlock size={16} />
-                    ) : item.action === 'ACTIVATED' ? (
-                      <UserCheck size={16} />
-                    ) : (
-                      <UserX size={16} />
-                    )}
+                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+                    item.action === 'LOCKED'      ? 'bg-red-100 text-red-600' :
+                    item.action === 'DEACTIVATED' ? 'bg-slate-100 text-slate-600' :
+                    item.action === 'UNLOCKED'    ? 'bg-emerald-100 text-emerald-600' :
+                    'bg-brand-100 text-brand-600'
+                  }`}>
+                    {item.action === 'LOCKED'    ? <Lock className="h-4 w-4" /> :
+                     item.action === 'UNLOCKED'  ? <Unlock className="h-4 w-4" /> :
+                     item.action === 'ACTIVATED' ? <UserCheck className="h-4 w-4" /> :
+                     <UserX className="h-4 w-4" />}
                   </div>
-                  <div style={{ flex: 1, paddingTop: 2 }}>
-                    <p
-                      style={{
-                        margin: 0,
-                        fontSize: 14,
-                        fontWeight: 600,
-                        color: 'var(--text-primary)',
-                      }}
-                    >
+                  <div className="flex-1 pt-0.5">
+                    <p className="text-sm font-semibold text-slate-900">
                       {(item.action ?? '').replace(/_/g, ' ')}
                     </p>
-                    <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)' }}>
-                      {item.description}
-                    </p>
-                    <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--text-secondary)' }}>
+                    <p className="text-sm text-slate-500">{item.description}</p>
+                    <p className="mt-1 text-xs text-slate-400">
                       {item.performedBy} · {formatDateTime(item.performedAt)}
                     </p>
                   </div>
@@ -1032,39 +575,17 @@ export const UserListPage = () => {
           description={`${editUser.fullName} · ${editUser.email}`}
           footer={
             <>
-              <AdminButton
-                variant="outline"
-                onClick={() => setEditUser(null)}
-                disabled={editSaving}
-              >
-                Cancel
-              </AdminButton>
-              <AdminButton onClick={handleSaveEdit} loading={editSaving}>
-                Save changes
-              </AdminButton>
+              <AdminButton variant="outline" onClick={() => setEditUser(null)} disabled={editSaving}>Cancel</AdminButton>
+              <AdminButton onClick={handleSaveEdit} loading={editSaving}>Save changes</AdminButton>
             </>
           }
         >
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <AdminInput
-                label="First name"
-                value={editFirstName}
-                onChange={(e) => setEditFirstName(e.target.value)}
-              />
-              <AdminInput
-                label="Last name"
-                value={editLastName}
-                onChange={(e) => setEditLastName(e.target.value)}
-              />
+              <AdminInput label="First name" value={editFirstName} onChange={(e) => setEditFirstName(e.target.value)} />
+              <AdminInput label="Last name" value={editLastName} onChange={(e) => setEditLastName(e.target.value)} />
             </div>
-            <AdminInput
-              label="Email"
-              type="email"
-              value={editEmail}
-              onChange={(e) => setEditEmail(e.target.value)}
-              icon={<Mail className="h-4 w-4" />}
-            />
+            <AdminInput label="Email" type="email" value={editEmail} onChange={(e) => setEditEmail(e.target.value)} icon={<Mail className="h-4 w-4" />} />
           </div>
         </AdminModal>
       )}
@@ -1078,16 +599,8 @@ export const UserListPage = () => {
           description={`Assign roles to ${rolesUser.fullName}`}
           footer={
             <>
-              <AdminButton
-                variant="outline"
-                onClick={() => setRolesUser(null)}
-                disabled={rolesSaving}
-              >
-                Cancel
-              </AdminButton>
-              <AdminButton onClick={handleSaveRoles} loading={rolesSaving}>
-                Save roles
-              </AdminButton>
+              <AdminButton variant="outline" onClick={() => setRolesUser(null)} disabled={rolesSaving}>Cancel</AdminButton>
+              <AdminButton onClick={handleSaveRoles} loading={rolesSaving}>Save roles</AdminButton>
             </>
           }
         >
@@ -1103,72 +616,24 @@ export const UserListPage = () => {
                   <button
                     key={role.id}
                     onClick={() => toggleRole(role.id)}
-                    style={{
-                      display: 'flex',
-                      width: '100%',
-                      alignItems: 'flex-start',
-                      gap: 12,
-                      borderRadius: 12,
-                      padding: 16,
-                      textAlign: 'left',
-                      cursor: 'pointer',
-                      border: selected
-                        ? '1px solid var(--text-primary)'
-                        : '1px solid var(--border-color)',
-                      background: selected ? 'var(--hover-bg)' : 'var(--surface-dark)',
-                      transition: 'all 0.15s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!selected) e.currentTarget.style.background = 'var(--hover-bg)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = selected
-                        ? 'var(--hover-bg)'
-                        : 'var(--surface-dark)';
-                    }}
+                    className={`flex w-full items-start gap-3 rounded-xl border p-4 text-left transition-all duration-200 ${
+                      selected
+                        ? 'border-brand-500 bg-brand-50 ring-2 ring-brand-500/15'
+                        : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+                    }`}
                   >
-                    <div
-                      style={{
-                        display: 'flex',
-                        width: 20,
-                        height: 20,
-                        flexShrink: 0,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderRadius: 6,
-                        marginTop: 2,
-                        border: selected
-                          ? '2px solid var(--text-primary)'
-                          : '2px solid var(--border-color)',
-                        background: selected ? 'var(--text-primary)' : 'transparent',
-                      }}
-                    >
+                    <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors mt-0.5 ${
+                      selected ? 'border-brand-600 bg-brand-600' : 'border-slate-300'
+                    }`}>
                       {selected && (
-                        <svg
-                          style={{ width: 12, height: 12, color: 'var(--surface-dark)' }}
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={3}
-                        >
+                        <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                       )}
                     </div>
-                    <div style={{ flex: 1 }}>
-                      <p
-                        style={{
-                          margin: 0,
-                          fontSize: 14,
-                          fontWeight: 600,
-                          color: 'var(--text-primary)',
-                        }}
-                      >
-                        {role.name}
-                      </p>
-                      <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>
-                        {role.description}
-                      </p>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-slate-900">{role.name}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{role.description}</p>
                     </div>
                   </button>
                 );

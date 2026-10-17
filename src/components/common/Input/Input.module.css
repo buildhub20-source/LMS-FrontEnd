@@ -1,51 +1,39 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 }
 .label {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--foreground);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
 }
 .required {
-  color: var(--color-red-500);
+  color: var(--color-danger);
   margin-left: 2px;
 }
 .control {
-  padding: 8px 12px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--card);
-  color: var(--foreground);
-  font-size: 14px;
-  transition: border-color 150ms ease, box-shadow 150ms ease;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  transition: border-color var(--transition-fast);
   width: 100%;
 }
-.control::placeholder {
-  color: var(--muted-foreground);
-  opacity: 0.7;
-}
 .control:focus {
-  border-color: var(--primary);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+  border-color: var(--color-primary-500);
 }
 .control:disabled {
-  background: var(--muted);
-  color: var(--muted-foreground);
-  -webkit-text-fill-color: var(--muted-foreground);
-  opacity: 0.95;
+  background: var(--color-surface-alt);
   cursor: not-allowed;
 }
 .invalid {
-  border-color: var(--color-red-400);
+  border-color: var(--color-danger);
 }
 .hint {
-  font-size: 12px;
-  color: var(--muted-foreground);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
 }
 .error {
-  font-size: 12px;
-  color: var(--color-red-500);
+  font-size: var(--text-xs);
+  color: var(--color-danger);
 }

@@ -1,32 +1,10 @@
-import axios from 'axios';
-import environment from '../../../config/environment';
-import tokenStorage from '../../../services/storage/tokenStorage';
-
-const notificationApi = axios.create({
-  baseURL: environment.notificationServiceUrl ?? 'http://localhost:3002/api/v1/notifications',
-  timeout: 10000,
-  headers: { 'Content-Type': 'application/json' },
-});
-
-notificationApi.interceptors.request.use((config) => {
-  const token = tokenStorage.getAccessToken();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  const tenantSlug = localStorage.getItem('tenantSlug');
-  if (tenantSlug) {
-    config.headers['X-Tenant-Slug'] = tenantSlug;
-  }
-  return config;
-});
-
-const unwrap = (r) => r?.data ?? r;
+import { http } from '../../../services/api/axiosInstance';
+import { API_ENDPOINTS } from '../../../constants/apiEndpoints';
 
 export const notificationService = {
-  list: (params) => notificationApi.get('/', { params }).then(unwrap),
-  getUnreadCount: () => notificationApi.get('/unread-count').then((r) => r?.data?.count ?? r?.count ?? 0),
-  markRead: (id) => notificationApi.patch(`/${id}/read`).then(unwrap),
-  markAllRead: () => notificationApi.patch('/read-all').then(unwrap),
+  list: (params) => http.get(API_ENDPOINTS.notifications.base, { params }),
+  markRead: (id) => http.patch(API_ENDPOINTS.notifications.read(id)),
+  markAllRead: () => http.patch(API_ENDPOINTS.notifications.readAll),
 };
 
 export default notificationService;

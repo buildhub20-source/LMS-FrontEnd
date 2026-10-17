@@ -2,60 +2,65 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-2);
   border: 1px solid transparent;
-  border-radius: 12px;
-  font-weight: 500;
+  border-radius: var(--radius-md);
+  font-weight: var(--weight-medium);
   cursor: pointer;
-  transition: all 150ms ease;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
   white-space: nowrap;
 }
 .button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
-.button:active:not(:disabled) {
-  transform: scale(0.98);
-}
 
-.sm { padding: 4px 12px; font-size: 13px; }
-.md { padding: 8px 16px; font-size: 14px; }
-.lg { padding: 12px 20px; font-size: 15px; }
+.sm {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-sm);
+}
+.md {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-base);
+}
+.lg {
+  padding: var(--space-3) var(--space-5);
+  font-size: var(--text-lg);
+}
 
 .primary {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  border: 1px solid var(--primary);
-  font-weight: 600;
+  background: var(--color-primary-600);
+  color: var(--color-text-inverse);
 }
 .primary:hover:not(:disabled) {
-  opacity: 0.9;
+  background: var(--color-primary-700);
 }
 
 .secondary {
-  background: var(--muted);
-  color: var(--foreground);
-  border: 1px solid var(--border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border);
 }
 .secondary:hover:not(:disabled) {
-  background: var(--accent);
+  background: var(--color-surface-alt);
 }
 
 .ghost {
   background: transparent;
-  color: var(--foreground);
+  color: var(--color-text);
 }
 .ghost:hover:not(:disabled) {
-  background: var(--muted);
+  background: var(--color-surface-alt);
 }
 
 .danger {
-  background: var(--color-red-50);
-  color: var(--color-red-600);
-  border: 1px solid var(--color-red-100);
+  background: var(--color-danger);
+  color: var(--color-text-inverse);
 }
 .danger:hover:not(:disabled) {
-  background: var(--color-red-100);
+  filter: brightness(0.92);
 }
 
 .fullWidth {
