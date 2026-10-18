@@ -14,7 +14,9 @@ const ToggleRow = ({ checked, description, label, onChange }) => (
       padding: '10px 12px',
       borderRadius: 8,
       background: 'var(--surface-medium)',
-      border: checked ? '1px solid rgba(99,102,241,0.4)' : '1px solid var(--border-color)',
+      border: checked
+        ? '1px solid color-mix(in srgb, var(--primary) 40%, transparent)'
+        : '1px solid var(--border-color)',
       cursor: 'pointer',
       transition: 'all 0.15s ease',
     }}
@@ -25,7 +27,13 @@ const ToggleRow = ({ checked, description, label, onChange }) => (
       type="checkbox"
       checked={checked}
       onChange={(e) => onChange(e.target.checked)}
-      style={{ marginTop: 3, width: 16, height: 16, cursor: 'pointer', accentColor: '#6366f1' }}
+      style={{
+        marginTop: 3,
+        width: 16,
+        height: 16,
+        cursor: 'pointer',
+        accentColor: 'var(--primary)',
+      }}
     />
     <div style={{ minWidth: 0, flex: 1 }}>
       <span
@@ -407,14 +415,14 @@ export const TenantConfigDrawer = ({ tenant, isOpen, onClose }) => {
                     width: 26,
                     height: 26,
                     borderRadius: 6,
-                    background: 'rgba(99,102,241,0.15)',
-                    border: '1px solid rgba(99,102,241,0.3)',
+                    background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+                    border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  <Video size={14} color="#818cf8" />
+                  <Video size={14} style={{ color: 'var(--link)' }} />
                 </div>
                 <span
                   style={{
@@ -434,9 +442,9 @@ export const TenantConfigDrawer = ({ tenant, isOpen, onClose }) => {
                       fontWeight: 700,
                       padding: '2px 8px',
                       borderRadius: 99,
-                      background: 'rgba(99,102,241,0.2)',
-                      color: '#818cf8',
-                      border: '1px solid rgba(99,102,241,0.35)',
+                      background: 'color-mix(in srgb, var(--primary) 20%, transparent)',
+                      color: 'var(--link)',
+                      border: '1px solid color-mix(in srgb, var(--primary) 35%, transparent)',
                     }}
                   >
                     ENABLED
@@ -460,8 +468,8 @@ export const TenantConfigDrawer = ({ tenant, isOpen, onClose }) => {
                       gap: 12,
                       padding: '14px',
                       borderRadius: 10,
-                      background: 'rgba(99,102,241,0.05)',
-                      border: '1px solid rgba(99,102,241,0.18)',
+                      background: 'color-mix(in srgb, var(--primary) 5%, transparent)',
+                      border: '1px solid color-mix(in srgb, var(--primary) 18%, transparent)',
                     }}
                   >
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>

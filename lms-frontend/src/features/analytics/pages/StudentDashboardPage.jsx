@@ -173,7 +173,7 @@ export const StudentDashboardPage = () => {
       label: 'Day Streak',
       value: analytics?.streakDays ?? 0,
       subtext: 'Consecutive days with activity',
-      icon: <Clock size={20} className="text-violet-400" />,
+      icon: <Clock size={20} className="text-[var(--link)]" />,
       color: '#8b5cf6',
       bg: 'rgba(139, 92, 246, 0.1)',
     },
@@ -728,7 +728,7 @@ export const StudentDashboardPage = () => {
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Calendar size={18} className="text-violet-400" />
+            <Calendar size={18} className="text-[var(--link)]" />
             <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
               Upcoming Assessments & Deadlines
             </h2>

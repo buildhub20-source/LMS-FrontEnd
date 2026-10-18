@@ -147,8 +147,13 @@ export const AcceptInvitationPage = () => {
         <div style={styles.card}>
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: 32 }}>
-            <div style={{ ...styles.iconWrap('rgba(99,102,241,0.12)'), margin: '0 auto 16px' }}>
-              <ShieldCheck size={28} color="#6366f1" />
+            <div
+              style={{
+                ...styles.iconWrap('color-mix(in srgb, var(--primary) 12%, transparent)'),
+                margin: '0 auto 16px',
+              }}
+            >
+              <ShieldCheck size={28} style={{ color: 'var(--link)' }} />
             </div>
             <h1 style={styles.title}>Create your password</h1>
             <p style={styles.body}>
@@ -178,7 +183,7 @@ export const AcceptInvitationPage = () => {
                   required
                   autoFocus
                   style={styles.input}
-                  onFocus={(e) => (e.target.style.borderColor = '#6366f1')}
+                  onFocus={(e) => (e.target.style.borderColor = 'var(--primary)')}
                   onBlur={(e) => (e.target.style.borderColor = 'var(--border-color)')}
                 />
                 <button
@@ -263,7 +268,7 @@ export const AcceptInvitationPage = () => {
             Already have an account?{' '}
             <Link
               to={ROUTES.LOGIN}
-              style={{ color: '#6366f1', fontWeight: 600, textDecoration: 'none' }}
+              style={{ color: 'var(--link)', fontWeight: 600, textDecoration: 'none' }}
             >
               Sign in
             </Link>
@@ -282,7 +287,7 @@ const styles = {
   },
   leftPanel: {
     flex: 1,
-    background: 'linear-gradient(135deg, #312e81 0%, #4f46e5 50%, #7c3aed 100%)',
+    background: '#121212',
     padding: '48px 56px',
     display: 'flex',
     alignItems: 'center',
@@ -454,7 +459,7 @@ const styles = {
   submitBtn: (disabled) => ({
     width: '100%',
     padding: '14px 20px',
-    background: disabled ? 'var(--surface-medium)' : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+    background: disabled ? 'var(--surface-medium)' : 'var(--primary)',
     border: 'none',
     borderRadius: 12,
     color: disabled ? 'var(--text-muted)' : '#fff',
@@ -474,9 +479,9 @@ const styles = {
     justifyContent: 'center',
     marginTop: 20,
     padding: '12px 28px',
-    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+    background: 'var(--primary)',
     borderRadius: 12,
-    color: '#fff',
+    color: 'var(--primary-foreground)',
     fontWeight: 700,
     fontSize: 14,
     textDecoration: 'none',

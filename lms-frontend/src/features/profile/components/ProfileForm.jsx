@@ -54,7 +54,7 @@ export const ProfileForm = ({ defaultValues, onSubmit, error = null }) => {
               marginBottom: 6,
             }}
           >
-            <User size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+            <User size={15} style={{ color: 'var(--primary, #121212)' }} />
             Full Name <span style={{ color: '#ef4444' }}>*</span>
           </label>
           <Input
@@ -78,7 +78,7 @@ export const ProfileForm = ({ defaultValues, onSubmit, error = null }) => {
               marginBottom: 6,
             }}
           >
-            <Mail size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+            <Mail size={15} style={{ color: 'var(--primary, #121212)' }} />
             Email Address
             <span
               style={{
@@ -113,7 +113,7 @@ export const ProfileForm = ({ defaultValues, onSubmit, error = null }) => {
               marginBottom: 6,
             }}
           >
-            <Phone size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+            <Phone size={15} style={{ color: 'var(--primary, #121212)' }} />
             Phone Number
           </label>
           <Input
@@ -136,7 +136,7 @@ export const ProfileForm = ({ defaultValues, onSubmit, error = null }) => {
               marginBottom: 6,
             }}
           >
-            <Briefcase size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+            <Briefcase size={15} style={{ color: 'var(--primary, #121212)' }} />
             Job Title / Designation
           </label>
           <Input
@@ -167,7 +167,7 @@ export const ProfileForm = ({ defaultValues, onSubmit, error = null }) => {
               color: 'var(--text-primary)',
             }}
           >
-            <FileText size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+            <FileText size={15} style={{ color: 'var(--primary, #121212)' }} />
             Bio & About Me
           </label>
           <span

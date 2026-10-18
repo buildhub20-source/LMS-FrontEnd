@@ -72,12 +72,12 @@ export const CertificateDetailsPage = () => {
         <div>
           <div
             style={{
-              background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%)',
+              background: '#121212',
               borderRadius: 20,
               padding: '56px 48px',
               color: '#ffffff',
               textAlign: 'center',
-              boxShadow: '0 20px 60px rgba(99,102,241,0.35)',
+              boxShadow: '0 20px 60px color-mix(in srgb, var(--primary) 35%, transparent)',
               position: 'relative',
               overflow: 'hidden',
               border: '2px solid rgba(251, 191, 36, 0.3)',
@@ -216,13 +216,13 @@ export const CertificateDetailsPage = () => {
                     width: 36,
                     height: 36,
                     borderRadius: 10,
-                    background: 'rgba(99, 102, 241, 0.15)',
+                    background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  <User size={18} style={{ color: '#818cf8' }} />
+                  <User size={18} style={{ color: 'var(--link)' }} />
                 </div>
                 <div>
                   <p

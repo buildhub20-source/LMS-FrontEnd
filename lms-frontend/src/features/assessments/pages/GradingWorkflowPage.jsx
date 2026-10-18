@@ -302,7 +302,7 @@ export const GradingWorkflowPage = () => {
             gap: 10,
           }}
         >
-          <Award size={24} color="var(--primary-color, #4f46e5)" /> Instructor Grading Workflow
+          <Award size={24} color="var(--primary-color, #121212)" /> Instructor Grading Workflow
         </h1>
         <p style={{ color: 'var(--text-secondary, #6b7280)', fontSize: '0.9rem' }}>
           Evaluate student coding submissions, assign rubric criteria scores, and record feedback.
@@ -372,7 +372,9 @@ export const GradingWorkflowPage = () => {
                   marginBottom: 8,
                   background: selectedSub?.id === sub.id ? '#eef2ff' : '#f9fafb',
                   borderLeft:
-                    selectedSub?.id === sub.id ? '4px solid #4f46e5' : '4px solid transparent',
+                    selectedSub?.id === sub.id
+                      ? '4px solid var(--primary)'
+                      : '4px solid transparent',
                 }}
               >
                 <div style={{ fontSize: '0.875rem', fontWeight: 600 }}>
@@ -427,17 +429,17 @@ export const GradingWorkflowPage = () => {
               {/* Syntax-highlighted code viewer with PR-Style Annotation Support */}
               <style>{`
                 .monaco-annotated-line {
-                  background: rgba(99, 102, 241, 0.22) !important;
-                  border-left: 3px solid #6366f1 !important;
+                  background: color-mix(in srgb, var(--primary) 22%, transparent) !important;
+                  border-left: 3px solid var(--primary) !important;
                 }
                 .monaco-annotation-glyph {
-                  background: #6366f1;
+                  background: var(--primary);
                   border-radius: 50%;
                   margin-left: 4px;
                   width: 8px !important;
                   height: 8px !important;
                   margin-top: 5px;
-                  box-shadow: 0 0 6px #6366f1;
+                  box-shadow: 0 0 6px var(--primary);
                 }
               `}</style>
 
@@ -499,7 +501,7 @@ export const GradingWorkflowPage = () => {
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <MessageSquare size={16} color="#6366f1" />
+                    <MessageSquare size={16} style={{ color: 'var(--link)' }} />
                     <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#1e293b' }}>
                       Inline Code Annotations ({annotations.length})
                     </span>
@@ -531,8 +533,8 @@ export const GradingWorkflowPage = () => {
                     >
                       <span
                         style={{
-                          background: 'rgba(99, 102, 241, 0.1)',
-                          color: '#4f46e5',
+                          background: 'color-mix(in srgb, var(--primary) 10%, transparent)',
+                          color: 'var(--link)',
                           fontWeight: 600,
                           fontSize: '0.75rem',
                           padding: '2px 8px',
@@ -605,7 +607,7 @@ export const GradingWorkflowPage = () => {
                         style={{
                           background: '#fff',
                           border: '1px solid #e2e8f0',
-                          borderLeft: '4px solid #6366f1',
+                          borderLeft: '4px solid var(--primary)',
                           borderRadius: 6,
                           padding: '10px 12px',
                           fontSize: '0.85rem',

@@ -3,7 +3,7 @@ import { X, Video, Clock, TrendingUp, Users, Film, Zap, AlertTriangle } from 'lu
 import platformService from '../services/platformService';
 import AdminButton from '../../../components/ui/AdminButton';
 
-const UsageBar = ({ label, used, limit, color = '#6366f1' }) => {
+const UsageBar = ({ label, used, limit, color = 'var(--primary)' }) => {
   const pct = limit > 0 ? Math.min(100, Math.round((used / limit) * 100)) : 0;
   const isNearLimit = pct >= 80;
   const isOverLimit = pct >= 100;
@@ -82,7 +82,7 @@ const UsageBar = ({ label, used, limit, color = '#6366f1' }) => {
   );
 };
 
-const StatCard = ({ icon, label, value, sub, color = '#6366f1' }) => (
+const StatCard = ({ icon, label, value, sub, color = 'var(--primary)' }) => (
   <div
     style={{
       display: 'flex',
@@ -196,14 +196,14 @@ export const TenantLiveUsageDrawer = ({ tenant, isOpen, onClose, onConfigureClic
                 width: 34,
                 height: 34,
                 borderRadius: 8,
-                background: 'rgba(99,102,241,0.15)',
-                border: '1px solid rgba(99,102,241,0.3)',
+                background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+                border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <Video size={18} color="#818cf8" />
+              <Video size={18} style={{ color: 'var(--link)' }} />
             </div>
             <div>
               <h3
@@ -213,7 +213,7 @@ export const TenantLiveUsageDrawer = ({ tenant, isOpen, onClose, onConfigureClic
               </h3>
               <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>
                 {tenant.slug} ·{' '}
-                <span style={{ color: '#818cf8' }}>{usage?.billingMonth || '—'}</span>
+                <span style={{ color: 'var(--link)' }}>{usage?.billingMonth || '—'}</span>
               </p>
             </div>
           </div>
@@ -263,8 +263,8 @@ export const TenantLiveUsageDrawer = ({ tenant, isOpen, onClose, onConfigureClic
               style={{
                 padding: '16px',
                 borderRadius: 12,
-                background: 'rgba(99,102,241,0.05)',
-                border: '1px solid rgba(99,102,241,0.15)',
+                background: 'color-mix(in srgb, var(--primary) 5%, transparent)',
+                border: '1px solid color-mix(in srgb, var(--primary) 15%, transparent)',
               }}
             >
               <span
@@ -285,7 +285,7 @@ export const TenantLiveUsageDrawer = ({ tenant, isOpen, onClose, onConfigureClic
                   label="Participant Minutes"
                   used={usage?.participantMinutesUsed ?? 0}
                   limit={usage?.monthlyLiveParticipantMinutesLimit ?? 0}
-                  color="#6366f1"
+                  color="var(--primary)"
                 />
                 {(usage?.monthlyRecordingMinutesLimit ?? 0) > 0 && (
                   <UsageBar
@@ -301,9 +301,9 @@ export const TenantLiveUsageDrawer = ({ tenant, isOpen, onClose, onConfigureClic
                   marginTop: 12,
                   padding: '8px 12px',
                   borderRadius: 8,
-                  background: 'rgba(99,102,241,0.08)',
+                  background: 'color-mix(in srgb, var(--primary) 8%, transparent)',
                   fontSize: 11,
-                  color: '#818cf8',
+                  color: 'var(--link)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: 6,
@@ -332,10 +332,10 @@ export const TenantLiveUsageDrawer = ({ tenant, isOpen, onClose, onConfigureClic
               </span>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 <StatCard
-                  icon={<Video size={16} color="#6366f1" />}
+                  icon={<Video size={16} style={{ color: 'var(--link)' }} />}
                   label="Sessions Hosted"
                   value={(usage?.sessionsHosted ?? 0).toLocaleString()}
-                  color="#6366f1"
+                  color="var(--primary)"
                 />
                 <StatCard
                   icon={<Users size={16} color="#0ea5e9" />}

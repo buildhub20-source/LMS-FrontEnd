@@ -152,12 +152,12 @@ const TECH_PRESETS = {
   },
   generic: {
     name: 'Core Curriculum',
-    accent: '#6366f1',
-    gradient: 'linear-gradient(135deg, #1e1b4b 0%, #4338ca 60%, #4f46e5 100%)',
-    glow: 'rgba(99, 102, 241, 0.25)',
-    border: 'rgba(99, 102, 241, 0.3)',
-    pillBg: 'rgba(99, 102, 241, 0.15)',
-    pillColor: '#a5b4fc',
+    accent: 'var(--primary)',
+    gradient: '#121212',
+    glow: 'color-mix(in srgb, var(--primary) 25%, transparent)',
+    border: 'color-mix(in srgb, var(--primary) 30%, transparent)',
+    pillBg: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+    pillColor: 'var(--link)',
     emblem: (
       <svg
         width="40"
@@ -811,14 +811,20 @@ function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark, on
                   fontSize: 12,
                   fontWeight: 600,
                   cursor: 'pointer',
-                  border: '1px solid rgba(99,102,241,0.3)',
-                  background: 'rgba(99,102,241,0.08)',
-                  color: '#6366f1',
+                  border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
+                  background: 'color-mix(in srgb, var(--primary) 8%, transparent)',
+                  color: 'var(--link)',
                   transition: 'all 0.15s ease',
                   whiteSpace: 'nowrap',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.18)')}
-                onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.08)')}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background =
+                    'color-mix(in srgb, var(--primary) 18%, transparent)')
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background =
+                    'color-mix(in srgb, var(--primary) 8%, transparent)')
+                }
               >
                 <Video size={13} /> Live
               </button>
@@ -1073,14 +1079,20 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, on
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: 'pointer',
-                border: '1px solid rgba(99,102,241,0.3)',
-                background: 'rgba(99,102,241,0.08)',
-                color: '#6366f1',
+                border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
+                background: 'color-mix(in srgb, var(--primary) 8%, transparent)',
+                color: 'var(--link)',
                 transition: 'all 0.15s ease',
                 whiteSpace: 'nowrap',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.18)')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.08)')}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.background =
+                  'color-mix(in srgb, var(--primary) 18%, transparent)')
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background =
+                  'color-mix(in srgb, var(--primary) 8%, transparent)')
+              }
             >
               <Video size={14} /> Live
             </button>
@@ -1173,9 +1185,15 @@ function CourseSidebar({ navigate }) {
   const weeklyHours = WEEK_DAYS.reduce((sum, day) => sum + (activityByDay.get(day.key) || 0), 0);
   const weeklyProgress = Math.min(100, Math.round((weeklyHours / WEEKLY_STUDY_TARGET_HOURS) * 100));
 
-  const handleFakeDownload = (name) => {
-    setDownloadSuccess(name);
-    setTimeout(() => setDownloadSuccess(''), 3000);
+  // Confirms only after the file has actually been handed to the browser.
+  const handleDownload = async (kit) => {
+    try {
+      await resourceService.downloadFile(kit);
+      setDownloadSuccess(kit.title);
+      setTimeout(() => setDownloadSuccess(''), 3000);
+    } catch {
+      setDownloadSuccess('');
+    }
   };
 
   return (
@@ -1478,10 +1496,7 @@ function CourseSidebar({ navigate }) {
                 return (
                   <div
                     key={kit.id}
-                    onClick={() => {
-                      resourceService.downloadFile(kit);
-                      handleFakeDownload(kit.title);
-                    }}
+                    onClick={() => handleDownload(kit)}
                     style={{
                       display: 'flex',
                       alignItems: 'center',

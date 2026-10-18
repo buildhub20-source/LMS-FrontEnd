@@ -43,7 +43,7 @@ export const AdminGamificationPage = () => {
     minPoints: 0,
     maxPoints: '',
     icon: 'shield',
-    color: '#6366f1',
+    color: 'var(--link)',
   });
 
   const [milestoneModal, setMilestoneModal] = useState({ isOpen: false, milestone: null });
@@ -136,7 +136,7 @@ export const AdminGamificationPage = () => {
         minPoints: level.minPoints,
         maxPoints: level.maxPoints != null ? level.maxPoints : '',
         icon: level.icon || 'shield',
-        color: level.color || '#6366f1',
+        color: level.color || 'var(--primary)',
       });
       setLevelModal({ isOpen: true, level });
     } else {
@@ -146,7 +146,7 @@ export const AdminGamificationPage = () => {
         minPoints: 0,
         maxPoints: '',
         icon: 'shield',
-        color: '#6366f1',
+        color: 'var(--link)',
       });
       setLevelModal({ isOpen: true, level: null });
     }

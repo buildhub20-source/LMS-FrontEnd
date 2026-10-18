@@ -54,7 +54,7 @@ export const LiveAttendanceTable = ({ attendanceList = [], isLoading }) => {
         </div>
 
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center gap-3">
-          <div className="p-3 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400">
+          <div className="p-3 rounded-lg bg-secondary text-[var(--link)]">
             <Clock className="w-5 h-5" />
           </div>
           <div>

@@ -38,10 +38,10 @@ const TIME_STATE_CONFIG = {
   locked: {
     icon: 'alarm',
     label: 'Scheduled',
-    bg: 'rgba(99,102,241,0.12)',
-    border: 'rgba(99,102,241,0.3)',
-    color: '#a5b4fc',
-    cardBorder: 'rgba(99,102,241,0.25)',
+    bg: 'color-mix(in srgb, var(--primary) 12%, transparent)',
+    border: 'color-mix(in srgb, var(--primary) 30%, transparent)',
+    color: 'var(--link)',
+    cardBorder: 'color-mix(in srgb, var(--primary) 25%, transparent)',
     prefix: 'Opens in',
   },
   open: {
@@ -178,7 +178,7 @@ const analyticsBtn = {
   borderRadius: 99,
   border: '1px solid var(--border)',
   background: 'var(--background)',
-  color: 'var(--color-primary, #6366f1)',
+  color: 'var(--color-primary, #121212)',
   fontSize: 12,
   fontWeight: 700,
   cursor: 'pointer',
@@ -220,11 +220,11 @@ function AssessmentCard({ item, info, onStart, onResume, onResult, onRetake }) {
   const topAccent = isClosingSoon
     ? 'linear-gradient(90deg,#ef4444,#f97316)'
     : isLocked
-      ? 'linear-gradient(90deg,#6366f1,#8b5cf6)'
+      ? 'var(--primary)'
       : isExpired
         ? 'var(--border)'
         : isInProgress
-          ? 'linear-gradient(90deg,#6366f1,#3b82f6)'
+          ? 'var(--primary)'
           : isCompleted
             ? 'var(--primary)'
             : 'linear-gradient(90deg,#10b981,#3b82f6)';
@@ -237,7 +237,7 @@ function AssessmentCard({ item, info, onStart, onResume, onResult, onRetake }) {
             display: 'flex',
             alignItems: 'center',
             gap: 6,
-            color: 'var(--color-primary, #6366f1)',
+            color: 'var(--color-primary, #121212)',
             fontSize: 12,
             fontWeight: 600,
           }}
@@ -270,7 +270,11 @@ function AssessmentCard({ item, info, onStart, onResume, onResult, onRetake }) {
           )}
           <button
             onClick={onResume}
-            style={primaryBtn('#6366f1', '#4f46e5', '0 4px 14px rgba(99,102,241,0.25)')}
+            style={primaryBtn(
+              'var(--primary)',
+              'var(--primary)',
+              '0 4px 14px color-mix(in srgb, var(--primary) 25%, transparent)',
+            )}
           >
             <PlayCircle size={14} /> Resume <ArrowRight size={13} />
           </button>
@@ -291,7 +295,11 @@ function AssessmentCard({ item, info, onStart, onResume, onResult, onRetake }) {
           {info.canRetake && (
             <button
               onClick={onRetake}
-              style={primaryBtn('#6366f1', '#4f46e5', '0 2px 10px rgba(99,102,241,0.2)')}
+              style={primaryBtn(
+                'var(--primary)',
+                'var(--primary)',
+                '0 2px 10px color-mix(in srgb, var(--primary) 20%, transparent)',
+              )}
             >
               <RefreshCcw size={13} /> Retake
             </button>
@@ -380,9 +388,11 @@ function AssessmentCard({ item, info, onStart, onResume, onResult, onRetake }) {
               display: 'flex',
               alignItems: 'center',
               gap: 3,
-              background: isAnalyticsEnabled ? 'rgba(99,102,241,0.1)' : 'var(--background)',
-              border: `1px solid ${isAnalyticsEnabled ? 'rgba(99,102,241,0.2)' : 'var(--border)'}`,
-              color: isAnalyticsEnabled ? 'var(--color-primary, #6366f1)' : 'var(--text-muted)',
+              background: isAnalyticsEnabled
+                ? 'color-mix(in srgb, var(--primary) 10%, transparent)'
+                : 'var(--background)',
+              border: `1px solid ${isAnalyticsEnabled ? 'color-mix(in srgb, var(--primary) 20%, transparent)' : 'var(--border)'}`,
+              color: isAnalyticsEnabled ? 'var(--color-primary, #121212)' : 'var(--text-muted)',
             }}
           >
             {isAnalyticsEnabled ? <BarChart2 size={10} /> : <Lock size={10} />}
@@ -481,7 +491,7 @@ function AssessmentCard({ item, info, onStart, onResume, onResult, onRetake }) {
                 color: 'var(--text-muted)',
               }}
             >
-              <CalendarClock size={12} style={{ color: 'var(--color-primary, #6366f1)' }} />
+              <CalendarClock size={12} style={{ color: 'var(--color-primary, #121212)' }} />
               Opens:{' '}
               <strong style={{ color: 'var(--text-primary)' }}>{fmtDate(item.startTime)}</strong>
             </div>
@@ -592,7 +602,7 @@ function AssessmentCard({ item, info, onStart, onResume, onResult, onRetake }) {
                 height: '100%',
                 width: `${attemptsPct}%`,
                 background: isInProgress
-                  ? '#6366f1'
+                  ? 'var(--primary)'
                   : info.canRetake
                     ? '#10b981'
                     : used >= configuredMax
@@ -618,11 +628,11 @@ function AssessmentCard({ item, info, onStart, onResume, onResult, onRetake }) {
         }}
       >
         <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600 }}>
-          {isLocked && <span style={{ color: 'var(--color-primary, #6366f1)' }}>⏳ Scheduled</span>}
+          {isLocked && <span style={{ color: 'var(--color-primary, #121212)' }}>⏳ Scheduled</span>}
           {isClosingSoon && <span style={{ color: '#ef4444' }}>🔴 Closing soon!</span>}
           {isExpired && !isCompleted && <span>📅 Window closed</span>}
           {isInProgress && (
-            <span style={{ color: 'var(--color-primary, #6366f1)' }}>● Active session</span>
+            <span style={{ color: 'var(--color-primary, #121212)' }}>● Active session</span>
           )}
           {isCompleted && <span style={{ color: '#10b981' }}>✓ Evaluation saved</span>}
           {!isLocked && !isExpired && !isInProgress && !isCompleted && isClosingSoon === false && (
@@ -882,7 +892,7 @@ export const AssessmentListPage = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onFocus={(e) => {
-              e.target.style.borderColor = 'var(--color-primary, #6366f1)';
+              e.target.style.borderColor = 'var(--color-primary, #121212)';
             }}
             onBlur={(e) => {
               e.target.style.borderColor = 'var(--border)';

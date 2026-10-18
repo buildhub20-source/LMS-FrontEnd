@@ -101,7 +101,7 @@ export const ResultSummary = ({ report }) => {
               gap: 8,
             }}
           >
-            <Clock size={18} color="#4f46e5" /> {minutesSpent}m {secondsSpent}s
+            <Clock size={18} style={{ color: 'var(--link)' }} /> {minutesSpent}m {secondsSpent}s
           </p>
         </div>
 
@@ -128,7 +128,8 @@ export const ResultSummary = ({ report }) => {
               gap: 8,
             }}
           >
-            <RotateCcw size={18} color="#4f46e5" /> {attemptsUsed} of {maxAttemptsAllowed} max
+            <RotateCcw size={18} style={{ color: 'var(--link)' }} /> {attemptsUsed} of{' '}
+            {maxAttemptsAllowed} max
           </p>
         </div>
 
@@ -155,7 +156,8 @@ export const ResultSummary = ({ report }) => {
               gap: 8,
             }}
           >
-            <FileText size={18} color="#4f46e5" /> {questionResults.length} problems
+            <FileText size={18} style={{ color: 'var(--link)' }} /> {questionResults.length}{' '}
+            problems
           </p>
         </div>
       </div>
@@ -224,7 +226,7 @@ export const ResultSummary = ({ report }) => {
                       style={{
                         fontSize: '0.75rem',
                         fontWeight: 700,
-                        color: '#4f46e5',
+                        color: 'var(--link)',
                         textTransform: 'uppercase',
                         marginBottom: 6,
                       }}
@@ -292,7 +294,7 @@ export const ResultSummary = ({ report }) => {
                   <td style={{ padding: '10px 12px', fontWeight: 600 }}>
                     {att.score ?? 0} / {att.totalMarks}
                   </td>
-                  <td style={{ padding: '10px 12px', fontWeight: 700, color: '#4f46e5' }}>
+                  <td style={{ padding: '10px 12px', fontWeight: 700, color: 'var(--link)' }}>
                     {att.percentage}%
                   </td>
                   <td style={{ padding: '10px 12px', color: '#6b7280' }}>

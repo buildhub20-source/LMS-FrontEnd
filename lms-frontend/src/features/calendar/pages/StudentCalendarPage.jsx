@@ -320,7 +320,7 @@ export const StudentCalendarPage = () => {
               style={{
                 fontSize: 12,
                 fontWeight: 700,
-                color: '#818cf8',
+                color: 'var(--link)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.8px',
               }}
@@ -336,9 +336,9 @@ export const StudentCalendarPage = () => {
                 borderRadius: 99,
                 fontSize: 11,
                 fontWeight: 700,
-                background: 'rgba(99, 102, 241, 0.15)',
-                color: '#a5b4fc',
-                border: '1px solid rgba(99, 102, 241, 0.3)',
+                background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+                color: 'var(--link)',
+                border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
               }}
             >
               <Sparkles size={12} />
@@ -363,13 +363,13 @@ export const StudentCalendarPage = () => {
                 width: 42,
                 height: 42,
                 borderRadius: 12,
-                background: 'rgba(99, 102, 241, 0.15)',
+                background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <CalendarIcon size={24} color="#818cf8" />
+              <CalendarIcon size={24} style={{ color: 'var(--link)' }} />
             </div>
             Calendar & Deadlines
           </h1>
@@ -398,13 +398,13 @@ export const StudentCalendarPage = () => {
                 width: 36,
                 height: 36,
                 borderRadius: 10,
-                background: 'rgba(99, 102, 241, 0.15)',
+                background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <CalendarCheck size={18} color="#6366f1" />
+              <CalendarCheck size={18} style={{ color: 'var(--link)' }} />
             </div>
             <div>
               <div
@@ -559,9 +559,12 @@ export const StudentCalendarPage = () => {
                 fontWeight: 600,
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                background: activeTab === key ? '#6366f1' : 'transparent',
+                background: activeTab === key ? 'var(--primary)' : 'transparent',
                 color: activeTab === key ? '#fff' : 'var(--text-muted)',
-                boxShadow: activeTab === key ? '0 2px 8px rgba(99, 102, 241, 0.3)' : 'none',
+                boxShadow:
+                  activeTab === key
+                    ? '0 2px 8px color-mix(in srgb, var(--primary) 30%, transparent)'
+                    : 'none',
               }}
             >
               <Icon size={15} />
@@ -651,9 +654,9 @@ export const StudentCalendarPage = () => {
               gap: 6,
               padding: '8px 16px',
               borderRadius: 10,
-              border: '1px solid rgba(99, 102, 241, 0.3)',
-              background: 'rgba(99, 102, 241, 0.1)',
-              color: '#a5b4fc',
+              border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
+              background: 'color-mix(in srgb, var(--primary) 10%, transparent)',
+              color: 'var(--link)',
               fontSize: 12,
               fontWeight: 600,
               cursor: 'pointer',
@@ -721,7 +724,7 @@ export const StudentCalendarPage = () => {
                 alignItems: 'center',
                 padding: '18px 24px',
                 background:
-                  'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.1) 100%)',
+                  'linear-gradient(135deg, color-mix(in srgb, var(--primary) 15%, transparent) 0%, rgba(139, 92, 246, 0.1) 100%)',
                 borderBottom: '1px solid var(--border)',
               }}
             >
@@ -885,9 +888,9 @@ export const StudentCalendarPage = () => {
                     onClick={() => setSelectedDate(dayInfo.date)}
                     style={{
                       background: isSelected
-                        ? 'rgba(99, 102, 241, 0.16)'
+                        ? 'color-mix(in srgb, var(--primary) 16%, transparent)'
                         : isToday
-                          ? 'rgba(99, 102, 241, 0.06)'
+                          ? 'color-mix(in srgb, var(--primary) 6%, transparent)'
                           : 'var(--bg)',
                       minHeight: 115,
                       padding: 8,
@@ -898,9 +901,9 @@ export const StudentCalendarPage = () => {
                       position: 'relative',
                       transition: 'all 0.15s ease',
                       border: isSelected
-                        ? '1.5px solid #6366f1'
+                        ? '1.5px solid var(--primary)'
                         : isToday
-                          ? '1.5px solid rgba(99, 102, 241, 0.4)'
+                          ? '1.5px solid color-mix(in srgb, var(--primary) 40%, transparent)'
                           : '1.5px solid transparent',
                       opacity: dayInfo.isCurrentMonth ? 1 : 0.35,
                     }}
@@ -911,7 +914,7 @@ export const StudentCalendarPage = () => {
                     onMouseLeave={(e) => {
                       if (!isSelected) {
                         e.currentTarget.style.background = isToday
-                          ? 'rgba(99, 102, 241, 0.06)'
+                          ? 'color-mix(in srgb, var(--primary) 6%, transparent)'
                           : 'var(--bg)';
                       }
                     }}
@@ -935,7 +938,7 @@ export const StudentCalendarPage = () => {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          background: isToday ? '#6366f1' : 'transparent',
+                          background: isToday ? 'var(--primary)' : 'transparent',
                           color: isToday ? '#fff' : 'var(--text-primary)',
                         }}
                       >
@@ -947,7 +950,7 @@ export const StudentCalendarPage = () => {
                           style={{
                             fontSize: 10,
                             fontWeight: 700,
-                            color: '#818cf8',
+                            color: 'var(--link)',
                             textTransform: 'uppercase',
                             letterSpacing: '0.4px',
                           }}
@@ -1055,7 +1058,7 @@ export const StudentCalendarPage = () => {
                     style={{
                       fontSize: 11,
                       fontWeight: 700,
-                      color: '#818cf8',
+                      color: 'var(--link)',
                       textTransform: 'uppercase',
                     }}
                   >
@@ -1086,9 +1089,9 @@ export const StudentCalendarPage = () => {
                     borderRadius: 99,
                     background:
                       selectedDateEvents.length > 0
-                        ? 'rgba(99, 102, 241, 0.2)'
+                        ? 'color-mix(in srgb, var(--primary) 20%, transparent)'
                         : 'rgba(255, 255, 255, 0.08)',
-                    color: selectedDateEvents.length > 0 ? '#a5b4fc' : 'var(--text-muted)',
+                    color: selectedDateEvents.length > 0 ? 'var(--primary)' : 'var(--text-muted)',
                   }}
                 >
                   {selectedDateEvents.length} events
@@ -1387,8 +1390,10 @@ export const StudentCalendarPage = () => {
                             borderRadius: 6,
                             fontSize: 10,
                             fontWeight: 800,
-                            background: isUrgent ? '#ef4444' : 'rgba(99, 102, 241, 0.2)',
-                            color: isUrgent ? '#fff' : '#6366f1',
+                            background: isUrgent
+                              ? '#ef4444'
+                              : 'color-mix(in srgb, var(--primary) 20%, transparent)',
+                            color: isUrgent ? '#fff' : 'var(--primary)',
                           }}
                         >
                           {daysLeft !== null
@@ -1415,7 +1420,7 @@ export const StudentCalendarPage = () => {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                <Bell size={16} color="#818cf8" />
+                <Bell size={16} style={{ color: 'var(--link)' }} />
                 <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
                   External Calendar Sync
                 </span>
@@ -1652,8 +1657,10 @@ export const StudentCalendarPage = () => {
                             borderRadius: 8,
                             fontSize: 11,
                             fontWeight: 800,
-                            background: isUrgent ? '#ef4444' : 'rgba(99, 102, 241, 0.2)',
-                            color: isUrgent ? '#fff' : '#a5b4fc',
+                            background: isUrgent
+                              ? '#ef4444'
+                              : 'color-mix(in srgb, var(--primary) 20%, transparent)',
+                            color: isUrgent ? '#fff' : 'var(--primary)',
                           }}
                         >
                           {daysLeft !== null
@@ -1779,7 +1786,7 @@ export const StudentCalendarPage = () => {
                 bottom: 8,
                 left: 10,
                 width: 2,
-                background: 'rgba(99, 102, 241, 0.3)',
+                background: 'color-mix(in srgb, var(--primary) 30%, transparent)',
               }}
             />
 

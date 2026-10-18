@@ -109,7 +109,7 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Hourglass size={16} style={{ color: '#6366f1' }} />
+          <Hourglass size={16} style={{ color: 'var(--link)' }} />
           <span
             style={{
               fontSize: 14,
@@ -148,10 +148,12 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
             style={{
               padding: '12px 14px',
               borderRadius: 12,
-              background: isClosingSoon ? 'rgba(239, 68, 68, 0.1)' : 'rgba(99, 102, 241, 0.08)',
+              background: isClosingSoon
+                ? 'rgba(239, 68, 68, 0.1)'
+                : 'color-mix(in srgb, var(--primary) 8%, transparent)',
               border: isClosingSoon
                 ? '1px solid rgba(239, 68, 68, 0.25)'
-                : '1px solid rgba(99, 102, 241, 0.2)',
+                : '1px solid color-mix(in srgb, var(--primary) 20%, transparent)',
               display: 'flex',
               flexDirection: 'column',
               gap: 8,
@@ -169,7 +171,7 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
                 style={{
                   fontSize: 14,
                   fontWeight: 800,
-                  color: isClosingSoon ? '#f87171' : '#6366f1',
+                  color: isClosingSoon ? '#f87171' : 'var(--primary)',
                   fontFamily: 'monospace',
                 }}
               >
@@ -199,7 +201,7 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
                     transition: 'width 1s linear',
                     boxShadow: isClosingSoon
                       ? '0 0 8px rgba(239,68,68,0.5)'
-                      : '0 0 8px rgba(99,102,241,0.5)',
+                      : '0 0 8px color-mix(in srgb, var(--primary) 50%, transparent)',
                   }}
                 />
               </div>
@@ -248,7 +250,7 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
                 color: 'var(--text-secondary)',
               }}
             >
-              <BarChart2 size={14} style={{ color: '#818cf8' }} /> Total Marks
+              <BarChart2 size={14} style={{ color: 'var(--link)' }} /> Total Marks
             </span>
             <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
               {assessment?.totalMarks || 0}%
@@ -383,9 +385,9 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
                       borderRadius: 8,
                       fontSize: 12,
                       fontWeight: 600,
-                      background: 'rgba(99, 102, 241, 0.15)',
-                      border: '1px solid rgba(99, 102, 241, 0.3)',
-                      color: '#a5b4fc',
+                      background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+                      border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
+                      color: 'var(--link)',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
@@ -406,9 +408,9 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
                       borderRadius: 8,
                       fontSize: 12,
                       fontWeight: 600,
-                      background: 'rgba(99, 102, 241, 0.15)',
-                      border: '1px solid rgba(99, 102, 241, 0.3)',
-                      color: '#a5b4fc',
+                      background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+                      border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
+                      color: 'var(--link)',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',

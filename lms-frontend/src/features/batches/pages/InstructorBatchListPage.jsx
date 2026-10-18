@@ -371,7 +371,7 @@ export const InstructorBatchListPage = () => {
                 transition: 'border-color 0.2s',
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = 'var(--color-primary, #6366f1)';
+                e.target.style.borderColor = 'var(--color-primary, #121212)';
               }}
               onBlur={(e) => {
                 e.target.style.borderColor = 'var(--border)';
@@ -402,7 +402,7 @@ export const InstructorBatchListPage = () => {
                   }}
                   onMouseEnter={(e) => {
                     if (!active)
-                      e.currentTarget.style.borderColor = 'var(--color-primary, #6366f1)';
+                      e.currentTarget.style.borderColor = 'var(--color-primary, #121212)';
                   }}
                   onMouseLeave={(e) => {
                     if (!active) e.currentTarget.style.borderColor = 'var(--border)';
@@ -431,7 +431,7 @@ export const InstructorBatchListPage = () => {
                 type="checkbox"
                 checked={myCohortsOnly}
                 onChange={(e) => setMyCohortsOnly(e.target.checked)}
-                style={{ cursor: 'pointer', accentColor: 'var(--color-primary, #6366f1)' }}
+                style={{ cursor: 'pointer', accentColor: 'var(--color-primary, #121212)' }}
               />
               <span>My Cohorts Only</span>
             </label>
@@ -542,7 +542,7 @@ export const InstructorBatchListPage = () => {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-3px)';
-                  e.currentTarget.style.borderColor = 'var(--color-primary, #6366f1)';
+                  e.currentTarget.style.borderColor = 'var(--color-primary, #121212)';
                   e.currentTarget.style.boxShadow = 'var(--shadow-md)';
                 }}
                 onMouseLeave={(e) => {
@@ -568,9 +568,9 @@ export const InstructorBatchListPage = () => {
                       fontSize: 11,
                       fontFamily: 'monospace',
                       fontWeight: 700,
-                      background: 'rgba(99, 102, 241, 0.1)',
-                      color: 'var(--color-primary, #6366f1)',
-                      border: '1px solid rgba(99, 102, 241, 0.2)',
+                      background: 'color-mix(in srgb, var(--primary) 10%, transparent)',
+                      color: 'var(--color-primary, #121212)',
+                      border: '1px solid color-mix(in srgb, var(--primary) 20%, transparent)',
                       letterSpacing: '0.04em',
                     }}
                   >
@@ -609,7 +609,7 @@ export const InstructorBatchListPage = () => {
                 >
                   <BookOpen
                     size={14}
-                    style={{ color: 'var(--color-primary, #6366f1)', flexShrink: 0 }}
+                    style={{ color: 'var(--color-primary, #121212)', flexShrink: 0 }}
                   />
                   <span
                     style={{
@@ -830,7 +830,7 @@ export const InstructorBatchListPage = () => {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.borderColor = 'var(--color-primary, #6366f1)';
+                  e.currentTarget.style.borderColor = 'var(--color-primary, #121212)';
                   e.currentTarget.style.boxShadow = 'var(--shadow-md)';
                 }}
                 onMouseLeave={(e) => {
@@ -845,12 +845,12 @@ export const InstructorBatchListPage = () => {
                     width: 42,
                     height: 42,
                     borderRadius: 10,
-                    background: 'rgba(99, 102, 241, 0.1)',
-                    border: '1px solid rgba(99, 102, 241, 0.2)',
+                    background: 'color-mix(in srgb, var(--primary) 10%, transparent)',
+                    border: '1px solid color-mix(in srgb, var(--primary) 20%, transparent)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: 'var(--color-primary, #6366f1)',
+                    color: 'var(--color-primary, #121212)',
                     flexShrink: 0,
                   }}
                 >
@@ -896,7 +896,7 @@ export const InstructorBatchListPage = () => {
                       color: 'var(--text-muted)',
                     }}
                   >
-                    <span style={{ color: 'var(--color-primary, #6366f1)', fontWeight: 600 }}>
+                    <span style={{ color: 'var(--color-primary, #121212)', fontWeight: 600 }}>
                       {batch.courseTitle || 'General Curriculum'}
                     </span>
                     <span>•</span>

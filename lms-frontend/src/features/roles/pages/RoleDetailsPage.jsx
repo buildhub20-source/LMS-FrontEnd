@@ -240,8 +240,10 @@ export const RoleDetailsPage = () => {
                 width: 56,
                 height: 56,
                 borderRadius: 14,
-                background: isSystemRole ? 'rgba(99,102,241,0.12)' : 'rgba(16,185,129,0.12)',
-                color: isSystemRole ? '#6366f1' : '#10b981',
+                background: isSystemRole
+                  ? 'color-mix(in srgb, var(--primary) 12%, transparent)'
+                  : 'rgba(16,185,129,0.12)',
+                color: isSystemRole ? 'var(--primary)' : '#10b981',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -427,9 +429,12 @@ export const RoleDetailsPage = () => {
                   fontWeight: 600,
                   cursor: 'pointer',
                   border: '1px solid',
-                  borderColor: selectedCategory === cat ? '#6366f1' : 'var(--border-color)',
-                  background: selectedCategory === cat ? 'rgba(99,102,241,0.12)' : 'transparent',
-                  color: selectedCategory === cat ? '#6366f1' : 'var(--text-muted)',
+                  borderColor: selectedCategory === cat ? 'var(--primary)' : 'var(--border-color)',
+                  background:
+                    selectedCategory === cat
+                      ? 'color-mix(in srgb, var(--primary) 12%, transparent)'
+                      : 'transparent',
+                  color: selectedCategory === cat ? 'var(--primary)' : 'var(--text-muted)',
                   transition: 'all 0.15s ease',
                 }}
               >

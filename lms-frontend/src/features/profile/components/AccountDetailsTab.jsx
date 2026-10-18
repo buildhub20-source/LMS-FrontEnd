@@ -54,7 +54,7 @@ export const AccountDetailsTab = ({ user }) => {
             >
               System User ID
             </span>
-            <Key size={16} style={{ color: 'var(--primary, #6366f1)' }} />
+            <Key size={16} style={{ color: 'var(--primary, #121212)' }} />
           </div>
           <div
             style={{
@@ -141,7 +141,7 @@ export const AccountDetailsTab = ({ user }) => {
                     padding: '4px 12px',
                     borderRadius: 20,
                     background:
-                      'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2))',
+                      'linear-gradient(135deg, color-mix(in srgb, var(--primary) 20%, transparent), rgba(168, 85, 247, 0.2))',
                     border: '1px solid rgba(168, 85, 247, 0.4)',
                     color: '#c084fc',
                     display: 'inline-flex',
@@ -260,7 +260,7 @@ export const AccountDetailsTab = ({ user }) => {
                     gap: 6,
                   }}
                 >
-                  <Sparkles size={11} style={{ color: 'var(--primary, #6366f1)' }} />
+                  <Sparkles size={11} style={{ color: 'var(--primary, #121212)' }} />
                   {perm}
                 </span>
               ))

@@ -152,7 +152,7 @@ export const BillingPage = () => {
                   gap: 8,
                 }}
               >
-                <Receipt size={18} style={{ color: '#6366f1' }} />
+                <Receipt size={18} style={{ color: 'var(--link)' }} />
                 Invoice Receipts ({filteredInvoices.length})
               </h2>
               <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>

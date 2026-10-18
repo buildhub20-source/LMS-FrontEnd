@@ -84,6 +84,7 @@ export const API_ENDPOINTS = Object.freeze({
     course: (courseId) => `/courses/${courseId}`,
     lesson: (courseId, lessonId) => `/learning/courses/${courseId}/lessons/${lessonId}`,
     progress: (courseId) => `/learning/courses/${courseId}/progress`,
+    time: (courseId) => `/learning/courses/${courseId}/time`,
   },
   assessments: {
     base: '/student/assessments',

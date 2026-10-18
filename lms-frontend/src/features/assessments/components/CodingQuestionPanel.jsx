@@ -29,6 +29,7 @@ import {
 import Badge from '../../../components/common/Badge';
 import Button from '../../../components/common/Button';
 import assessmentService from '../services/assessmentService';
+import codeRunService from '../services/codeRunService';
 import { DIFFICULTY_TONE } from '../constants/assessmentConstants';
 
 /** Supported languages with Monaco language IDs */
@@ -82,26 +83,48 @@ const runJavaScriptInWorker = (sourceCode, input) =>
     worker.postMessage({ runId, sourceCode, input });
   });
 
+const SERVER_STATUS_ERRORS = {
+  COMPILE_ERROR: 'Compilation failed',
+  RUNTIME_ERROR: 'Runtime error',
+  TIME_LIMIT_EXCEEDED: 'Time limit exceeded',
+  SANDBOX_ERROR: 'The code runner could not run this input',
+};
+
 /**
- * Sandboxed code execution simulator for sample test cases
+ * Runs every case on the server sandbox and returns browser-runner shaped
+ * outcomes, so both paths share the comparison below.
  */
+async function runCasesOnServer(language, sourceCode, cases) {
+  const runs = await codeRunService.run(
+    language,
+    sourceCode,
+    cases.map((tc) => tc.input ?? ''),
+  );
+  return cases.map((_, i) => {
+    const run = runs[i] ?? runs[runs.length - 1];
+    if (!run) return { success: false, error: 'The code runner returned no result.' };
+    if (run.status === 'ACCEPTED') {
+      return { success: true, output: run.stdout ?? '', timeMs: run.timeMs };
+    }
+    const detail = run.compileOutput || run.stderr || '';
+    const label = SERVER_STATUS_ERRORS[run.status] ?? 'Run failed';
+    return {
+      success: false,
+      error: detail ? `${label}: ${detail.trim()}` : label,
+      timeMs: run.timeMs,
+    };
+  });
+}
+
 /**
- * Runs code against the sample test cases. Only JavaScript can run in the
- * browser; other languages are not executed here, and no result is invented
- * for them. Every submitted answer is graded after the attempt is submitted.
+ * Runs code against the sample test cases. JavaScript runs in a browser
+ * worker; other languages run in the server's sandbox when one is configured.
+ * No result is ever invented. Every submitted answer is graded after the
+ * attempt is submitted.
  */
 async function executeCodeSandbox(language, sourceCode, testCases, customInput = '') {
   if (!sourceCode || !sourceCode.trim()) {
     return { status: 'EMPTY', message: 'Write some code before running it.', results: [] };
-  }
-
-  if (language !== 'javascript') {
-    const label = LANGUAGES.find((l) => l.value === language)?.label ?? language;
-    return {
-      status: 'UNAVAILABLE',
-      message: `Running ${label} code isn't available yet. Your answer is saved and will be graded after you submit.`,
-      results: [],
-    };
   }
 
   const casesToRun = [...testCases];
@@ -122,11 +145,30 @@ async function executeCodeSandbox(language, sourceCode, testCases, customInput =
   }
 
   const startTime = performance.now();
+  let serverRuns = null;
+  if (language !== 'javascript') {
+    try {
+      serverRuns = await runCasesOnServer(language, sourceCode, casesToRun);
+    } catch (err) {
+      // The API layer normalises errors to { status, code, message }.
+      const label = LANGUAGES.find((l) => l.value === language)?.label ?? language;
+      const message =
+        err?.status === 503
+          ? `Running ${label} code isn't set up on this server yet. Your answer is saved and will be graded after you submit.`
+          : err?.status === 429
+            ? err.message || 'You have run code a lot just now. Wait a moment and try again.'
+            : `Couldn't run your ${label} code. Try again in a moment.`;
+      return { status: 'UNAVAILABLE', message, results: [] };
+    }
+  }
+
   const results = [];
   for (let i = 0; i < casesToRun.length; i++) {
     const tc = casesToRun[i];
     const caseStart = performance.now();
-    const run = await runJavaScriptInWorker(sourceCode, tc.input ?? '');
+    const run = serverRuns
+      ? serverRuns[i]
+      : await runJavaScriptInWorker(sourceCode, tc.input ?? '');
     const actualOutput = (run.output ?? '').trim();
     const errorMsg = run.success ? null : (run.error ?? 'The sandboxed JavaScript runner failed.');
 
@@ -147,7 +189,7 @@ async function executeCodeSandbox(language, sourceCode, testCases, customInput =
       actualOutput: errorMsg ? `Runtime Error: ${errorMsg}` : actualOutput || '(no output)',
       status,
       errorMessage: errorMsg,
-      executionTimeMs: Math.round(performance.now() - caseStart),
+      executionTimeMs: run.timeMs ?? Math.round(performance.now() - caseStart),
       isCustom: tc.isCustom,
     });
   }
@@ -404,9 +446,9 @@ export const CodingQuestionPanel = ({
     MEDIUM: { bg: 'rgba(245, 158, 11, 0.15)', text: '#fbbf24', border: 'rgba(245, 158, 11, 0.3)' },
     HARD: { bg: 'rgba(239, 68, 68, 0.15)', text: '#f87171', border: 'rgba(239, 68, 68, 0.3)' },
   }[question?.difficulty?.toUpperCase()] ?? {
-    bg: 'rgba(99, 102, 241, 0.15)',
-    text: '#818cf8',
-    border: 'rgba(99, 102, 241, 0.3)',
+    bg: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+    text: 'var(--link)',
+    border: 'color-mix(in srgb, var(--primary) 30%, transparent)',
   };
 
   return (
@@ -495,7 +537,7 @@ export const CodingQuestionPanel = ({
                 color: '#94a3b8',
               }}
             >
-              <Sparkles size={12} style={{ color: '#818cf8' }} />
+              <Sparkles size={12} style={{ color: 'var(--link)' }} />
               <span>{question?.marks ?? 10} Points</span>
             </div>
 
@@ -566,7 +608,7 @@ export const CodingQuestionPanel = ({
                 gap: 6,
               }}
             >
-              <FileCode size={14} style={{ color: '#6366f1' }} />
+              <FileCode size={14} style={{ color: 'var(--link)' }} />
               Problem Description
             </h4>
             <div
@@ -682,7 +724,7 @@ export const CodingQuestionPanel = ({
                     padding: '10px 14px',
                     fontFamily: 'monospace',
                     fontSize: 12,
-                    color: '#a5b4fc',
+                    color: 'var(--link)',
                     whiteSpace: 'pre-wrap',
                   }}
                 >
@@ -729,7 +771,7 @@ export const CodingQuestionPanel = ({
                         borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
                         fontSize: 11,
                         fontWeight: 700,
-                        color: '#818cf8',
+                        color: 'var(--link)',
                         textTransform: 'uppercase',
                       }}
                     >
@@ -957,7 +999,7 @@ export const CodingQuestionPanel = ({
                 {submitSaveStatus === 'saving' && (
                   <span
                     style={{
-                      color: '#818cf8',
+                      color: 'var(--link)',
                       display: 'flex',
                       alignItems: 'center',
                       gap: 4,
@@ -1226,7 +1268,7 @@ export const CodingQuestionPanel = ({
                   border: 'none',
                   borderBottom:
                     activeConsoleTab === 'testcases' && isConsoleExpanded
-                      ? '2px solid #6366f1'
+                      ? '2px solid var(--primary)'
                       : '2px solid transparent',
                   color:
                     activeConsoleTab === 'testcases' && isConsoleExpanded ? '#ffffff' : '#94a3b8',
@@ -1365,10 +1407,12 @@ export const CodingQuestionPanel = ({
                           cursor: 'pointer',
                           border:
                             selectedTestCaseIdx === idx
-                              ? '1px solid #6366f1'
+                              ? '1px solid var(--primary)'
                               : '1px solid rgba(255,255,255,0.08)',
                           background:
-                            selectedTestCaseIdx === idx ? 'rgba(99, 102, 241, 0.2)' : '#111827',
+                            selectedTestCaseIdx === idx
+                              ? 'color-mix(in srgb, var(--primary) 20%, transparent)'
+                              : '#111827',
                           color: selectedTestCaseIdx === idx ? '#c7d2fe' : '#94a3b8',
                         }}
                       >
@@ -1656,8 +1700,8 @@ export const CodingQuestionPanel = ({
                         display: 'flex',
                         alignItems: 'center',
                         gap: 6,
-                        background: '#6366f1',
-                        color: '#ffffff',
+                        background: 'var(--primary)',
+                        color: 'var(--primary-foreground)',
                         border: 'none',
                         borderRadius: 6,
                         padding: '6px 14px',

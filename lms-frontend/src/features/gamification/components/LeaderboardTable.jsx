@@ -74,16 +74,16 @@ export const LeaderboardTable = ({
 
       {/* Current Student's Rank Banner if available */}
       {currentStudent && currentStudent.rank && (
-        <div className="mt-4 flex items-center justify-between rounded-xl bg-indigo-50/70 px-4 py-2.5 dark:bg-indigo-950/30">
+        <div className="mt-4 flex items-center justify-between rounded-xl bg-secondary/70 px-4 py-2.5 ">
           <div className="flex items-center gap-2.5">
-            <span className="rounded-md bg-indigo-600 px-2 py-0.5 text-xs font-bold text-white">
+            <span className="rounded-md bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground">
               Your Rank #{currentStudent.rank}
             </span>
             <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
               {currentStudent.studentName}
             </span>
           </div>
-          <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
+          <span className="text-xs font-bold text-[var(--link)]">
             {currentStudent.totalPoints?.toLocaleString()} pts
           </span>
         </div>
@@ -122,7 +122,7 @@ export const LeaderboardTable = ({
                     key={entry.studentId}
                     className={`transition ${
                       isCurrent
-                        ? 'bg-indigo-50/50 font-semibold dark:bg-indigo-950/20'
+                        ? 'bg-secondary/50 font-semibold '
                         : 'hover:bg-slate-50/60 dark:hover:bg-slate-800/30'
                     }`}
                   >
@@ -135,7 +135,7 @@ export const LeaderboardTable = ({
                         <span className="truncate max-w-[180px] text-slate-900 dark:text-slate-100">
                           {entry.studentName}
                           {isCurrent && (
-                            <span className="ml-1.5 text-[11px] font-normal text-indigo-600 dark:text-indigo-400">
+                            <span className="ml-1.5 text-[11px] font-normal text-[var(--link)]">
                               (You)
                             </span>
                           )}

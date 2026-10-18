@@ -132,7 +132,7 @@ export const ProcessingScreen = ({
             ? '0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 45px rgba(16, 185, 129, 0.2)'
             : isError
               ? '0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 45px rgba(239, 68, 68, 0.2)'
-              : '0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 45px rgba(99, 102, 241, 0.2)',
+              : '0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 45px color-mix(in srgb, var(--primary) 20%, transparent)',
           display: 'flex',
           flexDirection: 'column',
           gap: '24px',
@@ -159,7 +159,7 @@ export const ProcessingScreen = ({
                   ? 'var(--primary)'
                   : isError
                     ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
-                    : 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                    : 'var(--primary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -167,7 +167,7 @@ export const ProcessingScreen = ({
                   ? '0 8px 20px rgba(0, 0, 0, 0.18)'
                   : isError
                     ? '0 8px 20px rgba(239, 68, 68, 0.4)'
-                    : '0 8px 20px rgba(99, 102, 241, 0.4)',
+                    : '0 8px 20px color-mix(in srgb, var(--primary) 40%, transparent)',
                 transition: 'all 0.4s ease',
               }}
             >
@@ -215,13 +215,13 @@ export const ProcessingScreen = ({
                 ? 'rgba(16, 185, 129, 0.15)'
                 : isError
                   ? 'rgba(239, 68, 68, 0.15)'
-                  : 'rgba(99, 102, 241, 0.15)',
+                  : 'color-mix(in srgb, var(--primary) 15%, transparent)',
               border: `1px solid ${
                 isCompleted
                   ? 'rgba(16, 185, 129, 0.35)'
                   : isError
                     ? 'rgba(239, 68, 68, 0.35)'
-                    : 'rgba(99, 102, 241, 0.35)'
+                    : 'color-mix(in srgb, var(--primary) 35%, transparent)'
               }`,
               borderRadius: '30px',
               padding: '6px 16px',
@@ -247,7 +247,7 @@ export const ProcessingScreen = ({
               <>
                 <Clock
                   size={16}
-                  style={{ color: '#818cf8', animation: 'pulseGlow 1.5s infinite' }}
+                  style={{ color: 'var(--link)', animation: 'pulseGlow 1.5s infinite' }}
                 />
                 <span style={{ fontSize: 13, fontWeight: 700, color: '#c7d2fe' }}>
                   Finalizing ·{' '}
@@ -285,7 +285,7 @@ export const ProcessingScreen = ({
                   ? '0 0 16px rgba(0, 0, 0, 0.18)'
                   : isError
                     ? '0 0 16px rgba(239, 68, 68, 0.7)'
-                    : '0 0 14px rgba(99, 102, 241, 0.5)',
+                    : '0 0 14px color-mix(in srgb, var(--primary) 50%, transparent)',
               }}
             />
           </div>
@@ -304,7 +304,7 @@ export const ProcessingScreen = ({
               <StageIcon
                 size={15}
                 style={{
-                  color: isCompleted ? '#34d399' : isError ? '#f87171' : '#818cf8',
+                  color: isCompleted ? '#34d399' : isError ? '#f87171' : 'var(--primary)',
                 }}
               />
               <span style={{ color: '#cbd5e1', fontWeight: 600 }}>{currentStageConfig.label}</span>
@@ -313,7 +313,7 @@ export const ProcessingScreen = ({
               style={{
                 fontFamily: 'monospace',
                 fontWeight: 700,
-                color: isCompleted ? '#34d399' : isError ? '#f87171' : '#818cf8',
+                color: isCompleted ? '#34d399' : isError ? '#f87171' : 'var(--primary)',
               }}
             >
               {progressPercent}%
@@ -630,14 +630,14 @@ export const ProcessingScreen = ({
             justifyContent: 'center',
             gap: 8,
             padding: '8px 14px',
-            background: 'rgba(99, 102, 241, 0.06)',
+            background: 'color-mix(in srgb, var(--primary) 6%, transparent)',
             borderRadius: 8,
-            border: '1px solid rgba(99, 102, 241, 0.15)',
+            border: '1px solid color-mix(in srgb, var(--primary) 15%, transparent)',
             fontSize: 12,
-            color: '#a5b4fc',
+            color: 'var(--link)',
           }}
         >
-          <ShieldCheck size={14} style={{ color: '#818cf8' }} />
+          <ShieldCheck size={14} style={{ color: 'var(--link)' }} />
           <span>Responses and test recordings are encrypted and saved to the database.</span>
         </div>
       </div>

@@ -183,12 +183,12 @@ const TECH_PRESETS = {
   },
   generic: {
     name: 'Core Curriculum',
-    accent: '#6366f1',
-    gradient: 'linear-gradient(135deg, #1e1b4b 0%, #4338ca 60%, #4f46e5 100%)',
-    glow: 'rgba(99, 102, 241, 0.25)',
-    border: 'rgba(99, 102, 241, 0.3)',
-    pillBg: 'rgba(99, 102, 241, 0.15)',
-    pillColor: '#a5b4fc',
+    accent: 'var(--primary)',
+    gradient: '#121212',
+    glow: 'color-mix(in srgb, var(--primary) 25%, transparent)',
+    border: 'color-mix(in srgb, var(--primary) 30%, transparent)',
+    pillBg: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+    pillColor: 'var(--link)',
     emblem: (
       <svg
         width="40"
@@ -580,11 +580,19 @@ function CourseCard({ course, onAction, onClick }) {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <Layers size={14} style={{ color: preset.accent }} />
-            <span>{course.modulesCount ?? 4} Modules</span>
+            <span>
+              {course.modulesCount != null ? `${course.modulesCount} modules` : 'Curriculum'}
+            </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <Clock size={14} style={{ color: preset.accent }} />
-            <span>{course.durationHours ? `${course.durationHours}h` : '40h'}</span>
+            <span>
+              {!course.durationMinutes
+                ? 'Self-paced'
+                : course.durationMinutes < 60
+                  ? `${course.durationMinutes} min`
+                  : `${Math.round(course.durationMinutes / 60)}h`}
+            </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto' }}>
             <Award size={14} style={{ color: '#10b981' }} />
@@ -938,9 +946,9 @@ function CourseListRow({ course, onAction, onClick }) {
           style={{
             padding: '8px 10px',
             borderRadius: 8,
-            border: '1px solid rgba(99,102,241,0.35)',
-            background: 'rgba(99,102,241,0.08)',
-            color: '#818cf8',
+            border: '1px solid color-mix(in srgb, var(--primary) 35%, transparent)',
+            background: 'color-mix(in srgb, var(--primary) 8%, transparent)',
+            color: 'var(--link)',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -948,10 +956,11 @@ function CourseListRow({ course, onAction, onClick }) {
             transition: 'all 0.15s ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(99,102,241,0.18)';
+            e.currentTarget.style.background =
+              'color-mix(in srgb, var(--primary) 18%, transparent)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'rgba(99,102,241,0.08)';
+            e.currentTarget.style.background = 'color-mix(in srgb, var(--primary) 8%, transparent)';
           }}
         >
           <Video size={16} />

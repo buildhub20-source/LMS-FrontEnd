@@ -9,10 +9,10 @@ export const MilestoneList = ({ milestones = [] }) => {
     <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Target className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+          <Target className="h-5 w-5 text-[var(--link)]" />
           <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Milestones</h3>
         </div>
-        <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300">
+        <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold text-[var(--link)]  dark:text-[var(--link)]">
           {completedCount} / {milestones.length} Completed
         </span>
       </div>

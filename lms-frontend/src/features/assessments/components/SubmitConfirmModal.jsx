@@ -57,11 +57,12 @@ export const SubmitConfirmModal = ({
       <div
         style={{
           background: '#0f172a',
-          border: '1px solid rgba(99, 102, 241, 0.35)',
+          border: '1px solid color-mix(in srgb, var(--primary) 35%, transparent)',
           borderRadius: 20,
           width: '100%',
           maxWidth: 520,
-          boxShadow: '0 25px 60px rgba(0,0,0,0.6), 0 0 35px rgba(99,102,241,0.15)',
+          boxShadow:
+            '0 25px 60px rgba(0,0,0,0.6), 0 0 35px color-mix(in srgb, var(--primary) 15%, transparent)',
           overflow: 'hidden',
           animation: 'modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
           color: '#ffffff',
@@ -84,9 +85,9 @@ export const SubmitConfirmModal = ({
                 width: 36,
                 height: 36,
                 borderRadius: 8,
-                background: 'rgba(99, 102, 241, 0.15)',
-                border: '1px solid rgba(99, 102, 241, 0.3)',
-                color: '#818cf8',
+                background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+                border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
+                color: 'var(--link)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -164,7 +165,7 @@ export const SubmitConfirmModal = ({
                 style={{
                   fontSize: 13,
                   fontWeight: 800,
-                  color: completionPct === 100 ? '#34d399' : '#818cf8',
+                  color: completionPct === 100 ? '#34d399' : 'var(--primary)',
                 }}
               >
                 {completionPct}% Complete

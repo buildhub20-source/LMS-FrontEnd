@@ -117,9 +117,10 @@ export const ExamLockdownOverlay = ({
             maxWidth: 680,
             width: '100%',
             background: 'linear-gradient(180deg, #0f172a 0%, #090d18 100%)',
-            border: '1px solid rgba(99, 102, 241, 0.35)',
+            border: '1px solid color-mix(in srgb, var(--primary) 35%, transparent)',
             borderRadius: 20,
-            boxShadow: '0 25px 70px rgba(0,0,0,0.85), 0 0 45px rgba(99,102,241,0.15)',
+            boxShadow:
+              '0 25px 70px rgba(0,0,0,0.85), 0 0 45px color-mix(in srgb, var(--primary) 15%, transparent)',
             overflow: 'hidden',
           }}
         >
@@ -143,13 +144,13 @@ export const ExamLockdownOverlay = ({
                   height: 40,
                   borderRadius: 10,
                   background:
-                    'linear-gradient(135deg, rgba(99,102,241,0.25) 0%, rgba(79,70,229,0.15) 100%)',
-                  border: '1px solid rgba(99,102,241,0.4)',
+                    'linear-gradient(135deg, color-mix(in srgb, var(--primary) 25%, transparent) 0%, rgba(79,70,229,0.15) 100%)',
+                  border: '1px solid color-mix(in srgb, var(--primary) 40%, transparent)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#818cf8',
-                  boxShadow: '0 0 16px rgba(99,102,241,0.25)',
+                  color: 'var(--link)',
+                  boxShadow: '0 0 16px color-mix(in srgb, var(--primary) 25%, transparent)',
                 }}
               >
                 <Shield size={20} />
@@ -182,11 +183,11 @@ export const ExamLockdownOverlay = ({
                 style={{
                   padding: '4px 10px',
                   borderRadius: 20,
-                  background: 'rgba(99, 102, 241, 0.12)',
-                  border: '1px solid rgba(99, 102, 241, 0.3)',
+                  background: 'color-mix(in srgb, var(--primary) 12%, transparent)',
+                  border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
                   fontSize: 11,
                   fontWeight: 700,
-                  color: '#a5b4fc',
+                  color: 'var(--link)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: 4,
@@ -271,8 +272,8 @@ export const ExamLockdownOverlay = ({
                     style={{
                       padding: 6,
                       borderRadius: 8,
-                      background: 'rgba(99,102,241,0.15)',
-                      color: '#818cf8',
+                      background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+                      color: 'var(--link)',
                       flexShrink: 0,
                     }}
                   >
@@ -376,8 +377,10 @@ export const ExamLockdownOverlay = ({
                   gap: 12,
                   padding: '14px 16px',
                   borderRadius: 10,
-                  background: agreedTerms ? 'rgba(16, 185, 129, 0.08)' : 'rgba(99, 102, 241, 0.08)',
-                  border: `1.5px solid ${agreedTerms ? 'rgba(16, 185, 129, 0.4)' : 'rgba(99, 102, 241, 0.25)'}`,
+                  background: agreedTerms
+                    ? 'rgba(16, 185, 129, 0.08)'
+                    : 'color-mix(in srgb, var(--primary) 8%, transparent)',
+                  border: `1.5px solid ${agreedTerms ? 'rgba(16, 185, 129, 0.4)' : 'color-mix(in srgb, var(--primary) 25%, transparent)'}`,
                   cursor: 'pointer',
                   userSelect: 'none',
                   transition: 'all 0.2s ease',
@@ -449,7 +452,7 @@ export const ExamLockdownOverlay = ({
                 <div
                   style={{
                     background: '#070a14',
-                    border: `1px solid ${isScreenActive ? 'rgba(16, 185, 129, 0.35)' : 'rgba(99, 102, 241, 0.35)'}`,
+                    border: `1px solid ${isScreenActive ? 'rgba(16, 185, 129, 0.35)' : 'color-mix(in srgb, var(--primary) 35%, transparent)'}`,
                     borderRadius: 10,
                     padding: '14px 16px',
                     display: 'flex',
@@ -465,11 +468,11 @@ export const ExamLockdownOverlay = ({
                         borderRadius: 8,
                         background: isScreenActive
                           ? 'rgba(16, 185, 129, 0.15)'
-                          : 'rgba(99, 102, 241, 0.15)',
+                          : 'color-mix(in srgb, var(--primary) 15%, transparent)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: isScreenActive ? '#34d399' : '#818cf8',
+                        color: isScreenActive ? '#34d399' : 'var(--primary)',
                       }}
                     >
                       <Video size={18} />
@@ -503,7 +506,7 @@ export const ExamLockdownOverlay = ({
                         fontSize: 12,
                         fontWeight: 700,
                         borderRadius: 6,
-                        background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                        background: 'var(--primary)',
                       }}
                     >
                       {isRequestingScreen ? 'Selecting…' : 'Grant Access'}
@@ -546,11 +549,11 @@ export const ExamLockdownOverlay = ({
                         width: 36,
                         height: 36,
                         borderRadius: 8,
-                        background: 'rgba(99, 102, 241, 0.15)',
+                        background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#818cf8',
+                        color: 'var(--link)',
                       }}
                     >
                       <Monitor size={18} />
@@ -600,11 +603,11 @@ export const ExamLockdownOverlay = ({
                         width: 36,
                         height: 36,
                         borderRadius: 8,
-                        background: 'rgba(99, 102, 241, 0.15)',
+                        background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#818cf8',
+                        color: 'var(--link)',
                       }}
                     >
                       {loading ? (
@@ -669,10 +672,10 @@ export const ExamLockdownOverlay = ({
                         background: error
                           ? 'rgba(239, 68, 68, 0.15)'
                           : loading
-                            ? 'rgba(99, 102, 241, 0.15)'
+                            ? 'color-mix(in srgb, var(--primary) 15%, transparent)'
                             : 'rgba(16, 185, 129, 0.15)',
-                        border: `1px solid ${error ? 'rgba(239, 68, 68, 0.3)' : loading ? 'rgba(99, 102, 241, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`,
-                        color: error ? '#f87171' : loading ? '#818cf8' : '#34d399',
+                        border: `1px solid ${error ? 'rgba(239, 68, 68, 0.3)' : loading ? 'color-mix(in srgb, var(--primary) 30%, transparent)' : 'rgba(16, 185, 129, 0.3)'}`,
+                        color: error ? '#f87171' : loading ? 'var(--primary)' : '#34d399',
                         fontSize: 12,
                         fontWeight: 700,
                       }}
@@ -822,10 +825,11 @@ export const ExamLockdownOverlay = ({
             width: '100%',
             background:
               'linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(8, 12, 24, 0.95) 100%)',
-            border: '1px solid rgba(99, 102, 241, 0.3)',
+            border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
             borderRadius: 24,
             padding: '36px 36px 30px',
-            boxShadow: '0 30px 80px rgba(0,0,0,0.9), 0 0 60px rgba(99,102,241,0.18)',
+            boxShadow:
+              '0 30px 80px rgba(0,0,0,0.9), 0 0 60px color-mix(in srgb, var(--primary) 18%, transparent)',
             textAlign: 'center',
             position: 'relative',
             overflow: 'hidden',
@@ -840,7 +844,8 @@ export const ExamLockdownOverlay = ({
               transform: 'translateX(-50%)',
               width: 240,
               height: 120,
-              background: 'radial-gradient(circle, rgba(99,102,241,0.3) 0%, rgba(0,0,0,0) 70%)',
+              background:
+                'radial-gradient(circle, color-mix(in srgb, var(--primary) 30%, transparent) 0%, rgba(0,0,0,0) 70%)',
               pointerEvents: 'none',
             }}
           />
@@ -902,7 +907,7 @@ export const ExamLockdownOverlay = ({
                 style={{
                   fontSize: 10,
                   fontWeight: 700,
-                  color: '#818cf8',
+                  color: 'var(--link)',
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase',
                 }}
@@ -954,12 +959,12 @@ export const ExamLockdownOverlay = ({
                   width: 38,
                   height: 38,
                   borderRadius: 10,
-                  background: 'rgba(99, 102, 241, 0.15)',
-                  border: '1px solid rgba(99, 102, 241, 0.3)',
+                  background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+                  border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#818cf8',
+                  color: 'var(--link)',
                   flexShrink: 0,
                 }}
               >

@@ -474,7 +474,7 @@ export const InstructorCertificationHubPage = () => {
                   transition: 'border-color 0.2s',
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = 'var(--color-primary, #6366f1)';
+                  e.target.style.borderColor = 'var(--color-primary, #121212)';
                 }}
                 onBlur={(e) => {
                   e.target.style.borderColor = 'var(--border)';
@@ -509,7 +509,7 @@ export const InstructorCertificationHubPage = () => {
                     }}
                     onMouseEnter={(e) => {
                       if (!active)
-                        e.currentTarget.style.borderColor = 'var(--color-primary, #6366f1)';
+                        e.currentTarget.style.borderColor = 'var(--color-primary, #121212)';
                     }}
                     onMouseLeave={(e) => {
                       if (!active) e.currentTarget.style.borderColor = 'var(--border)';
@@ -938,9 +938,9 @@ export const InstructorCertificationHubPage = () => {
                             fontWeight: 600,
                             padding: '3px 8px',
                             borderRadius: 6,
-                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                            color: 'var(--color-primary, #6366f1)',
-                            border: '1px solid rgba(99, 102, 241, 0.25)',
+                            backgroundColor: 'color-mix(in srgb, var(--primary) 10%, transparent)',
+                            color: 'var(--color-primary, #121212)',
+                            border: '1px solid color-mix(in srgb, var(--primary) 25%, transparent)',
                           }}
                         >
                           Eligible for Minting
@@ -964,9 +964,11 @@ export const InstructorCertificationHubPage = () => {
                               gap: 4,
                               padding: '6px 12px',
                               borderRadius: 99,
-                              backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                              border: '1px solid rgba(99, 102, 241, 0.25)',
-                              color: 'var(--color-primary, #6366f1)',
+                              backgroundColor:
+                                'color-mix(in srgb, var(--primary) 10%, transparent)',
+                              border:
+                                '1px solid color-mix(in srgb, var(--primary) 25%, transparent)',
+                              color: 'var(--color-primary, #121212)',
                               fontSize: 12,
                               fontWeight: 600,
                               cursor: 'pointer',
@@ -1099,7 +1101,7 @@ export const InstructorCertificationHubPage = () => {
                   style={{
                     fontFamily: 'monospace',
                     fontWeight: 700,
-                    color: 'var(--color-primary, #6366f1)',
+                    color: 'var(--color-primary, #121212)',
                   }}
                 >
                   {activeVerifyCert.serialNumber}

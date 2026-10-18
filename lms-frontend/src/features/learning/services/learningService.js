@@ -7,6 +7,7 @@ export const learningService = {
   getProgress: (courseId) => http.get(API_ENDPOINTS.learning.progress(courseId)),
   saveProgress: (courseId, payload) =>
     http.post(API_ENDPOINTS.learning.progress(courseId), payload),
+  recordTime: (courseId, seconds) => http.post(API_ENDPOINTS.learning.time(courseId), { seconds }),
 };
 
 export default learningService;
