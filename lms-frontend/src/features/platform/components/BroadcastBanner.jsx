@@ -37,27 +37,27 @@ export const BroadcastBanner = () => {
 
   const typeConfig = {
     INFO: {
-      bg: 'rgba(56, 189, 248, 0.15)',
-      border: 'rgba(56, 189, 248, 0.3)',
-      color: '#38bdf8',
+      bg: 'var(--secondary)',
+      border: 'var(--border)',
+      color: 'var(--foreground)',
       icon: Info,
     },
     WARNING: {
       bg: 'rgba(234, 179, 8, 0.15)',
       border: 'rgba(234, 179, 8, 0.3)',
-      color: '#facc15',
+      color: 'color-mix(in srgb, #ca8a04 70%, var(--foreground))',
       icon: AlertTriangle,
     },
     CRITICAL: {
       bg: 'rgba(239, 68, 68, 0.15)',
       border: 'rgba(239, 68, 68, 0.3)',
-      color: '#f87171',
+      color: 'color-mix(in srgb, #ef4444 70%, var(--foreground))',
       icon: AlertTriangle,
     },
     MAINTENANCE: {
       bg: 'rgba(192, 132, 252, 0.15)',
       border: 'rgba(192, 132, 252, 0.3)',
-      color: '#c084fc',
+      color: 'color-mix(in srgb, #a855f7 70%, var(--foreground))',
       icon: Megaphone,
     },
   };

@@ -20,17 +20,19 @@
   --font-heading: var(--font-sans);
 
   /* ── Color Palette Scales ─────────────────────────── */
-  --color-slate-50: #f8fafc;
-  --color-slate-100: #f1f5f9;
-  --color-slate-200: #e2e8f0;
-  --color-slate-300: #cbd5e1;
-  --color-slate-400: #94a3b8;
-  --color-slate-500: #64748b;
-  --color-slate-600: #475569;
-  --color-slate-700: #334155;
-  --color-slate-800: #1e293b;
-  --color-slate-900: #0f172a;
-  --color-slate-950: #020617;
+  /* slate is redefined as the GradusMind warm neutral (paper → ink), so pages
+     built on Tailwind's slate classes no longer pick up a navy cast. */
+  --color-slate-50: #f8f6ef;
+  --color-slate-100: #f3f1ea;
+  --color-slate-200: #e2ded2;
+  --color-slate-300: #cfc9b8;
+  --color-slate-400: #9c988c;
+  --color-slate-500: #6f6d67;
+  --color-slate-600: #4a4945;
+  --color-slate-700: #33373c;
+  --color-slate-800: #1d2023;
+  --color-slate-900: #16181b;
+  --color-slate-950: #0b0c0d;
 
   --color-emerald-50: #ecfdf5;
   --color-emerald-100: #d1fae5;
