@@ -1,8 +1,14 @@
 import React from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import {
-  ArrowLeft, BookOpen, Layers, CheckCircle2, ChevronRight,
-  Sparkles, FileText, Info
+  ArrowLeft,
+  BookOpen,
+  Layers,
+  CheckCircle2,
+  ChevronRight,
+  Sparkles,
+  FileText,
+  Info,
 } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import CourseForm from '../components/CourseForm';
@@ -35,13 +41,16 @@ export const CreateCoursePage = () => {
   return (
     <PageContainer
       title="Create New Course"
-      breadcrumbs={[
-        { label: 'Courses', to: coursesRoute },
-        { label: 'Create Course' },
-      ]}
+      breadcrumbs={[{ label: 'Courses', to: coursesRoute }, { label: 'Create Course' }]}
     >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-        
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 24,
+          fontFamily: 'system-ui, -apple-system, sans-serif',
+        }}
+      >
         {/* ── Top Header Banner ── */}
         <div
           style={{
@@ -75,15 +84,28 @@ export const CreateCoursePage = () => {
                 transition: 'all 0.15s ease',
               }}
               title="Back to Courses"
-              onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--border-color)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--surface-medium, rgba(255, 255, 255, 0.05))'; }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--border-color)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background =
+                  'var(--surface-medium, rgba(255, 255, 255, 0.05))';
+              }}
             >
               <ArrowLeft size={16} />
             </button>
 
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
+                <h1
+                  style={{
+                    margin: 0,
+                    fontSize: 20,
+                    fontWeight: 700,
+                    color: 'var(--text-primary)',
+                    letterSpacing: '-0.3px',
+                  }}
+                >
                   Create New Course
                 </h1>
                 <span
@@ -102,7 +124,8 @@ export const CreateCoursePage = () => {
                 </span>
               </div>
               <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
-                Set up the foundational course details, level, and syllabus. You will be able to add modules and video lessons immediately after.
+                Set up the foundational course details, level, and syllabus. You will be able to add
+                modules and video lessons immediately after.
               </p>
             </div>
           </div>

@@ -6,8 +6,7 @@ export const calendarService = {
   getEvents: () => http.get(API_ENDPOINTS.calendar.events),
 
   /** Fetch upcoming deadlines within the given number of days. */
-  getDeadlines: (days = 30) =>
-    http.get(API_ENDPOINTS.calendar.deadlines, { params: { days } }),
+  getDeadlines: (days = 30) => http.get(API_ENDPOINTS.calendar.deadlines, { params: { days } }),
 };
 
 export default calendarService;

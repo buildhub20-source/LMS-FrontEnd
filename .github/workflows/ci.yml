@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [dev, main]
   pull_request:
-    branches: [main, develop]
+    branches: [dev, main]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -15,6 +15,9 @@ jobs:
     name: Lint, test and build
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: lms-frontend
 
     steps:
       - uses: actions/checkout@v4
@@ -23,6 +26,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: lms-frontend/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -40,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage
-          path: coverage/
+          path: lms-frontend/coverage/
           retention-days: 7
 
       - name: Build

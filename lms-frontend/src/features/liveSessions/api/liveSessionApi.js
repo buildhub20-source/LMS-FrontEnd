@@ -22,11 +22,9 @@ export const liveSessionApi = {
       }
       const courses = Array.isArray(coursesRes)
         ? coursesRes
-        : (coursesRes?.content || coursesRes?.data || []);
+        : coursesRes?.content || coursesRes?.data || [];
       const results = await Promise.all(
-        courses.map((c) =>
-          liveSessionApi.getCourseSessions(c.id).catch(() => [])
-        )
+        courses.map((c) => liveSessionApi.getCourseSessions(c.id).catch(() => [])),
       );
       const all = results.flat();
       all.sort((a, b) => new Date(b.scheduledStart || 0) - new Date(a.scheduledStart || 0));
@@ -39,32 +37,24 @@ export const liveSessionApi = {
     }
   },
 
-  getCourseSessions: (courseId) =>
-    http.get(API_ENDPOINTS.liveSessions.byCourse(courseId)),
+  getCourseSessions: (courseId) => http.get(API_ENDPOINTS.liveSessions.byCourse(courseId)),
 
   createSession: (courseId, payload) =>
     http.post(API_ENDPOINTS.liveSessions.create(courseId), payload),
 
-  getSession: (sessionId) =>
-    http.get(API_ENDPOINTS.liveSessions.byId(sessionId)),
+  getSession: (sessionId) => http.get(API_ENDPOINTS.liveSessions.byId(sessionId)),
 
-  startSession: (sessionId) =>
-    http.post(API_ENDPOINTS.liveSessions.start(sessionId)),
+  startSession: (sessionId) => http.post(API_ENDPOINTS.liveSessions.start(sessionId)),
 
-  joinSession: (sessionId) =>
-    http.post(API_ENDPOINTS.liveSessions.join(sessionId)),
+  joinSession: (sessionId) => http.post(API_ENDPOINTS.liveSessions.join(sessionId)),
 
-  leaveSession: (sessionId) =>
-    http.post(API_ENDPOINTS.liveSessions.leave(sessionId)),
+  leaveSession: (sessionId) => http.post(API_ENDPOINTS.liveSessions.leave(sessionId)),
 
-  endSession: (sessionId) =>
-    http.post(API_ENDPOINTS.liveSessions.end(sessionId)),
+  endSession: (sessionId) => http.post(API_ENDPOINTS.liveSessions.end(sessionId)),
 
-  getSessionAttendance: (sessionId) =>
-    http.get(API_ENDPOINTS.liveSessions.attendance(sessionId)),
+  getSessionAttendance: (sessionId) => http.get(API_ENDPOINTS.liveSessions.attendance(sessionId)),
 
-  getTenantUsage: (tenantId) =>
-    http.get(API_ENDPOINTS.liveSessions.tenantUsage(tenantId)),
+  getTenantUsage: (tenantId) => http.get(API_ENDPOINTS.liveSessions.tenantUsage(tenantId)),
 
   updateTenantLiveConfig: (tenantId, payload) =>
     http.put(API_ENDPOINTS.liveSessions.tenantConfig(tenantId), payload),

@@ -68,7 +68,9 @@ export const AdminButton = ({
       className={cn(
         'inline-flex items-center justify-center rounded-xl font-semibold',
         'transition-all duration-150 whitespace-nowrap',
-        (disabled || loading) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:opacity-85 active:scale-[0.98]',
+        disabled || loading
+          ? 'opacity-50 cursor-not-allowed'
+          : 'cursor-pointer hover:opacity-85 active:scale-[0.98]',
         className,
       )}
       style={{ ...vs, ...ss, ...style }}

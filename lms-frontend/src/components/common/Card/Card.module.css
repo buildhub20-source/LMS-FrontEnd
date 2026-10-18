@@ -7,7 +7,9 @@
 }
 .interactive {
   cursor: pointer;
-  transition: box-shadow 200ms ease, transform 200ms ease;
+  transition:
+    box-shadow 200ms ease,
+    transform 200ms ease;
 }
 .interactive:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);

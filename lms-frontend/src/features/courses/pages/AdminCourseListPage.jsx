@@ -1,13 +1,31 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Search, BookOpen, Plus, Globe, GlobeLock, Archive,
-  CheckCircle, XCircle, Trash2, LayoutList, LayoutGrid, Copy,
-  Clock, Layers, Award, Sparkles, ArrowRight, Video
+  Search,
+  BookOpen,
+  Plus,
+  Globe,
+  GlobeLock,
+  Archive,
+  CheckCircle,
+  XCircle,
+  Trash2,
+  LayoutList,
+  LayoutGrid,
+  Copy,
+  Clock,
+  Layers,
+  Award,
+  Sparkles,
+  ArrowRight,
+  Video,
 } from 'lucide-react';
 import AdminButton from '../../../components/ui/AdminButton';
 import { AdminModal, AdminConfirmModal } from '../../../components/ui/AdminModal';
-import AdminPagination, { AdminEmptyState, AdminErrorState } from '../../../components/ui/AdminPagination';
+import AdminPagination, {
+  AdminEmptyState,
+  AdminErrorState,
+} from '../../../components/ui/AdminPagination';
 import PermissionGuard from '../../../guards/PermissionGuard';
 import { PERMISSIONS } from '../../../constants/permissions';
 import { COURSE_STATUS } from '../constants/courseConstants';
@@ -46,9 +64,20 @@ const TECH_PRESETS = {
     pillColor: '#fda4af',
     emblem: (
       <svg width="40" height="40" viewBox="0 0 250 250" fill="none">
-        <polygon points="125,30 125,30 125,30 31.9,63.2 46.1,186.3 125,230 125,230 125,230 203.9,186.3 218.1,63.2" fill="rgba(244,63,94,0.3)" stroke="#f43f5e" strokeWidth="14" />
-        <polygon points="125,52.1 125,153.4 125,153.4 125,207 182.2,175.2 193.3,79.1" fill="rgba(244,63,94,0.5)" />
-        <path d="M125 78.5L84.2 173.3h18.8l8.2-20.7h27.6v-15.4h-21.4l12.6-31.5L125 78.5z" fill="#fff" />
+        <polygon
+          points="125,30 125,30 125,30 31.9,63.2 46.1,186.3 125,230 125,230 125,230 203.9,186.3 218.1,63.2"
+          fill="rgba(244,63,94,0.3)"
+          stroke="#f43f5e"
+          strokeWidth="14"
+        />
+        <polygon
+          points="125,52.1 125,153.4 125,153.4 125,207 182.2,175.2 193.3,79.1"
+          fill="rgba(244,63,94,0.5)"
+        />
+        <path
+          d="M125 78.5L84.2 173.3h18.8l8.2-20.7h27.6v-15.4h-21.4l12.6-31.5L125 78.5z"
+          fill="#fff"
+        />
       </svg>
     ),
   },
@@ -61,7 +90,16 @@ const TECH_PRESETS = {
     pillBg: 'rgba(16, 185, 129, 0.15)',
     pillColor: '#6ee7b7',
     emblem: (
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#10b981"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <polygon points="12 2 2 7 12 12 22 7 12 2" />
         <polyline points="2 17 12 22 22 17" />
         <polyline points="2 12 12 17 22 12" />
@@ -77,7 +115,16 @@ const TECH_PRESETS = {
     pillBg: 'rgba(249, 115, 22, 0.15)',
     pillColor: '#fdba74',
     emblem: (
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#f97316"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
       </svg>
@@ -92,7 +139,16 @@ const TECH_PRESETS = {
     pillBg: 'rgba(6, 182, 212, 0.15)',
     pillColor: '#67e8f9',
     emblem: (
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#06b6d4"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
       </svg>
     ),
@@ -106,7 +162,16 @@ const TECH_PRESETS = {
     pillBg: 'rgba(168, 85, 247, 0.15)',
     pillColor: '#d8b4fe',
     emblem: (
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#a855f7"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <rect x="4" y="4" width="16" height="16" rx="2" />
         <rect x="9" y="9" width="6" height="6" />
         <line x1="9" y1="1" x2="9" y2="4" />
@@ -125,7 +190,16 @@ const TECH_PRESETS = {
     pillBg: 'rgba(99, 102, 241, 0.15)',
     pillColor: '#a5b4fc',
     emblem: (
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#6366f1"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <polyline points="16 18 22 12 16 6" />
         <polyline points="8 6 2 12 8 18" />
       </svg>
@@ -137,24 +211,68 @@ function getTechPreset(title = '') {
   const t = title.toLowerCase();
   if (t.includes('react')) return TECH_PRESETS.react;
   if (t.includes('angular')) return TECH_PRESETS.angular;
-  if (t.includes('java') || t.includes('structure') || t.includes('dsa') || t.includes('algorithm')) return TECH_PRESETS.java;
-  if (t.includes('cloud') || t.includes('devops') || t.includes('aws') || t.includes('docker') || t.includes('kubernetes')) return TECH_PRESETS.cloud;
-  if (t.includes('ai') || t.includes('python') || t.includes('data') || t.includes('machine') || t.includes('learning')) return TECH_PRESETS.ai;
-  if (t.includes('full') || t.includes('stack') || t.includes('node') || t.includes('backend') || t.includes('web')) return TECH_PRESETS.fullstack;
+  if (t.includes('java') || t.includes('structure') || t.includes('dsa') || t.includes('algorithm'))
+    return TECH_PRESETS.java;
+  if (
+    t.includes('cloud') ||
+    t.includes('devops') ||
+    t.includes('aws') ||
+    t.includes('docker') ||
+    t.includes('kubernetes')
+  )
+    return TECH_PRESETS.cloud;
+  if (
+    t.includes('ai') ||
+    t.includes('python') ||
+    t.includes('data') ||
+    t.includes('machine') ||
+    t.includes('learning')
+  )
+    return TECH_PRESETS.ai;
+  if (
+    t.includes('full') ||
+    t.includes('stack') ||
+    t.includes('node') ||
+    t.includes('backend') ||
+    t.includes('web')
+  )
+    return TECH_PRESETS.fullstack;
   return TECH_PRESETS.generic;
 }
 
 function getInitials(str = '') {
-  return str.split(' ').slice(0, 2).map(w => w[0] ?? '').join('').toUpperCase() || 'CS';
+  return (
+    str
+      .split(' ')
+      .slice(0, 2)
+      .map((w) => w[0] ?? '')
+      .join('')
+      .toUpperCase() || 'CS'
+  );
 }
 
 /* ── Level Badge (Student Panel Style) ── */
 function LevelBadge({ level }) {
   const norm = (level || 'BEGINNER').toUpperCase();
   const map = {
-    BEGINNER: { label: 'Beginner', bg: 'rgba(16, 185, 129, 0.18)', color: '#34d399', border: 'rgba(16, 185, 129, 0.35)' },
-    INTERMEDIATE: { label: 'Intermediate', bg: 'rgba(59, 130, 246, 0.18)', color: '#60a5fa', border: 'rgba(59, 130, 246, 0.35)' },
-    ADVANCED: { label: 'Advanced', bg: 'rgba(168, 85, 247, 0.18)', color: '#c084fc', border: 'rgba(168, 85, 247, 0.35)' },
+    BEGINNER: {
+      label: 'Beginner',
+      bg: 'rgba(16, 185, 129, 0.18)',
+      color: '#34d399',
+      border: 'rgba(16, 185, 129, 0.35)',
+    },
+    INTERMEDIATE: {
+      label: 'Intermediate',
+      bg: 'rgba(59, 130, 246, 0.18)',
+      color: '#60a5fa',
+      border: 'rgba(59, 130, 246, 0.35)',
+    },
+    ADVANCED: {
+      label: 'Advanced',
+      bg: 'rgba(168, 85, 247, 0.18)',
+      color: '#c084fc',
+      border: 'rgba(168, 85, 247, 0.35)',
+    },
   };
   const s = map[norm] || map.BEGINNER;
   return (
@@ -174,7 +292,15 @@ function LevelBadge({ level }) {
         backdropFilter: 'blur(4px)',
       }}
     >
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: s.color, boxShadow: `0 0 6px ${s.color}` }} />
+      <span
+        style={{
+          width: 6,
+          height: 6,
+          borderRadius: '50%',
+          background: s.color,
+          boxShadow: `0 0 6px ${s.color}`,
+        }}
+      />
       {s.label}
     </span>
   );
@@ -182,21 +308,57 @@ function LevelBadge({ level }) {
 
 /* ── status pill ── */
 const SC = {
-  DRAFT: { label: 'Draft', bg: 'rgba(255, 255, 255, 0.08)', color: '#94a3b8', border: 'rgba(255, 255, 255, 0.15)' },
-  PENDING_REVIEW: { label: 'Pending', bg: 'rgba(245, 158, 11, 0.18)', color: '#fbbf24', border: 'rgba(245, 158, 11, 0.35)' },
-  PUBLISHED: { label: 'Ongoing', bg: 'rgba(16, 185, 129, 0.18)', color: '#34d399', border: 'rgba(16, 185, 129, 0.35)' },
-  UNPUBLISHED: { label: 'Unpublished', bg: 'rgba(148, 163, 184, 0.18)', color: '#cbd5e1', border: 'rgba(148, 163, 184, 0.35)' },
-  ARCHIVED: { label: 'Archived', bg: 'rgba(100, 116, 139, 0.18)', color: '#94a3b8', border: 'rgba(100, 116, 139, 0.35)' },
+  DRAFT: {
+    label: 'Draft',
+    bg: 'rgba(255, 255, 255, 0.08)',
+    color: '#94a3b8',
+    border: 'rgba(255, 255, 255, 0.15)',
+  },
+  PENDING_REVIEW: {
+    label: 'Pending',
+    bg: 'rgba(245, 158, 11, 0.18)',
+    color: '#fbbf24',
+    border: 'rgba(245, 158, 11, 0.35)',
+  },
+  PUBLISHED: {
+    label: 'Ongoing',
+    bg: 'rgba(16, 185, 129, 0.18)',
+    color: '#34d399',
+    border: 'rgba(16, 185, 129, 0.35)',
+  },
+  UNPUBLISHED: {
+    label: 'Unpublished',
+    bg: 'rgba(148, 163, 184, 0.18)',
+    color: '#cbd5e1',
+    border: 'rgba(148, 163, 184, 0.35)',
+  },
+  ARCHIVED: {
+    label: 'Archived',
+    bg: 'rgba(100, 116, 139, 0.18)',
+    color: '#94a3b8',
+    border: 'rgba(100, 116, 139, 0.35)',
+  },
 };
 
 function StatusPill({ status }) {
   const c = SC[status] ?? SC.DRAFT;
   return (
-    <span style={{
-      padding: '4px 12px', borderRadius: 99, fontSize: 12, fontWeight: 600,
-      background: c.bg, color: c.color, border: `1px solid ${c.border}`,
-      backdropFilter: 'blur(8px)', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: 5
-    }}>
+    <span
+      style={{
+        padding: '4px 12px',
+        borderRadius: 99,
+        fontSize: 12,
+        fontWeight: 600,
+        background: c.bg,
+        color: c.color,
+        border: `1px solid ${c.border}`,
+        backdropFilter: 'blur(8px)',
+        whiteSpace: 'nowrap',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 5,
+      }}
+    >
       <span style={{ width: 6, height: 6, borderRadius: '50%', background: c.color }} />
       {c.label}
     </span>
@@ -206,13 +368,24 @@ function StatusPill({ status }) {
 /* ── avatar ── */
 function Avatar({ name = '', size = 34 }) {
   return (
-    <div style={{
-      width: size, height: size, borderRadius: '50%', flexShrink: 0,
-      background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)', color: '#fff',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontWeight: 700, fontSize: size * 0.38, fontFamily: 'system-ui, -apple-system, sans-serif',
-      boxShadow: '0 2px 6px rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.15)'
-    }}>
+    <div
+      style={{
+        width: size,
+        height: size,
+        borderRadius: '50%',
+        flexShrink: 0,
+        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+        color: '#fff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontWeight: 700,
+        fontSize: size * 0.38,
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+        border: '1px solid rgba(255,255,255,0.15)',
+      }}
+    >
       {getInitials(name)}
     </div>
   );
@@ -220,7 +393,8 @@ function Avatar({ name = '', size = 34 }) {
 
 /* ── action builder ── */
 function buildActions(course, onAction) {
-  const s = course.status, A = [];
+  const s = course.status,
+    A = [];
   if (s === 'PENDING_REVIEW') {
     A.push({ label: 'Approve', danger: false, onClick: () => onAction('approve', course) });
     A.push({ label: 'Reject', danger: true, onClick: () => onAction('reject', course) });
@@ -261,12 +435,12 @@ function CourseCard({ course, onAction, onClick }) {
         cursor: 'pointer',
         width: '100%',
       }}
-      onMouseEnter={e => {
+      onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-4px)';
         e.currentTarget.style.borderColor = 'var(--primary, #22c55e)';
         e.currentTarget.style.boxShadow = 'var(--shadow-md, 0 8px 24px rgba(0,0,0,0.08))';
       }}
-      onMouseLeave={e => {
+      onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)';
         e.currentTarget.style.borderColor = 'var(--border, #e2e8f0)';
         e.currentTarget.style.boxShadow = 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))';
@@ -276,7 +450,9 @@ function CourseCard({ course, onAction, onClick }) {
       <div
         style={{
           height: 135,
-          background: course.thumbnailUrl ? `url(${course.thumbnailUrl}) center/cover` : preset.gradient,
+          background: course.thumbnailUrl
+            ? `url(${course.thumbnailUrl}) center/cover`
+            : preset.gradient,
           position: 'relative',
           padding: '14px 16px',
           display: 'flex',
@@ -290,7 +466,8 @@ function CourseCard({ course, onAction, onClick }) {
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)',
+            background:
+              'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)',
             pointerEvents: 'none',
           }}
         />
@@ -360,7 +537,9 @@ function CourseCard({ course, onAction, onClick }) {
       </div>
 
       {/* Card Body */}
-      <div style={{ padding: '18px 20px', display: 'flex', flexDirection: 'column', flex: 1, gap: 14 }}>
+      <div
+        style={{ padding: '18px 20px', display: 'flex', flexDirection: 'column', flex: 1, gap: 14 }}
+      >
         <div>
           <h3
             style={{
@@ -385,17 +564,29 @@ function CourseCard({ course, onAction, onClick }) {
               overflow: 'hidden',
             }}
           >
-            {course.description || 'Master core concepts through interactive modules, practical evaluations, and certified instructor guidance.'}
+            {course.description ||
+              'Master core concepts through interactive modules, practical evaluations, and certified instructor guidance.'}
           </p>
         </div>
 
         {/* Metadata Chips */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 12, color: 'var(--text-muted, #64748b)', flexWrap: 'wrap' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            fontSize: 12,
+            color: 'var(--text-muted, #64748b)',
+            flexWrap: 'wrap',
+          }}
+        >
           <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <Clock size={13} style={{ color: '#3b82f6' }} /> {course.durationMinutes ? `${course.durationMinutes} min` : 'Self-paced'}
+            <Clock size={13} style={{ color: '#3b82f6' }} />{' '}
+            {course.durationMinutes ? `${course.durationMinutes} min` : 'Self-paced'}
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <Layers size={13} style={{ color: '#10b981' }} /> {course.modules?.length ? `${course.modules.length} modules` : 'Full curriculum'}
+            <Layers size={13} style={{ color: '#10b981' }} />{' '}
+            {course.modules?.length ? `${course.modules.length} modules` : 'Full curriculum'}
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#f59e0b' }}>
             <Award size={13} /> Certified
@@ -404,11 +595,26 @@ function CourseCard({ course, onAction, onClick }) {
 
         {/* Gradient Progress Bar */}
         <div style={{ marginTop: 'auto', paddingTop: 2 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: 12,
+              fontWeight: 600,
+              marginBottom: 6,
+            }}
+          >
             <span style={{ color: 'var(--text-muted, #64748b)' }}>Progress</span>
             <span style={{ color: 'var(--text-primary, #1a1a2e)' }}>{progressPct}%</span>
           </div>
-          <div style={{ height: 6, background: 'var(--muted, #f1f5f9)', borderRadius: 99, overflow: 'hidden' }}>
+          <div
+            style={{
+              height: 6,
+              background: 'var(--muted, #f1f5f9)',
+              borderRadius: 99,
+              overflow: 'hidden',
+            }}
+          >
             <div
               style={{
                 height: '100%',
@@ -426,20 +632,42 @@ function CourseCard({ course, onAction, onClick }) {
         <div style={{ height: 1, background: 'var(--border, #e2e8f0)' }} />
 
         {/* Creator & Action Buttons */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
             <Avatar name={course.createdByName ?? 'Administrator'} size={32} />
             <div style={{ minWidth: 0 }}>
-              <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: 'var(--text-primary, #1a1a2e)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: 'var(--text-primary, #1a1a2e)',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
                 {course.createdByName ?? 'Platform Admin'}
               </p>
-              <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted, #94a3b8)' }}>Instructor</p>
+              <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted, #94a3b8)' }}>
+                Instructor
+              </p>
             </div>
           </div>
 
           <div style={{ display: 'flex', gap: 8, shrink: 0 }}>
             <button
-              onClick={(e) => { e.stopPropagation(); onAction('edit', course); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onAction('edit', course);
+              }}
               style={{
                 padding: '6px 13px',
                 borderRadius: 99,
@@ -452,14 +680,21 @@ function CourseCard({ course, onAction, onClick }) {
                 color: 'var(--text-primary, #1a1a2e)',
                 transition: 'all 0.2s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-surface-hover, #e2e8f0)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'var(--muted, #f8fafc)'; }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--color-surface-hover, #e2e8f0)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'var(--muted, #f8fafc)';
+              }}
             >
               Edit
             </button>
             {primary && primary.label !== 'Edit' && primary.label !== 'Delete' && (
               <button
-                onClick={(e) => { e.stopPropagation(); primary.onClick(); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  primary.onClick();
+                }}
                 style={{
                   padding: '6px 14px',
                   borderRadius: 99,
@@ -468,19 +703,28 @@ function CourseCard({ course, onAction, onClick }) {
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
                   border: primary.danger ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
-                  background: primary.danger ? 'rgba(239, 68, 68, 0.15)' : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+                  background: primary.danger
+                    ? 'rgba(239, 68, 68, 0.15)'
+                    : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
                   color: primary.danger ? '#f87171' : '#fff',
                   boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(37, 99, 235, 0.35)',
                   transition: 'all 0.2s',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
               >
                 {primary.label}
               </button>
             )}
             <button
-              onClick={(e) => { e.stopPropagation(); onAction('duplicate', course); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onAction('duplicate', course);
+              }}
               title="Duplicate course"
               style={{
                 padding: '7px 10px',
@@ -494,13 +738,16 @@ function CourseCard({ course, onAction, onClick }) {
                 justifyContent: 'center',
                 transition: 'all 0.15s ease',
               }}
-              onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-medium)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--surface-medium)')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
             >
               <Copy size={15} />
             </button>
             <button
-              onClick={(e) => { e.stopPropagation(); onAction('live', course); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onAction('live', course);
+              }}
               title="Live Classes"
               style={{
                 padding: '7px 10px',
@@ -514,13 +761,20 @@ function CourseCard({ course, onAction, onClick }) {
                 justifyContent: 'center',
                 transition: 'all 0.15s ease',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.18)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.08)'; }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(99,102,241,0.18)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(99,102,241,0.08)';
+              }}
             >
               <Video size={15} />
             </button>
             <button
-              onClick={(e) => { e.stopPropagation(); onAction('delete', course); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onAction('delete', course);
+              }}
               title="Delete course"
               style={{
                 padding: '7px 10px',
@@ -534,8 +788,12 @@ function CourseCard({ course, onAction, onClick }) {
                 justifyContent: 'center',
                 transition: 'all 0.15s ease',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)'; }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)';
+              }}
             >
               <Trash2 size={15} />
             </button>
@@ -568,12 +826,12 @@ function CourseListRow({ course, onAction, onClick }) {
         boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.04))',
         transition: 'all 0.2s ease',
       }}
-      onMouseEnter={e => {
+      onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-2px)';
         e.currentTarget.style.borderColor = 'var(--primary, #22c55e)';
         e.currentTarget.style.boxShadow = 'var(--shadow-md, 0 6px 18px rgba(0,0,0,0.06))';
       }}
-      onMouseLeave={e => {
+      onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'none';
         e.currentTarget.style.borderColor = 'var(--border, #e2e8f0)';
         e.currentTarget.style.boxShadow = 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.04))';
@@ -600,26 +858,73 @@ function CourseListRow({ course, onAction, onClick }) {
       </div>
 
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary, #1a1a2e)' }}>{course.title}</span>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            marginBottom: 4,
+            flexWrap: 'wrap',
+          }}
+        >
+          <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary, #1a1a2e)' }}>
+            {course.title}
+          </span>
           <LevelBadge level={course.level} />
           <StatusPill status={course.status} />
         </div>
-        <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted, #64748b)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 13,
+            color: 'var(--text-muted, #64748b)',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
           {course.description || preset.name}
         </p>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, borderLeft: '1px solid var(--border, #e2e8f0)', paddingLeft: 16 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          borderLeft: '1px solid var(--border, #e2e8f0)',
+          paddingLeft: 16,
+        }}
+      >
         <Avatar name={course.createdByName ?? 'Instructor'} size={32} />
         <div>
-          <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: 'var(--text-primary, #1a1a2e)' }}>{course.createdByName ?? 'Platform Admin'}</p>
+          <p
+            style={{
+              margin: 0,
+              fontSize: 13,
+              fontWeight: 600,
+              color: 'var(--text-primary, #1a1a2e)',
+            }}
+          >
+            {course.createdByName ?? 'Platform Admin'}
+          </p>
           <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted, #94a3b8)' }}>Instructor</p>
         </div>
       </div>
-      <div style={{ display: 'flex', gap: 8, borderLeft: '1px solid var(--border, #e2e8f0)', paddingLeft: 16, shrink: 0 }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 8,
+          borderLeft: '1px solid var(--border, #e2e8f0)',
+          paddingLeft: 16,
+          shrink: 0,
+        }}
+      >
         <button
-          onClick={(e) => { e.stopPropagation(); onAction('edit', course); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onAction('edit', course);
+          }}
           style={{
             padding: '7px 16px',
             borderRadius: 99,
@@ -631,21 +936,30 @@ function CourseListRow({ course, onAction, onClick }) {
             cursor: 'pointer',
             transition: 'all 0.2s',
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-surface-hover, #e2e8f0)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'var(--muted, #f8fafc)'; }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'var(--color-surface-hover, #e2e8f0)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'var(--muted, #f8fafc)';
+          }}
         >
           Edit
         </button>
         {primary && primary.label !== 'Edit' && primary.label !== 'Delete' && (
           <button
-            onClick={(e) => { e.stopPropagation(); primary.onClick(); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              primary.onClick();
+            }}
             style={{
               padding: '7px 16px',
               borderRadius: 99,
               fontSize: 13,
               fontWeight: 700,
               border: primary.danger ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
-              background: primary.danger ? 'rgba(239, 68, 68, 0.15)' : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+              background: primary.danger
+                ? 'rgba(239, 68, 68, 0.15)'
+                : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
               color: primary.danger ? '#f87171' : '#fff',
               cursor: 'pointer',
               boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(37, 99, 235, 0.35)',
@@ -656,7 +970,10 @@ function CourseListRow({ course, onAction, onClick }) {
           </button>
         )}
         <button
-          onClick={(e) => { e.stopPropagation(); onAction('duplicate', course); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onAction('duplicate', course);
+          }}
           title="Duplicate course"
           style={{
             padding: '8px 10px',
@@ -670,13 +987,16 @@ function CourseListRow({ course, onAction, onClick }) {
             justifyContent: 'center',
             transition: 'all 0.15s ease',
           }}
-          onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-medium)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--surface-medium)')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
         >
           <Copy size={16} />
         </button>
         <button
-          onClick={(e) => { e.stopPropagation(); onAction('live', course); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onAction('live', course);
+          }}
           title="Live Classes"
           style={{
             padding: '8px 10px',
@@ -690,13 +1010,20 @@ function CourseListRow({ course, onAction, onClick }) {
             justifyContent: 'center',
             transition: 'all 0.15s ease',
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.18)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(99,102,241,0.08)'; }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(99,102,241,0.18)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(99,102,241,0.08)';
+          }}
         >
           <Video size={16} />
         </button>
         <button
-          onClick={(e) => { e.stopPropagation(); onAction('delete', course); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onAction('delete', course);
+          }}
           title="Delete course"
           style={{
             padding: '8px 10px',
@@ -710,8 +1037,12 @@ function CourseListRow({ course, onAction, onClick }) {
             justifyContent: 'center',
             transition: 'all 0.15s ease',
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)'; }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)';
+          }}
         >
           <Trash2 size={16} />
         </button>
@@ -722,10 +1053,29 @@ function CourseListRow({ course, onAction, onClick }) {
 
 /* ── Skeleton Card ── */
 function SkeletonCard() {
-  const s = { background: 'var(--skeleton-bg, #e2e8f0)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' };
+  const s = {
+    background: 'var(--skeleton-bg, #e2e8f0)',
+    borderRadius: 8,
+    animation: 'pulse 1.5s ease-in-out infinite',
+  };
   return (
-    <div style={{ background: 'var(--card, #ffffff)', border: '1px solid var(--border, #e2e8f0)', borderRadius: 20, overflow: 'hidden', boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))' }}>
-      <div style={{ ...s, height: 135, borderRadius: 0, background: 'var(--skeleton-subtle, #f1f5f9)' }} />
+    <div
+      style={{
+        background: 'var(--card, #ffffff)',
+        border: '1px solid var(--border, #e2e8f0)',
+        borderRadius: 20,
+        overflow: 'hidden',
+        boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
+      }}
+    >
+      <div
+        style={{
+          ...s,
+          height: 135,
+          borderRadius: 0,
+          background: 'var(--skeleton-subtle, #f1f5f9)',
+        }}
+      />
       <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div style={{ ...s, height: 20, width: '70%' }} />
         <div style={{ ...s, height: 14, width: '90%' }} />
@@ -766,15 +1116,24 @@ export const AdminCourseListPage = () => {
   const [rejectReason, setRejectReason] = useState('');
 
   const load = useCallback(async () => {
-    setLoading(true); setLoadError('');
+    setLoading(true);
+    setLoadError('');
     try {
-      const res = await courseService.list({ page, size: pageSize, search: search || undefined, status: statusFilter === 'ALL' ? undefined : statusFilter });
+      const res = await courseService.list({
+        page,
+        size: pageSize,
+        search: search || undefined,
+        status: statusFilter === 'ALL' ? undefined : statusFilter,
+      });
       const data = res?.data ?? res;
       setCourses(Array.isArray(data?.content) ? data.content : []);
       setTotalPages(data?.totalPages ?? 0);
       setTotalElements(data?.totalElements ?? 0);
-    } catch (err) { setLoadError(err?.message ?? 'Failed to load.'); }
-    finally { setLoading(false); }
+    } catch (err) {
+      setLoadError(err?.message ?? 'Failed to load.');
+    } finally {
+      setLoading(false);
+    }
   }, [page, pageSize, search, statusFilter]);
 
   useEffect(() => {
@@ -783,7 +1142,7 @@ export const AdminCourseListPage = () => {
   }, [load]);
 
   const doAction = async (course, type, fn, msg) => {
-    setConfirmAction(a => ({ ...a, loading: true }));
+    setConfirmAction((a) => ({ ...a, loading: true }));
     try {
       if (type === 'delete' && course.status === 'PUBLISHED') {
         await courseService.unpublish(course.id);
@@ -792,19 +1151,33 @@ export const AdminCourseListPage = () => {
       toastSuccess(msg);
       setConfirmAction(null);
       load();
-    }
-    catch (err) {
+    } catch (err) {
       toastError(err?.response?.data?.message ?? err?.message ?? 'Failed.');
-      setConfirmAction(a => ({ ...a, loading: false }));
+      setConfirmAction((a) => ({ ...a, loading: false }));
     }
   };
 
   const handleAction = (type, course) => {
-    if (type === 'edit') { navigate(ROUTES.ADMIN_COURSE_EDIT(course.id)); return; }
-    if (type === 'live') { navigate(ROUTES.COURSE_LIVE_SESSIONS(course.id)); return; }
-    if (type === 'reject') { setRejectModal({ course, loading: false }); setRejectReason(''); return; }
+    if (type === 'edit') {
+      navigate(ROUTES.ADMIN_COURSE_EDIT(course.id));
+      return;
+    }
+    if (type === 'live') {
+      navigate(ROUTES.COURSE_LIVE_SESSIONS(course.id));
+      return;
+    }
+    if (type === 'reject') {
+      setRejectModal({ course, loading: false });
+      setRejectReason('');
+      return;
+    }
     if (type === 'duplicate') {
-      doAction(course, 'duplicate', courseService.duplicate, `"${course.title}" duplicated into DRAFT!`);
+      doAction(
+        course,
+        'duplicate',
+        courseService.duplicate,
+        `"${course.title}" duplicated into DRAFT!`,
+      );
       return;
     }
     const MAP = {
@@ -814,45 +1187,97 @@ export const AdminCourseListPage = () => {
       archive: { fn: courseService.archive, msg: 'Archived.' },
       delete: { fn: courseService.remove, msg: 'Deleted.' },
     };
-    if (MAP[type]) setConfirmAction({ course, action: type, loading: false, fn: () => doAction(course, type, MAP[type].fn, MAP[type].msg) });
+    if (MAP[type])
+      setConfirmAction({
+        course,
+        action: type,
+        loading: false,
+        fn: () => doAction(course, type, MAP[type].fn, MAP[type].msg),
+      });
   };
 
   const handleReject = async () => {
     if (!rejectModal) return;
-    setRejectModal(m => ({ ...m, loading: true }));
-    try { await courseService.reject(rejectModal.course.id, { reason: rejectReason || null }); toastSuccess('Rejected.'); setRejectModal(null); setRejectReason(''); load(); }
-    catch (err) { toastError(err?.response?.data?.message ?? 'Failed.'); setRejectModal(m => ({ ...m, loading: false })); }
+    setRejectModal((m) => ({ ...m, loading: true }));
+    try {
+      await courseService.reject(rejectModal.course.id, { reason: rejectReason || null });
+      toastSuccess('Rejected.');
+      setRejectModal(null);
+      setRejectReason('');
+      load();
+    } catch (err) {
+      toastError(err?.response?.data?.message ?? 'Failed.');
+      setRejectModal((m) => ({ ...m, loading: false }));
+    }
   };
 
-  const f = { width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', background: 'var(--lms-card)', color: 'var(--text-primary)', fontSize: 14, fontFamily: 'system-ui, -apple-system, sans-serif', boxSizing: 'border-box', outline: 'none' };
+  const f = {
+    width: '100%',
+    padding: '10px 12px',
+    borderRadius: 8,
+    border: '1px solid var(--border-color)',
+    background: 'var(--lms-card)',
+    color: 'var(--text-primary)',
+    fontSize: 14,
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    boxSizing: 'border-box',
+    outline: 'none',
+  };
 
   return (
     <div className="space-y-6" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       {/* header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>My Courses</h1>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: 24,
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+              letterSpacing: '-0.5px',
+            }}
+          >
+            My Courses
+          </h1>
         </div>
         <PermissionGuard required={[PERMISSIONS.COURSE_CREATE]} fallback={null}>
-          <AdminButton icon={<Plus className="h-4 w-4" />} onClick={() => navigate(ROUTES.ADMIN_COURSE_CREATE)}>New Course</AdminButton>
+          <AdminButton
+            icon={<Plus className="h-4 w-4" />}
+            onClick={() => navigate(ROUTES.ADMIN_COURSE_CREATE)}
+          >
+            New Course
+          </AdminButton>
         </PermissionGuard>
       </div>
 
       {/* filter bar */}
-      <div style={{
-        background: 'var(--card, #ffffff)',
-        border: '1px solid var(--border, #e2e8f0)',
-        borderRadius: 16,
-        padding: '12px 16px',
-        boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.04))',
-      }}>
+      <div
+        style={{
+          background: 'var(--card, #ffffff)',
+          border: '1px solid var(--border, #e2e8f0)',
+          borderRadius: 16,
+          padding: '12px 16px',
+          boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.04))',
+        }}
+      >
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
           <div style={{ position: 'relative', flex: '1 1 220px', minWidth: 180 }}>
-            <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted, #94a3b8)', pointerEvents: 'none' }} />
+            <Search
+              size={16}
+              style={{
+                position: 'absolute',
+                left: 14,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'var(--text-muted, #94a3b8)',
+                pointerEvents: 'none',
+              }}
+            />
             <input
               value={searchInput}
-              onChange={e => setSearchInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && (setPage(0), setSearch(searchInput))}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && (setPage(0), setSearch(searchInput))}
               placeholder="Search courses…"
               style={{
                 width: '100%',
@@ -867,17 +1292,36 @@ export const AdminCourseListPage = () => {
                 outline: 'none',
                 transition: 'border-color 0.2s, background 0.2s',
               }}
-              onFocus={e => { e.target.style.borderColor = 'var(--primary, #22c55e)'; e.target.style.background = 'var(--card, #ffffff)'; }}
-              onBlur={e => { e.target.style.borderColor = 'var(--border, #e2e8f0)'; e.target.style.background = 'var(--color-bg, #f5f7fa)'; }}
+              onFocus={(e) => {
+                e.target.style.borderColor = 'var(--primary, #22c55e)';
+                e.target.style.background = 'var(--card, #ffffff)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'var(--border, #e2e8f0)';
+                e.target.style.background = 'var(--color-bg, #f5f7fa)';
+              }}
             />
           </div>
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', background: 'var(--color-bg, #f5f7fa)', padding: 4, borderRadius: 99, border: '1px solid var(--border, #e2e8f0)' }}>
-            {STATUS_FILTERS.map(s => {
+          <div
+            style={{
+              display: 'flex',
+              gap: 6,
+              flexWrap: 'wrap',
+              background: 'var(--color-bg, #f5f7fa)',
+              padding: 4,
+              borderRadius: 99,
+              border: '1px solid var(--border, #e2e8f0)',
+            }}
+          >
+            {STATUS_FILTERS.map((s) => {
               const active = statusFilter === s;
               return (
                 <button
                   key={s}
-                  onClick={() => { setPage(0); setStatusFilter(s); }}
+                  onClick={() => {
+                    setPage(0);
+                    setStatusFilter(s);
+                  }}
                   style={{
                     padding: '6px 14px',
                     borderRadius: 99,
@@ -886,30 +1330,41 @@ export const AdminCourseListPage = () => {
                     cursor: 'pointer',
                     fontFamily: 'inherit',
                     background: active ? 'var(--text-primary, #1a1a2e)' : 'transparent',
-                    color: active ? 'var(--color-surface, #ffffff)' : 'var(--text-secondary, #64748b)',
+                    color: active
+                      ? 'var(--color-surface, #ffffff)'
+                      : 'var(--text-secondary, #64748b)',
                     border: 'none',
                     boxShadow: active ? '0 1px 4px rgba(0,0,0,0.12)' : 'none',
                     transition: 'all 0.15s ease',
                   }}
-                  onMouseEnter={e => { if (!active) e.currentTarget.style.color = 'var(--text-primary, #1a1a2e)'; }}
-                  onMouseLeave={e => { if (!active) e.currentTarget.style.color = 'var(--text-secondary, #64748b)'; }}
+                  onMouseEnter={(e) => {
+                    if (!active) e.currentTarget.style.color = 'var(--text-primary, #1a1a2e)';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!active) e.currentTarget.style.color = 'var(--text-secondary, #64748b)';
+                  }}
                 >
-                  {s === 'ALL' ? 'All' : SC[s]?.label ?? s}
+                  {s === 'ALL' ? 'All' : (SC[s]?.label ?? s)}
                 </button>
               );
             })}
           </div>
-          <div style={{
-            display: 'flex',
-            border: '1px solid var(--border, #e2e8f0)',
-            borderRadius: 10,
-            overflow: 'hidden',
-            marginLeft: 'auto',
-            background: 'var(--color-bg, #f5f7fa)',
-            padding: 3,
-            gap: 2,
-          }}>
-            {[{ id: 'list', I: LayoutList }, { id: 'grid', I: LayoutGrid }].map(({ id, I }) => (
+          <div
+            style={{
+              display: 'flex',
+              border: '1px solid var(--border, #e2e8f0)',
+              borderRadius: 10,
+              overflow: 'hidden',
+              marginLeft: 'auto',
+              background: 'var(--color-bg, #f5f7fa)',
+              padding: 3,
+              gap: 2,
+            }}
+          >
+            {[
+              { id: 'list', I: LayoutList },
+              { id: 'grid', I: LayoutGrid },
+            ].map(({ id, I }) => (
               <button
                 key={id}
                 onClick={() => setView(id)}
@@ -921,7 +1376,8 @@ export const AdminCourseListPage = () => {
                   display: 'flex',
                   alignItems: 'center',
                   background: view === id ? 'var(--card, #ffffff)' : 'transparent',
-                  color: view === id ? 'var(--text-primary, #1a1a2e)' : 'var(--text-muted, #94a3b8)',
+                  color:
+                    view === id ? 'var(--text-primary, #1a1a2e)' : 'var(--text-muted, #94a3b8)',
                   boxShadow: view === id ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                   transition: 'all 0.15s',
                 }}
@@ -935,38 +1391,129 @@ export const AdminCourseListPage = () => {
 
       {/* content */}
       {loading ? (
-        <div style={{ display: 'grid', gap: 24, gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))' }}>
-          {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
+        <div
+          style={{
+            display: 'grid',
+            gap: 24,
+            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+          }}
+        >
+          {Array.from({ length: 4 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
         </div>
       ) : loadError ? (
-        <div style={{ padding: 32, textAlign: 'center', background: 'var(--lms-card)', borderRadius: 12, border: '1px solid var(--border-color)', color: 'var(--text-muted)' }}>
-          {loadError} <button onClick={load} style={{ color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>Retry</button>
+        <div
+          style={{
+            padding: 32,
+            textAlign: 'center',
+            background: 'var(--lms-card)',
+            borderRadius: 12,
+            border: '1px solid var(--border-color)',
+            color: 'var(--text-muted)',
+          }}
+        >
+          {loadError}{' '}
+          <button
+            onClick={load}
+            style={{
+              color: 'var(--text-primary)',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+            }}
+          >
+            Retry
+          </button>
         </div>
       ) : courses.length === 0 ? (
-        <div style={{ padding: 48, textAlign: 'center', background: 'var(--lms-card)', borderRadius: 12, border: '1px solid var(--border-color)' }}>
+        <div
+          style={{
+            padding: 48,
+            textAlign: 'center',
+            background: 'var(--lms-card)',
+            borderRadius: 12,
+            border: '1px solid var(--border-color)',
+          }}
+        >
           <BookOpen size={48} style={{ color: 'var(--text-muted)', margin: '0 auto 16px' }} />
-          <p style={{ margin: '0 0 8px', fontWeight: 600, color: 'var(--text-primary)', fontSize: 18 }}>No courses found</p>
-          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 15 }}>{search || statusFilter !== 'ALL' ? 'Try adjusting your search or filter.' : 'Create your first course to get started.'}</p>
+          <p
+            style={{
+              margin: '0 0 8px',
+              fontWeight: 600,
+              color: 'var(--text-primary)',
+              fontSize: 18,
+            }}
+          >
+            No courses found
+          </p>
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 15 }}>
+            {search || statusFilter !== 'ALL'
+              ? 'Try adjusting your search or filter.'
+              : 'Create your first course to get started.'}
+          </p>
         </div>
       ) : view === 'grid' ? (
         <>
-          <div style={{ display: 'grid', gap: 24, gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))' }}>
-            {courses.map(c => <CourseCard key={c.id} course={c} onAction={handleAction} onClick={() => navigate(ROUTES.ADMIN_COURSE_DETAILS(c.id))} />)}
+          <div
+            style={{
+              display: 'grid',
+              gap: 24,
+              gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+            }}
+          >
+            {courses.map((c) => (
+              <CourseCard
+                key={c.id}
+                course={c}
+                onAction={handleAction}
+                onClick={() => navigate(ROUTES.ADMIN_COURSE_DETAILS(c.id))}
+              />
+            ))}
           </div>
-          {totalPages > 1 && <div style={{ marginTop: 24 }}><AdminPagination page={page} totalPages={totalPages} totalElements={totalElements} pageSize={pageSize} onPageChange={setPage} /></div>}
+          {totalPages > 1 && (
+            <div style={{ marginTop: 24 }}>
+              <AdminPagination
+                page={page}
+                totalPages={totalPages}
+                totalElements={totalElements}
+                pageSize={pageSize}
+                onPageChange={setPage}
+              />
+            </div>
+          )}
         </>
       ) : (
         <>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {courses.map(c => <CourseListRow key={c.id} course={c} onAction={handleAction} onClick={() => navigate(ROUTES.ADMIN_COURSE_DETAILS(c.id))} />)}
+            {courses.map((c) => (
+              <CourseListRow
+                key={c.id}
+                course={c}
+                onAction={handleAction}
+                onClick={() => navigate(ROUTES.ADMIN_COURSE_DETAILS(c.id))}
+              />
+            ))}
           </div>
-          {totalPages > 1 && <div style={{ marginTop: 24 }}><AdminPagination page={page} totalPages={totalPages} totalElements={totalElements} pageSize={pageSize} onPageChange={setPage} /></div>}
+          {totalPages > 1 && (
+            <div style={{ marginTop: 24 }}>
+              <AdminPagination
+                page={page}
+                totalPages={totalPages}
+                totalElements={totalElements}
+                pageSize={pageSize}
+                onPageChange={setPage}
+              />
+            </div>
+          )}
         </>
       )}
 
       {/* confirm action */}
       {confirmAction && (
-        <AdminConfirmModal open
+        <AdminConfirmModal
+          open
           title={`${confirmAction.action[0].toUpperCase() + confirmAction.action.slice(1)} Course`}
           description={
             confirmAction.action === 'delete' && confirmAction.course.status === 'PUBLISHED'
@@ -975,7 +1522,9 @@ export const AdminCourseListPage = () => {
           }
           confirmLabel={confirmAction.action[0].toUpperCase() + confirmAction.action.slice(1)}
           danger={['delete', 'archive'].includes(confirmAction.action)}
-          loading={confirmAction.loading} onConfirm={confirmAction.fn} onCancel={() => setConfirmAction(null)}
+          loading={confirmAction.loading}
+          onConfirm={confirmAction.fn}
+          onCancel={() => setConfirmAction(null)}
         />
       )}
 
@@ -986,11 +1535,31 @@ export const AdminCourseListPage = () => {
             <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 16 }}>
               Rejecting <strong>{rejectModal.course.title}</strong> will reset it to DRAFT.
             </p>
-            <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-muted)', display: 'block', marginBottom: 8 }}>Reason (optional)</label>
-            <textarea value={rejectReason} onChange={e => setRejectReason(e.target.value)} rows={3} placeholder="Tell the creator why…" style={f} />
+            <label
+              style={{
+                fontSize: 13,
+                fontWeight: 500,
+                color: 'var(--text-muted)',
+                display: 'block',
+                marginBottom: 8,
+              }}
+            >
+              Reason (optional)
+            </label>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              rows={3}
+              placeholder="Tell the creator why…"
+              style={f}
+            />
             <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 16 }}>
-              <AdminButton variant="ghost" onClick={() => setRejectModal(null)}>Cancel</AdminButton>
-              <AdminButton variant="danger" loading={rejectModal.loading} onClick={handleReject}>Reject</AdminButton>
+              <AdminButton variant="ghost" onClick={() => setRejectModal(null)}>
+                Cancel
+              </AdminButton>
+              <AdminButton variant="danger" loading={rejectModal.loading} onClick={handleReject}>
+                Reject
+              </AdminButton>
             </div>
           </div>
         </AdminModal>

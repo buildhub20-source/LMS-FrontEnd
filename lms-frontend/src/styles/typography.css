@@ -1,5 +1,7 @@
 :root {
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-sans:
+    'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
   --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, Menlo, monospace;
 
   --text-2xs: 0.6875rem;
@@ -78,4 +80,3 @@ pre {
   font-size: var(--text-xs);
   letter-spacing: 0;
 }
-

@@ -43,7 +43,7 @@ export const LiveSessionsPage = () => {
       { courseId, payload },
       {
         onSuccess: () => setIsModalOpen(false),
-      }
+      },
     );
   };
 
@@ -148,8 +148,8 @@ export const LiveSessionsPage = () => {
               {filter !== 'ALL'
                 ? `No sessions currently matching "${filter.toLowerCase()}".`
                 : isInstructorOrAdmin
-                ? 'Get started by scheduling your first live classroom lecture or Q&A.'
-                : 'Your instructor has not scheduled any live classes for this course yet.'}
+                  ? 'Get started by scheduling your first live classroom lecture or Q&A.'
+                  : 'Your instructor has not scheduled any live classes for this course yet.'}
             </p>
             {isInstructorOrAdmin && (
               <Button

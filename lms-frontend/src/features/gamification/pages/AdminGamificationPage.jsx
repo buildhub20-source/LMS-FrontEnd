@@ -1,15 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Award,
-  Shield,
-  Target,
-  Zap,
-  Plus,
-  Edit2,
-  Trash2,
-  Check,
-  X,
-} from 'lucide-react';
+import { Award, Shield, Target, Zap, Plus, Edit2, Trash2, Check, X } from 'lucide-react';
 import {
   useAdminBadges,
   useCreateBadge,
@@ -128,7 +118,7 @@ export const AdminGamificationPage = () => {
     if (badgeModal.badge) {
       updateBadgeMutation.mutate(
         { id: badgeModal.badge.id, data: badgeForm },
-        { onSuccess: () => setBadgeModal({ isOpen: false, badge: null }) }
+        { onSuccess: () => setBadgeModal({ isOpen: false, badge: null }) },
       );
     } else {
       createBadgeMutation.mutate(badgeForm, {
@@ -173,7 +163,7 @@ export const AdminGamificationPage = () => {
     if (levelModal.level) {
       updateLevelMutation.mutate(
         { id: levelModal.level.id, data: payload },
-        { onSuccess: () => setLevelModal({ isOpen: false, level: null }) }
+        { onSuccess: () => setLevelModal({ isOpen: false, level: null }) },
       );
     } else {
       createLevelMutation.mutate(payload, {
@@ -221,7 +211,7 @@ export const AdminGamificationPage = () => {
     if (milestoneModal.milestone) {
       updateMilestoneMutation.mutate(
         { id: milestoneModal.milestone.id, data: payload },
-        { onSuccess: () => setMilestoneModal({ isOpen: false, milestone: null }) }
+        { onSuccess: () => setMilestoneModal({ isOpen: false, milestone: null }) },
       );
     } else {
       createMilestoneMutation.mutate(payload, {
@@ -446,7 +436,9 @@ export const AdminGamificationPage = () => {
                     <tr key={b.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20">
                       <td className="py-3 px-3">
                         <div className="font-bold text-slate-900 dark:text-slate-100">{b.name}</div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400">{b.description}</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">
+                          {b.description}
+                        </div>
                       </td>
                       <td className="py-3 px-3 text-xs font-medium text-slate-600 dark:text-slate-400">
                         {b.category}
@@ -579,9 +571,7 @@ export const AdminGamificationPage = () => {
         <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <div className="mb-4 flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
-                Milestones
-              </h3>
+              <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Milestones</h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 Configure key learner journey goals and thresholds.
               </p>
@@ -623,7 +613,9 @@ export const AdminGamificationPage = () => {
                       </td>
                       <td className="py-3 px-3">
                         <div className="font-bold text-slate-900 dark:text-slate-100">{m.name}</div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400">{m.description}</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">
+                          {m.description}
+                        </div>
                       </td>
                       <td className="py-3 px-3 text-xs text-slate-600 dark:text-slate-400">
                         {m.criteriaType} ({m.criteriaValue})
@@ -678,7 +670,9 @@ export const AdminGamificationPage = () => {
             </h3>
             <form onSubmit={handleSaveBadge} className="mt-4 space-y-3.5">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Name</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Name
+                </label>
                 <input
                   type="text"
                   required
@@ -688,7 +682,9 @@ export const AdminGamificationPage = () => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Description</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Description
+                </label>
                 <textarea
                   required
                   rows={2}
@@ -699,7 +695,9 @@ export const AdminGamificationPage = () => {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Icon Key</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Icon Key
+                  </label>
                   <input
                     type="text"
                     value={badgeForm.icon}
@@ -708,7 +706,9 @@ export const AdminGamificationPage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Category</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Category
+                  </label>
                   <select
                     value={badgeForm.category}
                     onChange={(e) => setBadgeForm({ ...badgeForm, category: e.target.value })}
@@ -724,7 +724,9 @@ export const AdminGamificationPage = () => {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Criteria Type</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Criteria Type
+                  </label>
                   <select
                     value={badgeForm.criteriaType}
                     onChange={(e) => setBadgeForm({ ...badgeForm, criteriaType: e.target.value })}
@@ -738,13 +740,20 @@ export const AdminGamificationPage = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Target Value</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Target Value
+                  </label>
                   <input
                     type="number"
                     min="1"
                     required
                     value={badgeForm.criteriaValue}
-                    onChange={(e) => setBadgeForm({ ...badgeForm, criteriaValue: parseInt(e.target.value, 10) || 1 })}
+                    onChange={(e) =>
+                      setBadgeForm({
+                        ...badgeForm,
+                        criteriaValue: parseInt(e.target.value, 10) || 1,
+                      })
+                    }
                     className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
                   />
                 </div>
@@ -757,7 +766,10 @@ export const AdminGamificationPage = () => {
                   onChange={(e) => setBadgeForm({ ...badgeForm, active: e.target.checked })}
                   className="rounded border-slate-300"
                 />
-                <label htmlFor="badgeActive" className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                <label
+                  htmlFor="badgeActive"
+                  className="text-xs font-medium text-slate-700 dark:text-slate-300"
+                >
                   Active (awardable to learners)
                 </label>
               </div>
@@ -791,7 +803,9 @@ export const AdminGamificationPage = () => {
             <form onSubmit={handleSaveLevel} className="mt-4 space-y-3.5">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Level Number</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Level Number
+                  </label>
                   <input
                     type="number"
                     min="1"
@@ -802,7 +816,9 @@ export const AdminGamificationPage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Title</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Title
+                  </label>
                   <input
                     type="text"
                     required
@@ -814,7 +830,9 @@ export const AdminGamificationPage = () => {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Min Points</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Min Points
+                  </label>
                   <input
                     type="number"
                     min="0"
@@ -825,7 +843,9 @@ export const AdminGamificationPage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Max Points (blank for max)</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Max Points (blank for max)
+                  </label>
                   <input
                     type="number"
                     min="0"
@@ -865,7 +885,9 @@ export const AdminGamificationPage = () => {
             <form onSubmit={handleSaveMilestone} className="mt-4 space-y-3.5">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Key (Unique)</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Key (Unique)
+                  </label>
                   <input
                     type="text"
                     required
@@ -875,7 +897,9 @@ export const AdminGamificationPage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Name</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Name
+                  </label>
                   <input
                     type="text"
                     required
@@ -886,21 +910,29 @@ export const AdminGamificationPage = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Description</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Description
+                </label>
                 <textarea
                   required
                   rows={2}
                   value={milestoneForm.description}
-                  onChange={(e) => setMilestoneForm({ ...milestoneForm, description: e.target.value })}
+                  onChange={(e) =>
+                    setMilestoneForm({ ...milestoneForm, description: e.target.value })
+                  }
                   className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Criteria Type</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Criteria Type
+                  </label>
                   <select
                     value={milestoneForm.criteriaType}
-                    onChange={(e) => setMilestoneForm({ ...milestoneForm, criteriaType: e.target.value })}
+                    onChange={(e) =>
+                      setMilestoneForm({ ...milestoneForm, criteriaType: e.target.value })
+                    }
                     className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
                   >
                     <option value="LESSONS_COMPLETED">LESSONS_COMPLETED</option>
@@ -911,13 +943,17 @@ export const AdminGamificationPage = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Target Value</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Target Value
+                  </label>
                   <input
                     type="number"
                     min="1"
                     required
                     value={milestoneForm.criteriaValue}
-                    onChange={(e) => setMilestoneForm({ ...milestoneForm, criteriaValue: e.target.value })}
+                    onChange={(e) =>
+                      setMilestoneForm({ ...milestoneForm, criteriaValue: e.target.value })
+                    }
                     className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
                   />
                 </div>

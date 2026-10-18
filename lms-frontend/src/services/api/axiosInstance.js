@@ -28,10 +28,10 @@ const unwrap = (r) => {
 
 /** Unwraps the ApiResponse envelope so services receive the raw payload. */
 export const http = {
-  get:    (url, config) => apiClient.get(url, config).then((r) => unwrap(r.data)),
-  post:   (url, body, config) => apiClient.post(url, body, config).then((r) => unwrap(r.data)),
-  put:    (url, body, config) => apiClient.put(url, body, config).then((r) => unwrap(r.data)),
-  patch:  (url, body, config) => apiClient.patch(url, body, config).then((r) => unwrap(r.data)),
+  get: (url, config) => apiClient.get(url, config).then((r) => unwrap(r.data)),
+  post: (url, body, config) => apiClient.post(url, body, config).then((r) => unwrap(r.data)),
+  put: (url, body, config) => apiClient.put(url, body, config).then((r) => unwrap(r.data)),
+  patch: (url, body, config) => apiClient.patch(url, body, config).then((r) => unwrap(r.data)),
   delete: (url, config) => apiClient.delete(url, config).then((r) => unwrap(r.data)),
 };
 

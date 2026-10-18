@@ -34,7 +34,7 @@ describe('LiveSessionControls Center and Bottom Buttons', () => {
         canPublish={true}
         canPublishVideo={true}
         canShareScreen={true}
-      />
+      />,
     );
 
     // 1. Microphone button
@@ -106,7 +106,7 @@ describe('LiveSessionControls Center and Bottom Buttons', () => {
         canPublish={false}
         canPublishVideo={false}
         canShareScreen={false}
-      />
+      />,
     );
 
     // Receive-only students must not be offered publishing controls.
@@ -157,7 +157,7 @@ describe('LiveSessionControls Center and Bottom Buttons', () => {
         onToggleParticipants={vi.fn()}
         onLeave={vi.fn()}
         canPublish={false}
-      />
+      />,
     );
 
     // Fullscreen button

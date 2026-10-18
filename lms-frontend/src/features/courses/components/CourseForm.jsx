@@ -1,7 +1,15 @@
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  BookOpen, Layers, Clock, Sparkles, Image, Tag, Award, CheckCircle2, Globe
+  BookOpen,
+  Layers,
+  Clock,
+  Sparkles,
+  Image,
+  Tag,
+  Award,
+  CheckCircle2,
+  Globe,
 } from 'lucide-react';
 import Input from '../../../components/common/Input';
 import TextArea from '../../../components/common/TextArea';
@@ -14,7 +22,7 @@ import {
   COURSE_LEVEL_OPTIONS,
   COURSE_STATUS_OPTIONS,
   COURSE_STATUS,
-  DEFAULT_CATEGORIES
+  DEFAULT_CATEGORIES,
 } from '../constants/courseConstants';
 
 const EMPTY_COURSE = {
@@ -55,10 +63,13 @@ export const CourseForm = ({
   });
 
   const summaryValue = useWatch({ control, name: 'summary' }) || '';
-  const descriptionValue = useWatch({ control, name: 'description' }) || '';
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      style={{ display: 'flex', flexDirection: 'column', gap: 24 }}
+    >
       {error && <Alert tone="error">{error.message}</Alert>}
 
       {/* ── CARD 1: Basic Course Identity ── */}
@@ -69,7 +80,9 @@ export const CourseForm = ({
           </div>
           <div>
             <h3 style={sectionTitleStyle}>Course Identity & Overview</h3>
-            <p style={sectionSubStyle}>Define the primary title, summary, and categorization of your course.</p>
+            <p style={sectionSubStyle}>
+              Define the primary title, summary, and categorization of your course.
+            </p>
           </div>
         </div>
 
@@ -87,9 +100,21 @@ export const CourseForm = ({
 
           {/* Short Summary */}
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 4,
+              }}
+            >
               <label style={labelStyle}>Short Summary</label>
-              <span style={{ fontSize: 12, color: summaryValue.length > 280 ? '#ef4444' : 'var(--text-muted)' }}>
+              <span
+                style={{
+                  fontSize: 12,
+                  color: summaryValue.length > 280 ? '#ef4444' : 'var(--text-muted)',
+                }}
+              >
                 {summaryValue.length} / 280 chars
               </span>
             </div>
@@ -101,7 +126,13 @@ export const CourseForm = ({
           </div>
 
           {/* 3-Column Attributes Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: 16,
+            }}
+          >
             <Select
               label="Skill Level"
               required
@@ -138,7 +169,9 @@ export const CourseForm = ({
           </div>
           <div>
             <h3 style={sectionTitleStyle}>Detailed Description & Syllabus</h3>
-            <p style={sectionSubStyle}>Provide a comprehensive outline of what students will learn and achieve.</p>
+            <p style={sectionSubStyle}>
+              Provide a comprehensive outline of what students will learn and achieve.
+            </p>
           </div>
         </div>
 
@@ -169,11 +202,19 @@ export const CourseForm = ({
           </div>
           <div>
             <h3 style={sectionTitleStyle}>Publishing & Access Settings</h3>
-            <p style={sectionSubStyle}>Control the lifecycle status and visibility of your course.</p>
+            <p style={sectionSubStyle}>
+              Control the lifecycle status and visibility of your course.
+            </p>
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: 16,
+          }}
+        >
           <Select
             label="Course Lifecycle Status"
             options={COURSE_STATUS_OPTIONS}
@@ -184,7 +225,16 @@ export const CourseForm = ({
       </div>
 
       {/* ── ACTION FOOTER ── */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 12, paddingTop: 8, borderTop: '1px solid var(--border-color)' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          gap: 12,
+          paddingTop: 8,
+          borderTop: '1px solid var(--border-color)',
+        }}
+      >
         {onCancel && (
           <Button type="button" variant="secondary" onClick={onCancel}>
             Cancel
@@ -207,7 +257,7 @@ const sectionCardStyle = {
   display: 'flex',
   flexDirection: 'column',
   gap: 20,
-  boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
 };
 
 const sectionHeadStyle = {
@@ -215,7 +265,7 @@ const sectionHeadStyle = {
   alignItems: 'center',
   gap: 14,
   paddingBottom: 16,
-  borderBottom: '1px solid var(--border-color)'
+  borderBottom: '1px solid var(--border-color)',
 };
 
 const sectionTitleStyle = {
@@ -223,19 +273,19 @@ const sectionTitleStyle = {
   fontSize: 16,
   fontWeight: 600,
   color: 'var(--text-primary)',
-  letterSpacing: '-0.3px'
+  letterSpacing: '-0.3px',
 };
 
 const sectionSubStyle = {
   margin: '2px 0 0',
   fontSize: 13,
-  color: 'var(--text-muted)'
+  color: 'var(--text-muted)',
 };
 
 const labelStyle = {
   fontSize: 13,
   fontWeight: 600,
-  color: 'var(--text-primary)'
+  color: 'var(--text-primary)',
 };
 
 const iconBoxStyle = (bg, color) => ({
@@ -247,7 +297,7 @@ const iconBoxStyle = (bg, color) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  flexShrink: 0
+  flexShrink: 0,
 });
 
 export default CourseForm;

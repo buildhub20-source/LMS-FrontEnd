@@ -42,9 +42,15 @@ export const PlatformAuditLogsPage = () => {
     queryFn: platformService.listTenants,
   });
 
-  const { data: auditLogs = [], isLoading, isFetching, refetch } = useQuery({
+  const {
+    data: auditLogs = [],
+    isLoading,
+    isFetching,
+    refetch,
+  } = useQuery({
     queryKey: ['platform-audit-logs', selectedTenantId],
-    queryFn: () => platformService.listAuditLogs(selectedTenantId ? { tenantId: selectedTenantId } : {}),
+    queryFn: () =>
+      platformService.listAuditLogs(selectedTenantId ? { tenantId: selectedTenantId } : {}),
   });
 
   const filteredLogs = auditLogs.filter((log) => {
@@ -59,7 +65,16 @@ export const PlatformAuditLogsPage = () => {
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 1400, margin: '0 auto', fontFamily: 'Inter, sans-serif' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 24,
+        maxWidth: 1400,
+        margin: '0 auto',
+        fontFamily: 'Inter, sans-serif',
+      }}
+    >
       {/* ── Page Header ── */}
       <div
         style={{
@@ -73,14 +88,31 @@ export const PlatformAuditLogsPage = () => {
         }}
       >
         <div>
-          <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)' }}>
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              color: 'var(--text-muted)',
+            }}
+          >
             Security & Compliance
           </span>
-          <h1 style={{ margin: '4px 0 0', fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
+          <h1
+            style={{
+              margin: '4px 0 0',
+              fontSize: 24,
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+              letterSpacing: '-0.5px',
+            }}
+          >
             Platform Audit Trail
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
-            Immutable audit record of all control plane operations, tenant lifecycle actions, and impersonation sessions.
+            Immutable audit record of all control plane operations, tenant lifecycle actions, and
+            impersonation sessions.
           </p>
         </div>
 
@@ -109,7 +141,16 @@ export const PlatformAuditLogsPage = () => {
           border: '1px solid var(--border-color)',
         }}
       >
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12, flex: 1, minWidth: 260 }}>
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            gap: 12,
+            flex: 1,
+            minWidth: 260,
+          }}
+        >
           <div style={{ maxWidth: 300, flex: 1 }}>
             <AdminInput
               placeholder="Search event, message, or tenant..."
@@ -148,7 +189,8 @@ export const PlatformAuditLogsPage = () => {
         </div>
 
         <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-          Showing <strong style={{ color: 'var(--text-primary)' }}>{filteredLogs.length}</strong> events
+          Showing <strong style={{ color: 'var(--text-primary)' }}>{filteredLogs.length}</strong>{' '}
+          events
         </span>
       </div>
 
@@ -175,10 +217,23 @@ export const PlatformAuditLogsPage = () => {
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}>
+            <table
+              style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}
+            >
               <thead>
-                <tr style={{ background: 'var(--surface-medium)', borderBottom: '1px solid var(--border-color)' }}>
-                  {['Timestamp', 'Workspace', 'Event Type', 'Message / Event Details', 'Actor ID'].map((h) => (
+                <tr
+                  style={{
+                    background: 'var(--surface-medium)',
+                    borderBottom: '1px solid var(--border-color)',
+                  }}
+                >
+                  {[
+                    'Timestamp',
+                    'Workspace',
+                    'Event Type',
+                    'Message / Event Details',
+                    'Actor ID',
+                  ].map((h) => (
                     <th
                       key={h}
                       style={{
@@ -207,14 +262,34 @@ export const PlatformAuditLogsPage = () => {
                     onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
                     onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                   >
-                    <td style={{ padding: '12px 16px', color: 'var(--text-muted)', fontSize: 12, whiteSpace: 'nowrap' }}>
+                    <td
+                      style={{
+                        padding: '12px 16px',
+                        color: 'var(--text-muted)',
+                        fontSize: 12,
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
                       {formatDate(log.createdAt)}
                     </td>
                     <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
-                      <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', display: 'block' }}>
+                      <span
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 600,
+                          color: 'var(--text-primary)',
+                          display: 'block',
+                        }}
+                      >
                         {log.tenantName}
                       </span>
-                      <span style={{ fontFamily: 'monospace', fontSize: 11, color: 'var(--text-muted)' }}>
+                      <span
+                        style={{
+                          fontFamily: 'monospace',
+                          fontSize: 11,
+                          color: 'var(--text-muted)',
+                        }}
+                      >
                         {log.tenantSlug}
                       </span>
                     </td>
@@ -223,7 +298,14 @@ export const PlatformAuditLogsPage = () => {
                         {log.eventType}
                       </AdminBadge>
                     </td>
-                    <td style={{ padding: '12px 16px', color: 'var(--text-secondary)', maxWidth: 450, wordBreak: 'break-word' }}>
+                    <td
+                      style={{
+                        padding: '12px 16px',
+                        color: 'var(--text-secondary)',
+                        maxWidth: 450,
+                        wordBreak: 'break-word',
+                      }}
+                    >
                       {log.message}
                     </td>
                     <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>

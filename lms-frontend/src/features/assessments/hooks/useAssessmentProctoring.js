@@ -58,25 +58,28 @@ export function useAssessmentProctoring({
   }, [logViolation]);
 
   // Handle security strike
-  const recordStrike = useCallback((reason) => {
-    if (!enabled || isTerminated || !isRulesAgreed || suppressRef.current) return;
+  const recordStrike = useCallback(
+    (reason) => {
+      if (!enabled || isTerminated || !isRulesAgreed || suppressRef.current) return;
 
-    setTabSwitchCount((prev) => {
-      const nextCount = prev + 1;
-      const violationMsg = `${reason} (Violation ${nextCount} of ${MAX_STRIKES})`;
-      setLastViolation({ reason, count: nextCount, max: MAX_STRIKES });
-      setShowViolationModal(true);
-      logViolation('SECURITY_VIOLATION', violationMsg);
+      setTabSwitchCount((prev) => {
+        const nextCount = prev + 1;
+        const violationMsg = `${reason} (Violation ${nextCount} of ${MAX_STRIKES})`;
+        setLastViolation({ reason, count: nextCount, max: MAX_STRIKES });
+        setShowViolationModal(true);
+        logViolation('SECURITY_VIOLATION', violationMsg);
 
-      if (nextCount >= MAX_STRIKES) {
-        setIsTerminated(true);
-        logViolation('EXAM_TERMINATED', 'Maximum violation strikes exceeded. Auto-submitting.');
-        onSecurityViolationSubmit?.();
-      }
+        if (nextCount >= MAX_STRIKES) {
+          setIsTerminated(true);
+          logViolation('EXAM_TERMINATED', 'Maximum violation strikes exceeded. Auto-submitting.');
+          onSecurityViolationSubmit?.();
+        }
 
-      return nextCount;
-    });
-  }, [enabled, isTerminated, isRulesAgreed, logViolation, onSecurityViolationSubmit, suppressRef]);
+        return nextCount;
+      });
+    },
+    [enabled, isTerminated, isRulesAgreed, logViolation, onSecurityViolationSubmit, suppressRef],
+  );
 
   // Request & Start Continuous Screen Recording
   const startScreenRecording = useCallback(async () => {
@@ -144,7 +147,9 @@ export function useAssessmentProctoring({
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       try {
         mediaRecorderRef.current.stop();
-      } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
+      } catch {
+        /* Best-effort browser cleanup; failure must not block the workflow. */
+      }
     }
     if (screenStream) {
       screenStream.getTracks().forEach((track) => track.stop());
@@ -165,9 +170,10 @@ export function useAssessmentProctoring({
 
       // Safeguard timeout (max 1.5s) to ensure submission is never blocked
       const timeoutId = setTimeout(() => {
-        const blob = recordedChunksRef.current.length > 0
-          ? new Blob(recordedChunksRef.current, { type: 'video/webm' })
-          : null;
+        const blob =
+          recordedChunksRef.current.length > 0
+            ? new Blob(recordedChunksRef.current, { type: 'video/webm' })
+            : null;
         doResolve(blob);
       }, 1500);
 
@@ -183,23 +189,27 @@ export function useAssessmentProctoring({
           mediaRecorderRef.current.stop();
         } else {
           clearTimeout(timeoutId);
-          const blob = recordedChunksRef.current.length > 0
-            ? new Blob(recordedChunksRef.current, { type: 'video/webm' })
-            : null;
+          const blob =
+            recordedChunksRef.current.length > 0
+              ? new Blob(recordedChunksRef.current, { type: 'video/webm' })
+              : null;
           doResolve(blob);
         }
-      } catch (e) {
+      } catch {
         clearTimeout(timeoutId);
-        const blob = recordedChunksRef.current.length > 0
-          ? new Blob(recordedChunksRef.current, { type: 'video/webm' })
-          : null;
+        const blob =
+          recordedChunksRef.current.length > 0
+            ? new Blob(recordedChunksRef.current, { type: 'video/webm' })
+            : null;
         doResolve(blob);
       }
 
       if (screenStream) {
         try {
           screenStream.getTracks().forEach((track) => track.stop());
-        } catch { /* Best-effort browser cleanup; failure must not block the workflow. */ }
+        } catch {
+          /* Best-effort browser cleanup; failure must not block the workflow. */
+        }
         setScreenStream(null);
       }
       setIsScreenRecording(false);
@@ -269,7 +279,11 @@ export function useAssessmentProctoring({
       }
 
       // Block Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C (Inspect Element)
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) {
+      if (
+        (e.ctrlKey || e.metaKey) &&
+        e.shiftKey &&
+        ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)
+      ) {
         e.preventDefault();
         e.stopPropagation();
         recordStrike('Inspect element shortcut blocked');

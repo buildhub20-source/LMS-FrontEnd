@@ -31,6 +31,15 @@ export default [
       ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
 
+      // These rules target the React Compiler, which this app does not use.
+      // Existing findings are tracked as warnings and capped by --max-warnings
+      // in package.json; lower the cap as they are cleaned up.
+      'react-hooks/set-state-in-effect': 'warn',
+      'react-hooks/purity': 'warn',
+      'react-hooks/refs': 'warn',
+      'react-hooks/immutability': 'warn',
+      'react-hooks/preserve-manual-memoization': 'warn',
+
       'react/prop-types': 'off',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 

@@ -42,8 +42,10 @@ export const AdminModal = ({
         }}
       >
         {/* Header */}
-        <div className="flex items-start justify-between gap-4 px-6 py-5"
-          style={{ borderBottom: '1px solid var(--border)' }}>
+        <div
+          className="flex items-start justify-between gap-4 px-6 py-5"
+          style={{ borderBottom: '1px solid var(--border)' }}
+        >
           <div>
             <h2 className="m-0 text-lg font-bold" style={{ color: 'var(--foreground)' }}>
               {title}
@@ -57,17 +59,28 @@ export const AdminModal = ({
           <button
             onClick={onClose}
             className="shrink-0 rounded-lg p-1.5 transition-colors hover:bg-[var(--muted)]"
-            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--muted-foreground)' }}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--muted-foreground)',
+            }}
           >
             <X size={18} />
           </button>
         </div>
         {/* Body */}
-        <div className={`flex-1 ${overflowVisible ? 'overflow-visible' : 'overflow-y-auto'} px-6 py-5`}>{children}</div>
+        <div
+          className={`flex-1 ${overflowVisible ? 'overflow-visible' : 'overflow-y-auto'} px-6 py-5`}
+        >
+          {children}
+        </div>
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-end gap-3 px-6 py-4"
-            style={{ borderTop: '1px solid var(--border)', background: 'var(--muted)' }}>
+          <div
+            className="flex items-center justify-end gap-3 px-6 py-4"
+            style={{ borderTop: '1px solid var(--border)', background: 'var(--muted)' }}
+          >
             {footer}
           </div>
         )}
@@ -95,7 +108,7 @@ export const AdminConfirmModal = ({
   const handleClose = onClose || onCancel;
   const displayMessage = message || description;
   const isDestructive = danger || variant === 'danger';
-  const resolvedVariant = isDestructive ? 'danger' : (variant || 'primary');
+  const resolvedVariant = isDestructive ? 'danger' : variant || 'primary';
 
   return (
     <AdminModal
@@ -123,7 +136,10 @@ export const AdminConfirmModal = ({
             <AlertTriangle size={18} />
           </div>
         )}
-        <p className="m-0 text-sm flex-1 whitespace-pre-line" style={{ color: 'var(--muted-foreground)', lineHeight: 1.6 }}>
+        <p
+          className="m-0 text-sm flex-1 whitespace-pre-line"
+          style={{ color: 'var(--muted-foreground)', lineHeight: 1.6 }}
+        >
           {displayMessage}
         </p>
       </div>

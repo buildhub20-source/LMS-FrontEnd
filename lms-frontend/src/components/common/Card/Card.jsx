@@ -1,6 +1,15 @@
 import styles from './Card.module.css';
 
-export const Card = ({ title, subtitle, actions, footer, onClick, className = '', children, style }) => (
+export const Card = ({
+  title,
+  subtitle,
+  actions,
+  footer,
+  onClick,
+  className = '',
+  children,
+  style,
+}) => (
   <section
     className={`${styles.card} ${onClick ? styles.interactive : ''} ${className}`}
     onClick={onClick}

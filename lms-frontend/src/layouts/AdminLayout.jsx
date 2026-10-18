@@ -21,10 +21,10 @@ import {
   BarChart3,
 } from 'lucide-react';
 import RouteErrorBoundary from '../components/common/RouteErrorBoundary';
-import AppShell from './AppShell';
 import TopTabNav from '../components/layout/TopTabNav/TopTabNav';
 import { ROUTES } from '../constants/routes';
 import { PERMISSIONS } from '../constants/permissions';
+import AppShell from './AppShell';
 
 /* ── Sidebar icon items (slim sidebar) ──────────────── */
 const SIDEBAR_ITEMS = [
@@ -136,10 +136,7 @@ const TOP_TABS = [
 
 export const AdminLayout = () => (
   <RouteErrorBoundary>
-    <AppShell
-      navigation={SIDEBAR_ITEMS}
-      tabNav={<TopTabNav tabs={TOP_TABS} />}
-    />
+    <AppShell navigation={SIDEBAR_ITEMS} tabNav={<TopTabNav tabs={TOP_TABS} />} />
   </RouteErrorBoundary>
 );
 

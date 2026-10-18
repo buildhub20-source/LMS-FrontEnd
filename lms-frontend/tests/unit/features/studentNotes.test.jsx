@@ -16,7 +16,7 @@ describe('LessonNotesPanel', () => {
         courseTitle="Algorithms"
         currentLesson={lesson}
         allLessons={[lesson]}
-      />
+      />,
     );
 
     expect(screen.getByText('Binary Search Basics')).toBeInTheDocument();
@@ -35,7 +35,7 @@ describe('LessonNotesPanel', () => {
         courseTitle="Algorithms"
         currentLesson={lesson}
         allLessons={[lesson]}
-      />
+      />,
     );
 
     const allNotesBtn = screen.getByText('All Course Notes');
@@ -56,7 +56,7 @@ describe('LessonNotesPanel', () => {
         allLessons={[lesson]}
         currentVideoTime={125}
         onSeekToTime={onSeek}
-      />
+      />,
     );
 
     // 125 seconds = 02:05

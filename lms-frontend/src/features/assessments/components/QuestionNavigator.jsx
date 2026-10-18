@@ -1,7 +1,12 @@
 import React from 'react';
 import {
-  CheckCircle2, Circle, AlertCircle, ChevronLeft,
-  ChevronRight, ListOrdered, Check
+  CheckCircle2,
+  Circle,
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  ListOrdered,
+  Check,
 } from 'lucide-react';
 
 /**
@@ -121,11 +126,7 @@ export const QuestionNavigator = ({
                     : hasCode
                       ? 'rgba(16, 185, 129, 0.1)'
                       : 'rgba(255, 255, 255, 0.03)',
-                  color: isCurrent
-                    ? '#ffffff'
-                    : hasCode
-                      ? '#34d399'
-                      : '#94a3b8',
+                  color: isCurrent ? '#ffffff' : hasCode ? '#34d399' : '#94a3b8',
                   fontSize: 12,
                   fontWeight: 700,
                   display: 'flex',
@@ -140,7 +141,17 @@ export const QuestionNavigator = ({
                 {hasCode ? (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <span>{idx + 1}</span>
-                    <span style={{ position: 'absolute', bottom: 3, right: 3, width: 6, height: 6, borderRadius: '50%', background: '#10b981' }} />
+                    <span
+                      style={{
+                        position: 'absolute',
+                        bottom: 3,
+                        right: 3,
+                        width: 6,
+                        height: 6,
+                        borderRadius: '50%',
+                        background: '#10b981',
+                      }}
+                    />
                   </div>
                 ) : (
                   <span>{idx + 1}</span>
@@ -164,9 +175,7 @@ export const QuestionNavigator = ({
                 background: isCurrent
                   ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(79, 70, 229, 0.1) 100%)'
                   : 'rgba(255, 255, 255, 0.02)',
-                border: isCurrent
-                  ? '1px solid rgba(99, 102, 241, 0.45)'
-                  : '1px solid transparent',
+                border: isCurrent ? '1px solid rgba(99, 102, 241, 0.45)' : '1px solid transparent',
                 cursor: 'pointer',
                 width: '100%',
                 transition: 'all 0.15s ease',
@@ -190,11 +199,7 @@ export const QuestionNavigator = ({
                     : hasCode
                       ? 'rgba(16, 185, 129, 0.2)'
                       : 'rgba(255, 255, 255, 0.08)',
-                  color: isCurrent
-                    ? '#ffffff'
-                    : hasCode
-                      ? '#34d399'
-                      : '#94a3b8',
+                  color: isCurrent ? '#ffffff' : hasCode ? '#34d399' : '#94a3b8',
                   border: hasCode && !isCurrent ? '1px solid rgba(16, 185, 129, 0.4)' : 'none',
                 }}
               >
@@ -226,20 +231,30 @@ export const QuestionNavigator = ({
                     color: '#64748b',
                   }}
                 >
-                  <span style={{
-                    fontSize: 10,
-                    fontWeight: 700,
-                    padding: '1px 5px',
-                    borderRadius: 4,
-                    background: q.questionType === 'MULTIPLE_CHOICE' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(59, 130, 246, 0.15)',
-                    color: q.questionType === 'MULTIPLE_CHOICE' ? '#c4b5fd' : '#93c5fd',
-                  }}>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 700,
+                      padding: '1px 5px',
+                      borderRadius: 4,
+                      background:
+                        q.questionType === 'MULTIPLE_CHOICE'
+                          ? 'rgba(139, 92, 246, 0.2)'
+                          : 'rgba(59, 130, 246, 0.15)',
+                      color: q.questionType === 'MULTIPLE_CHOICE' ? '#c4b5fd' : '#93c5fd',
+                    }}
+                  >
                     {q.questionType === 'MULTIPLE_CHOICE' ? 'MCQ' : 'CODE'}
                   </span>
                   <span>•</span>
                   <span>{q.marks ?? 10} pts</span>
                   <span>•</span>
-                  <span style={{ color: hasCode ? '#10b981' : '#64748b', fontWeight: hasCode ? 600 : 400 }}>
+                  <span
+                    style={{
+                      color: hasCode ? '#10b981' : '#64748b',
+                      fontWeight: hasCode ? 600 : 400,
+                    }}
+                  >
                     {hasCode ? 'Answered' : 'Not Attempted'}
                   </span>
                 </div>

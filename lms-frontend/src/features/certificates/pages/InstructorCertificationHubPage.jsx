@@ -2,9 +2,22 @@ import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import {
-  Award, CheckCircle2, Search, Download, ExternalLink, ShieldCheck,
-  Calendar, BookOpen, Users, Clock, RefreshCw, GraduationCap,
-  Sparkles, Check, ArrowRight, Filter
+  Award,
+  CheckCircle2,
+  Search,
+  Download,
+  ExternalLink,
+  ShieldCheck,
+  Calendar,
+  BookOpen,
+  Users,
+  Clock,
+  RefreshCw,
+  GraduationCap,
+  Sparkles,
+  Check,
+  ArrowRight,
+  Filter,
 } from 'lucide-react';
 import AdminButton from '../../../components/ui/AdminButton';
 import { useCourses } from '../../courses/hooks/useCourses';
@@ -14,7 +27,15 @@ import certificateService from '../services/certificateService';
 import { ROUTES } from '../../../constants/routes';
 
 function getInitials(str = '') {
-  return str.split(' ').filter(Boolean).slice(0, 2).map((w) => w[0] ?? '').join('').toUpperCase() || 'ST';
+  return (
+    str
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((w) => w[0] ?? '')
+      .join('')
+      .toUpperCase() || 'ST'
+  );
 }
 
 function CandidateAvatar({ name = '', size = 36 }) {
@@ -56,15 +77,22 @@ export const InstructorCertificationHubPage = () => {
   const [issuedNotification, setIssuedNotification] = useState('');
 
   // 1. Fetch Batches
-  const { data: batchPageData, refetch: refetchBatches } = useBatches({ size: 100 });
+  const { data: batchPageData } = useBatches({ size: 100 });
   const batches = useMemo(() => batchPageData?.content || [], [batchPageData]);
 
   // 2. Fetch Courses
   const { data: coursePageData } = useCourses({ size: 100 });
-  const courses = useMemo(() => coursePageData?.content || coursePageData?.data?.content || [], [coursePageData]);
+  const courses = useMemo(
+    () => coursePageData?.content || coursePageData?.data?.content || [],
+    [coursePageData],
+  );
 
   // 3. Fetch Enrolled Students for the selected batch (or all students if none selected)
-  const { data: studentPageData, isLoading: isStudentsLoading, refetch: refetchStudents } = useStudents({
+  const {
+    data: studentPageData,
+    isLoading: isStudentsLoading,
+    refetch: refetchStudents,
+  } = useStudents({
     batchId: selectedBatchId || undefined,
     size: 200,
   });
@@ -76,7 +104,8 @@ export const InstructorCertificationHubPage = () => {
     queryFn: () => certificateService.list({ size: 200 }),
   });
   const certificates = useMemo(() => {
-    const list = certPageData?.data?.data?.content ?? certPageData?.data?.content ?? certPageData?.data ?? [];
+    const list =
+      certPageData?.data?.data?.content ?? certPageData?.data?.content ?? certPageData?.data ?? [];
     return Array.isArray(list) ? list : [];
   }, [certPageData]);
 
@@ -110,7 +139,9 @@ export const InstructorCertificationHubPage = () => {
       const activeEnrolment =
         student.enrolments?.find((e) => !selectedBatchId || e.batchId === selectedBatchId) ||
         student.enrolments?.[0];
-      const activeBatch = batches.find((b) => b.id === (selectedBatchId || activeEnrolment?.batchId));
+      const activeBatch = batches.find(
+        (b) => b.id === (selectedBatchId || activeEnrolment?.batchId),
+      );
 
       const isCompleted = activeEnrolment?.status === 'COMPLETED' || student.status === 'COMPLETED';
       const progressPercent = activeEnrolment?.progressPercentage ?? (isCompleted ? 100 : 0);
@@ -161,8 +192,8 @@ export const InstructorCertificationHubPage = () => {
 
       const matchesCourse =
         !selectedCourseId ||
-        (c.courseId === selectedCourseId) ||
-        (batches.find((b) => b.code === c.batchCode)?.courseId === selectedCourseId);
+        c.courseId === selectedCourseId ||
+        batches.find((b) => b.code === c.batchCode)?.courseId === selectedCourseId;
 
       return matchesSearch && matchesStatus && matchesCourse;
     });
@@ -184,7 +215,9 @@ export const InstructorCertificationHubPage = () => {
     setIsIssuingBatch(true);
     setTimeout(() => {
       setIsIssuingBatch(false);
-      setIssuedNotification(`Successfully minted and recorded certificates for ${stats.completed} eligible candidates.`);
+      setIssuedNotification(
+        `Successfully minted and recorded certificates for ${stats.completed} eligible candidates.`,
+      );
       refetchCerts();
       refetchStudents();
       setTimeout(() => setIssuedNotification(''), 6000);
@@ -199,7 +232,16 @@ export const InstructorCertificationHubPage = () => {
 
   const exportGraduationCsv = () => {
     if (!filteredCandidates.length) return;
-    const headers = ['Student Name', 'Registration No', 'Email', 'Cohort', 'Course', 'Progress (%)', 'Status', 'Certificate Serial'];
+    const headers = [
+      'Student Name',
+      'Registration No',
+      'Email',
+      'Cohort',
+      'Course',
+      'Progress (%)',
+      'Status',
+      'Certificate Serial',
+    ];
     const rows = filteredCandidates.map((c) => [
       `"${c.fullName}"`,
       `"${c.registrationNo || 'N/A'}"`,
@@ -211,7 +253,9 @@ export const InstructorCertificationHubPage = () => {
       `"${c.certificate?.serialNumber || 'PENDING'}"`,
     ]);
 
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
@@ -227,11 +271,20 @@ export const InstructorCertificationHubPage = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: 24,
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+              letterSpacing: '-0.5px',
+            }}
+          >
             Course Completion & Certificates
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)' }}>
-            Track student curriculum completions across cohorts, verify credential validity, and mint certificates for graduating learners.
+            Track student curriculum completions across cohorts, verify credential validity, and
+            mint certificates for graduating learners.
           </p>
         </div>
 
@@ -276,10 +329,42 @@ export const InstructorCertificationHubPage = () => {
         }}
       >
         {[
-          { label: 'Cohort Candidates', val: stats.total, sub: 'Learners in active scope', icon: Users, tone: '#3b82f6', bg: 'var(--card-blue)', border: 'var(--card-blue-border)' },
-          { label: 'Course Completed', val: stats.completed, sub: '100% curriculum completed', icon: CheckCircle2, tone: '#10b981', bg: 'var(--card-green)', border: 'var(--card-green-border)' },
-          { label: 'Graduation Rate', val: `${stats.rate}%`, sub: 'Cohort pass-through ratio', icon: GraduationCap, tone: '#f59e0b', bg: 'var(--card-yellow)', border: 'var(--card-yellow-border)' },
-          { label: 'Certificates Issued', val: stats.certified, sub: 'Minted credentials', icon: Award, tone: '#8b5cf6', bg: 'var(--card-purple)', border: 'var(--card-purple-border)' },
+          {
+            label: 'Cohort Candidates',
+            val: stats.total,
+            sub: 'Learners in active scope',
+            icon: Users,
+            tone: '#3b82f6',
+            bg: 'var(--card-blue)',
+            border: 'var(--card-blue-border)',
+          },
+          {
+            label: 'Course Completed',
+            val: stats.completed,
+            sub: '100% curriculum completed',
+            icon: CheckCircle2,
+            tone: '#10b981',
+            bg: 'var(--card-green)',
+            border: 'var(--card-green-border)',
+          },
+          {
+            label: 'Graduation Rate',
+            val: `${stats.rate}%`,
+            sub: 'Cohort pass-through ratio',
+            icon: GraduationCap,
+            tone: '#f59e0b',
+            bg: 'var(--card-yellow)',
+            border: 'var(--card-yellow-border)',
+          },
+          {
+            label: 'Certificates Issued',
+            val: stats.certified,
+            sub: 'Minted credentials',
+            icon: Award,
+            tone: '#8b5cf6',
+            bg: 'var(--card-purple)',
+            border: 'var(--card-purple-border)',
+          },
         ].map((m, idx) => {
           const Icon = m.icon;
           return (
@@ -297,10 +382,27 @@ export const InstructorCertificationHubPage = () => {
               }}
             >
               <div>
-                <p style={{ margin: 0, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)' }}>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 11,
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: 'var(--text-secondary)',
+                  }}
+                >
                   {m.label}
                 </p>
-                <div style={{ fontSize: 26, fontWeight: 800, color: 'var(--text-primary)', marginTop: 4, letterSpacing: '-0.02em' }}>
+                <div
+                  style={{
+                    fontSize: 26,
+                    fontWeight: 800,
+                    color: 'var(--text-primary)',
+                    marginTop: 4,
+                    letterSpacing: '-0.02em',
+                  }}
+                >
                   {m.val}
                 </div>
                 <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
@@ -371,8 +473,12 @@ export const InstructorCertificationHubPage = () => {
                   outline: 'none',
                   transition: 'border-color 0.2s',
                 }}
-                onFocus={(e) => { e.target.style.borderColor = 'var(--color-primary, #6366f1)'; }}
-                onBlur={(e) => { e.target.style.borderColor = 'var(--border)'; }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = 'var(--color-primary, #6366f1)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'var(--border)';
+                }}
               />
             </div>
 
@@ -401,8 +507,13 @@ export const InstructorCertificationHubPage = () => {
                       boxShadow: active ? '0 2px 8px rgba(0, 0, 0, 0.12)' : 'none',
                       transition: 'all 0.2s ease',
                     }}
-                    onMouseEnter={(e) => { if (!active) e.currentTarget.style.borderColor = 'var(--color-primary, #6366f1)'; }}
-                    onMouseLeave={(e) => { if (!active) e.currentTarget.style.borderColor = 'var(--border)'; }}
+                    onMouseEnter={(e) => {
+                      if (!active)
+                        e.currentTarget.style.borderColor = 'var(--color-primary, #6366f1)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!active) e.currentTarget.style.borderColor = 'var(--border)';
+                    }}
                   >
                     {p.label}
                   </button>
@@ -412,8 +523,20 @@ export const InstructorCertificationHubPage = () => {
           </div>
 
           {/* Bottom Row: Cohort Focus, Course Filter, and Action Buttons */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border)', paddingTop: 12 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', flex: 1 }}>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 12,
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderTop: '1px solid var(--border)',
+              paddingTop: 12,
+            }}
+          >
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', flex: 1 }}
+            >
               {/* Batch Selector */}
               <div style={{ minWidth: 200, flex: '1 1 180px' }}>
                 <select
@@ -431,11 +554,18 @@ export const InstructorCertificationHubPage = () => {
                     cursor: 'pointer',
                   }}
                 >
-                  <option value="" style={{ backgroundColor: 'var(--card)', color: 'var(--text-primary)' }}>
+                  <option
+                    value=""
+                    style={{ backgroundColor: 'var(--card)', color: 'var(--text-primary)' }}
+                  >
                     All Cohorts & Batches
                   </option>
                   {batches.map((b) => (
-                    <option key={b.id} value={b.id} style={{ backgroundColor: 'var(--card)', color: 'var(--text-primary)' }}>
+                    <option
+                      key={b.id}
+                      value={b.id}
+                      style={{ backgroundColor: 'var(--card)', color: 'var(--text-primary)' }}
+                    >
                       {b.code} — {b.name}
                     </option>
                   ))}
@@ -459,11 +589,18 @@ export const InstructorCertificationHubPage = () => {
                     cursor: 'pointer',
                   }}
                 >
-                  <option value="" style={{ backgroundColor: 'var(--card)', color: 'var(--text-primary)' }}>
+                  <option
+                    value=""
+                    style={{ backgroundColor: 'var(--card)', color: 'var(--text-primary)' }}
+                  >
                     All Curriculum Courses
                   </option>
                   {courses.map((c) => (
-                    <option key={c.id} value={c.id} style={{ backgroundColor: 'var(--card)', color: 'var(--text-primary)' }}>
+                    <option
+                      key={c.id}
+                      value={c.id}
+                      style={{ backgroundColor: 'var(--card)', color: 'var(--text-primary)' }}
+                    >
                       {c.title}
                     </option>
                   ))}
@@ -506,15 +643,41 @@ export const InstructorCertificationHubPage = () => {
           boxShadow: 'var(--shadow-sm)',
         }}
       >
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}>
+        <table
+          style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: 13 }}
+        >
           <thead>
-            <tr style={{ borderBottom: '1px solid var(--border)', backgroundColor: 'var(--background)' }}>
-              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>Candidate</th>
-              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>Cohort</th>
-              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>Course Curriculum</th>
-              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>Completion Progress</th>
-              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>Credential Status</th>
-              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)', textAlign: 'right' }}>Actions</th>
+            <tr
+              style={{
+                borderBottom: '1px solid var(--border)',
+                backgroundColor: 'var(--background)',
+              }}
+            >
+              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                Candidate
+              </th>
+              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                Cohort
+              </th>
+              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                Course Curriculum
+              </th>
+              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                Completion Progress
+              </th>
+              <th style={{ padding: '14px 20px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                Credential Status
+              </th>
+              <th
+                style={{
+                  padding: '14px 20px',
+                  fontWeight: 600,
+                  color: 'var(--text-secondary)',
+                  textAlign: 'right',
+                }}
+              >
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -523,35 +686,109 @@ export const InstructorCertificationHubPage = () => {
                 <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
                   <td style={{ padding: '16px 20px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                      <div
+                        style={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: '50%',
+                          background: 'var(--skeleton-bg, #e2e8f0)',
+                          animation: 'pulse 1.5s ease-in-out infinite',
+                        }}
+                      />
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        <div style={{ width: 110, height: 14, borderRadius: 4, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
-                        <div style={{ width: 140, height: 11, borderRadius: 4, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                        <div
+                          style={{
+                            width: 110,
+                            height: 14,
+                            borderRadius: 4,
+                            background: 'var(--skeleton-bg, #e2e8f0)',
+                            animation: 'pulse 1.5s ease-in-out infinite',
+                          }}
+                        />
+                        <div
+                          style={{
+                            width: 140,
+                            height: 11,
+                            borderRadius: 4,
+                            background: 'var(--skeleton-subtle, #f1f5f9)',
+                            animation: 'pulse 1.5s ease-in-out infinite',
+                          }}
+                        />
                       </div>
                     </div>
                   </td>
                   <td style={{ padding: '16px 20px' }}>
-                    <div style={{ width: 90, height: 20, borderRadius: 6, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    <div
+                      style={{
+                        width: 90,
+                        height: 20,
+                        borderRadius: 6,
+                        background: 'var(--skeleton-subtle, #f1f5f9)',
+                        animation: 'pulse 1.5s ease-in-out infinite',
+                      }}
+                    />
                   </td>
                   <td style={{ padding: '16px 20px' }}>
-                    <div style={{ width: 140, height: 14, borderRadius: 4, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    <div
+                      style={{
+                        width: 140,
+                        height: 14,
+                        borderRadius: 4,
+                        background: 'var(--skeleton-bg, #e2e8f0)',
+                        animation: 'pulse 1.5s ease-in-out infinite',
+                      }}
+                    />
                   </td>
                   <td style={{ padding: '16px 20px' }}>
-                    <div style={{ width: 100, height: 8, borderRadius: 99, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    <div
+                      style={{
+                        width: 100,
+                        height: 8,
+                        borderRadius: 99,
+                        background: 'var(--skeleton-subtle, #f1f5f9)',
+                        animation: 'pulse 1.5s ease-in-out infinite',
+                      }}
+                    />
                   </td>
                   <td style={{ padding: '16px 20px' }}>
-                    <div style={{ width: 80, height: 22, borderRadius: 99, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    <div
+                      style={{
+                        width: 80,
+                        height: 22,
+                        borderRadius: 99,
+                        background: 'var(--skeleton-subtle, #f1f5f9)',
+                        animation: 'pulse 1.5s ease-in-out infinite',
+                      }}
+                    />
                   </td>
                   <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                    <div style={{ width: 88, height: 30, borderRadius: 8, background: 'var(--skeleton-bg, #e2e8f0)', marginLeft: 'auto', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    <div
+                      style={{
+                        width: 88,
+                        height: 30,
+                        borderRadius: 8,
+                        background: 'var(--skeleton-bg, #e2e8f0)',
+                        marginLeft: 'auto',
+                        animation: 'pulse 1.5s ease-in-out infinite',
+                      }}
+                    />
                   </td>
                 </tr>
               ))
             ) : filteredCandidates.length === 0 ? (
               <tr>
-                <td colSpan={6} style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
-                  <GraduationCap size={36} color="var(--text-muted)" style={{ margin: '0 auto 10px auto' }} />
-                  <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>No Candidates Found</div>
+                <td
+                  colSpan={6}
+                  style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--text-muted)' }}
+                >
+                  <GraduationCap
+                    size={36}
+                    color="var(--text-muted)"
+                    style={{ margin: '0 auto 10px auto' }}
+                  />
+                  <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
+                    No Candidates Found
+                  </div>
                   <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
                     No learners match the selected cohort or filter criteria.
                   </div>
@@ -566,18 +803,30 @@ export const InstructorCertificationHubPage = () => {
                       borderBottom: '1px solid var(--border)',
                       transition: 'background-color 0.15s ease',
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--background)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'var(--background)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
                   >
                     {/* Candidate */}
                     <td style={{ padding: '14px 20px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         <CandidateAvatar name={c.fullName} size={36} />
                         <div>
-                          <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{c.fullName}</div>
+                          <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                            {c.fullName}
+                          </div>
                           <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{c.email}</div>
                           {c.registrationNo && (
-                            <div style={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
+                            <div
+                              style={{
+                                fontSize: 11,
+                                color: 'var(--text-secondary)',
+                                fontFamily: 'monospace',
+                              }}
+                            >
                               Reg: {c.registrationNo}
                             </div>
                           )}
@@ -608,8 +857,20 @@ export const InstructorCertificationHubPage = () => {
                     </td>
 
                     {/* Course */}
-                    <td style={{ padding: '14px 20px', color: 'var(--text-secondary)', maxWidth: 220 }}>
-                      <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <td
+                      style={{
+                        padding: '14px 20px',
+                        color: 'var(--text-secondary)',
+                        maxWidth: 220,
+                      }}
+                    >
+                      <div
+                        style={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
                         {c.courseTitle || <span style={{ color: 'var(--text-muted)' }}>—</span>}
                       </div>
                     </td>
@@ -617,7 +878,15 @@ export const InstructorCertificationHubPage = () => {
                     {/* Progress */}
                     <td style={{ padding: '14px 20px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ width: 80, height: 6, borderRadius: 99, backgroundColor: 'var(--border)', overflow: 'hidden' }}>
+                        <div
+                          style={{
+                            width: 80,
+                            height: 6,
+                            borderRadius: 99,
+                            backgroundColor: 'var(--border)',
+                            overflow: 'hidden',
+                          }}
+                        >
                           <div
                             style={{
                               width: `${c.progressPercent}%`,
@@ -629,7 +898,13 @@ export const InstructorCertificationHubPage = () => {
                             }}
                           />
                         </div>
-                        <span style={{ fontSize: 12, fontWeight: 600, color: c.isCompleted ? '#059669' : 'var(--text-secondary)' }}>
+                        <span
+                          style={{
+                            fontSize: 12,
+                            fontWeight: 600,
+                            color: c.isCompleted ? '#059669' : 'var(--text-secondary)',
+                          }}
+                        >
                           {c.progressPercent}%
                         </span>
                       </div>
@@ -704,7 +979,9 @@ export const InstructorCertificationHubPage = () => {
                             Verify
                           </button>
                           <button
-                            onClick={() => window.open(`/verify/${c.certificate.serialNumber}`, '_blank')}
+                            onClick={() =>
+                              window.open(`/verify/${c.certificate.serialNumber}`, '_blank')
+                            }
                             style={{
                               padding: '6px 8px',
                               borderRadius: 8,
@@ -780,14 +1057,28 @@ export const InstructorCertificationHubPage = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-              <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: '50%',
+                  backgroundColor: '#10b981',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
                 <CheckCircle2 size={20} color="#fff" />
               </div>
               <div>
-                <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                <h3
+                  style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}
+                >
                   Verified Credential
                 </h3>
-                <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Cryptographic authenticity confirmed</div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                  Cryptographic authenticity confirmed
+                </div>
               </div>
             </div>
 
@@ -806,7 +1097,13 @@ export const InstructorCertificationHubPage = () => {
             >
               <div>
                 <span style={{ color: 'var(--text-muted)' }}>Serial Number: </span>
-                <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--color-primary, #6366f1)' }}>
+                <span
+                  style={{
+                    fontFamily: 'monospace',
+                    fontWeight: 700,
+                    color: 'var(--color-primary, #6366f1)',
+                  }}
+                >
                   {activeVerifyCert.serialNumber}
                 </span>
               </div>
@@ -830,10 +1127,7 @@ export const InstructorCertificationHubPage = () => {
               >
                 Open Public Registry
               </AdminButton>
-              <AdminButton
-                variant="secondary"
-                onClick={() => setActiveVerifyCert(null)}
-              >
+              <AdminButton variant="secondary" onClick={() => setActiveVerifyCert(null)}>
                 Close
               </AdminButton>
             </div>

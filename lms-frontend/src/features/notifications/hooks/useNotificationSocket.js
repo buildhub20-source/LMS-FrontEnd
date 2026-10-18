@@ -17,7 +17,8 @@ export function useNotificationSocket() {
 
   useEffect(() => {
     // Initial fetch of unread count from REST
-    notificationService.getUnreadCount()
+    notificationService
+      .getUnreadCount()
       .then((count) => {
         if (typeof count === 'number') setUnreadCount(count);
       })

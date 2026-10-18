@@ -22,10 +22,7 @@ export const CreateAssessmentPage = () => {
       title="Create New Assessment"
       subtitle="Set up title, duration, marks, and retake policies for your students."
       actions={
-        <Link
-          to={ROUTES.ASSESSMENTS}
-          style={{ textDecoration: 'none' }}
-        >
+        <Link to={ROUTES.ASSESSMENTS} style={{ textDecoration: 'none' }}>
           <button
             type="button"
             style={{

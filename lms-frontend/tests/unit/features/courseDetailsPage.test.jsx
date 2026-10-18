@@ -6,7 +6,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 const course = {
   id: 'course-1',
   title: 'Java Foundations',
-  modules: [{ id: 'm1', title: 'Basics', lessons: [{ id: 'l1', title: 'Variables', type: 'ARTICLE', content: 'Hello' }] }],
+  modules: [
+    {
+      id: 'm1',
+      title: 'Basics',
+      lessons: [{ id: 'l1', title: 'Variables', type: 'ARTICLE', content: 'Hello' }],
+    },
+  ],
 };
 
 vi.mock('../../../src/features/courses/hooks/useCourse', () => ({
@@ -33,9 +39,15 @@ vi.mock('../../../src/features/learning/services/learningService', () => ({
 vi.mock('../../../src/features/courses/services/courseService', () => ({
   default: { getRecordingPlaybackUrl: vi.fn().mockResolvedValue({}) },
 }));
-vi.mock('../../../src/features/courses/components/CourseAnalyticsTab', () => ({ default: () => null }));
-vi.mock('../../../src/features/courses/components/LessonNotesPanel', () => ({ default: () => null }));
-vi.mock('../../../src/features/courses/components/LessonResourcesPanel', () => ({ default: () => null }));
+vi.mock('../../../src/features/courses/components/CourseAnalyticsTab', () => ({
+  default: () => null,
+}));
+vi.mock('../../../src/features/courses/components/LessonNotesPanel', () => ({
+  default: () => null,
+}));
+vi.mock('../../../src/features/courses/components/LessonResourcesPanel', () => ({
+  default: () => null,
+}));
 
 import { CourseDetailsPage } from '../../../src/features/courses/pages/CourseDetailsPage';
 

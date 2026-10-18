@@ -13,12 +13,7 @@ describe('Message Attachments & Lightbox Tests', () => {
 
     it('renders the image when isOpen is true and src is provided', () => {
       render(
-        <ImageLightbox
-          isOpen={true}
-          src={mockImage.url}
-          alt={mockImage.name}
-          onClose={vi.fn()}
-        />
+        <ImageLightbox isOpen={true} src={mockImage.url} alt={mockImage.name} onClose={vi.fn()} />,
       );
 
       expect(screen.getByAltText('test-image.png')).toBeInTheDocument();
@@ -27,12 +22,7 @@ describe('Message Attachments & Lightbox Tests', () => {
 
     it('does not render when isOpen is false or src is null', () => {
       const { container } = render(
-        <ImageLightbox
-          isOpen={false}
-          src={mockImage.url}
-          alt={mockImage.name}
-          onClose={vi.fn()}
-        />
+        <ImageLightbox isOpen={false} src={mockImage.url} alt={mockImage.name} onClose={vi.fn()} />,
       );
       expect(container.firstChild).toBeNull();
     });
@@ -40,12 +30,7 @@ describe('Message Attachments & Lightbox Tests', () => {
     it('calls onClose when close button or Escape key is pressed', () => {
       const onClose = vi.fn();
       render(
-        <ImageLightbox
-          isOpen={true}
-          src={mockImage.url}
-          alt={mockImage.name}
-          onClose={onClose}
-        />
+        <ImageLightbox isOpen={true} src={mockImage.url} alt={mockImage.name} onClose={onClose} />,
       );
 
       const closeBtn = screen.getByLabelText('Close preview (Esc)');
@@ -58,12 +43,7 @@ describe('Message Attachments & Lightbox Tests', () => {
 
     it('handles zoom in, zoom out, and reset zoom actions', () => {
       render(
-        <ImageLightbox
-          isOpen={true}
-          src={mockImage.url}
-          alt={mockImage.name}
-          onClose={vi.fn()}
-        />
+        <ImageLightbox isOpen={true} src={mockImage.url} alt={mockImage.name} onClose={vi.fn()} />,
       );
 
       const zoomInBtn = screen.getByLabelText('Zoom In');
@@ -104,7 +84,7 @@ describe('Message Attachments & Lightbox Tests', () => {
           onReply={vi.fn()}
           onEdit={vi.fn()}
           onDelete={vi.fn()}
-        />
+        />,
       );
 
       const img = screen.getByAltText('arch.png');
@@ -141,7 +121,7 @@ describe('Message Attachments & Lightbox Tests', () => {
           onReply={vi.fn()}
           onEdit={vi.fn()}
           onDelete={vi.fn()}
-        />
+        />,
       );
 
       expect(screen.getByText('spec.pdf')).toBeInTheDocument();
@@ -153,12 +133,7 @@ describe('Message Attachments & Lightbox Tests', () => {
 
   describe('MessageComposer Drag-and-Drop and Paste', () => {
     it('shows drag overlay when files are dragged over composer', () => {
-      const { container } = render(
-        <MessageComposer
-          onSend={vi.fn()}
-          onTyping={vi.fn()}
-        />
-      );
+      const { container } = render(<MessageComposer onSend={vi.fn()} onTyping={vi.fn()} />);
 
       const dropZone = container.querySelector('.chat-composer');
       expect(dropZone).toBeInTheDocument();

@@ -10,7 +10,8 @@ export const LiveAttendancePage = () => {
   const navigate = useNavigate();
 
   const { data: session, isLoading: sessionLoading } = useLiveSessionDetails(sessionId);
-  const { data: attendance = [], isLoading: attendanceLoading } = useLiveSessionAttendance(sessionId);
+  const { data: attendance = [], isLoading: attendanceLoading } =
+    useLiveSessionAttendance(sessionId);
 
   const formatTime = (dateStr) => {
     if (!dateStr) return '—';
@@ -58,7 +59,12 @@ export const LiveAttendancePage = () => {
               </div>
               <div className="flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-slate-400" />
-                <span>Status: <strong className="capitalize text-slate-700 dark:text-slate-300">{session.status?.toLowerCase()}</strong></span>
+                <span>
+                  Status:{' '}
+                  <strong className="capitalize text-slate-700 dark:text-slate-300">
+                    {session.status?.toLowerCase()}
+                  </strong>
+                </span>
               </div>
             </div>
           )}
@@ -70,10 +76,7 @@ export const LiveAttendancePage = () => {
             <Spinner />
           </div>
         ) : (
-          <LiveAttendanceTable
-            attendanceList={attendance}
-            isLoading={attendanceLoading}
-          />
+          <LiveAttendanceTable attendanceList={attendance} isLoading={attendanceLoading} />
         )}
       </div>
     </PageContainer>

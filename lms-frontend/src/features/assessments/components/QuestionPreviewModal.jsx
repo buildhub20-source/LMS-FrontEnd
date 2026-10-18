@@ -1,5 +1,14 @@
 import React, { useState, useMemo } from 'react';
-import { X, Eye, Play, Sparkles, CheckCircle2, AlertTriangle, Monitor, RotateCcw } from 'lucide-react';
+import {
+  X,
+  Eye,
+  Play,
+  Sparkles,
+  CheckCircle2,
+  AlertTriangle,
+  Monitor,
+  RotateCcw,
+} from 'lucide-react';
 import Button from '../../../components/common/Button';
 import Badge from '../../../components/common/Badge';
 import CodingQuestionPanel from './CodingQuestionPanel';
@@ -7,15 +16,11 @@ import McqQuestionPanel from './McqQuestionPanel';
 
 /**
  * QuestionPreviewModal
- * 
+ *
  * Allows instructors to preview and test questions exactly as a student would experience them.
  * Supports running code against test cases with live output verification.
  */
-export default function QuestionPreviewModal({
-  isOpen,
-  onClose,
-  questionData,
-}) {
+export default function QuestionPreviewModal({ isOpen, onClose, questionData }) {
   // Hooks live in the inner component: an early return before them changes the hook
   // count between renders, which React rejects when the modal opens or closes.
   if (!isOpen || !questionData) return null;
@@ -132,7 +137,8 @@ function QuestionPreviewContent({ onClose, questionData }) {
               </span>
             </div>
             <span style={{ fontSize: 12, color: 'var(--text-muted, #94a3b8)' }}>
-              Testing "{normalizedQuestion.title}" ({normalizedQuestion.difficulty} · {normalizedQuestion.marks} marks)
+              Testing &ldquo;{normalizedQuestion.title}&rdquo; ({normalizedQuestion.difficulty} ·{' '}
+              {normalizedQuestion.marks} marks)
             </span>
           </div>
         </div>
@@ -190,7 +196,15 @@ function QuestionPreviewContent({ onClose, questionData }) {
             isReadOnly={false}
           />
         ) : (
-          <div style={{ padding: 24, overflowY: 'auto', maxWidth: 900, margin: '0 auto', width: '100%' }}>
+          <div
+            style={{
+              padding: 24,
+              overflowY: 'auto',
+              maxWidth: 900,
+              margin: '0 auto',
+              width: '100%',
+            }}
+          >
             <McqQuestionPanel
               question={normalizedQuestion}
               draft={draft}
@@ -211,11 +225,22 @@ function QuestionPreviewContent({ onClose, questionData }) {
                   Instructor Answers & Explanations:
                 </h4>
                 {normalizedQuestion.options.map((opt, i) => (
-                  <div key={opt.id} style={{ fontSize: 12, marginBottom: 6, color: 'var(--text-primary, #fff)' }}>
+                  <div
+                    key={opt.id}
+                    style={{ fontSize: 12, marginBottom: 6, color: 'var(--text-primary, #fff)' }}
+                  >
                     <strong>Option {String.fromCharCode(65 + i)}:</strong> {opt.optionText}{' '}
-                    {opt.isCorrect && <span style={{ color: '#10b981', fontWeight: 700 }}>(Correct)</span>}
+                    {opt.isCorrect && (
+                      <span style={{ color: '#10b981', fontWeight: 700 }}>(Correct)</span>
+                    )}
                     {opt.explanation && (
-                      <p style={{ margin: '2px 0 0', color: 'var(--text-muted, #94a3b8)', fontStyle: 'italic' }}>
+                      <p
+                        style={{
+                          margin: '2px 0 0',
+                          color: 'var(--text-muted, #94a3b8)',
+                          fontStyle: 'italic',
+                        }}
+                      >
                         Explanation: {opt.explanation}
                       </p>
                     )}

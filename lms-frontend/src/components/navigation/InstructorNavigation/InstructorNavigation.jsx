@@ -1,4 +1,16 @@
-import { FolderDown, BookOpen, FileText, ClipboardList, LayoutDashboard, Megaphone, Database, Users, Award, MessageSquare, Video } from 'lucide-react';
+import {
+  FolderDown,
+  BookOpen,
+  FileText,
+  ClipboardList,
+  LayoutDashboard,
+  Megaphone,
+  Database,
+  Users,
+  Award,
+  MessageSquare,
+  Video,
+} from 'lucide-react';
 import MainNavigation from '../MainNavigation';
 import { ROUTES } from '../../../constants/routes';
 import { PERMISSIONS } from '../../../constants/permissions';

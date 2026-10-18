@@ -1,9 +1,32 @@
 import { useState } from 'react';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
-  GripVertical, Plus, Trash2, ChevronDown, ChevronRight, Edit2, FolderPlus, FileText, Layers, Check, X
+  GripVertical,
+  Plus,
+  Trash2,
+  ChevronDown,
+  ChevronRight,
+  Edit2,
+  FolderPlus,
+  FileText,
+  Layers,
+  Check,
+  X,
 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import curriculumService from '../services/curriculumService';
@@ -19,7 +42,9 @@ export function formatSectionTitle(title, index) {
 
 // Sortable Individual Lesson Row Component
 const SortableLessonRow = ({ lesson, idx, moduleId, onEditLesson, onDeleteLesson }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: lesson.id });
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+    id: lesson.id,
+  });
   const typeConfig = LESSON_TYPE_MAP[lesson.lessonType] || LESSON_TYPE_MAP.VIDEO;
   const IconComp = typeConfig.icon || FileText;
 
@@ -31,17 +56,34 @@ const SortableLessonRow = ({ lesson, idx, moduleId, onEditLesson, onDeleteLesson
   return (
     <div ref={setNodeRef} style={{ ...style, ...lessonRowStyle }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1 }}>
-        <div {...attributes} {...listeners} style={{ cursor: 'grab', color: 'var(--text-muted)', display: 'flex', alignItems: 'center' }} title="Drag to reorder lesson">
+        <div
+          {...attributes}
+          {...listeners}
+          style={{
+            cursor: 'grab',
+            color: 'var(--text-muted)',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+          title="Drag to reorder lesson"
+        >
           <GripVertical size={14} />
         </div>
         <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', width: 20 }}>
           {idx + 1}.
         </span>
         {lesson.thumbnailUrl ? (
-          <img 
-            src={lesson.thumbnailUrl} 
-            alt={lesson.title} 
-            style={{ width: 44, height: 32, borderRadius: 6, objectFit: 'cover', border: '1px solid var(--border-color)', flexShrink: 0 }} 
+          <img
+            src={lesson.thumbnailUrl}
+            alt={lesson.title}
+            style={{
+              width: 44,
+              height: 32,
+              borderRadius: 6,
+              objectFit: 'cover',
+              border: '1px solid var(--border-color)',
+              flexShrink: 0,
+            }}
           />
         ) : (
           <div style={lessonIconBox(typeConfig.color)}>
@@ -61,18 +103,26 @@ const SortableLessonRow = ({ lesson, idx, moduleId, onEditLesson, onDeleteLesson
                 • {lesson.durationMinutes} min
               </span>
             )}
-            {lesson.freePreview && (
-              <span style={freeBadgeStyle}>Free Preview</span>
-            )}
+            {lesson.freePreview && <span style={freeBadgeStyle}>Free Preview</span>}
           </div>
         </div>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <Button variant="ghost" size="sm" onClick={() => onEditLesson(moduleId, lesson)} title="Edit lesson">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onEditLesson(moduleId, lesson)}
+          title="Edit lesson"
+        >
           <Edit2 size={13} />
         </Button>
-        <Button variant="ghost" size="sm" onClick={() => onDeleteLesson(moduleId, lesson.id)} title="Delete lesson">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onDeleteLesson(moduleId, lesson.id)}
+          title="Delete lesson"
+        >
           <Trash2 size={13} />
         </Button>
       </div>
@@ -81,15 +131,28 @@ const SortableLessonRow = ({ lesson, idx, moduleId, onEditLesson, onDeleteLesson
 };
 
 // Sortable Section / Module Component
-const SortableModule = ({ module, index, onAddLesson, onEditLesson, onDeleteLesson, onDeleteModule, onUpdateModuleTitle, onReorderLessons }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: module.id });
+const SortableModule = ({
+  module,
+  index,
+  onAddLesson,
+  onEditLesson,
+  onDeleteLesson,
+  onDeleteModule,
+  onUpdateModuleTitle,
+  onReorderLessons,
+}) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+    id: module.id,
+  });
   const [expanded, setExpanded] = useState(true);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(module.title.replace(/^section\s*\d*\s*:?\s*/i, '').trim() || module.title);
+  const [editedTitle, setEditedTitle] = useState(
+    module.title.replace(/^section\s*\d*\s*:?\s*/i, '').trim() || module.title,
+  );
 
   const sensors = useSensors(
     useSensor(PointerSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
   const style = {
@@ -120,13 +183,23 @@ const SortableModule = ({ module, index, onAddLesson, onEditLesson, onDeleteLess
       {/* Module Header */}
       <div style={sectionHeadStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1 }}>
-          <div {...attributes} {...listeners} style={{ cursor: 'grab', color: 'var(--text-muted)', display: 'flex', alignItems: 'center' }} title="Drag to reorder section">
+          <div
+            {...attributes}
+            {...listeners}
+            style={{
+              cursor: 'grab',
+              color: 'var(--text-muted)',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+            title="Drag to reorder section"
+          >
             <GripVertical size={18} />
           </div>
           <button onClick={() => setExpanded(!expanded)} style={iconBtnStyle}>
             {expanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
           </button>
-          
+
           <div style={{ flex: 1 }}>
             {isEditingTitle ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, maxWidth: 400 }}>
@@ -146,10 +219,14 @@ const SortableModule = ({ module, index, onAddLesson, onEditLesson, onDeleteLess
               </div>
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
+                <h3
+                  style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}
+                >
                   {formatSectionTitle(module.title, index + 1)}
                 </h3>
-                <span style={badgeStyle}>{lessonsCount} {lessonsCount === 1 ? 'item' : 'items'}</span>
+                <span style={badgeStyle}>
+                  {lessonsCount} {lessonsCount === 1 ? 'item' : 'items'}
+                </span>
                 <button
                   onClick={() => setIsEditingTitle(true)}
                   style={{ ...iconBtnStyle, padding: 4 }}
@@ -166,7 +243,12 @@ const SortableModule = ({ module, index, onAddLesson, onEditLesson, onDeleteLess
           <Button variant="secondary" size="sm" onClick={() => onAddLesson(module.id)}>
             <Plus size={13} style={{ marginRight: 4 }} /> Add Lesson / File
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => onDeleteModule(module.id)} title="Delete section">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onDeleteModule(module.id)}
+            title="Delete section"
+          >
             <Trash2 size={13} style={{ color: '#ef4444' }} />
           </Button>
         </div>
@@ -176,8 +258,15 @@ const SortableModule = ({ module, index, onAddLesson, onEditLesson, onDeleteLess
       {expanded && (
         <div style={{ padding: '12px 18px', background: 'var(--lms-card)' }}>
           {module.lessons?.length > 0 ? (
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleLessonDragEnd}>
-              <SortableContext items={module.lessons.map((l) => l.id)} strategy={verticalListSortingStrategy}>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleLessonDragEnd}
+            >
+              <SortableContext
+                items={module.lessons.map((l) => l.id)}
+                strategy={verticalListSortingStrategy}
+              >
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {module.lessons.map((lesson, idx) => (
                     <SortableLessonRow
@@ -193,8 +282,19 @@ const SortableModule = ({ module, index, onAddLesson, onEditLesson, onDeleteLess
               </SortableContext>
             </DndContext>
           ) : (
-            <p style={{ margin: 0, padding: '16px 0', fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', fontStyle: 'italic' }}>
-              {'No material or lessons added in this section yet. Click "+ Add Lesson / File" above.'}
+            <p
+              style={{
+                margin: 0,
+                padding: '16px 0',
+                fontSize: 13,
+                color: 'var(--text-muted)',
+                textAlign: 'center',
+                fontStyle: 'italic',
+              }}
+            >
+              {
+                'No material or lessons added in this section yet. Click "+ Add Lesson / File" above.'
+              }
             </p>
           )}
         </div>
@@ -207,7 +307,7 @@ export const CurriculumBuilder = ({ course }) => {
   const [modules, setModules] = useState(course?.modules || []);
   const [isAddingModule, setIsAddingModule] = useState(false);
   const [newModuleTitle, setNewModuleTitle] = useState('');
-  
+
   const [editingLesson, setEditingLesson] = useState(null); // { moduleId, lesson }
 
   const toast = useToast();
@@ -215,7 +315,7 @@ export const CurriculumBuilder = ({ course }) => {
 
   const sensors = useSensors(
     useSensor(PointerSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
   const handleDragEnd = (event) => {
@@ -233,7 +333,10 @@ export const CurriculumBuilder = ({ course }) => {
     if (!newModuleTitle.trim()) return;
     try {
       const cleanTitle = newModuleTitle.replace(/^section\s*\d*\s*:?\s*/i, '').trim();
-      const res = await curriculumService.addModule(course.id, { title: cleanTitle, sortOrder: modules.length });
+      const res = await curriculumService.addModule(course.id, {
+        title: cleanTitle,
+        sortOrder: modules.length,
+      });
       setModules([...modules, { ...res, lessons: [] }]);
       setNewModuleTitle('');
       setIsAddingModule(false);
@@ -248,7 +351,7 @@ export const CurriculumBuilder = ({ course }) => {
     try {
       const cleanTitle = newTitle.replace(/^section\s*\d*\s*:?\s*/i, '').trim();
       await curriculumService.updateModule(course.id, moduleId, { title: cleanTitle });
-      setModules(modules.map(m => m.id === moduleId ? { ...m, title: cleanTitle } : m));
+      setModules(modules.map((m) => (m.id === moduleId ? { ...m, title: cleanTitle } : m)));
       toast.success('Section title updated');
     } catch (e) {
       toast.error(e?.message || 'Failed to update section title');
@@ -256,14 +359,14 @@ export const CurriculumBuilder = ({ course }) => {
   };
 
   const handleReorderLessons = (moduleId, reorderedLessons) => {
-    setModules(modules.map(m => m.id === moduleId ? { ...m, lessons: reorderedLessons } : m));
+    setModules(modules.map((m) => (m.id === moduleId ? { ...m, lessons: reorderedLessons } : m)));
   };
 
   const handleDeleteModule = async (moduleId) => {
     if (!window.confirm('Delete this section and all its contents?')) return;
     try {
       await curriculumService.deleteModule(course.id, moduleId);
-      setModules(modules.filter(m => m.id !== moduleId));
+      setModules(modules.filter((m) => m.id !== moduleId));
       toast.success('Section deleted');
     } catch (e) {
       toast.error(e?.message || 'Failed to delete section');
@@ -277,26 +380,28 @@ export const CurriculumBuilder = ({ course }) => {
         title: '',
         lessonType: 'VIDEO',
         durationMinutes: 10,
-        freePreview: false
-      }
+        freePreview: false,
+      },
     });
   };
 
   const handleSaveLesson = (savedLesson) => {
     if (!editingLesson?.moduleId || !savedLesson) return;
-    setModules(modules.map(m => {
-      if (m.id === editingLesson.moduleId) {
-        const existingIdx = m.lessons?.findIndex(l => l.id === savedLesson.id);
-        let updatedLessons;
-        if (existingIdx >= 0) {
-          updatedLessons = m.lessons.map(l => l.id === savedLesson.id ? savedLesson : l);
-        } else {
-          updatedLessons = [...(m.lessons || []), savedLesson];
+    setModules(
+      modules.map((m) => {
+        if (m.id === editingLesson.moduleId) {
+          const existingIdx = m.lessons?.findIndex((l) => l.id === savedLesson.id);
+          let updatedLessons;
+          if (existingIdx >= 0) {
+            updatedLessons = m.lessons.map((l) => (l.id === savedLesson.id ? savedLesson : l));
+          } else {
+            updatedLessons = [...(m.lessons || []), savedLesson];
+          }
+          return { ...m, lessons: updatedLessons };
         }
-        return { ...m, lessons: updatedLessons };
-      }
-      return m;
-    }));
+        return m;
+      }),
+    );
     setEditingLesson(null);
   };
 
@@ -304,12 +409,14 @@ export const CurriculumBuilder = ({ course }) => {
     if (!window.confirm('Delete this lesson?')) return;
     try {
       await curriculumService.deleteLesson(course.id, moduleId, lessonId);
-      setModules(modules.map(m => {
-        if (m.id === moduleId) {
-          return { ...m, lessons: m.lessons.filter(l => l.id !== lessonId) };
-        }
-        return m;
-      }));
+      setModules(
+        modules.map((m) => {
+          if (m.id === moduleId) {
+            return { ...m, lessons: m.lessons.filter((l) => l.id !== lessonId) };
+          }
+          return m;
+        }),
+      );
       toast.success('Lesson deleted');
     } catch (e) {
       toast.error(e?.message || 'Failed to delete lesson');
@@ -325,7 +432,8 @@ export const CurriculumBuilder = ({ course }) => {
             Course Curriculum & Materials
           </h2>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
-            Organize course content into multiple sections containing videos, slides (PPT), PDFs, and docs. Drag items to reorder.
+            Organize course content into multiple sections containing videos, slides (PPT), PDFs,
+            and docs. Drag items to reorder.
           </p>
         </div>
         <Button onClick={() => setIsAddingModule(true)} variant="primary" size="sm">
@@ -337,19 +445,32 @@ export const CurriculumBuilder = ({ course }) => {
       {isAddingModule && (
         <div style={inlineAddModuleStyle}>
           <div style={{ flex: 1 }}>
-            <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', display: 'block', marginBottom: 4 }}>
+            <label
+              style={{
+                fontSize: 13,
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+                display: 'block',
+                marginBottom: 4,
+              }}
+            >
               Section Title *
             </label>
-            <input 
+            <input
               autoFocus
               style={inputStyle}
-              value={newModuleTitle} 
-              onChange={(e) => setNewModuleTitle(e.target.value)} 
+              value={newModuleTitle}
+              onChange={(e) => setNewModuleTitle(e.target.value)}
               placeholder="e.g. Introduction to Angular Framework"
             />
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
-            <Button onClick={handleAddModule} variant="primary" size="sm" disabled={!newModuleTitle.trim()}>
+            <Button
+              onClick={handleAddModule}
+              variant="primary"
+              size="sm"
+              disabled={!newModuleTitle.trim()}
+            >
               Save Section
             </Button>
             <Button onClick={() => setIsAddingModule(false)} variant="ghost" size="sm">
@@ -361,11 +482,11 @@ export const CurriculumBuilder = ({ course }) => {
 
       {/* Drag & Drop Section List */}
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={modules.map(m => m.id)} strategy={verticalListSortingStrategy}>
+        <SortableContext items={modules.map((m) => m.id)} strategy={verticalListSortingStrategy}>
           {modules.map((module, idx) => (
-            <SortableModule 
-              key={module.id} 
-              module={module} 
+            <SortableModule
+              key={module.id}
+              module={module}
               index={idx}
               onAddLesson={handleStartAddLesson}
               onEditLesson={(moduleId, lesson) => setEditingLesson({ moduleId, lesson })}
@@ -379,7 +500,14 @@ export const CurriculumBuilder = ({ course }) => {
           {modules.length === 0 && !isAddingModule && (
             <div style={emptyCurriculumStyle}>
               <Layers size={36} style={{ color: 'var(--text-muted)', marginBottom: 12 }} />
-              <p style={{ margin: '0 0 6px', fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
+              <p
+                style={{
+                  margin: '0 0 6px',
+                  fontSize: 15,
+                  fontWeight: 600,
+                  color: 'var(--text-primary)',
+                }}
+              >
                 No sections created yet
               </p>
               <p style={{ margin: '0 0 16px', fontSize: 13, color: 'var(--text-muted)' }}>
@@ -395,12 +523,12 @@ export const CurriculumBuilder = ({ course }) => {
 
       {/* Add / Edit Lesson Modal */}
       {editingLesson && (
-        <LessonEditorModal 
-          courseId={course.id} 
-          moduleId={editingLesson.moduleId} 
-          lesson={editingLesson.lesson} 
-          onClose={() => setEditingLesson(null)} 
-          onSave={handleSaveLesson} 
+        <LessonEditorModal
+          courseId={course.id}
+          moduleId={editingLesson.moduleId}
+          lesson={editingLesson.lesson}
+          onClose={() => setEditingLesson(null)}
+          onSave={handleSaveLesson}
         />
       )}
     </div>
@@ -417,7 +545,7 @@ const curriculumHeaderStyle = {
   justifyContent: 'space-between',
   alignItems: 'center',
   flexWrap: 'wrap',
-  gap: 12
+  gap: 12,
 };
 
 const sectionCardStyle = {
@@ -426,7 +554,7 @@ const sectionCardStyle = {
   borderRadius: 12,
   marginBottom: 16,
   overflow: 'hidden',
-  boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
 };
 
 const sectionHeadStyle = {
@@ -435,7 +563,7 @@ const sectionHeadStyle = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  borderBottom: '1px solid var(--border-color)'
+  borderBottom: '1px solid var(--border-color)',
 };
 
 const iconBtnStyle = {
@@ -445,7 +573,7 @@ const iconBtnStyle = {
   cursor: 'pointer',
   padding: 2,
   display: 'flex',
-  alignItems: 'center'
+  alignItems: 'center',
 };
 
 const badgeStyle = {
@@ -454,7 +582,7 @@ const badgeStyle = {
   padding: '2px 8px',
   borderRadius: 12,
   background: 'var(--border-color)',
-  color: 'var(--text-secondary)'
+  color: 'var(--text-secondary)',
 };
 
 const lessonRowStyle = {
@@ -465,7 +593,7 @@ const lessonRowStyle = {
   borderRadius: 8,
   border: '1px solid var(--border-color)',
   background: 'var(--bg-primary)',
-  transition: 'background 0.15s ease'
+  transition: 'background 0.15s ease',
 };
 
 const lessonIconBox = (color) => ({
@@ -477,7 +605,7 @@ const lessonIconBox = (color) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  flexShrink: 0
+  flexShrink: 0,
 });
 
 const freeBadgeStyle = {
@@ -487,7 +615,7 @@ const freeBadgeStyle = {
   borderRadius: 4,
   background: 'rgba(16, 185, 129, 0.1)',
   color: '#10b981',
-  border: '1px solid rgba(16, 185, 129, 0.3)'
+  border: '1px solid rgba(16, 185, 129, 0.3)',
 };
 
 const inlineAddModuleStyle = {
@@ -497,7 +625,7 @@ const inlineAddModuleStyle = {
   padding: 18,
   display: 'flex',
   gap: 12,
-  alignItems: 'flex-end'
+  alignItems: 'flex-end',
 };
 
 const emptyCurriculumStyle = {
@@ -505,7 +633,7 @@ const emptyCurriculumStyle = {
   padding: '48px 24px',
   background: 'var(--lms-card)',
   border: '2px dashed var(--border-color)',
-  borderRadius: 12
+  borderRadius: 12,
 };
 
 const inputStyle = {
@@ -517,7 +645,7 @@ const inputStyle = {
   color: 'var(--text-primary)',
   fontSize: 14,
   outline: 'none',
-  boxSizing: 'border-box'
+  boxSizing: 'border-box',
 };
 
 const inputInlineStyle = {
@@ -528,7 +656,7 @@ const inputInlineStyle = {
   color: 'var(--text-primary)',
   fontSize: 14,
   outline: 'none',
-  width: '100%'
+  width: '100%',
 };
 
 export default CurriculumBuilder;

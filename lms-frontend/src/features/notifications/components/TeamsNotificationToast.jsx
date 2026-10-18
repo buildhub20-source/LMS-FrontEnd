@@ -74,8 +74,7 @@ function TeamsNotificationCard({ notification, onDismiss }) {
 
   // Extract channel ID from metadata or linkUrl
   const channelId =
-    notification.data?.channelId ||
-    (notification.linkUrl?.match(/channelId=([^&]+)/)?.[1] ?? null);
+    notification.data?.channelId || (notification.linkUrl?.match(/channelId=([^&]+)/)?.[1] ?? null);
 
   const senderName =
     notification.data?.senderName ||

@@ -48,27 +48,31 @@ export const AttemptStatusBadge = ({ status, size = 'md' }) => {
   const fontSize = size === 'sm' ? 11 : 12;
 
   return (
-    <span style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: 5,
-      padding: size === 'sm' ? '2px 7px' : '3px 10px',
-      borderRadius: 20,
-      background: cfg.bg,
-      color: cfg.color,
-      fontSize,
-      fontWeight: 600,
-      letterSpacing: '0.01em',
-      whiteSpace: 'nowrap',
-    }}>
-      <span style={{
-        width: 6,
-        height: 6,
-        borderRadius: '50%',
-        background: cfg.dot,
-        display: 'inline-block',
-        animation: status === ATTEMPT_STATUS.IN_PROGRESS ? 'dotPulse 1.5s infinite' : 'none',
-      }} />
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 5,
+        padding: size === 'sm' ? '2px 7px' : '3px 10px',
+        borderRadius: 20,
+        background: cfg.bg,
+        color: cfg.color,
+        fontSize,
+        fontWeight: 600,
+        letterSpacing: '0.01em',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      <span
+        style={{
+          width: 6,
+          height: 6,
+          borderRadius: '50%',
+          background: cfg.dot,
+          display: 'inline-block',
+          animation: status === ATTEMPT_STATUS.IN_PROGRESS ? 'dotPulse 1.5s infinite' : 'none',
+        }}
+      />
       {cfg.label}
 
       <style>{`

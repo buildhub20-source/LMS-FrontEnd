@@ -25,12 +25,42 @@ import { ROUTES } from '../../../constants/routes';
 import Spinner from '../../../components/common/Spinner';
 
 const EVENT_COLORS = {
-  blue: { bg: 'rgba(59, 130, 246, 0.12)', border: 'rgba(59, 130, 246, 0.3)', dot: '#3b82f6', text: '#60a5fa' },
-  green: { bg: 'rgba(16, 185, 129, 0.12)', border: 'rgba(16, 185, 129, 0.3)', dot: '#10b981', text: '#34d399' },
-  emerald: { bg: 'rgba(16, 185, 129, 0.15)', border: 'rgba(16, 185, 129, 0.35)', dot: '#059669', text: '#6ee7b7' },
-  amber: { bg: 'rgba(245, 158, 11, 0.12)', border: 'rgba(245, 158, 11, 0.3)', dot: '#f59e0b', text: '#fbbf24' },
-  red: { bg: 'rgba(239, 68, 68, 0.12)', border: 'rgba(239, 68, 68, 0.3)', dot: '#ef4444', text: '#f87171' },
-  violet: { bg: 'rgba(139, 92, 246, 0.12)', border: 'rgba(139, 92, 246, 0.3)', dot: '#8b5cf6', text: '#a78bfa' },
+  blue: {
+    bg: 'rgba(59, 130, 246, 0.12)',
+    border: 'rgba(59, 130, 246, 0.3)',
+    dot: '#3b82f6',
+    text: '#60a5fa',
+  },
+  green: {
+    bg: 'rgba(16, 185, 129, 0.12)',
+    border: 'rgba(16, 185, 129, 0.3)',
+    dot: '#10b981',
+    text: '#34d399',
+  },
+  emerald: {
+    bg: 'rgba(16, 185, 129, 0.15)',
+    border: 'rgba(16, 185, 129, 0.35)',
+    dot: '#059669',
+    text: '#6ee7b7',
+  },
+  amber: {
+    bg: 'rgba(245, 158, 11, 0.12)',
+    border: 'rgba(245, 158, 11, 0.3)',
+    dot: '#f59e0b',
+    text: '#fbbf24',
+  },
+  red: {
+    bg: 'rgba(239, 68, 68, 0.12)',
+    border: 'rgba(239, 68, 68, 0.3)',
+    dot: '#ef4444',
+    text: '#f87171',
+  },
+  violet: {
+    bg: 'rgba(139, 92, 246, 0.12)',
+    border: 'rgba(139, 92, 246, 0.3)',
+    dot: '#8b5cf6',
+    text: '#a78bfa',
+  },
 };
 
 const EVENT_ICONS = {
@@ -49,8 +79,18 @@ const STATUS_BADGES = {
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 export const StudentCalendarPage = () => {
@@ -128,9 +168,7 @@ export const StudentCalendarPage = () => {
   const eventsByDate = useMemo(() => {
     const map = {};
     (filteredEvents || []).forEach((event) => {
-      const dateKey = event.startTime
-        ? new Date(event.startTime).toDateString()
-        : null;
+      const dateKey = event.startTime ? new Date(event.startTime).toDateString() : null;
       if (dateKey) {
         if (!map[dateKey]) map[dateKey] = [];
         map[dateKey].push(event);
@@ -166,14 +204,14 @@ export const StudentCalendarPage = () => {
 
   // Export deadlines as .ics file
   const handleExportICS = () => {
-    const lines = [
-      'BEGIN:VCALENDAR',
-      'VERSION:2.0',
-      'PRODID:-//LMS Student Academic Schedule//EN',
-    ];
+    const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//LMS Student Academic Schedule//EN'];
     deadlines.forEach((d) => {
-      const start = d.startTime ? new Date(d.startTime).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z' : '';
-      const end = d.endTime ? new Date(d.endTime).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z' : start;
+      const start = d.startTime
+        ? new Date(d.startTime).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
+        : '';
+      const end = d.endTime
+        ? new Date(d.endTime).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
+        : start;
       lines.push('BEGIN:VEVENT');
       lines.push(`SUMMARY:${d.title || 'LMS Deadline'}`);
       lines.push(`DESCRIPTION:${d.description || ''}`);
@@ -216,7 +254,9 @@ export const StudentCalendarPage = () => {
               const m = clean.substr(4, 2);
               const d = clean.substr(6, 2);
               const time = clean.includes('T') ? clean.split('T')[1].substr(0, 4) : '0900';
-              startTime = new Date(`${y}-${m}-${d}T${time.substr(0, 2)}:${time.substr(2, 2)}:00Z`).toISOString();
+              startTime = new Date(
+                `${y}-${m}-${d}T${time.substr(0, 2)}:${time.substr(2, 2)}:00Z`,
+              ).toISOString();
             }
           }
           parsed.push({
@@ -248,7 +288,6 @@ export const StudentCalendarPage = () => {
   const totalEventsCount = events.length;
   const activeDeadlinesCount = deadlines.length;
   const completedCount = events.filter((e) => e.status === 'completed').length;
-  const nextDeadline = deadlines[0];
 
   if (eventsLoading) return <Spinner fullPage />;
 
@@ -335,7 +374,8 @@ export const StudentCalendarPage = () => {
             Calendar & Deadlines
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: 14, margin: '6px 0 0' }}>
-            Comprehensive schedule of assessment windows, coursework milestones, and upcoming evaluations.
+            Comprehensive schedule of assessment windows, coursework milestones, and upcoming
+            evaluations.
           </p>
         </div>
 
@@ -367,7 +407,14 @@ export const StudentCalendarPage = () => {
               <CalendarCheck size={18} color="#6366f1" />
             </div>
             <div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
+              <div
+                style={{
+                  fontSize: 11,
+                  color: 'var(--text-muted)',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                }}
+              >
                 Total Events
               </div>
               <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>
@@ -402,7 +449,14 @@ export const StudentCalendarPage = () => {
               <Clock size={18} color="#f87171" />
             </div>
             <div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
+              <div
+                style={{
+                  fontSize: 11,
+                  color: 'var(--text-muted)',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                }}
+              >
                 Upcoming Deadlines
               </div>
               <div style={{ fontSize: 18, fontWeight: 800, color: '#f87171' }}>
@@ -437,7 +491,14 @@ export const StudentCalendarPage = () => {
               <Award size={18} color="#34d399" />
             </div>
             <div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
+              <div
+                style={{
+                  fontSize: 11,
+                  color: 'var(--text-muted)',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                }}
+              >
                 Completed
               </div>
               <div style={{ fontSize: 18, fontWeight: 800, color: '#34d399' }}>
@@ -470,8 +531,18 @@ export const StudentCalendarPage = () => {
           }}
         >
           {[
-            { key: 'calendar', label: 'Calendar View', icon: CalendarIcon, count: totalEventsCount },
-            { key: 'deadlines', label: 'Upcoming Deadlines', icon: Clock, count: activeDeadlinesCount },
+            {
+              key: 'calendar',
+              label: 'Calendar View',
+              icon: CalendarIcon,
+              count: totalEventsCount,
+            },
+            {
+              key: 'deadlines',
+              label: 'Upcoming Deadlines',
+              icon: Clock,
+              count: activeDeadlinesCount,
+            },
             { key: 'timeline', label: 'Monthly Timeline', icon: Zap, count: null },
           ].map(({ key, label, icon: Icon, count }) => (
             <button
@@ -501,7 +572,8 @@ export const StudentCalendarPage = () => {
                     fontSize: 11,
                     padding: '2px 6px',
                     borderRadius: 99,
-                    background: activeTab === key ? 'rgba(255,255,255,0.25)' : 'var(--border-color)',
+                    background:
+                      activeTab === key ? 'rgba(255,255,255,0.25)' : 'var(--border-color)',
                     color: activeTab === key ? '#fff' : 'var(--text-secondary)',
                     fontWeight: 700,
                   }}
@@ -648,7 +720,8 @@ export const StudentCalendarPage = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '18px 24px',
-                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.1) 100%)',
+                background:
+                  'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.1) 100%)',
                 borderBottom: '1px solid var(--border)',
               }}
             >
@@ -668,13 +741,25 @@ export const StudentCalendarPage = () => {
                     justifyContent: 'center',
                     transition: 'all 0.15s ease',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')
+                  }
                 >
                   <ChevronLeft size={18} />
                 </button>
 
-                <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>
+                <h2
+                  style={{
+                    margin: 0,
+                    fontSize: 20,
+                    fontWeight: 800,
+                    color: '#fff',
+                    letterSpacing: '-0.02em',
+                  }}
+                >
                   {MONTHS[month]} {year}
                 </h2>
 
@@ -693,8 +778,12 @@ export const StudentCalendarPage = () => {
                     justifyContent: 'center',
                     transition: 'all 0.15s ease',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')
+                  }
                 >
                   <ChevronRight size={18} />
                 </button>
@@ -702,16 +791,46 @@ export const StudentCalendarPage = () => {
 
               {/* Legend Hints */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#94a3b8' }}>
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444' }} />
+                <span
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontSize: 12,
+                    color: '#94a3b8',
+                  }}
+                >
+                  <span
+                    style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444' }}
+                  />
                   Deadlines
                 </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#94a3b8' }}>
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#3b82f6' }} />
+                <span
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontSize: 12,
+                    color: '#94a3b8',
+                  }}
+                >
+                  <span
+                    style={{ width: 8, height: 8, borderRadius: '50%', background: '#3b82f6' }}
+                  />
                   Courses
                 </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#94a3b8' }}>
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#8b5cf6' }} />
+                <span
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontSize: 12,
+                    color: '#94a3b8',
+                  }}
+                >
+                  <span
+                    style={{ width: 8, height: 8, borderRadius: '50%', background: '#8b5cf6' }}
+                  />
                   Milestones
                 </span>
               </div>
@@ -786,7 +905,8 @@ export const StudentCalendarPage = () => {
                       opacity: dayInfo.isCurrentMonth ? 1 : 0.35,
                     }}
                     onMouseEnter={(e) => {
-                      if (!isSelected) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
+                      if (!isSelected)
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
                     }}
                     onMouseLeave={(e) => {
                       if (!isSelected) {
@@ -838,7 +958,15 @@ export const StudentCalendarPage = () => {
                     </div>
 
                     {/* Interactive Event Chips inside Day Cell */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 3,
+                        flex: 1,
+                        overflow: 'hidden',
+                      }}
+                    >
                       {dayEvents.slice(0, 2).map((ev) => {
                         const Icon = EVENT_ICONS[ev.type] || FileText;
                         const c = EVENT_COLORS[ev.color] || EVENT_COLORS.blue;
@@ -923,12 +1051,30 @@ export const StudentCalendarPage = () => {
                 }}
               >
                 <div>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: '#818cf8', textTransform: 'uppercase' }}>
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: '#818cf8',
+                      textTransform: 'uppercase',
+                    }}
+                  >
                     Selected Agenda
                   </span>
-                  <h3 style={{ margin: '2px 0 0', fontSize: 16, fontWeight: 800, color: 'var(--text-primary)' }}>
+                  <h3
+                    style={{
+                      margin: '2px 0 0',
+                      fontSize: 16,
+                      fontWeight: 800,
+                      color: 'var(--text-primary)',
+                    }}
+                  >
                     {selectedDate
-                      ? selectedDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+                      ? selectedDate.toLocaleDateString('en-US', {
+                          weekday: 'short',
+                          month: 'short',
+                          day: 'numeric',
+                        })
                       : 'Select a date'}
                   </h3>
                 </div>
@@ -938,7 +1084,10 @@ export const StudentCalendarPage = () => {
                     fontWeight: 700,
                     padding: '2px 8px',
                     borderRadius: 99,
-                    background: selectedDateEvents.length > 0 ? 'rgba(99, 102, 241, 0.2)' : 'rgba(255, 255, 255, 0.08)',
+                    background:
+                      selectedDateEvents.length > 0
+                        ? 'rgba(99, 102, 241, 0.2)'
+                        : 'rgba(255, 255, 255, 0.08)',
                     color: selectedDateEvents.length > 0 ? '#a5b4fc' : 'var(--text-muted)',
                   }}
                 >
@@ -947,13 +1096,26 @@ export const StudentCalendarPage = () => {
               </div>
 
               {selectedDateEvents.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '30px 16px', color: 'var(--text-muted)' }}>
-                  <CheckCircle2 size={36} style={{ marginBottom: 10, opacity: 0.4, color: '#10b981' }} />
-                  <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 4px' }}>
+                <div
+                  style={{ textAlign: 'center', padding: '30px 16px', color: 'var(--text-muted)' }}
+                >
+                  <CheckCircle2
+                    size={36}
+                    style={{ marginBottom: 10, opacity: 0.4, color: '#10b981' }}
+                  />
+                  <p
+                    style={{
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: 'var(--text-primary)',
+                      margin: '0 0 4px',
+                    }}
+                  >
                     No Scheduled Events
                   </p>
                   <p style={{ fontSize: 12, margin: 0, lineHeight: 1.5 }}>
-                    Great day for uninterrupted self-study, reviewing saved revision notes, or practicing coding challenges.
+                    Great day for uninterrupted self-study, reviewing saved revision notes, or
+                    practicing coding challenges.
                   </p>
                 </div>
               ) : (
@@ -993,18 +1155,45 @@ export const StudentCalendarPage = () => {
                           </div>
 
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <h4 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <h4
+                                style={{
+                                  margin: 0,
+                                  fontSize: 13,
+                                  fontWeight: 700,
+                                  color: 'var(--text-primary)',
+                                }}
+                              >
                                 {event.title}
                               </h4>
                             </div>
-                            <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                            <p
+                              style={{
+                                margin: '4px 0 0',
+                                fontSize: 12,
+                                color: 'var(--text-muted)',
+                                lineHeight: 1.4,
+                              }}
+                            >
                               {event.description}
                             </p>
                           </div>
                         </div>
 
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginTop: 4,
+                          }}
+                        >
                           {statusBadge && (
                             <span
                               style={{
@@ -1069,7 +1258,14 @@ export const StudentCalendarPage = () => {
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <AlertCircle size={16} color="#f87171" />
-                  <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: 'var(--text-primary)' }}>
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: 15,
+                      fontWeight: 800,
+                      color: 'var(--text-primary)',
+                    }}
+                  >
                     Urgent Deadlines
                   </h3>
                 </div>
@@ -1081,18 +1277,58 @@ export const StudentCalendarPage = () => {
               {deadlinesLoading ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', borderRadius: 10, background: 'var(--background)', border: '1px solid var(--border)' }}>
+                    <div
+                      key={i}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '10px 12px',
+                        borderRadius: 10,
+                        background: 'var(--background)',
+                        border: '1px solid var(--border)',
+                      }}
+                    >
                       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        <div style={{ width: '65%', height: 12, borderRadius: 4, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
-                        <div style={{ width: '40%', height: 10, borderRadius: 4, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                        <div
+                          style={{
+                            width: '65%',
+                            height: 12,
+                            borderRadius: 4,
+                            background: 'var(--skeleton-bg, #e2e8f0)',
+                            animation: 'pulse 1.5s ease-in-out infinite',
+                          }}
+                        />
+                        <div
+                          style={{
+                            width: '40%',
+                            height: 10,
+                            borderRadius: 4,
+                            background: 'var(--skeleton-subtle, #f1f5f9)',
+                            animation: 'pulse 1.5s ease-in-out infinite',
+                          }}
+                        />
                       </div>
-                      <div style={{ width: 44, height: 18, borderRadius: 6, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                      <div
+                        style={{
+                          width: 44,
+                          height: 18,
+                          borderRadius: 6,
+                          background: 'var(--skeleton-subtle, #f1f5f9)',
+                          animation: 'pulse 1.5s ease-in-out infinite',
+                        }}
+                      />
                     </div>
                   ))}
                 </div>
               ) : deadlines.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '24px 12px', color: 'var(--text-muted)' }}>
-                  <CheckCircle2 size={32} style={{ marginBottom: 8, opacity: 0.3, color: '#10b981' }} />
+                <div
+                  style={{ textAlign: 'center', padding: '24px 12px', color: 'var(--text-muted)' }}
+                >
+                  <CheckCircle2
+                    size={32}
+                    style={{ marginBottom: 8, opacity: 0.3, color: '#10b981' }}
+                  />
                   <p style={{ fontSize: 13, margin: 0, fontWeight: 600 }}>All deadlines clear!</p>
                 </div>
               ) : (
@@ -1135,7 +1371,12 @@ export const StudentCalendarPage = () => {
                             {d.title}
                           </div>
                           <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-                            {dueDate ? dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Pending'}
+                            {dueDate
+                              ? dueDate.toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                })
+                              : 'Pending'}
                           </div>
                         </div>
 
@@ -1150,7 +1391,11 @@ export const StudentCalendarPage = () => {
                             color: isUrgent ? '#fff' : '#6366f1',
                           }}
                         >
-                          {daysLeft !== null ? (daysLeft <= 0 ? 'Today' : `${daysLeft}d left`) : 'Soon'}
+                          {daysLeft !== null
+                            ? daysLeft <= 0
+                              ? 'Today'
+                              : `${daysLeft}d left`
+                            : 'Soon'}
                         </span>
                       </div>
                     );
@@ -1176,7 +1421,8 @@ export const StudentCalendarPage = () => {
                 </span>
               </div>
               <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>
-                Click <strong>Sync .ics</strong> above to import all deadlines and test windows directly into Google Calendar, Outlook, or Apple Calendar.
+                Click <strong>Sync .ics</strong> above to import all deadlines and test windows
+                directly into Google Calendar, Outlook, or Apple Calendar.
               </p>
             </div>
           </div>
@@ -1195,7 +1441,8 @@ export const StudentCalendarPage = () => {
           <div
             style={{
               padding: '18px 24px',
-              background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(245, 158, 11, 0.08) 100%)',
+              background:
+                'linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(245, 158, 11, 0.08) 100%)',
               borderBottom: '1px solid var(--border)',
               display: 'flex',
               justifyContent: 'space-between',
@@ -1204,7 +1451,11 @@ export const StudentCalendarPage = () => {
           >
             <div>
               <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: '#fff' }}>
-                <AlertCircle style={{ display: 'inline', verticalAlign: 'middle', marginRight: 8 }} size={20} color="#f87171" />
+                <AlertCircle
+                  style={{ display: 'inline', verticalAlign: 'middle', marginRight: 8 }}
+                  size={20}
+                  color="#f87171"
+                />
                 Active Deadlines & Assessment Windows
               </h2>
               <p style={{ margin: '4px 0 0', fontSize: 13, color: '#94a3b8' }}>
@@ -1227,29 +1478,110 @@ export const StudentCalendarPage = () => {
           </div>
 
           {deadlinesLoading ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 16, padding: 24 }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
+                gap: 16,
+                padding: 24,
+              }}
+            >
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} style={{ background: 'var(--card)', borderRadius: 14, border: '1px solid var(--border)', padding: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div
+                  key={i}
+                  style={{
+                    background: 'var(--card)',
+                    borderRadius: 14,
+                    border: '1px solid var(--border)',
+                    padding: 20,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 12,
+                  }}
+                >
                   <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                    <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    <div
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 10,
+                        background: 'var(--skeleton-bg, #e2e8f0)',
+                        animation: 'pulse 1.5s ease-in-out infinite',
+                      }}
+                    />
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                      <div style={{ width: '60%', height: 14, borderRadius: 4, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
-                      <div style={{ width: '40%', height: 11, borderRadius: 4, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                      <div
+                        style={{
+                          width: '60%',
+                          height: 14,
+                          borderRadius: 4,
+                          background: 'var(--skeleton-bg, #e2e8f0)',
+                          animation: 'pulse 1.5s ease-in-out infinite',
+                        }}
+                      />
+                      <div
+                        style={{
+                          width: '40%',
+                          height: 11,
+                          borderRadius: 4,
+                          background: 'var(--skeleton-subtle, #f1f5f9)',
+                          animation: 'pulse 1.5s ease-in-out infinite',
+                        }}
+                      />
                     </div>
                   </div>
-                  <div style={{ width: '90%', height: 12, borderRadius: 4, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
-                  <div style={{ marginTop: 'auto', paddingTop: 12, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between' }}>
-                    <div style={{ width: 80, height: 12, borderRadius: 4, background: 'var(--skeleton-subtle, #f1f5f9)', animation: 'pulse 1.5s ease-in-out infinite' }} />
-                    <div style={{ width: 90, height: 26, borderRadius: 6, background: 'var(--skeleton-bg, #e2e8f0)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  <div
+                    style={{
+                      width: '90%',
+                      height: 12,
+                      borderRadius: 4,
+                      background: 'var(--skeleton-subtle, #f1f5f9)',
+                      animation: 'pulse 1.5s ease-in-out infinite',
+                    }}
+                  />
+                  <div
+                    style={{
+                      marginTop: 'auto',
+                      paddingTop: 12,
+                      borderTop: '1px solid var(--border)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 80,
+                        height: 12,
+                        borderRadius: 4,
+                        background: 'var(--skeleton-subtle, #f1f5f9)',
+                        animation: 'pulse 1.5s ease-in-out infinite',
+                      }}
+                    />
+                    <div
+                      style={{
+                        width: 90,
+                        height: 26,
+                        borderRadius: 6,
+                        background: 'var(--skeleton-bg, #e2e8f0)',
+                        animation: 'pulse 1.5s ease-in-out infinite',
+                      }}
+                    />
                   </div>
                 </div>
               ))}
             </div>
           ) : deadlines.length === 0 ? (
             <div style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
-              <CheckCircle2 size={48} style={{ marginBottom: 16, opacity: 0.3, color: '#10b981' }} />
-              <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>All clear! No upcoming deadlines.</p>
-              <p style={{ fontSize: 13 }}>You have no assessments or course milestones due in the next 30 days.</p>
+              <CheckCircle2
+                size={48}
+                style={{ marginBottom: 16, opacity: 0.3, color: '#10b981' }}
+              />
+              <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+                All clear! No upcoming deadlines.
+              </p>
+              <p style={{ fontSize: 13 }}>
+                You have no assessments or course milestones due in the next 30 days.
+              </p>
             </div>
           ) : (
             <div
@@ -1292,7 +1624,14 @@ export const StudentCalendarPage = () => {
                     }}
                   >
                     <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          marginBottom: 12,
+                        }}
+                      >
                         <div
                           style={{
                             width: 36,
@@ -1317,14 +1656,32 @@ export const StudentCalendarPage = () => {
                             color: isUrgent ? '#fff' : '#a5b4fc',
                           }}
                         >
-                          {daysLeft !== null ? (daysLeft <= 0 ? 'Due Today!' : `${daysLeft} days remaining`) : 'Upcoming'}
+                          {daysLeft !== null
+                            ? daysLeft <= 0
+                              ? 'Due Today!'
+                              : `${daysLeft} days remaining`
+                            : 'Upcoming'}
                         </span>
                       </div>
 
-                      <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+                      <h3
+                        style={{
+                          margin: '0 0 6px',
+                          fontSize: 16,
+                          fontWeight: 700,
+                          color: 'var(--text-primary)',
+                        }}
+                      >
                         {event.title}
                       </h3>
-                      <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                      <p
+                        style={{
+                          margin: 0,
+                          fontSize: 13,
+                          color: 'var(--text-muted)',
+                          lineHeight: 1.5,
+                        }}
+                      >
                         {event.description}
                       </p>
                     </div>
@@ -1340,7 +1697,17 @@ export const StudentCalendarPage = () => {
                       }}
                     >
                       <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                        Due: <strong>{dueDate ? dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'TBD'}</strong>
+                        Due:{' '}
+                        <strong>
+                          {dueDate
+                            ? dueDate.toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })
+                            : 'TBD'}
+                        </strong>
                       </div>
 
                       <button
@@ -1380,7 +1747,14 @@ export const StudentCalendarPage = () => {
           }}
         >
           <div style={{ marginBottom: 20 }}>
-            <h2 style={{ margin: '0 0 6px', fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>
+            <h2
+              style={{
+                margin: '0 0 6px',
+                fontSize: 18,
+                fontWeight: 800,
+                color: 'var(--text-primary)',
+              }}
+            >
               Monthly Milestone Timeline
             </h2>
             <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)' }}>
@@ -1388,7 +1762,15 @@ export const StudentCalendarPage = () => {
             </p>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, position: 'relative', paddingLeft: 24 }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 16,
+              position: 'relative',
+              paddingLeft: 24,
+            }}
+          >
             {/* Timeline Vertical Track */}
             <div
               style={{
@@ -1451,10 +1833,24 @@ export const StudentCalendarPage = () => {
                       }}
                     >
                       <div>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: colors.text, textTransform: 'uppercase' }}>
+                        <span
+                          style={{
+                            fontSize: 11,
+                            fontWeight: 700,
+                            color: colors.text,
+                            textTransform: 'uppercase',
+                          }}
+                        >
                           {ev.type?.replace(/_/g, ' ')}
                         </span>
-                        <h4 style={{ margin: '3px 0', fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
+                        <h4
+                          style={{
+                            margin: '3px 0',
+                            fontSize: 14,
+                            fontWeight: 700,
+                            color: 'var(--text-primary)',
+                          }}
+                        >
                           {ev.title}
                         </h4>
                         <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
@@ -1463,8 +1859,12 @@ export const StudentCalendarPage = () => {
                       </div>
 
                       <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                        <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
-                          {evDate ? evDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Term Event'}
+                        <div
+                          style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}
+                        >
+                          {evDate
+                            ? evDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                            : 'Term Event'}
                         </div>
                         <span
                           style={{

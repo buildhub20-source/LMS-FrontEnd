@@ -25,11 +25,7 @@ export const DeadlineCountdown = ({ deadline, prefix = 'Closes in' }) => {
   }, [deadline]);
 
   if (remaining <= 0) {
-    return (
-      <span style={{ fontSize: 12, color: '#ef4444', fontWeight: 600 }}>
-        Closed
-      </span>
-    );
+    return <span style={{ fontSize: 12, color: '#ef4444', fontWeight: 600 }}>Closed</span>;
   }
 
   const days = Math.floor(remaining / 86400);
@@ -52,14 +48,16 @@ export const DeadlineCountdown = ({ deadline, prefix = 'Closes in' }) => {
   }
 
   return (
-    <span style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: 4,
-      fontSize: 12,
-      fontWeight: 600,
-      color,
-    }}>
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 4,
+        fontSize: 12,
+        fontWeight: 600,
+        color,
+      }}
+    >
       <Clock size={11} />
       {prefix} {display}
     </span>

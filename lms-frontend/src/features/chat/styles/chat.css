@@ -98,8 +98,15 @@ html.light .chat-page {
 }
 
 @keyframes pulse-icon {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(0.95); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
 }
 
 /* ─── Sidebar ───────────────────────────────────────────── */
@@ -305,7 +312,9 @@ html.light .chat-page {
   font-size: 0.88rem;
   color: var(--chat-text-secondary);
   border-radius: 8px;
-  transition: background 0.12s ease, color 0.12s ease;
+  transition:
+    background 0.12s ease,
+    color 0.12s ease;
 }
 
 .chat-channel-item:hover {
@@ -384,10 +393,18 @@ html.light .chat-channel-item--active {
   box-shadow: none;
 }
 
-.chat-channel-icon-badge--org { background: #059669; }
-.chat-channel-icon-badge--course { background: #0284c7; }
-.chat-channel-icon-badge--direct { background: #7c3aed; }
-.chat-channel-icon-badge--group { background: #d97706; }
+.chat-channel-icon-badge--org {
+  background: #059669;
+}
+.chat-channel-icon-badge--course {
+  background: #0284c7;
+}
+.chat-channel-icon-badge--direct {
+  background: #7c3aed;
+}
+.chat-channel-icon-badge--group {
+  background: #d97706;
+}
 
 .chat-channel-icon-badge--header {
   width: 40px;
@@ -692,7 +709,9 @@ html.light .chat-channel-item--active {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ─── Message Item — Teams Bubble Layout ────────────────── */
@@ -762,12 +781,24 @@ html.light .chat-channel-item--active {
 }
 
 /* User Avatar Standard Colors */
-.chat-avatar--gradient-0 { background: #6366f1; }
-.chat-avatar--gradient-1 { background: #0284c7; }
-.chat-avatar--gradient-2 { background: #059669; }
-.chat-avatar--gradient-3 { background: #d97706; }
-.chat-avatar--gradient-4 { background: #e11d48; }
-.chat-avatar--gradient-5 { background: #7c3aed; }
+.chat-avatar--gradient-0 {
+  background: #6366f1;
+}
+.chat-avatar--gradient-1 {
+  background: #0284c7;
+}
+.chat-avatar--gradient-2 {
+  background: #059669;
+}
+.chat-avatar--gradient-3 {
+  background: #d97706;
+}
+.chat-avatar--gradient-4 {
+  background: #e11d48;
+}
+.chat-avatar--gradient-5 {
+  background: #7c3aed;
+}
 
 .chat-message__body {
   min-width: 0;
@@ -985,12 +1016,22 @@ html.light .chat-channel-item--active {
   animation: typing-bounce 1.4s ease-in-out infinite;
 }
 
-.chat-typing-indicator__dots span:nth-child(2) { animation-delay: 0.2s; }
-.chat-typing-indicator__dots span:nth-child(3) { animation-delay: 0.4s; }
+.chat-typing-indicator__dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.chat-typing-indicator__dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
 
 @keyframes typing-bounce {
-  0%, 60%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-4px); }
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
 }
 
 /* ─── Composer — Teams Floating Style ───────────────────── */
@@ -1054,7 +1095,9 @@ html.light .chat-channel-item--active {
   min-height: 44px;
   box-shadow: none;
   box-sizing: border-box;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .chat-composer__input-row:focus-within {
@@ -1712,7 +1755,9 @@ html.light .chat-channel-item--active {
 
 .chat-presence-dot--online {
   background: #10b981;
-  box-shadow: 0 0 0 2px var(--chat-surface-card), 0 0 6px rgba(16, 185, 129, 0.5);
+  box-shadow:
+    0 0 0 2px var(--chat-surface-card),
+    0 0 6px rgba(16, 185, 129, 0.5);
 }
 
 .chat-presence-dot--offline {
@@ -1876,7 +1921,9 @@ html.light .chat-channel-item--active {
   border: none;
   font-size: 1.05rem;
   cursor: pointer;
-  transition: transform 0.12s ease, background 0.12s ease;
+  transition:
+    transform 0.12s ease,
+    background 0.12s ease;
   line-height: 1;
 }
 
@@ -2464,12 +2511,7 @@ html.light .chat-channel-item--active {
    ═══════════════════════════════════════════════════════════ */
 
 .chat-skeleton {
-  background: linear-gradient(
-    90deg,
-    #141416 25%,
-    #222226 45%,
-    #141416 65%
-  );
+  background: linear-gradient(90deg, #141416 25%, #222226 45%, #141416 65%);
   background-size: 300% 100%;
   animation: chat-shimmer 1.6s ease-in-out infinite;
   border-radius: 6px;
@@ -2479,12 +2521,7 @@ html.light .chat-channel-item--active {
 
 [data-theme='light'] .chat-skeleton,
 html.light .chat-skeleton {
-  background: linear-gradient(
-    90deg,
-    #e2e8f0 25%,
-    #f8fafc 45%,
-    #e2e8f0 65%
-  );
+  background: linear-gradient(90deg, #e2e8f0 25%, #f8fafc 45%, #e2e8f0 65%);
   background-size: 300% 100%;
 }
 
@@ -2970,7 +3007,3 @@ html.light .chat-skeleton {
   color: #ef4444;
   background: rgba(239, 68, 68, 0.15);
 }
-
-
-
-

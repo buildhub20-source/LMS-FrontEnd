@@ -38,9 +38,24 @@ const TAB_NOTES = 'notes';
 const TAB_BOOKMARKS = 'bookmarks';
 
 function NoteSkeletonCard() {
-  const s = { background: 'var(--skeleton-bg, #e2e8f0)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' };
+  const s = {
+    background: 'var(--skeleton-bg, #e2e8f0)',
+    borderRadius: 8,
+    animation: 'pulse 1.5s ease-in-out infinite',
+  };
   return (
-    <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, padding: 20, display: 'flex', flexDirection: 'column', gap: 14, boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))' }}>
+    <div
+      style={{
+        background: 'var(--card)',
+        border: '1px solid var(--border)',
+        borderRadius: 16,
+        padding: 20,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 14,
+        boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
+      }}
+    >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ ...s, width: 90, height: 20, borderRadius: 99 }} />
         <div style={{ ...s, width: 24, height: 24, borderRadius: 6 }} />
@@ -48,7 +63,16 @@ function NoteSkeletonCard() {
       <div style={{ ...s, height: 18, width: '75%' }} />
       <div style={{ ...s, height: 13, width: '90%' }} />
       <div style={{ ...s, height: 13, width: '60%' }} />
-      <div style={{ marginTop: 'auto', paddingTop: 12, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div
+        style={{
+          marginTop: 'auto',
+          paddingTop: 12,
+          borderTop: '1px solid var(--border)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <div style={{ ...s, width: 70, height: 12 }} />
         <div style={{ ...s, width: 50, height: 12 }} />
       </div>
@@ -115,8 +139,7 @@ export const NotesBookmarksPage = () => {
       const q = search.toLowerCase();
       list = list.filter(
         (n) =>
-          (n.title || '').toLowerCase().includes(q) ||
-          (n.content || '').toLowerCase().includes(q),
+          (n.title || '').toLowerCase().includes(q) || (n.content || '').toLowerCase().includes(q),
       );
     }
     return list;
@@ -332,7 +355,8 @@ export const NotesBookmarksPage = () => {
             Notes & Bookmarks
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: 14, margin: '6px 0 0' }}>
-            Capture revision notes, key architectural formulas, and bookmark lessons for instant recall.
+            Capture revision notes, key architectural formulas, and bookmark lessons for instant
+            recall.
           </p>
         </div>
 
@@ -365,10 +389,22 @@ export const NotesBookmarksPage = () => {
               <FileText size={18} />
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.5px' }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 10,
+                  color: 'var(--text-muted)',
+                  fontWeight: 700,
+                  letterSpacing: '0.5px',
+                }}
+              >
                 TOTAL NOTES
               </p>
-              <h4 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>{allNotes.length}</h4>
+              <h4
+                style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}
+              >
+                {allNotes.length}
+              </h4>
             </div>
           </div>
 
@@ -399,10 +435,22 @@ export const NotesBookmarksPage = () => {
               <Star size={18} />
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.5px' }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 10,
+                  color: 'var(--text-muted)',
+                  fontWeight: 700,
+                  letterSpacing: '0.5px',
+                }}
+              >
                 BOOKMARKS
               </p>
-              <h4 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>{allBookmarks.length}</h4>
+              <h4
+                style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}
+              >
+                {allBookmarks.length}
+              </h4>
             </div>
           </div>
 
@@ -433,10 +481,22 @@ export const NotesBookmarksPage = () => {
               <Sparkles size={18} />
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: 10, color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.5px' }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 10,
+                  color: 'var(--text-muted)',
+                  fontWeight: 700,
+                  letterSpacing: '0.5px',
+                }}
+              >
                 WORDS CAPTURED
               </p>
-              <h4 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>{totalWords}</h4>
+              <h4
+                style={{ margin: 0, fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}
+              >
+                {totalWords}
+              </h4>
             </div>
           </div>
         </div>
@@ -522,7 +582,8 @@ export const NotesBookmarksPage = () => {
                 fontSize: 11,
                 padding: '2px 6px',
                 borderRadius: 99,
-                background: activeTab === TAB_BOOKMARKS ? 'rgba(255,255,255,0.2)' : 'var(--border-color)',
+                background:
+                  activeTab === TAB_BOOKMARKS ? 'rgba(255,255,255,0.2)' : 'var(--border-color)',
                 color: activeTab === TAB_BOOKMARKS ? '#fff' : 'var(--text-secondary)',
                 fontWeight: 700,
               }}
@@ -533,7 +594,16 @@ export const NotesBookmarksPage = () => {
         </div>
 
         {/* Right: Search, Filter, New Note Button */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', flex: 1, justifyContent: 'flex-end' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            flexWrap: 'wrap',
+            flex: 1,
+            justifyContent: 'flex-end',
+          }}
+        >
           {/* Search Box */}
           <div
             style={{
@@ -551,7 +621,9 @@ export const NotesBookmarksPage = () => {
             <Search size={15} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
             <input
               type="text"
-              placeholder={activeTab === TAB_NOTES ? 'Search title or notes content...' : 'Search bookmarks...'}
+              placeholder={
+                activeTab === TAB_NOTES ? 'Search title or notes content...' : 'Search bookmarks...'
+              }
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{
@@ -566,7 +638,13 @@ export const NotesBookmarksPage = () => {
             {search && (
               <button
                 onClick={() => setSearch('')}
-                style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 0, color: 'var(--text-muted)' }}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  color: 'var(--text-muted)',
+                }}
               >
                 <X size={14} />
               </button>
@@ -694,7 +772,9 @@ export const NotesBookmarksPage = () => {
                 gap: 16,
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+              >
                 <h3
                   style={{
                     margin: 0,
@@ -791,7 +871,15 @@ export const NotesBookmarksPage = () => {
               />
 
               {/* Footer Row: word count + actions */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: 12,
+                }}
+              >
                 <div style={{ display: 'flex', gap: 16, fontSize: 12, color: 'var(--text-muted)' }}>
                   <span>{noteContent.trim().split(/\s+/).filter(Boolean).length} words</span>
                   <span>{noteContent.length} characters</span>
@@ -841,7 +929,13 @@ export const NotesBookmarksPage = () => {
 
           {/* ── Content Grid ── */}
           {isLoading ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 18 }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                gap: 18,
+              }}
+            >
               {Array.from({ length: 6 }).map((_, i) => (
                 <NoteSkeletonCard key={i} />
               ))}
@@ -873,7 +967,14 @@ export const NotesBookmarksPage = () => {
                 >
                   <StickyNote size={32} color="#f59e0b" />
                 </div>
-                <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 8px' }}>
+                <h3
+                  style={{
+                    fontSize: 18,
+                    fontWeight: 700,
+                    color: 'var(--text-primary)',
+                    margin: '0 0 8px',
+                  }}
+                >
                   {search ? 'No notes matched your search' : 'No study notes yet'}
                 </h3>
                 <p style={{ fontSize: 13, maxWidth: 420, margin: '0 auto 20px', lineHeight: 1.5 }}>
@@ -939,14 +1040,23 @@ export const NotesBookmarksPage = () => {
                   >
                     <div>
                       {/* Top Tag & Actions */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          marginBottom: 12,
+                        }}
+                      >
                         <span
                           style={{
                             fontSize: 11,
                             fontWeight: 700,
                             padding: '3px 8px',
                             borderRadius: 6,
-                            background: note.courseId ? 'rgba(56, 189, 248, 0.12)' : 'rgba(245, 158, 11, 0.12)',
+                            background: note.courseId
+                              ? 'rgba(56, 189, 248, 0.12)'
+                              : 'rgba(245, 158, 11, 0.12)',
                             color: note.courseId ? '#38bdf8' : '#f59e0b',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
@@ -954,10 +1064,15 @@ export const NotesBookmarksPage = () => {
                             maxWidth: 200,
                           }}
                         >
-                          {note.courseId ? courseMap[note.courseId] || 'Enrolled Course' : 'General Study'}
+                          {note.courseId
+                            ? courseMap[note.courseId] || 'Enrolled Course'
+                            : 'General Study'}
                         </span>
 
-                        <div style={{ display: 'flex', gap: 4 }} onClick={(e) => e.stopPropagation()}>
+                        <div
+                          style={{ display: 'flex', gap: 4 }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <button
                             onClick={() => handleEditNote(note)}
                             title="Edit Note"
@@ -984,7 +1099,9 @@ export const NotesBookmarksPage = () => {
                               borderRadius: 6,
                             }}
                             onMouseEnter={(e) => (e.currentTarget.style.color = '#ef4444')}
-                            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
+                            onMouseLeave={(e) =>
+                              (e.currentTarget.style.color = 'var(--text-muted)')
+                            }
                           >
                             <Trash2 size={14} />
                           </button>
@@ -1035,7 +1152,15 @@ export const NotesBookmarksPage = () => {
                         borderTop: '1px solid rgba(255, 255, 255, 0.06)',
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#64748b', fontSize: 11 }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          color: '#64748b',
+                          fontSize: 11,
+                        }}
+                      >
                         <Clock size={12} />
                         <span>{formatDate(note.updatedAt)}</span>
                       </div>
@@ -1047,178 +1172,187 @@ export const NotesBookmarksPage = () => {
                 ))}
               </div>
             )
-          ) : (
-            /* ── Bookmarks Tab ── */
-            bookmarks.length === 0 ? (
+          ) : /* ── Bookmarks Tab ── */
+          bookmarks.length === 0 ? (
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '70px 24px',
+                color: 'var(--text-muted)',
+                background:
+                  'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 100%)',
+                borderRadius: 18,
+                border: '1px dashed var(--border-color)',
+              }}
+            >
               <div
                 style={{
-                  textAlign: 'center',
-                  padding: '70px 24px',
-                  color: 'var(--text-muted)',
-                  background: 'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 100%)',
-                  borderRadius: 18,
-                  border: '1px dashed var(--border-color)',
+                  width: 64,
+                  height: 64,
+                  borderRadius: 20,
+                  background: 'rgba(99, 102, 241, 0.1)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: 16,
                 }}
               >
-                <div
-                  style={{
-                    width: 64,
-                    height: 64,
-                    borderRadius: 20,
-                    background: 'rgba(99, 102, 241, 0.1)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: 16,
-                  }}
-                >
-                  <Bookmark size={32} color="#818cf8" />
-                </div>
-                <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 8px' }}>
-                  No bookmarks yet
-                </h3>
-                <p style={{ fontSize: 13, maxWidth: 420, margin: '0 auto 20px', lineHeight: 1.5 }}>
-                  While studying courses, click the bookmark icon on any lesson to save it for quick revision here.
-                </p>
-                <button
-                  onClick={() => navigate(ROUTES.MY_COURSES)}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    padding: '10px 20px',
-                    borderRadius: 10,
-                    border: 'none',
-                    background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-                    color: '#fff',
-                    fontSize: 13,
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
-                >
-                  <BookOpen size={16} />
-                  Browse My Courses
-                </button>
+                <Bookmark size={32} color="#818cf8" />
               </div>
-            ) : (
-              <div
+              <h3
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                  gap: 16,
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: 'var(--text-primary)',
+                  margin: '0 0 8px',
                 }}
               >
-                {bookmarks.map((bm) => (
-                  <div
-                    key={bm.id}
-                    style={{
-                      background: 'var(--card)',
-                      border: '1px solid var(--border)',
-                      borderRadius: 16,
-                      padding: 18,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      gap: 14,
-                      boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
-                      transition: 'all 0.2s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.4)';
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-                      e.currentTarget.style.transform = 'translateY(0)';
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                      <div
+                No bookmarks yet
+              </h3>
+              <p style={{ fontSize: 13, maxWidth: 420, margin: '0 auto 20px', lineHeight: 1.5 }}>
+                While studying courses, click the bookmark icon on any lesson to save it for quick
+                revision here.
+              </p>
+              <button
+                onClick={() => navigate(ROUTES.MY_COURSES)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '10px 20px',
+                  borderRadius: 10,
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                  color: '#fff',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
+              >
+                <BookOpen size={16} />
+                Browse My Courses
+              </button>
+            </div>
+          ) : (
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                gap: 16,
+              }}
+            >
+              {bookmarks.map((bm) => (
+                <div
+                  key={bm.id}
+                  style={{
+                    background: 'var(--card)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 16,
+                    padding: 18,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: 14,
+                    boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.4)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                    <div
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 10,
+                        background: 'rgba(99, 102, 241, 0.15)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#818cf8',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Star size={20} fill="#818cf8" color="#818cf8" />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <span
                         style={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: 10,
-                          background: 'rgba(99, 102, 241, 0.15)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: '#818cf8',
-                          flexShrink: 0,
+                          fontSize: 10,
+                          fontWeight: 700,
+                          color: '#38bdf8',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px',
                         }}
                       >
-                        <Star size={20} fill="#818cf8" color="#818cf8" />
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <span
-                          style={{
-                            fontSize: 10,
-                            fontWeight: 700,
-                            color: '#38bdf8',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.5px',
-                          }}
-                        >
-                          {courseMap[bm.courseId] || 'Course Lesson'}
-                        </span>
-                        <h4 style={{ margin: '3px 0 0', fontSize: 15, fontWeight: 700, color: '#fff' }}>
-                          {bm.label || 'Bookmarked Lesson'}
-                        </h4>
-                        <p style={{ margin: '4px 0 0', fontSize: 11, color: '#64748b' }}>
-                          Saved {formatDate(bm.createdAt)}
-                        </p>
-                      </div>
+                        {courseMap[bm.courseId] || 'Course Lesson'}
+                      </span>
+                      <h4
+                        style={{ margin: '3px 0 0', fontSize: 15, fontWeight: 700, color: '#fff' }}
+                      >
+                        {bm.label || 'Bookmarked Lesson'}
+                      </h4>
+                      <p style={{ margin: '4px 0 0', fontSize: 11, color: '#64748b' }}>
+                        Saved {formatDate(bm.createdAt)}
+                      </p>
                     </div>
+                  </div>
 
-                    <div
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      paddingTop: 12,
+                      borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                    }}
+                  >
+                    <button
+                      onClick={() => navigate(ROUTES.LEARNING(bm.courseId))}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingTop: 12,
-                        borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                        gap: 6,
+                        padding: '6px 14px',
+                        borderRadius: 8,
+                        border: 'none',
+                        background: 'rgba(99, 102, 241, 0.15)',
+                        color: '#818cf8',
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: 'pointer',
                       }}
                     >
-                      <button
-                        onClick={() => navigate(ROUTES.LEARNING(bm.courseId))}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 6,
-                          padding: '6px 14px',
-                          borderRadius: 8,
-                          border: 'none',
-                          background: 'rgba(99, 102, 241, 0.15)',
-                          color: '#818cf8',
-                          fontSize: 12,
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                        }}
-                      >
-                        Open Lesson
-                        <ExternalLink size={12} />
-                      </button>
+                      Open Lesson
+                      <ExternalLink size={12} />
+                    </button>
 
-                      <button
-                        onClick={() => handleDeleteBookmark(bm.id)}
-                        style={{
-                          background: 'transparent',
-                          border: 'none',
-                          cursor: 'pointer',
-                          color: '#64748b',
-                          padding: 6,
-                          borderRadius: 6,
-                        }}
-                        title="Remove Bookmark"
-                        onMouseEnter={(e) => (e.currentTarget.style.color = '#ef4444')}
-                        onMouseLeave={(e) => (e.currentTarget.style.color = '#64748b')}
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => handleDeleteBookmark(bm.id)}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: '#64748b',
+                        padding: 6,
+                        borderRadius: 6,
+                      }}
+                      title="Remove Bookmark"
+                      onMouseEnter={(e) => (e.currentTarget.style.color = '#ef4444')}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = '#64748b')}
+                    >
+                      <Trash2 size={15} />
+                    </button>
                   </div>
-                ))}
-              </div>
-            )
+                </div>
+              ))}
+            </div>
           )}
         </div>
 
@@ -1238,12 +1372,31 @@ export const NotesBookmarksPage = () => {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: 'var(--text-primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
                 <Sparkles size={16} color="#f59e0b" />
                 Quick Study Scratchpad
               </h3>
               {scratchpadSaved && (
-                <span style={{ fontSize: 11, color: '#10b981', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span
+                  style={{
+                    fontSize: 11,
+                    color: '#10b981',
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4,
+                  }}
+                >
                   <Check size={12} /> Saved
                 </span>
               )}
@@ -1325,7 +1478,17 @@ export const NotesBookmarksPage = () => {
               boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
-            <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <h3
+              style={{
+                margin: 0,
+                fontSize: 14,
+                fontWeight: 700,
+                color: 'var(--text-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+              }}
+            >
               <Folder size={16} color="#38bdf8" />
               Notes by Course
             </h3>
@@ -1339,7 +1502,8 @@ export const NotesBookmarksPage = () => {
                   padding: '8px 12px',
                   borderRadius: 8,
                   border: 'none',
-                  background: selectedCourseFilter === 'ALL' ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
+                  background:
+                    selectedCourseFilter === 'ALL' ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
                   color: selectedCourseFilter === 'ALL' ? '#38bdf8' : 'var(--text-secondary)',
                   fontSize: 12,
                   fontWeight: 600,
@@ -1360,7 +1524,8 @@ export const NotesBookmarksPage = () => {
                   padding: '8px 12px',
                   borderRadius: 8,
                   border: 'none',
-                  background: selectedCourseFilter === 'GENERAL' ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
+                  background:
+                    selectedCourseFilter === 'GENERAL' ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
                   color: selectedCourseFilter === 'GENERAL' ? '#38bdf8' : 'var(--text-secondary)',
                   fontSize: 12,
                   fontWeight: 600,
@@ -1387,7 +1552,8 @@ export const NotesBookmarksPage = () => {
                       padding: '8px 12px',
                       borderRadius: 8,
                       border: 'none',
-                      background: selectedCourseFilter === c.id ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
+                      background:
+                        selectedCourseFilter === c.id ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
                       color: selectedCourseFilter === c.id ? '#38bdf8' : 'var(--text-secondary)',
                       fontSize: 12,
                       fontWeight: 600,
@@ -1395,7 +1561,14 @@ export const NotesBookmarksPage = () => {
                       textAlign: 'left',
                     }}
                   >
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 220 }}>
+                    <span
+                      style={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        maxWidth: 220,
+                      }}
+                    >
                       {c.title}
                     </span>
                     <span style={{ fontSize: 11, opacity: 0.7 }}>{count}</span>
@@ -1418,15 +1591,43 @@ export const NotesBookmarksPage = () => {
               boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
-            <h3 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <h3
+              style={{
+                margin: 0,
+                fontSize: 13,
+                fontWeight: 700,
+                color: '#94a3b8',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
               <Code size={14} color="#818cf8" />
               Markdown Quick Tips
             </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: 11, color: '#64748b' }}>
-              <div><code style={{ color: '#f59e0b' }}># Header 1</code></div>
-              <div><code style={{ color: '#f59e0b' }}>**Bold**</code></div>
-              <div><code style={{ color: '#f59e0b' }}>- Bullet</code></div>
-              <div><code style={{ color: '#f59e0b' }}>`Code`</code></div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: 8,
+                fontSize: 11,
+                color: '#64748b',
+              }}
+            >
+              <div>
+                <code style={{ color: '#f59e0b' }}># Header 1</code>
+              </div>
+              <div>
+                <code style={{ color: '#f59e0b' }}>**Bold**</code>
+              </div>
+              <div>
+                <code style={{ color: '#f59e0b' }}>- Bullet</code>
+              </div>
+              <div>
+                <code style={{ color: '#f59e0b' }}>`Code`</code>
+              </div>
             </div>
           </div>
         </div>

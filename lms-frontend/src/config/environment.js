@@ -4,7 +4,14 @@
  */
 const raw = import.meta.env;
 
-const required = ['VITE_API_BASE_URL'];
+const required = [
+  'VITE_API_BASE_URL',
+  'VITE_CHAT_SERVICE_URL',
+  'VITE_CHAT_WS_URL',
+  'VITE_NOTIFICATION_SERVICE_URL',
+  'VITE_NOTIFICATION_WS_URL',
+  'VITE_TENANT_BASE_DOMAIN',
+];
 
 const missing = required.filter((key) => !raw[key]);
 if (missing.length > 0 && raw.PROD) {
@@ -16,7 +23,8 @@ export const environment = Object.freeze({
   wsBaseUrl: raw.VITE_WS_BASE_URL ?? 'ws://localhost:8080/ws',
   chatServiceUrl: raw.VITE_CHAT_SERVICE_URL ?? 'http://localhost:3001/api/v1/chat',
   chatWsUrl: raw.VITE_CHAT_WS_URL ?? 'http://localhost:3001',
-  notificationServiceUrl: raw.VITE_NOTIFICATION_SERVICE_URL ?? 'http://localhost:3002/api/v1/notifications',
+  notificationServiceUrl:
+    raw.VITE_NOTIFICATION_SERVICE_URL ?? 'http://localhost:3002/api/v1/notifications',
   notificationWsUrl: raw.VITE_NOTIFICATION_WS_URL ?? 'http://localhost:3002',
   appName: raw.VITE_APP_NAME ?? 'LMS',
   appEnv: raw.VITE_APP_ENV ?? raw.MODE,

@@ -27,7 +27,7 @@ import chatUnreadService from '../features/chat/services/chatUnreadService';
  * │                 │  [Footer]                      │
  * └──────────────────────────────────────────────────┘
  */
-export const AppShell = ({ navigation, tabNav, title }) => {
+export const AppShell = ({ navigation, tabNav }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -74,21 +74,14 @@ export const AppShell = ({ navigation, tabNav, title }) => {
     <ThemeProvider>
       <div className="flex h-screen overflow-hidden" style={{ background: 'var(--background)' }}>
         {/* Slim Icon Sidebar */}
-        <IconSidebar
-          items={navigation}
-          onLogout={handleSignOut}
-          user={user}
-        />
+        <IconSidebar items={navigation} onLogout={handleSignOut} user={user} />
 
         {/* Main content column */}
         <div className="flex flex-1 flex-col overflow-hidden">
           <ImpersonationBanner />
           <BroadcastBanner />
 
-          <Header
-            onToggleSidebar={() => {}}
-            tabNav={tabNav}
-          />
+          <Header onToggleSidebar={() => {}} tabNav={tabNav} />
 
           <main
             className="flex-1 overflow-y-auto p-6 relative"

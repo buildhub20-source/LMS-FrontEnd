@@ -1,9 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
-  ShieldCheck, Award, Search, CheckCircle2, AlertTriangle, XCircle,
-  Calendar, Building2, User, BookOpen, Download, Copy, Check, ExternalLink,
-  ArrowRight, Sparkles, RefreshCw
+  ShieldCheck,
+  Award,
+  Search,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
+  Calendar,
+  Building2,
+  User,
+  BookOpen,
+  Download,
+  Copy,
+  Check,
+  ExternalLink,
+  ArrowRight,
+  Sparkles,
+  RefreshCw,
 } from 'lucide-react';
 import certificateService from '../services/certificateService';
 
@@ -34,7 +48,8 @@ export const PublicCertificateVerifyPage = () => {
       setError(
         err.response?.status === 404
           ? 'Certificate not found. Please double-check the serial number.'
-          : err.response?.data?.message || 'Unable to verify credential at this time. Please try again.'
+          : err.response?.data?.message ||
+              'Unable to verify credential at this time. Please try again.',
       );
     } finally {
       setLoading(false);
@@ -125,7 +140,8 @@ export const PublicCertificateVerifyPage = () => {
             Certificate Verification Portal
           </h1>
           <p style={{ color: '#94A3B8', fontSize: '15px', maxWidth: '520px', margin: '0 auto' }}>
-            Verify the cryptographic validity and academic authenticity of credentials issued by our learning platform.
+            Verify the cryptographic validity and academic authenticity of credentials issued by our
+            learning platform.
           </p>
         </div>
 
@@ -145,7 +161,16 @@ export const PublicCertificateVerifyPage = () => {
           }}
         >
           <div style={{ position: 'relative', flex: 1 }}>
-            <Search size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#64748B' }} />
+            <Search
+              size={18}
+              style={{
+                position: 'absolute',
+                left: 14,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: '#64748B',
+              }}
+            />
             <input
               type="text"
               placeholder="Enter Certificate Serial (e.g. CERT-2026-A1B2C3D4)..."
@@ -185,7 +210,11 @@ export const PublicCertificateVerifyPage = () => {
               boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
             }}
           >
-            {loading ? <RefreshCw size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <ShieldCheck size={16} />}
+            {loading ? (
+              <RefreshCw size={16} style={{ animation: 'spin 1s linear infinite' }} />
+            ) : (
+              <ShieldCheck size={16} />
+            )}
             Verify Credential
           </button>
         </form>
@@ -205,7 +234,9 @@ export const PublicCertificateVerifyPage = () => {
                 marginBottom: 14,
               }}
             />
-            <div style={{ fontSize: '14px', fontWeight: 600 }}>Querying cryptographic registry...</div>
+            <div style={{ fontSize: '14px', fontWeight: 600 }}>
+              Querying cryptographic registry...
+            </div>
           </div>
         )}
 
@@ -238,7 +269,9 @@ export const PublicCertificateVerifyPage = () => {
               <XCircle size={20} color="#F87171" />
             </div>
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#FCA5A5', margin: '0 0 4px 0' }}>
+              <h3
+                style={{ fontSize: '16px', fontWeight: 700, color: '#FCA5A5', margin: '0 0 4px 0' }}
+              >
                 Verification Unsuccessful
               </h3>
               <p style={{ color: '#FECACA', fontSize: '14px', margin: 0, lineHeight: 1.4 }}>
@@ -321,7 +354,9 @@ export const PublicCertificateVerifyPage = () => {
                       letterSpacing: '0.05em',
                     }}
                   >
-                    {verifiedData.status === 'ACTIVE' ? 'Official Verified Credential' : 'Credential Revoked'}
+                    {verifiedData.status === 'ACTIVE'
+                      ? 'Official Verified Credential'
+                      : 'Credential Revoked'}
                   </div>
                   <div style={{ fontSize: '11px', color: '#94A3B8' }}>
                     Authenticity verified against central registry
@@ -373,7 +408,8 @@ export const PublicCertificateVerifyPage = () => {
                 style={{
                   padding: '30px',
                   borderRadius: '16px',
-                  background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%)',
+                  background:
+                    'linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%)',
                   border: '1px solid rgba(255, 255, 255, 0.08)',
                   position: 'relative',
                   overflow: 'hidden',
@@ -392,11 +428,22 @@ export const PublicCertificateVerifyPage = () => {
                   }}
                 />
 
-                <div style={{ fontSize: '12px', color: '#818CF8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: '#818CF8',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                    marginBottom: 8,
+                  }}
+                >
                   Certificate of Completion
                 </div>
 
-                <div style={{ fontSize: '14px', color: '#94A3B8', marginBottom: 4 }}>This verifies that</div>
+                <div style={{ fontSize: '14px', color: '#94A3B8', marginBottom: 4 }}>
+                  This verifies that
+                </div>
                 <div
                   style={{
                     fontSize: '26px',
@@ -437,26 +484,53 @@ export const PublicCertificateVerifyPage = () => {
                   }}
                 >
                   <div>
-                    <div style={{ fontSize: '11px', color: '#64748B', fontWeight: 600, textTransform: 'uppercase' }}>
+                    <div
+                      style={{
+                        fontSize: '11px',
+                        color: '#64748B',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                      }}
+                    >
                       Issuing Institution
                     </div>
-                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#CBD5E1', marginTop: 3 }}>
+                    <div
+                      style={{ fontSize: '14px', fontWeight: 600, color: '#CBD5E1', marginTop: 3 }}
+                    >
                       {verifiedData.organizationName || 'LMS Institutional Academy'}
                     </div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '11px', color: '#64748B', fontWeight: 600, textTransform: 'uppercase' }}>
+                    <div
+                      style={{
+                        fontSize: '11px',
+                        color: '#64748B',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                      }}
+                    >
                       Issue Date
                     </div>
-                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#CBD5E1', marginTop: 3 }}>
+                    <div
+                      style={{ fontSize: '14px', fontWeight: 600, color: '#CBD5E1', marginTop: 3 }}
+                    >
                       {verifiedData.issuedAt ? verifiedData.issuedAt.slice(0, 10) : '—'}
                     </div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '11px', color: '#64748B', fontWeight: 600, textTransform: 'uppercase' }}>
+                    <div
+                      style={{
+                        fontSize: '11px',
+                        color: '#64748B',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                      }}
+                    >
                       Credential Validity
                     </div>
-                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#34D399', marginTop: 3 }}>
+                    <div
+                      style={{ fontSize: '14px', fontWeight: 600, color: '#34D399', marginTop: 3 }}
+                    >
                       Permanent / Valid
                     </div>
                   </div>
@@ -476,7 +550,10 @@ export const PublicCertificateVerifyPage = () => {
               }}
             >
               <div style={{ fontSize: '12px', color: '#64748B' }}>
-                Cryptographic Serial: <span style={{ fontFamily: 'monospace', color: '#94A3B8' }}>{verifiedData.serialNumber}</span>
+                Cryptographic Serial:{' '}
+                <span style={{ fontFamily: 'monospace', color: '#94A3B8' }}>
+                  {verifiedData.serialNumber}
+                </span>
               </div>
               <Link
                 to="/"

@@ -77,7 +77,8 @@ const ROLE_THEMES = {
     glow: 'rgba(99, 102, 241, 0.2)',
     tag: 'Full Platform Access',
     accent: '#6366f1',
-    description: 'Complete unrestricted access to system configurations, billing, tenants, and logs.',
+    description:
+      'Complete unrestricted access to system configurations, billing, tenants, and logs.',
   },
   superadmin: {
     icon: KeyRound,
@@ -99,7 +100,8 @@ const ROLE_THEMES = {
     glow: 'rgba(16, 185, 129, 0.2)',
     tag: 'Courses & Live Classes',
     accent: '#10b981',
-    description: 'Author courses, schedule live classrooms, evaluate assessments, and review students.',
+    description:
+      'Author courses, schedule live classrooms, evaluate assessments, and review students.',
   },
   manager: {
     icon: Briefcase,
@@ -110,7 +112,8 @@ const ROLE_THEMES = {
     glow: 'rgba(245, 158, 11, 0.2)',
     tag: 'Operations & Reports',
     accent: '#f59e0b',
-    description: 'Supervise cohorts, monitor course completion rates, and manage enrollment workflows.',
+    description:
+      'Supervise cohorts, monitor course completion rates, and manage enrollment workflows.',
   },
   student: {
     icon: BookOpen,
@@ -121,7 +124,8 @@ const ROLE_THEMES = {
     glow: 'rgba(14, 165, 233, 0.2)',
     tag: 'Learning & Assessments',
     accent: '#0ea5e9',
-    description: 'Enroll in academic courses, attend interactive live streams, and earn certifications.',
+    description:
+      'Enroll in academic courses, attend interactive live streams, and earn certifications.',
   },
   default: {
     icon: Users,
@@ -132,12 +136,15 @@ const ROLE_THEMES = {
     glow: 'rgba(167, 139, 250, 0.2)',
     tag: 'Custom Privileges',
     accent: '#8b5cf6',
-    description: 'Customized permission set tailored for specialized organizational responsibilities.',
+    description:
+      'Customized permission set tailored for specialized organizational responsibilities.',
   },
 };
 
 function getRoleTheme(roleName = '') {
-  const key = String(roleName).toLowerCase().replace(/[^a-z]/g, '');
+  const key = String(roleName)
+    .toLowerCase()
+    .replace(/[^a-z]/g, '');
   return ROLE_THEMES[key] || ROLE_THEMES.default;
 }
 
@@ -153,15 +160,6 @@ function initials(name = '') {
       .slice(0, 2)
       .map((w) => w[0]?.toUpperCase() ?? '')
       .join('') || '?'
-  );
-}
-
-function roleBadge(name = '') {
-  return (
-    ROLE_BADGE_COLORS[name.toLowerCase().replace(/[^a-z]/g, '')] ?? {
-      bg: M.primarySoft,
-      color: M.primary,
-    }
   );
 }
 
@@ -263,7 +261,12 @@ function StatusBadge({ user }) {
   const s = user.locked
     ? { bg: 'rgba(234, 84, 85, 0.15)', color: '#ea5455', label: 'Locked', dot: '#ea5455' }
     : !user.active
-      ? { bg: 'var(--surface-medium)', color: 'var(--text-muted)', label: 'Inactive', dot: '#94a3b8' }
+      ? {
+          bg: 'var(--surface-medium)',
+          color: 'var(--text-muted)',
+          label: 'Inactive',
+          dot: '#94a3b8',
+        }
       : !user.activated
         ? { bg: 'rgba(255, 159, 67, 0.15)', color: '#ff9f43', label: 'Pending', dot: '#ff9f43' }
         : { bg: 'rgba(40, 199, 111, 0.15)', color: '#28c76f', label: 'Active', dot: '#28c76f' };
@@ -349,7 +352,9 @@ function RoleCard({ role, usersWithRole, onEdit, onDelete, isFilterActive, onTog
       />
 
       {/* Top row: Role Icon + User count & Avatar stack */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+      <div
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div
             style={{
@@ -391,8 +396,24 @@ function RoleCard({ role, usersWithRole, onEdit, onDelete, isFilterActive, onTog
 
       {/* Middle row: Role title, capability description, permissions badge */}
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 4 }}>
-          <h3 style={{ fontSize: 18, fontWeight: 800, color: M.textMain, margin: 0, letterSpacing: '-0.01em' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 8,
+            marginBottom: 4,
+          }}
+        >
+          <h3
+            style={{
+              fontSize: 18,
+              fontWeight: 800,
+              color: M.textMain,
+              margin: 0,
+              letterSpacing: '-0.01em',
+            }}
+          >
             {role.name}
           </h3>
           {isFilterActive && (
@@ -712,7 +733,9 @@ export const RoleListPage = () => {
     setDeletingUser(true);
     try {
       await userService.delete(deleteUserTarget.id);
-      toastSuccess(`${deleteUserTarget.fullName || deleteUserTarget.name || 'User'} has been removed.`);
+      toastSuccess(
+        `${deleteUserTarget.fullName || deleteUserTarget.name || 'User'} has been removed.`,
+      );
       setDeleteUserTarget(null);
       loadUsers();
     } catch (err) {
@@ -724,9 +747,7 @@ export const RoleListPage = () => {
 
   const openEditUserRoles = (u) => {
     setRolesUserTarget(u);
-    const userRoleNames = (u.roles ?? []).map((r) =>
-      typeof r === 'string' ? r : (r?.name ?? '')
-    );
+    const userRoleNames = (u.roles ?? []).map((r) => (typeof r === 'string' ? r : (r?.name ?? '')));
     const preSelected = roles
       .filter((r) => userRoleNames.some((name) => name.toLowerCase() === r.name?.toLowerCase()))
       .map((r) => r.id);
@@ -738,7 +759,9 @@ export const RoleListPage = () => {
     setSavingUserRoles(true);
     try {
       await userService.updateRoles(rolesUserTarget.id, selectedUserRoleIds);
-      toastSuccess(`Roles updated for ${rolesUserTarget.fullName || rolesUserTarget.name || 'user'}.`);
+      toastSuccess(
+        `Roles updated for ${rolesUserTarget.fullName || rolesUserTarget.name || 'user'}.`,
+      );
       setRolesUserTarget(null);
       loadUsers();
     } catch (err) {
@@ -762,7 +785,7 @@ export const RoleListPage = () => {
           ? `${u.fullName || u.name} has been locked.`
           : type === 'unlock'
             ? `${u.fullName || u.name} has been unlocked.`
-            : `${u.fullName || u.name} has been ${type}d.`
+            : `${u.fullName || u.name} has been ${type}d.`,
       );
       setConfirmUserAction(null);
       loadUsers();
@@ -798,7 +821,15 @@ export const RoleListPage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
       {/* Page header with Telemetry Ribbon */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 20 }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+          gap: 20,
+        }}
+      >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
             <span
@@ -817,11 +848,20 @@ export const RoleListPage = () => {
               Access & Governance
             </span>
           </div>
-          <h1 style={{ fontSize: 26, fontWeight: 800, color: M.textMain, margin: 0, letterSpacing: '-0.02em' }}>
+          <h1
+            style={{
+              fontSize: 26,
+              fontWeight: 800,
+              color: M.textMain,
+              margin: 0,
+              letterSpacing: '-0.02em',
+            }}
+          >
             Roles & Permissions
           </h1>
           <p style={{ fontSize: 14, color: M.textMuted, margin: '6px 0 0', maxWidth: 650 }}>
-            Configure role-based access control (RBAC), govern system privileges, and audit assigned user responsibilities.
+            Configure role-based access control (RBAC), govern system privileges, and audit assigned
+            user responsibilities.
           </p>
         </div>
 
@@ -853,7 +893,16 @@ export const RoleListPage = () => {
               <ShieldCheck size={18} />
             </div>
             <div>
-              <div style={{ fontSize: 11, color: M.textMuted, fontWeight: 600, textTransform: 'uppercase' }}>Roles</div>
+              <div
+                style={{
+                  fontSize: 11,
+                  color: M.textMuted,
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                }}
+              >
+                Roles
+              </div>
               <div style={{ fontSize: 17, fontWeight: 800, color: M.textMain }}>{roles.length}</div>
             </div>
           </div>
@@ -884,8 +933,19 @@ export const RoleListPage = () => {
               <Users size={18} />
             </div>
             <div>
-              <div style={{ fontSize: 11, color: M.textMuted, fontWeight: 600, textTransform: 'uppercase' }}>Total Users</div>
-              <div style={{ fontSize: 17, fontWeight: 800, color: M.textMain }}>{userTotal || users.length}</div>
+              <div
+                style={{
+                  fontSize: 11,
+                  color: M.textMuted,
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                }}
+              >
+                Total Users
+              </div>
+              <div style={{ fontSize: 17, fontWeight: 800, color: M.textMain }}>
+                {userTotal || users.length}
+              </div>
             </div>
           </div>
 
@@ -915,8 +975,19 @@ export const RoleListPage = () => {
               <KeyRound size={18} />
             </div>
             <div>
-              <div style={{ fontSize: 11, color: M.textMuted, fontWeight: 600, textTransform: 'uppercase' }}>Permissions</div>
-              <div style={{ fontSize: 17, fontWeight: 800, color: M.textMain }}>{allPermissions.length}</div>
+              <div
+                style={{
+                  fontSize: 11,
+                  color: M.textMuted,
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                }}
+              >
+                Permissions
+              </div>
+              <div style={{ fontSize: 17, fontWeight: 800, color: M.textMain }}>
+                {allPermissions.length}
+              </div>
             </div>
           </div>
         </div>
@@ -964,7 +1035,7 @@ export const RoleListPage = () => {
                 isFilterActive={isFilterActive}
                 onToggleFilter={() => {
                   setRoleFilter((prev) =>
-                    prev.toLowerCase() === (role.name ?? '').toLowerCase() ? '' : role.name
+                    prev.toLowerCase() === (role.name ?? '').toLowerCase() ? '' : role.name,
                   );
                   setUserPage(0);
                 }}
@@ -1055,7 +1126,15 @@ export const RoleListPage = () => {
       >
         {/* Table section header & Quick Filter Tabs */}
         <div style={{ padding: '20px 24px 16px', borderBottom: `1px solid ${M.border}` }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 14 }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 14,
+            }}
+          >
             <div>
               <h2 style={{ fontSize: 18, fontWeight: 700, color: M.textMain, margin: 0 }}>
                 Platform Users & Role Assignments
@@ -1068,7 +1147,10 @@ export const RoleListPage = () => {
             {/* Quick role filter pills */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
               <button
-                onClick={() => { setRoleFilter(''); setUserPage(0); }}
+                onClick={() => {
+                  setRoleFilter('');
+                  setUserPage(0);
+                }}
                 style={{
                   padding: '5px 12px',
                   borderRadius: 999,
@@ -1088,8 +1170,10 @@ export const RoleListPage = () => {
                 const theme = getRoleTheme(r.name);
                 const count = users.filter((u) =>
                   (u.roles ?? []).some(
-                    (userR) => (typeof userR === 'string' ? userR : (userR.name ?? '')).toLowerCase() === (r.name ?? '').toLowerCase()
-                  )
+                    (userR) =>
+                      (typeof userR === 'string' ? userR : (userR.name ?? '')).toLowerCase() ===
+                      (r.name ?? '').toLowerCase(),
+                  ),
                 ).length;
                 return (
                   <button
@@ -1407,7 +1491,14 @@ export const RoleListPage = () => {
                         <StatusBadge user={user} />
                       </td>
                       <td style={{ padding: '10px 16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 4, position: 'relative' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            position: 'relative',
+                          }}
+                        >
                           {/* Remove user button */}
                           <button
                             type="button"
@@ -1487,7 +1578,8 @@ export const RoleListPage = () => {
                                 cursor: 'pointer',
                                 padding: 6,
                                 borderRadius: 6,
-                                color: userMenuOpenId === user.id ? 'var(--text-primary)' : M.textMuted,
+                                color:
+                                  userMenuOpenId === user.id ? 'var(--text-primary)' : M.textMuted,
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
@@ -1543,7 +1635,9 @@ export const RoleListPage = () => {
                                     color: 'var(--text-primary)',
                                     textAlign: 'left',
                                   }}
-                                  onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
+                                  onMouseEnter={(e) =>
+                                    (e.currentTarget.style.background = 'var(--hover-bg)')
+                                  }
                                   onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
                                 >
                                   <ShieldCheck size={14} /> Manage Roles
@@ -1572,7 +1666,9 @@ export const RoleListPage = () => {
                                     color: user.locked ? '#28c76f' : '#ea5455',
                                     textAlign: 'left',
                                   }}
-                                  onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
+                                  onMouseEnter={(e) =>
+                                    (e.currentTarget.style.background = 'var(--hover-bg)')
+                                  }
                                   onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
                                 >
                                   {user.locked ? <Unlock size={14} /> : <Lock size={14} />}
@@ -1602,14 +1698,22 @@ export const RoleListPage = () => {
                                     color: user.active ? '#ea5455' : '#28c76f',
                                     textAlign: 'left',
                                   }}
-                                  onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
+                                  onMouseEnter={(e) =>
+                                    (e.currentTarget.style.background = 'var(--hover-bg)')
+                                  }
                                   onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
                                 >
                                   {user.active ? <UserX size={14} /> : <UserCheck size={14} />}
                                   {user.active ? 'Deactivate' : 'Activate'}
                                 </button>
 
-                                <div style={{ height: 1, background: 'var(--border-color)', margin: '4px 0' }} />
+                                <div
+                                  style={{
+                                    height: 1,
+                                    background: 'var(--border-color)',
+                                    margin: '4px 0',
+                                  }}
+                                />
 
                                 <button
                                   type="button"
@@ -1630,7 +1734,9 @@ export const RoleListPage = () => {
                                     color: '#ea5455',
                                     textAlign: 'left',
                                   }}
-                                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(234, 84, 85, 0.1)')}
+                                  onMouseEnter={(e) =>
+                                    (e.currentTarget.style.background = 'rgba(234, 84, 85, 0.1)')
+                                  }
                                   onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
                                 >
                                   <Trash2 size={14} /> Remove User
@@ -1962,28 +2068,28 @@ export const RoleListPage = () => {
             confirmUserAction.type === 'lock'
               ? 'Lock Account'
               : confirmUserAction.type === 'unlock'
-              ? 'Unlock Account'
-              : confirmUserAction.type === 'deactivate'
-              ? 'Deactivate User'
-              : 'Activate User'
+                ? 'Unlock Account'
+                : confirmUserAction.type === 'deactivate'
+                  ? 'Deactivate User'
+                  : 'Activate User'
           }
           message={
             confirmUserAction.type === 'lock'
               ? `Are you sure you want to lock the account for "${confirmUserAction.user?.fullName || confirmUserAction.user?.name || confirmUserAction.user?.email}"? They will not be able to log in.`
               : confirmUserAction.type === 'unlock'
-              ? `Are you sure you want to unlock the account for "${confirmUserAction.user?.fullName || confirmUserAction.user?.name || confirmUserAction.user?.email}"?`
-              : confirmUserAction.type === 'deactivate'
-              ? `Are you sure you want to deactivate "${confirmUserAction.user?.fullName || confirmUserAction.user?.name || confirmUserAction.user?.email}"?`
-              : `Are you sure you want to activate "${confirmUserAction.user?.fullName || confirmUserAction.user?.name || confirmUserAction.user?.email}"?`
+                ? `Are you sure you want to unlock the account for "${confirmUserAction.user?.fullName || confirmUserAction.user?.name || confirmUserAction.user?.email}"?`
+                : confirmUserAction.type === 'deactivate'
+                  ? `Are you sure you want to deactivate "${confirmUserAction.user?.fullName || confirmUserAction.user?.name || confirmUserAction.user?.email}"?`
+                  : `Are you sure you want to activate "${confirmUserAction.user?.fullName || confirmUserAction.user?.name || confirmUserAction.user?.email}"?`
           }
           confirmLabel={
             confirmUserAction.type === 'lock'
               ? 'Lock Account'
               : confirmUserAction.type === 'unlock'
-              ? 'Unlock Account'
-              : confirmUserAction.type === 'deactivate'
-              ? 'Deactivate'
-              : 'Activate'
+                ? 'Unlock Account'
+                : confirmUserAction.type === 'deactivate'
+                  ? 'Deactivate'
+                  : 'Activate'
           }
           variant={
             confirmUserAction.type === 'lock' || confirmUserAction.type === 'deactivate'
@@ -2035,7 +2141,7 @@ export const RoleListPage = () => {
                       setSelectedUserRoleIds((prev) =>
                         prev.includes(role.id)
                           ? prev.filter((id) => id !== role.id)
-                          : [...prev, role.id]
+                          : [...prev, role.id],
                       )
                     }
                     style={{
@@ -2047,9 +2153,7 @@ export const RoleListPage = () => {
                       border: checked
                         ? '1px solid var(--primary-color, #7367f0)'
                         : '1px solid var(--border-color)',
-                      background: checked
-                        ? 'rgba(115, 103, 240, 0.08)'
-                        : 'var(--surface-medium)',
+                      background: checked ? 'rgba(115, 103, 240, 0.08)' : 'var(--surface-medium)',
                       cursor: 'pointer',
                       textAlign: 'left',
                       transition: 'all 0.15s ease',
@@ -2064,9 +2168,7 @@ export const RoleListPage = () => {
                         border: checked
                           ? '2px solid var(--primary-color, #7367f0)'
                           : '2px solid var(--border-color)',
-                        background: checked
-                          ? 'var(--primary-color, #7367f0)'
-                          : 'transparent',
+                        background: checked ? 'var(--primary-color, #7367f0)' : 'transparent',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',

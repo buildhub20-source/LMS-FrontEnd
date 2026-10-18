@@ -1,10 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import {
-  Copy, Clock, Database, ChevronDown, ChevronUp, Play,
-  CheckCircle2, XCircle, Terminal, AlertCircle, RefreshCw,
-  Code2, RotateCcw, Check, Sparkles, HelpCircle, Layers,
-  FileCode, CheckCheck, SendHorizonal, Lock, Eye, EyeOff, CloudUpload
+  Copy,
+  Clock,
+  Database,
+  ChevronDown,
+  ChevronUp,
+  Play,
+  CheckCircle2,
+  XCircle,
+  Terminal,
+  AlertCircle,
+  RefreshCw,
+  Code2,
+  RotateCcw,
+  Check,
+  Sparkles,
+  HelpCircle,
+  Layers,
+  FileCode,
+  CheckCheck,
+  SendHorizonal,
+  Lock,
+  Eye,
+  EyeOff,
+  CloudUpload,
 } from 'lucide-react';
 import Badge from '../../../components/common/Badge';
 import Button from '../../../components/common/Button';
@@ -13,282 +33,133 @@ import { DIFFICULTY_TONE } from '../constants/assessmentConstants';
 
 /** Supported languages with Monaco language IDs */
 const LANGUAGES = [
-  { value: 'java',       label: 'Java 17',            monacoLang: 'java',       ext: 'java' },
-  { value: 'python',     label: 'Python 3.11',       monacoLang: 'python',     ext: 'py' },
-  { value: 'cpp',        label: 'C++ (GCC 13)',       monacoLang: 'cpp',        ext: 'cpp' },
-  { value: 'c',          label: 'C (GCC 13)',         monacoLang: 'c',          ext: 'c' },
+  { value: 'java', label: 'Java 17', monacoLang: 'java', ext: 'java' },
+  { value: 'python', label: 'Python 3.11', monacoLang: 'python', ext: 'py' },
+  { value: 'cpp', label: 'C++ (GCC 13)', monacoLang: 'cpp', ext: 'cpp' },
+  { value: 'c', label: 'C (GCC 13)', monacoLang: 'c', ext: 'c' },
   { value: 'javascript', label: 'JavaScript (Node)', monacoLang: 'javascript', ext: 'js' },
 ];
 
 const STARTER_CODE = {
-  java:       'import java.util.*;\n\npublic class Solution {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        // Write your solution here\n        \n    }\n}\n',
-  python:     '# Write your solution here\nimport sys\n\ndef main():\n    # Read input from stdin\n    input_data = sys.stdin.read().strip()\n    if not input_data:\n        return\n    \n    # Your logic here\n\nif __name__ == "__main__":\n    main()\n',
-  cpp:        '#include <iostream>\n#include <vector>\n#include <string>\nusing namespace std;\n\nint main() {\n    // Write your solution here\n    \n    return 0;\n}\n',
-  c:          '#include <stdio.h>\n\nint main() {\n    // Write your solution here\n    \n    return 0;\n}\n',
-  javascript: '// Write your solution here\nconst fs = require("fs");\n\nfunction main() {\n    const input = fs.readFileSync(0, "utf-8").trim();\n    // Your logic here\n    \n}\n\nmain();\n',
+  java: 'import java.util.*;\n\npublic class Solution {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        // Write your solution here\n        \n    }\n}\n',
+  python:
+    '# Write your solution here\nimport sys\n\ndef main():\n    # Read input from stdin\n    input_data = sys.stdin.read().strip()\n    if not input_data:\n        return\n    \n    # Your logic here\n\nif __name__ == "__main__":\n    main()\n',
+  cpp: '#include <iostream>\n#include <vector>\n#include <string>\nusing namespace std;\n\nint main() {\n    // Write your solution here\n    \n    return 0;\n}\n',
+  c: '#include <stdio.h>\n\nint main() {\n    // Write your solution here\n    \n    return 0;\n}\n',
+  javascript:
+    '// Write your solution here\nconst fs = require("fs");\n\nfunction main() {\n    const input = fs.readFileSync(0, "utf-8").trim();\n    // Your logic here\n    \n}\n\nmain();\n',
 };
 
 const JAVA_SCRIPT_RUN_TIMEOUT_MS = 3_000;
 
-const runJavaScriptInWorker = (sourceCode, input) => new Promise((resolve) => {
-  const worker = new Worker(
-    new URL('../workers/javascriptRunner.worker.js', import.meta.url),
-    { type: 'module' },
-  );
-  const runId = crypto.randomUUID();
-  let complete = false;
+const runJavaScriptInWorker = (sourceCode, input) =>
+  new Promise((resolve) => {
+    const worker = new Worker(new URL('../workers/javascriptRunner.worker.js', import.meta.url), {
+      type: 'module',
+    });
+    const runId = crypto.randomUUID();
+    let complete = false;
 
-  const finish = (result) => {
-    if (complete) return;
-    complete = true;
-    clearTimeout(timeout);
-    worker.terminate();
-    resolve(result);
-  };
+    const finish = (result) => {
+      if (complete) return;
+      complete = true;
+      clearTimeout(timeout);
+      worker.terminate();
+      resolve(result);
+    };
 
-  const timeout = window.setTimeout(
-    () => finish({ success: false, error: 'Execution timed out after 3 seconds.' }),
-    JAVA_SCRIPT_RUN_TIMEOUT_MS,
-  );
+    const timeout = window.setTimeout(
+      () => finish({ success: false, error: 'Execution timed out after 3 seconds.' }),
+      JAVA_SCRIPT_RUN_TIMEOUT_MS,
+    );
 
-  worker.onmessage = ({ data }) => {
-    if (data?.runId !== runId) return;
-    finish(data);
-  };
-  worker.onerror = () => finish({ success: false, error: 'The sandboxed JavaScript runner failed to start.' });
-  worker.postMessage({ runId, sourceCode, input });
-});
+    worker.onmessage = ({ data }) => {
+      if (data?.runId !== runId) return;
+      finish(data);
+    };
+    worker.onerror = () =>
+      finish({ success: false, error: 'The sandboxed JavaScript runner failed to start.' });
+    worker.postMessage({ runId, sourceCode, input });
+  });
 
 /**
  * Sandboxed code execution simulator for sample test cases
  */
+/**
+ * Runs code against the sample test cases. Only JavaScript can run in the
+ * browser; other languages are not executed here, and no result is invented
+ * for them. Every submitted answer is graded after the attempt is submitted.
+ */
 async function executeCodeSandbox(language, sourceCode, testCases, customInput = '') {
-  const startTime = performance.now();
-  const results = [];
-
   if (!sourceCode || !sourceCode.trim()) {
-    return {
-      status: 'COMPILE_ERROR',
-      message: 'Source code is empty. Please write your solution.',
-      results: [],
-      executionTimeMs: 0,
-    };
+    return { status: 'EMPTY', message: 'Write some code before running it.', results: [] };
   }
 
-  // Realistic compiler/syntax validation for Java
-  if (language === 'java') {
-    const openBraces = (sourceCode.match(/\{/g) || []).length;
-    const closeBraces = (sourceCode.match(/\}/g) || []).length;
-    if (openBraces !== closeBraces) {
-      return {
-        status: 'COMPILE_ERROR',
-        message: `Main.java: error: reached end of file while parsing (unmatched braces: ${openBraces} '{' vs ${closeBraces} '}')`,
-        results: [],
-        executionTimeMs: 12,
-      };
-    }
-
-    if (/System\.out\.printl[^n]/.test(sourceCode) || /System\.out\.printl\s*\(/.test(sourceCode)) {
-      return {
-        status: 'COMPILE_ERROR',
-        message: "Main.java: error: cannot find symbol\n  symbol:   method printl(java.lang.String)\n  location: variable out of type java.io.PrintStream",
-        results: [],
-        executionTimeMs: 14,
-      };
-    }
-
-    const codeLines = sourceCode.split('\n');
-    for (let lineNum = 0; lineNum < codeLines.length; lineNum++) {
-      const line = codeLines[lineNum].trim();
-      if (
-        (line.startsWith('int ') || line.startsWith('String ') || line.startsWith('Scanner ') || line.startsWith('Map<') || line.startsWith('return ')) &&
-        !line.endsWith(';') && !line.endsWith('{') && !line.endsWith('}') && !line.startsWith('//') && !line.startsWith('/*')
-      ) {
-        return {
-          status: 'COMPILE_ERROR',
-          message: `Main.java:${lineNum + 1}: error: ';' expected\n    ${line}\n    ${' '.repeat(Math.max(0, line.length - 1))}^`,
-          results: [],
-          executionTimeMs: 15,
-        };
-      }
-    }
+  if (language !== 'javascript') {
+    const label = LANGUAGES.find((l) => l.value === language)?.label ?? language;
+    return {
+      status: 'UNAVAILABLE',
+      message: `Running ${label} code isn't available yet. Your answer is saved and will be graded after you submit.`,
+      results: [],
+    };
   }
 
   const casesToRun = [...testCases];
   if (customInput && customInput.trim()) {
     casesToRun.push({
       id: 'custom-input',
-      label: 'Custom Input Case',
+      label: 'Custom Input',
       input: customInput,
-      expectedOutput: '(Custom Evaluation)',
       isCustom: true,
     });
   }
-
-  // Fallback sample if question has no test cases configured
   if (casesToRun.length === 0) {
-    casesToRun.push({
-      id: 'default-1',
-      label: 'Sample Case 1',
-      input: '1 2 3',
-      expectedOutput: 'Sample Result',
-      isCustom: true,
-    });
+    return {
+      status: 'NO_TESTS',
+      message: 'This question has no sample test cases. Add custom input to try your code.',
+      results: [],
+    };
   }
 
-  // Comprehensive code simulation engine for Java, Python, C++, C
+  const startTime = performance.now();
+  const results = [];
   for (let i = 0; i < casesToRun.length; i++) {
     const tc = casesToRun[i];
-    const expectedTrimmed = (tc.expectedOutput ?? '').trim();
-    const inputContent = (tc.input ?? '').trim();
+    const caseStart = performance.now();
+    const run = await runJavaScriptInWorker(sourceCode, tc.input ?? '');
+    const actualOutput = (run.output ?? '').trim();
+    const errorMsg = run.success ? null : (run.error ?? 'The sandboxed JavaScript runner failed.');
 
-    let actualOutput = '';
-    let isPassed = false;
-    let errorMsg = null;
-
-    if (language === 'javascript') {
-      const run = await runJavaScriptInWorker(sourceCode, tc.input ?? '');
-      actualOutput = run.output ?? '';
-      errorMsg = run.success ? null : (run.error ?? 'The sandboxed JavaScript runner failed.');
-    } else {
-      // Robust output parser for Java, Python, C++, and C
-      const collectedOutputs = [];
-
-      if (language === 'java') {
-        // Check if code is implementing Two Sum logic
-        const isTwoSumCode = /scanner|nextInt|map|target|nums|twoSum|sum/i.test(sourceCode);
-        const numbers = inputContent.match(/-?\d+/g)?.map(Number) || [];
-        if (isTwoSumCode && numbers.length >= 3) {
-          const n = numbers[0];
-          const arr = numbers.slice(1, 1 + n);
-          const target = numbers[1 + n];
-          if (arr.length === n && target !== undefined) {
-            const seen = new Map();
-            let found = null;
-            for (let idx = 0; idx < arr.length; idx++) {
-              const comp = target - arr[idx];
-              if (seen.has(comp)) {
-                const first = seen.get(comp);
-                found = `${Math.min(first, idx)} ${Math.max(first, idx)}`;
-                break;
-              }
-              seen.set(arr[idx], idx);
-            }
-            if (found) {
-              collectedOutputs.push(found);
-            }
-          }
-        }
-
-        if (collectedOutputs.length === 0) {
-          // Fallback regex parser for System.out.println, System.out.print, System.out.printf, System.err.print
-          const javaPrintRegex = /System\.(?:out|err)\.(?:println|print|printf)\s*\(\s*([^;]+?)\s*\)\s*;/g;
-          let match;
-          while ((match = javaPrintRegex.exec(sourceCode)) !== null) {
-            const rawArg = match[1].trim();
-            // Extract string literal(s) or evaluate simple expressions
-            const stringMatches = [...rawArg.matchAll(/["'](.*?)["']/g)];
-            if (stringMatches.length > 0) {
-              collectedOutputs.push(stringMatches.map((m) => m[1]).join(''));
-            } else if (/^-?\d+(?:\.\d+)?$/.test(rawArg)) {
-              collectedOutputs.push(rawArg);
-            } else if (rawArg.toLowerCase() === 'true' || rawArg.toLowerCase() === 'false') {
-              collectedOutputs.push(rawArg.toLowerCase());
-            } else if (inputContent && (rawArg.includes('scanner') || rawArg.includes('input') || rawArg.includes('in.'))) {
-              collectedOutputs.push(inputContent);
-            } else {
-              collectedOutputs.push(rawArg.replace(/[()]/g, ''));
-            }
-          }
-        }
-      } else if (language === 'python') {
-        // Match print(...) or sys.stdout.write(...)
-        const pyPrintRegex = /(?:print|sys\.stdout\.write)\s*\(\s*(.*?)\s*\)(?:\s*#.*)?$/gm;
-        let match;
-        while ((match = pyPrintRegex.exec(sourceCode)) !== null) {
-          const rawArg = match[1].trim();
-          const stringMatches = [...rawArg.matchAll(/["'](.*?)["']/g)];
-          if (stringMatches.length > 0) {
-            collectedOutputs.push(stringMatches.map((m) => m[1]).join(' '));
-          } else if (/^-?\d+(?:\.\d+)?$/.test(rawArg)) {
-            collectedOutputs.push(rawArg);
-          } else if (inputContent && (rawArg.includes('input_data') || rawArg.includes('input(') || rawArg.includes('sys.stdin'))) {
-            collectedOutputs.push(inputContent);
-          } else {
-            collectedOutputs.push(rawArg);
-          }
-        }
-      } else if (language === 'cpp') {
-        // Match cout << ... or printf(...)
-        const coutRegex = /cout\s*<<\s*([^;]+);/g;
-        let match;
-        while ((match = coutRegex.exec(sourceCode)) !== null) {
-          const rawParts = match[1].split('<<');
-          const lineParts = [];
-          for (const part of rawParts) {
-            const p = part.trim();
-            if (p === 'endl' || p === '"\\n"') continue;
-            const strMatch = p.match(/["'](.*?)["']/);
-            if (strMatch) {
-              lineParts.push(strMatch[1]);
-            } else if (/^-?\d+(?:\.\d+)?$/.test(p)) {
-              lineParts.push(p);
-            }
-          }
-          if (lineParts.length > 0) collectedOutputs.push(lineParts.join(''));
-        }
-
-        const printfRegex = /printf\s*\(\s*["'](.*?)["'](?:\s*,\s*([^)]*))?\s*\)\s*;/g;
-        while ((match = printfRegex.exec(sourceCode)) !== null) {
-          collectedOutputs.push(match[1].replace(/\\n/g, '').trim());
-        }
-      } else if (language === 'c') {
-        // Match printf(...) or puts(...)
-        const cPrintRegex = /(?:printf|puts)\s*\(\s*["'](.*?)["'](?:\s*,\s*([^)]*))?\s*\)\s*;/g;
-        let match;
-        while ((match = cPrintRegex.exec(sourceCode)) !== null) {
-          collectedOutputs.push(match[1].replace(/\\n/g, '').trim());
-        }
-      }
-
-      if (collectedOutputs.length > 0) {
-        actualOutput = collectedOutputs.join('\n').trim();
-      }
-    }
-
-    // Determine pass / fail status
-    if (errorMsg) {
-      isPassed = false;
-    } else if (tc.isCustom) {
-      isPassed = true;
-    } else {
-      const actualNorm = (actualOutput || '').trim().replace(/\r\n/g, '\n');
-      const expectedNorm = expectedTrimmed.replace(/\r\n/g, '\n');
-      isPassed = actualNorm === expectedNorm || actualNorm.toLowerCase() === expectedNorm.toLowerCase();
+    let status;
+    if (errorMsg) status = 'RUNTIME_ERROR';
+    else if (tc.isCustom) status = 'RAN';
+    else {
+      const actualNorm = actualOutput.replace(/\r\n/g, '\n');
+      const expectedNorm = (tc.expectedOutput ?? '').trim().replace(/\r\n/g, '\n');
+      status = actualNorm === expectedNorm ? 'PASSED' : 'WRONG_ANSWER';
     }
 
     results.push({
       testCaseIndex: i + 1,
       label: tc.label || `Case ${i + 1}`,
       input: tc.input ?? '',
-      expectedOutput: tc.expectedOutput ?? '',
-      actualOutput: errorMsg ? `Runtime Error: ${errorMsg}` : actualOutput || '(Execution completed with no output)',
-      status: errorMsg ? 'RUNTIME_ERROR' : isPassed ? 'PASSED' : 'WRONG_ANSWER',
+      expectedOutput: tc.isCustom ? null : (tc.expectedOutput ?? ''),
+      actualOutput: errorMsg ? `Runtime Error: ${errorMsg}` : actualOutput || '(no output)',
+      status,
       errorMessage: errorMsg,
-      executionTimeMs: Math.max(12, Math.round(Math.random() * 25 + 12)),
-      memoryMb: +(Math.random() * 5 + 18).toFixed(1),
+      executionTimeMs: Math.round(performance.now() - caseStart),
       isCustom: tc.isCustom,
     });
   }
 
-  const duration = Math.round(performance.now() - startTime);
-  const allPassed = results.length > 0 && results.every((r) => r.status === 'PASSED');
+  const checked = results.filter((r) => !r.isCustom);
+  let status = 'RAN';
+  if (results.some((r) => r.status === 'RUNTIME_ERROR')) status = 'RUNTIME_ERROR';
+  else if (checked.length > 0) {
+    status = checked.every((r) => r.status === 'PASSED') ? 'ACCEPTED' : 'WRONG_ANSWER';
+  }
 
-  return {
-    status: allPassed ? 'ACCEPTED' : results.some((r) => r.status === 'RUNTIME_ERROR') ? 'RUNTIME_ERROR' : 'WRONG_ANSWER',
-    results,
-    executionTimeMs: Math.max(duration, 42),
-  };
+  return { status, results, executionTimeMs: Math.round(performance.now() - startTime) };
 }
 
 /**
@@ -302,7 +173,7 @@ export const CodingQuestionPanel = ({
   isReadOnly = false,
   onSubmitQuestion = null,
   isQuestionSubmitted = false,
-  attemptId = null,   // needed for direct backend submission
+  attemptId = null, // needed for direct backend submission
 }) => {
   const [showConstraints, setShowConstraints] = useState(true);
   const [activeConsoleTab, setActiveConsoleTab] = useState('testcases');
@@ -316,7 +187,8 @@ export const CodingQuestionPanel = ({
   const [copiedKey, setCopiedKey] = useState(null);
 
   const sampleCases = question?.sampleTestCases ?? question?.testCases ?? [];
-  const currentLang = LANGUAGES.find((l) => l.value === (draft?.language || 'java')) ?? LANGUAGES[0];
+  const currentLang =
+    LANGUAGES.find((l) => l.value === (draft?.language || 'java')) ?? LANGUAGES[0];
   const activeLanguage = currentLang.value;
 
   // Retrieve per-language code cache from draft or initialize
@@ -324,7 +196,7 @@ export const CodingQuestionPanel = ({
   const currentCode =
     draft?.sourceCode !== undefined && draft?.sourceCode !== null && draft?.sourceCode !== ''
       ? draft.sourceCode
-      : (codeByLanguage[activeLanguage] || STARTER_CODE[activeLanguage] || '');
+      : codeByLanguage[activeLanguage] || STARTER_CODE[activeLanguage] || '';
 
   const handleLanguageChange = (e) => {
     const newLang = e.target.value;
@@ -344,9 +216,11 @@ export const CodingQuestionPanel = ({
     // If user already wrote custom code in the newly selected language, use that.
     // Otherwise, load the starter template for the new language.
     const newCode =
-      !isUnmodified && updatedCodeByLanguage[newLang] && updatedCodeByLanguage[newLang].trim() !== ''
+      !isUnmodified &&
+      updatedCodeByLanguage[newLang] &&
+      updatedCodeByLanguage[newLang].trim() !== ''
         ? updatedCodeByLanguage[newLang]
-        : (STARTER_CODE[newLang] || '');
+        : STARTER_CODE[newLang] || '';
 
     updatedCodeByLanguage[newLang] = newCode;
 
@@ -359,7 +233,11 @@ export const CodingQuestionPanel = ({
 
   const handleResetCode = () => {
     const defaultTemplate = STARTER_CODE[activeLanguage] ?? '';
-    if (window.confirm(`Reset ${currentLang.label} code to starter template? Your current edits for this language will be overwritten.`)) {
+    if (
+      window.confirm(
+        `Reset ${currentLang.label} code to starter template? Your current edits for this language will be overwritten.`,
+      )
+    ) {
       const updatedCodeByLanguage = {
         ...codeByLanguage,
         [activeLanguage]: defaultTemplate,
@@ -525,10 +403,22 @@ export const CodingQuestionPanel = ({
     EASY: { bg: 'rgba(16, 185, 129, 0.15)', text: '#34d399', border: 'rgba(16, 185, 129, 0.3)' },
     MEDIUM: { bg: 'rgba(245, 158, 11, 0.15)', text: '#fbbf24', border: 'rgba(245, 158, 11, 0.3)' },
     HARD: { bg: 'rgba(239, 68, 68, 0.15)', text: '#f87171', border: 'rgba(239, 68, 68, 0.3)' },
-  }[question?.difficulty?.toUpperCase()] ?? { bg: 'rgba(99, 102, 241, 0.15)', text: '#818cf8', border: 'rgba(99, 102, 241, 0.3)' };
+  }[question?.difficulty?.toUpperCase()] ?? {
+    bg: 'rgba(99, 102, 241, 0.15)',
+    text: '#818cf8',
+    border: 'rgba(99, 102, 241, 0.3)',
+  };
 
   return (
-    <div style={{ display: 'flex', height: '100%', minHeight: 0, overflow: 'hidden', background: '#0a0f1d' }}>
+    <div
+      style={{
+        display: 'flex',
+        height: '100%',
+        minHeight: 0,
+        overflow: 'hidden',
+        background: '#0a0f1d',
+      }}
+    >
       {/* ── LEFT PANEL: Problem Statement & Specs ──────────────────── */}
       <div
         style={{
@@ -550,7 +440,15 @@ export const CodingQuestionPanel = ({
             flexShrink: 0,
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 10 }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'space-between',
+              gap: 12,
+              marginBottom: 10,
+            }}
+          >
             <h2
               style={{
                 margin: 0,
@@ -838,11 +736,27 @@ export const CodingQuestionPanel = ({
                       {tc.label || `Example ${idx + 1}`}
                     </div>
 
-                    <div style={{ padding: '10px 12px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <div
+                      style={{
+                        padding: '10px 12px',
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: 12,
+                      }}
+                    >
                       {/* Input block */}
                       <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                          <span style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8' }}>Input:</span>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: 4,
+                          }}
+                        >
+                          <span style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8' }}>
+                            Input:
+                          </span>
                           <button
                             type="button"
                             onClick={() => handleCopy(tc.input ?? '', `in-${idx}`)}
@@ -882,8 +796,17 @@ export const CodingQuestionPanel = ({
 
                       {/* Expected output block */}
                       <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                          <span style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8' }}>Expected Output:</span>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: 4,
+                          }}
+                        >
+                          <span style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8' }}>
+                            Expected Output:
+                          </span>
                           <button
                             type="button"
                             onClick={() => handleCopy(tc.expectedOutput ?? '', `out-${idx}`)}
@@ -1032,21 +955,46 @@ export const CodingQuestionPanel = ({
                 )}
                 {/* Submit-to-server status (overrides autosave status while active) */}
                 {submitSaveStatus === 'saving' && (
-                  <span style={{ color: '#818cf8', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700 }}>
-                    <CloudUpload size={12} style={{ animation: 'pulse 1s infinite' }} /> Submitting to server…
+                  <span
+                    style={{
+                      color: '#818cf8',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      fontWeight: 700,
+                    }}
+                  >
+                    <CloudUpload size={12} style={{ animation: 'pulse 1s infinite' }} /> Submitting
+                    to server…
                   </span>
                 )}
                 {submitSaveStatus === 'saved' && (
-                  <span style={{
-                    color: '#10b981', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700,
-                    background: 'rgba(16,185,129,0.1)', padding: '2px 8px', borderRadius: 5,
-                    border: '1px solid rgba(16,185,129,0.25)',
-                  }}>
+                  <span
+                    style={{
+                      color: '#10b981',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      fontWeight: 700,
+                      background: 'rgba(16,185,129,0.1)',
+                      padding: '2px 8px',
+                      borderRadius: 5,
+                      border: '1px solid rgba(16,185,129,0.25)',
+                    }}
+                  >
                     <CheckCheck size={12} /> Answer saved to server!
                   </span>
                 )}
                 {submitSaveStatus === 'error' && (
-                  <span style={{ color: '#f87171', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700 }}>
+                  <span
+                    style={{
+                      color: '#f87171',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      fontWeight: 700,
+                    }}
+                  >
                     <AlertCircle size={12} /> Save failed — draft kept locally
                   </span>
                 )}
@@ -1065,7 +1013,9 @@ export const CodingQuestionPanel = ({
                     display: 'flex',
                     alignItems: 'center',
                     gap: 6,
-                    background: isRunning ? '#334155' : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    background: isRunning
+                      ? '#334155'
+                      : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                     color: '#ffffff',
                     border: 'none',
                     borderRadius: 6,
@@ -1127,7 +1077,10 @@ export const CodingQuestionPanel = ({
                     padding: '6px 12px',
                     fontSize: 12,
                     fontWeight: 700,
-                    cursor: (isRunning || isSubmittingQuestion || !draft.sourceCode?.trim()) ? 'not-allowed' : 'pointer',
+                    cursor:
+                      isRunning || isSubmittingQuestion || !draft.sourceCode?.trim()
+                        ? 'not-allowed'
+                        : 'pointer',
                     transition: 'all 0.15s ease',
                     boxShadow: isSubmittingQuestion ? 'none' : '0 2px 8px rgba(245, 158, 11, 0.35)',
                   }}
@@ -1185,7 +1138,13 @@ export const CodingQuestionPanel = ({
         </div>
 
         {/* Monaco Editor Container */}
-        <div style={{ flex: isConsoleExpanded ? '1 1 55%' : '1 1 95%', minHeight: 160, position: 'relative' }}>
+        <div
+          style={{
+            flex: isConsoleExpanded ? '1 1 55%' : '1 1 95%',
+            minHeight: 160,
+            position: 'relative',
+          }}
+        >
           <Editor
             key={`${question?.id}_${activeLanguage}`}
             height="100%"
@@ -1267,8 +1226,12 @@ export const CodingQuestionPanel = ({
                   gap: 6,
                   background: 'none',
                   border: 'none',
-                  borderBottom: activeConsoleTab === 'testcases' && isConsoleExpanded ? '2px solid #6366f1' : '2px solid transparent',
-                  color: activeConsoleTab === 'testcases' && isConsoleExpanded ? '#ffffff' : '#94a3b8',
+                  borderBottom:
+                    activeConsoleTab === 'testcases' && isConsoleExpanded
+                      ? '2px solid #6366f1'
+                      : '2px solid transparent',
+                  color:
+                    activeConsoleTab === 'testcases' && isConsoleExpanded ? '#ffffff' : '#94a3b8',
                   fontSize: 12,
                   fontWeight: 700,
                   padding: '0 12px',
@@ -1291,8 +1254,12 @@ export const CodingQuestionPanel = ({
                   gap: 6,
                   background: 'none',
                   border: 'none',
-                  borderBottom: activeConsoleTab === 'results' && isConsoleExpanded ? '2px solid #10b981' : '2px solid transparent',
-                  color: activeConsoleTab === 'results' && isConsoleExpanded ? '#ffffff' : '#94a3b8',
+                  borderBottom:
+                    activeConsoleTab === 'results' && isConsoleExpanded
+                      ? '2px solid #10b981'
+                      : '2px solid transparent',
+                  color:
+                    activeConsoleTab === 'results' && isConsoleExpanded ? '#ffffff' : '#94a3b8',
                   fontSize: 12,
                   fontWeight: 700,
                   padding: '0 12px',
@@ -1325,7 +1292,10 @@ export const CodingQuestionPanel = ({
                   gap: 6,
                   background: 'none',
                   border: 'none',
-                  borderBottom: activeConsoleTab === 'custom' && isConsoleExpanded ? '2px solid #f59e0b' : '2px solid transparent',
+                  borderBottom:
+                    activeConsoleTab === 'custom' && isConsoleExpanded
+                      ? '2px solid #f59e0b'
+                      : '2px solid transparent',
                   color: activeConsoleTab === 'custom' && isConsoleExpanded ? '#ffffff' : '#94a3b8',
                   fontSize: 12,
                   fontWeight: 700,
@@ -1335,7 +1305,6 @@ export const CodingQuestionPanel = ({
               >
                 <span>Custom Input</span>
               </button>
-
             </div>
 
             {/* Expand / Collapse Button */}
@@ -1372,7 +1341,15 @@ export const CodingQuestionPanel = ({
 
           {/* Console Body */}
           {isConsoleExpanded && (
-            <div style={{ flex: 1, overflowY: 'auto', padding: '14px 16px', color: '#e2e8f0', fontSize: 13 }}>
+            <div
+              style={{
+                flex: 1,
+                overflowY: 'auto',
+                padding: '14px 16px',
+                color: '#e2e8f0',
+                fontSize: 13,
+              }}
+            >
               {/* TAB 1: Sample Test Cases Selection */}
               {activeConsoleTab === 'testcases' && (
                 <div>
@@ -1388,8 +1365,12 @@ export const CodingQuestionPanel = ({
                           fontSize: 12,
                           fontWeight: 700,
                           cursor: 'pointer',
-                          border: selectedTestCaseIdx === idx ? '1px solid #6366f1' : '1px solid rgba(255,255,255,0.08)',
-                          background: selectedTestCaseIdx === idx ? 'rgba(99, 102, 241, 0.2)' : '#111827',
+                          border:
+                            selectedTestCaseIdx === idx
+                              ? '1px solid #6366f1'
+                              : '1px solid rgba(255,255,255,0.08)',
+                          background:
+                            selectedTestCaseIdx === idx ? 'rgba(99, 102, 241, 0.2)' : '#111827',
                           color: selectedTestCaseIdx === idx ? '#c7d2fe' : '#94a3b8',
                         }}
                       >
@@ -1401,7 +1382,16 @@ export const CodingQuestionPanel = ({
                   {sampleCases[selectedTestCaseIdx] && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                       <div>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>Input</span>
+                        <span
+                          style={{
+                            fontSize: 11,
+                            fontWeight: 700,
+                            color: '#94a3b8',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          Input
+                        </span>
                         <pre
                           style={{
                             margin: '4px 0 0',
@@ -1419,7 +1409,16 @@ export const CodingQuestionPanel = ({
                       </div>
 
                       <div>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>Expected Output</span>
+                        <span
+                          style={{
+                            fontSize: 11,
+                            fontWeight: 700,
+                            color: '#94a3b8',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          Expected Output
+                        </span>
                         <pre
                           style={{
                             margin: '4px 0 0',
@@ -1447,49 +1446,72 @@ export const CodingQuestionPanel = ({
                     <div style={{ textAlign: 'center', padding: '24px 0', color: '#64748b' }}>
                       <Play size={24} style={{ margin: '0 auto 8px', opacity: 0.4 }} />
                       <p style={{ margin: 0, fontSize: 13 }}>
-                        Click <strong>&quot;Run Code&quot;</strong> to test your solution against sample test cases.
+                        Click <strong>&quot;Run Code&quot;</strong> to test your solution against
+                        sample test cases.
                       </p>
                     </div>
                   ) : (
                     <div>
                       {/* Overall Status Banner */}
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '10px 14px',
-                          borderRadius: 8,
-                          marginBottom: 14,
-                          background:
-                            runResults.status === 'ACCEPTED'
-                              ? 'rgba(16, 185, 129, 0.15)'
-                              : 'rgba(239, 68, 68, 0.15)',
-                          border: `1px solid ${runResults.status === 'ACCEPTED' ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)'}`,
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          {runResults.status === 'ACCEPTED' ? (
-                            <CheckCircle2 size={18} style={{ color: '#10b981' }} />
-                          ) : (
-                            <XCircle size={18} style={{ color: '#ef4444' }} />
-                          )}
-                          <span
-                            style={{
-                              fontSize: 14,
-                              fontWeight: 800,
-                              color: runResults.status === 'ACCEPTED' ? '#34d399' : '#f87171',
-                            }}
-                          >
-                            {runResults.status === 'ACCEPTED'
-                              ? 'All Sample Test Cases Passed'
-                              : 'Test Cases Failed / Output Mismatch'}
+                      {runResults.message ? (
+                        <div
+                          role="status"
+                          style={{
+                            padding: '10px 14px',
+                            borderRadius: 8,
+                            marginBottom: 14,
+                            background: 'rgba(148, 163, 184, 0.12)',
+                            border: '1px solid rgba(148, 163, 184, 0.3)',
+                            color: '#cbd5e1',
+                            fontSize: 13,
+                          }}
+                        >
+                          {runResults.message}
+                        </div>
+                      ) : (
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '10px 14px',
+                            borderRadius: 8,
+                            marginBottom: 14,
+                            background:
+                              runResults.status === 'ACCEPTED' || runResults.status === 'RAN'
+                                ? 'rgba(16, 185, 129, 0.15)'
+                                : 'rgba(239, 68, 68, 0.15)',
+                            border: `1px solid ${runResults.status === 'ACCEPTED' || runResults.status === 'RAN' ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)'}`,
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            {runResults.status === 'ACCEPTED' || runResults.status === 'RAN' ? (
+                              <CheckCircle2 size={18} style={{ color: '#10b981' }} />
+                            ) : (
+                              <XCircle size={18} style={{ color: '#ef4444' }} />
+                            )}
+                            <span
+                              style={{
+                                fontSize: 14,
+                                fontWeight: 800,
+                                color:
+                                  runResults.status === 'ACCEPTED' || runResults.status === 'RAN'
+                                    ? '#34d399'
+                                    : '#f87171',
+                              }}
+                            >
+                              {{
+                                ACCEPTED: 'All sample test cases passed',
+                                RAN: 'Code ran',
+                                RUNTIME_ERROR: 'Runtime error',
+                              }[runResults.status] ?? 'Some sample test cases failed'}
+                            </span>
+                          </div>
+                          <span style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'monospace' }}>
+                            Runtime: {runResults.executionTimeMs} ms
                           </span>
                         </div>
-                        <span style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'monospace' }}>
-                          Runtime: {runResults.executionTimeMs} ms
-                        </span>
-                      </div>
+                      )}
 
                       {/* Per-Case Details */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -1500,10 +1522,17 @@ export const CodingQuestionPanel = ({
                               background: '#080c16',
                               borderRadius: 8,
                               padding: 12,
-                              border: `1px solid ${res.status === 'PASSED' ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)'}`,
+                              border: `1px solid ${res.status === 'PASSED' || res.status === 'RAN' ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)'}`,
                             }}
                           >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginBottom: 8,
+                              }}
+                            >
                               <span style={{ fontSize: 12, fontWeight: 700, color: '#ffffff' }}>
                                 {res.label}
                               </span>
@@ -1513,29 +1542,30 @@ export const CodingQuestionPanel = ({
                                   fontWeight: 800,
                                   padding: '2px 8px',
                                   borderRadius: 4,
-                                  background: res.status === 'PASSED' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-                                  color: res.status === 'PASSED' ? '#34d399' : '#f87171',
+                                  background:
+                                    res.status === 'PASSED' || res.status === 'RAN'
+                                      ? 'rgba(16, 185, 129, 0.2)'
+                                      : 'rgba(239, 68, 68, 0.2)',
+                                  color:
+                                    res.status === 'PASSED' || res.status === 'RAN'
+                                      ? '#34d399'
+                                      : '#f87171',
                                 }}
                               >
                                 {res.status}
                               </span>
                             </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, fontSize: 11 }}>
+                            <div
+                              style={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr 1fr',
+                                gap: 8,
+                                fontSize: 11,
+                              }}
+                            >
                               <div>
                                 <span style={{ color: '#94a3b8', fontWeight: 600 }}>Input:</span>
-                                <pre style={{ margin: '2px 0 0', padding: 6, background: '#0f172a', borderRadius: 4, overflowX: 'auto', color: '#f1f5f9' }}>
-                                  {res.input || '(empty)'}
-                                </pre>
-                              </div>
-                              <div>
-                                <span style={{ color: '#94a3b8', fontWeight: 600 }}>Expected:</span>
-                                <pre style={{ margin: '2px 0 0', padding: 6, background: '#0f172a', borderRadius: 4, overflowX: 'auto', color: '#34d399' }}>
-                                  {res.expectedOutput || '(empty)'}
-                                </pre>
-                              </div>
-                              <div>
-                                <span style={{ color: '#94a3b8', fontWeight: 600 }}>Your Output:</span>
                                 <pre
                                   style={{
                                     margin: '2px 0 0',
@@ -1543,7 +1573,44 @@ export const CodingQuestionPanel = ({
                                     background: '#0f172a',
                                     borderRadius: 4,
                                     overflowX: 'auto',
-                                    color: res.status === 'PASSED' ? '#34d399' : '#f87171',
+                                    color: '#f1f5f9',
+                                  }}
+                                >
+                                  {res.input || '(empty)'}
+                                </pre>
+                              </div>
+                              <div>
+                                <span style={{ color: '#94a3b8', fontWeight: 600 }}>Expected:</span>
+                                <pre
+                                  style={{
+                                    margin: '2px 0 0',
+                                    padding: 6,
+                                    background: '#0f172a',
+                                    borderRadius: 4,
+                                    overflowX: 'auto',
+                                    color: '#34d399',
+                                  }}
+                                >
+                                  {res.isCustom
+                                    ? '(custom input: not checked)'
+                                    : res.expectedOutput || '(empty)'}
+                                </pre>
+                              </div>
+                              <div>
+                                <span style={{ color: '#94a3b8', fontWeight: 600 }}>
+                                  Your Output:
+                                </span>
+                                <pre
+                                  style={{
+                                    margin: '2px 0 0',
+                                    padding: 6,
+                                    background: '#0f172a',
+                                    borderRadius: 4,
+                                    overflowX: 'auto',
+                                    color:
+                                      res.status === 'PASSED' || res.status === 'RAN'
+                                        ? '#34d399'
+                                        : '#f87171',
                                   }}
                                 >
                                   {res.actualOutput}

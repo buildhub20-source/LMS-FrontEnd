@@ -14,12 +14,12 @@ import {
   Plus,
   Sparkles,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
 import ErrorState from '../../../components/common/ErrorState';
 import Button from '../../../components/common/Button';
 import certificateService from '../services/certificateService';
-import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../../constants/routes';
 import ImportCertificateModal from '../components/ImportCertificateModal';
 
@@ -38,9 +38,24 @@ const handleDownload = async (id, courseName) => {
 };
 
 function CertificateSkeletonCard() {
-  const s = { background: 'var(--skeleton-bg, #e2e8f0)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' };
+  const s = {
+    background: 'var(--skeleton-bg, #e2e8f0)',
+    borderRadius: 8,
+    animation: 'pulse 1.5s ease-in-out infinite',
+  };
   return (
-    <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24, display: 'flex', flexDirection: 'column', gap: 16, boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))' }}>
+    <div
+      style={{
+        background: 'var(--card)',
+        border: '1px solid var(--border)',
+        borderRadius: 16,
+        padding: 24,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 16,
+        boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
+      }}
+    >
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <div style={{ ...s, width: 44, height: 44, borderRadius: 12 }} />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
@@ -50,7 +65,15 @@ function CertificateSkeletonCard() {
       </div>
       <div style={{ ...s, height: 14, width: '90%' }} />
       <div style={{ ...s, height: 14, width: '50%' }} />
-      <div style={{ borderTop: '1px solid var(--border)', paddingTop: 14, display: 'flex', gap: 10, marginTop: 'auto' }}>
+      <div
+        style={{
+          borderTop: '1px solid var(--border)',
+          paddingTop: 14,
+          display: 'flex',
+          gap: 10,
+          marginTop: 'auto',
+        }}
+      >
         <div style={{ ...s, height: 34, flex: 1, borderRadius: 8 }} />
         <div style={{ ...s, height: 34, width: 38, borderRadius: 8 }} />
       </div>
@@ -76,7 +99,12 @@ export const CertificateListPage = () => {
     }
   });
 
-  const { data: raw, isLoading, error, refetch } = useQuery({
+  const {
+    data: raw,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ['certificates'],
     queryFn: () => certificateService.list(),
   });
@@ -92,7 +120,11 @@ export const CertificateListPage = () => {
 
   const handleDeleteImported = (id, e) => {
     e?.stopPropagation();
-    if (window.confirm('Are you sure you want to remove this imported credential from your portfolio?')) {
+    if (
+      window.confirm(
+        'Are you sure you want to remove this imported credential from your portfolio?',
+      )
+    ) {
       const updated = importedCerts.filter((c) => c.id !== id);
       setImportedCerts(updated);
       localStorage.setItem('lms_imported_certificates', JSON.stringify(updated));
@@ -103,8 +135,8 @@ export const CertificateListPage = () => {
     filterTab === 'LMS'
       ? lmsCerts
       : filterTab === 'IMPORTED'
-      ? importedCerts
-      : [...importedCerts, ...lmsCerts];
+        ? importedCerts
+        : [...importedCerts, ...lmsCerts];
 
   return (
     <PageContainer
@@ -150,10 +182,19 @@ export const CertificateListPage = () => {
               boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: 11,
+                color: 'var(--text-muted)',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+              }}
+            >
               Total Credentials
             </div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-primary)', marginTop: 4 }}>
+            <div
+              style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-primary)', marginTop: 4 }}
+            >
               {isLoading ? '—' : totalCount}
             </div>
           </div>
@@ -167,7 +208,14 @@ export const CertificateListPage = () => {
               boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: 11,
+                color: 'var(--text-muted)',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+              }}
+            >
               Imported External
             </div>
             <div style={{ fontSize: 24, fontWeight: 800, color: '#6366f1', marginTop: 4 }}>
@@ -184,7 +232,14 @@ export const CertificateListPage = () => {
               boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: 11,
+                color: 'var(--text-muted)',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+              }}
+            >
               Passing Standard
             </div>
             <div style={{ fontSize: 24, fontWeight: 800, color: '#f59e0b', marginTop: 4 }}>
@@ -201,7 +256,14 @@ export const CertificateListPage = () => {
               boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
             }}
           >
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: 11,
+                color: 'var(--text-muted)',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+              }}
+            >
               Verification Protocol
             </div>
             <div style={{ fontSize: 24, fontWeight: 800, color: '#10b981', marginTop: 4 }}>
@@ -238,7 +300,10 @@ export const CertificateListPage = () => {
                   fontWeight: 600,
                   cursor: 'pointer',
                   border: 'none',
-                  background: filterTab === tab.id ? 'var(--color-primary, #6366f1)' : 'var(--surface-medium)',
+                  background:
+                    filterTab === tab.id
+                      ? 'var(--color-primary, #6366f1)'
+                      : 'var(--surface-medium)',
                   color: filterTab === tab.id ? '#ffffff' : 'var(--text-muted)',
                   transition: 'all 0.15s ease',
                 }}
@@ -270,13 +335,25 @@ export const CertificateListPage = () => {
 
         {/* Credentials Grid or Empty Pathway */}
         {isLoading ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+              gap: 20,
+            }}
+          >
             {Array.from({ length: 6 }).map((_, i) => (
               <CertificateSkeletonCard key={i} />
             ))}
           </div>
         ) : filteredCerts.length > 0 ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+              gap: 20,
+            }}
+          >
             {filteredCerts.map((cert) => {
               const isImported = Boolean(cert.isImported);
 
@@ -305,11 +382,18 @@ export const CertificateListPage = () => {
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.transform = '';
-                      e.currentTarget.style.boxShadow = 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))';
+                      e.currentTarget.style.boxShadow =
+                        'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))';
                     }}
                   >
                     {/* Top Badges */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                      }}
+                    >
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                         <div
                           style={{
@@ -338,9 +422,16 @@ export const CertificateListPage = () => {
                               gap: 4,
                             }}
                           >
-                            <ShieldCheck size={11} /> {cert.issuer || 'External Credential'}
+                            Self-reported · {cert.issuer || 'External credential'}
                           </span>
-                          <h4 style={{ margin: '2px 0 0', fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+                          <h4
+                            style={{
+                              margin: '2px 0 0',
+                              fontSize: 16,
+                              fontWeight: 700,
+                              color: 'var(--text-primary)',
+                            }}
+                          >
                             {cert.title}
                           </h4>
                         </div>
@@ -366,16 +457,33 @@ export const CertificateListPage = () => {
                     </div>
 
                     {/* Metadata */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 12, color: '#94a3b8' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 6,
+                        fontSize: 12,
+                        color: '#94a3b8',
+                      }}
+                    >
                       {cert.issuedAt && (
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                           <Calendar size={13} color="#64748b" />
                           <span>
-                            Issued {new Date(cert.issuedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                            Issued{' '}
+                            {new Date(cert.issuedAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                            })}
                           </span>
                           {cert.expiresAt && (
                             <span style={{ fontSize: 11, opacity: 0.7 }}>
-                              · Exp: {new Date(cert.expiresAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                              · Exp:{' '}
+                              {new Date(cert.expiresAt).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                              })}
                             </span>
                           )}
                         </div>
@@ -383,8 +491,18 @@ export const CertificateListPage = () => {
 
                       {cert.credentialId && (
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <span style={{ fontSize: 11, color: '#64748b', fontWeight: 600 }}>ID:</span>
-                          <code style={{ fontSize: 11, background: 'rgba(255,255,255,0.06)', padding: '2px 6px', borderRadius: 4, color: '#cbd5e1' }}>
+                          <span style={{ fontSize: 11, color: '#64748b', fontWeight: 600 }}>
+                            ID:
+                          </span>
+                          <code
+                            style={{
+                              fontSize: 11,
+                              background: 'rgba(255,255,255,0.06)',
+                              padding: '2px 6px',
+                              borderRadius: 4,
+                              color: '#cbd5e1',
+                            }}
+                          >
                             {cert.credentialId}
                           </code>
                         </div>
@@ -417,7 +535,14 @@ export const CertificateListPage = () => {
                     </div>
 
                     {/* Action buttons */}
-                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 12, display: 'flex', gap: 8 }}>
+                    <div
+                      style={{
+                        borderTop: '1px solid rgba(255,255,255,0.08)',
+                        paddingTop: 12,
+                        display: 'flex',
+                        gap: 8,
+                      }}
+                    >
                       {cert.verificationUrl ? (
                         <a
                           href={cert.verificationUrl}
@@ -570,7 +695,15 @@ export const CertificateListPage = () => {
                   </div>
 
                   {cert.issuedAt && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, opacity: 0.7 }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        fontSize: 12,
+                        opacity: 0.7,
+                      }}
+                    >
                       <Calendar size={12} />
                       {new Date(cert.issuedAt).toLocaleDateString('en-US', {
                         year: 'numeric',
@@ -644,12 +777,20 @@ export const CertificateListPage = () => {
 
         {/* If no certificates at all or in pathway mode */}
         {totalCount === 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 360px', gap: 24, alignItems: 'start' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'minmax(0, 1fr) 360px',
+              gap: 24,
+              alignItems: 'start',
+            }}
+          >
             {/* Left: Available Certificates to Earn */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div
                 style={{
-                  background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.1) 100%)',
+                  background:
+                    'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.1) 100%)',
                   border: '1px solid rgba(99, 102, 241, 0.3)',
                   borderRadius: 16,
                   padding: '20px 24px',
@@ -661,11 +802,21 @@ export const CertificateListPage = () => {
                 }}
               >
                 <div>
-                  <h3 style={{ margin: '0 0 6px', fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>
+                  <h3
+                    style={{
+                      margin: '0 0 6px',
+                      fontSize: 18,
+                      fontWeight: 800,
+                      color: 'var(--text-primary)',
+                    }}
+                  >
                     Certified Credentials Pathway
                   </h3>
-                  <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
-                    Certificates are automatically minted upon scoring 70% or higher on final module assessments and completing required lessons.
+                  <p
+                    style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}
+                  >
+                    Certificates are automatically minted upon scoring 70% or higher on final module
+                    assessments and completing required lessons.
                   </p>
                 </div>
                 <Button
@@ -682,7 +833,13 @@ export const CertificateListPage = () => {
                 </Button>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                  gap: 16,
+                }}
+              >
                 {[
                   {
                     title: 'Angular Js Framework Specialist',
@@ -732,13 +889,34 @@ export const CertificateListPage = () => {
                       >
                         <Award size={20} color={track.color} />
                       </div>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: track.color, textTransform: 'uppercase' }}>
+                      <span
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 700,
+                          color: track.color,
+                          textTransform: 'uppercase',
+                        }}
+                      >
                         {track.category}
                       </span>
-                      <h4 style={{ margin: '4px 0 6px', fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
+                      <h4
+                        style={{
+                          margin: '4px 0 6px',
+                          fontSize: 15,
+                          fontWeight: 700,
+                          color: 'var(--text-primary)',
+                        }}
+                      >
                         {track.title}
                       </h4>
-                      <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                      <p
+                        style={{
+                          margin: 0,
+                          fontSize: 12,
+                          color: 'var(--text-muted)',
+                          lineHeight: 1.4,
+                        }}
+                      >
                         Pass the final assessment to earn your tamper-proof blockchain certificate.
                       </p>
                     </div>
@@ -781,7 +959,9 @@ export const CertificateListPage = () => {
                 boxShadow: 'var(--shadow-card, 0 1px 3px rgba(0,0,0,0.05))',
               }}
             >
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: 'var(--text-primary)' }}>
+              <h3
+                style={{ margin: 0, fontSize: 16, fontWeight: 800, color: 'var(--text-primary)' }}
+              >
                 About LMS Credentials
               </h3>
               <div
@@ -795,20 +975,23 @@ export const CertificateListPage = () => {
                 }}
               >
                 <p style={{ margin: 0 }}>
-                  <strong style={{ color: 'var(--text-primary)' }}>Cryptographic Verification:</strong> Each earned
-                  credential receives a unique SHA-256 hash verifiable worldwide.
+                  <strong style={{ color: 'var(--text-primary)' }}>
+                    Cryptographic Verification:
+                  </strong>{' '}
+                  Each earned credential receives a unique SHA-256 hash verifiable worldwide.
                 </p>
                 <p style={{ margin: 0 }}>
-                  <strong style={{ color: 'var(--text-primary)' }}>High-Resolution PDF:</strong> Download print-ready
-                  certificates suitable for framing or portfolio inclusion.
+                  <strong style={{ color: 'var(--text-primary)' }}>High-Resolution PDF:</strong>{' '}
+                  Download print-ready certificates suitable for framing or portfolio inclusion.
                 </p>
                 <p style={{ margin: 0 }}>
-                  <strong style={{ color: 'var(--text-primary)' }}>External Platform Sync:</strong> Import your verified
-                  licenses from AWS, Coursera, Google, and Open Badges to keep everything in one central portfolio.
+                  <strong style={{ color: 'var(--text-primary)' }}>External Platform Sync:</strong>{' '}
+                  Import your verified licenses from AWS, Coursera, Google, and Open Badges to keep
+                  everything in one central portfolio.
                 </p>
                 <p style={{ margin: 0 }}>
-                  <strong style={{ color: 'var(--text-primary)' }}>Direct Employer Sharing:</strong> Share one-click
-                  verification URLs on LinkedIn and resumes.
+                  <strong style={{ color: 'var(--text-primary)' }}>Direct Employer Sharing:</strong>{' '}
+                  Share one-click verification URLs on LinkedIn and resumes.
                 </p>
               </div>
             </div>

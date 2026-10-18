@@ -60,7 +60,8 @@ export const useLogin = () => {
         setError({
           type: 'TENANT_NOT_FOUND',
           title: 'Workspace Required',
-          message: 'Please open your specific workspace URL to sign in (e.g. your-team.localhost:3000).',
+          message:
+            'Please open your specific workspace URL to sign in (e.g. your-team.localhost:3000).',
         });
         return false;
       }
@@ -79,7 +80,10 @@ export const useLogin = () => {
               : {
                   type: 'UNKNOWN',
                   title: 'Sign In Failed',
-                  message: typeof payload === 'string' ? payload : 'Invalid email or password. Please try again.',
+                  message:
+                    typeof payload === 'string'
+                      ? payload
+                      : 'Invalid email or password. Please try again.',
                 },
           );
           return false;

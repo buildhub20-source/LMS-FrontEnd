@@ -15,13 +15,13 @@ export const TopTabNav = ({ tabs = [] }) => {
       className="flex items-center justify-center gap-1 px-4 py-2"
       aria-label="Section navigation"
     >
-      <div className="flex items-center gap-1 rounded-full p-1"
-        style={{ background: 'var(--muted)' }}>
+      <div
+        className="flex items-center gap-1 rounded-full p-1"
+        style={{ background: 'var(--muted)' }}
+      >
         {tabs.map((tab) => {
-          const isActive = tab.to && (
-            location.pathname === tab.to ||
-            location.pathname.startsWith(tab.to + '/')
-          );
+          const isActive =
+            tab.to && (location.pathname === tab.to || location.pathname.startsWith(tab.to + '/'));
 
           return (
             <NavLink
@@ -30,9 +30,7 @@ export const TopTabNav = ({ tabs = [] }) => {
               className={cn(
                 'flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium',
                 'transition-all duration-200 whitespace-nowrap',
-                isActive
-                  ? 'shadow-sm'
-                  : 'hover:opacity-70',
+                isActive ? 'shadow-sm' : 'hover:opacity-70',
               )}
               style={{
                 background: isActive ? 'var(--foreground)' : 'transparent',

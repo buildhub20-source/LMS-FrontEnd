@@ -36,9 +36,18 @@ export const AdminCardSkeleton = () => (
       border: '1px solid var(--border)',
     }}
   >
-    <div className="animate-pulse h-4 w-24 rounded" style={{ background: 'var(--skeleton-bg, var(--muted))' }} />
-    <div className="animate-pulse h-8 w-16 rounded" style={{ background: 'var(--skeleton-bg, var(--muted))' }} />
-    <div className="animate-pulse h-3 w-32 rounded" style={{ background: 'var(--skeleton-bg, var(--muted))' }} />
+    <div
+      className="animate-pulse h-4 w-24 rounded"
+      style={{ background: 'var(--skeleton-bg, var(--muted))' }}
+    />
+    <div
+      className="animate-pulse h-8 w-16 rounded"
+      style={{ background: 'var(--skeleton-bg, var(--muted))' }}
+    />
+    <div
+      className="animate-pulse h-3 w-32 rounded"
+      style={{ background: 'var(--skeleton-bg, var(--muted))' }}
+    />
   </div>
 );
 

@@ -13,7 +13,9 @@ describe('MessageItem (Phase 2 Reliable Messaging)', () => {
   };
 
   it('renders message content and sender name', () => {
-    render(<MessageItem message={baseMessage} onReply={vi.fn()} onEdit={vi.fn()} onDelete={vi.fn()} />);
+    render(
+      <MessageItem message={baseMessage} onReply={vi.fn()} onEdit={vi.fn()} onDelete={vi.fn()} />,
+    );
     expect(screen.getByText('Hello team!')).toBeInTheDocument();
     expect(screen.getByText('Alice')).toBeInTheDocument();
   });
@@ -29,7 +31,9 @@ describe('MessageItem (Phase 2 Reliable Messaging)', () => {
       replyToContent: 'Hello team!',
     };
 
-    render(<MessageItem message={replyMessage} onReply={vi.fn()} onEdit={vi.fn()} onDelete={vi.fn()} />);
+    render(
+      <MessageItem message={replyMessage} onReply={vi.fn()} onEdit={vi.fn()} onDelete={vi.fn()} />,
+    );
     expect(screen.getByText('Bob')).toBeInTheDocument();
     expect(screen.getByText(/Alice/)).toBeInTheDocument();
     expect(screen.getByText('Hello team!')).toBeInTheDocument();
@@ -42,7 +46,9 @@ describe('MessageItem (Phase 2 Reliable Messaging)', () => {
       edited_at: new Date().toISOString(),
     };
 
-    render(<MessageItem message={editedMessage} onReply={vi.fn()} onEdit={vi.fn()} onDelete={vi.fn()} />);
+    render(
+      <MessageItem message={editedMessage} onReply={vi.fn()} onEdit={vi.fn()} onDelete={vi.fn()} />,
+    );
     expect(screen.getByText('(edited)')).toBeInTheDocument();
   });
 
@@ -55,7 +61,7 @@ describe('MessageItem (Phase 2 Reliable Messaging)', () => {
         onReply={vi.fn()}
         onEdit={vi.fn()}
         onDelete={vi.fn()}
-      />
+      />,
     );
 
     fireEvent.mouseEnter(screen.getByText('Hello team!').closest('.chat-message'));
@@ -69,7 +75,7 @@ describe('MessageItem (Phase 2 Reliable Messaging)', () => {
         onReply={vi.fn()}
         onEdit={vi.fn()}
         onDelete={vi.fn()}
-      />
+      />,
     );
 
     expect(screen.queryByTitle('Edit message')).not.toBeInTheDocument();
@@ -83,7 +89,7 @@ describe('MessageItem (Phase 2 Reliable Messaging)', () => {
         onReply={vi.fn()}
         onEdit={vi.fn()}
         onDelete={vi.fn()}
-      />
+      />,
     );
 
     fireEvent.mouseEnter(screen.getByText('Hello team!').closest('.chat-message'));
@@ -106,7 +112,7 @@ describe('MessageItem (Phase 2 Reliable Messaging)', () => {
         onReply={vi.fn()}
         onEdit={vi.fn()}
         onDelete={vi.fn()}
-      />
+      />,
     );
 
     expect(screen.getByText('[Message deleted]')).toBeInTheDocument();

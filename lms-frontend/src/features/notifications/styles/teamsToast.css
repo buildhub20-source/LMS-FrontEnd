@@ -11,7 +11,12 @@
   pointer-events: none;
   max-width: 380px;
   width: calc(100vw - 32px);
-  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  font-family:
+    'Segoe UI',
+    -apple-system,
+    BlinkMacSystemFont,
+    Roboto,
+    sans-serif;
 }
 
 .teams-toast-card {
@@ -22,15 +27,21 @@
   color: var(--popover-foreground, #ffffff);
   border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
   border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.12);
   overflow: hidden;
   animation: teamsSlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   user-select: none;
 }
 
 .teams-toast-card:hover {
-  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.18);
+  box-shadow:
+    0 14px 38px rgba(0, 0, 0, 0.35),
+    0 4px 12px rgba(0, 0, 0, 0.18);
   transform: translateY(-2px);
 }
 
@@ -246,7 +257,9 @@
   border: 1px solid #3e3f46;
   border-radius: 6px;
   overflow: hidden;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .teams-toast-reply-form:focus-within {
@@ -277,7 +290,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.15s ease, transform 0.15s ease;
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
 }
 
 .teams-toast-reply-send-btn:hover:not(:disabled) {

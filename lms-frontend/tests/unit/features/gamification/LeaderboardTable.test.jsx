@@ -5,8 +5,22 @@ import LeaderboardTable from '../../../../src/features/gamification/components/L
 
 describe('LeaderboardTable Component', () => {
   const sampleEntries = [
-    { rank: 1, studentId: 's-1', studentName: 'Alice Johnson', levelTitle: 'Master', badgeCount: 8, totalPoints: 1850 },
-    { rank: 2, studentId: 's-2', studentName: 'Bob Smith', levelTitle: 'Expert', badgeCount: 6, totalPoints: 1200 },
+    {
+      rank: 1,
+      studentId: 's-1',
+      studentName: 'Alice Johnson',
+      levelTitle: 'Master',
+      badgeCount: 8,
+      totalPoints: 1850,
+    },
+    {
+      rank: 2,
+      studentId: 's-2',
+      studentName: 'Bob Smith',
+      levelTitle: 'Expert',
+      badgeCount: 6,
+      totalPoints: 1200,
+    },
   ];
 
   it('renders table headers and student rows', () => {
@@ -20,7 +34,7 @@ describe('LeaderboardTable Component', () => {
         onPeriodChange={vi.fn()}
         page={0}
         onPageChange={vi.fn()}
-      />
+      />,
     );
 
     expect(screen.getByText('Alice Johnson')).toBeInTheDocument();
@@ -31,7 +45,12 @@ describe('LeaderboardTable Component', () => {
 
   it('highlights current student and calls onPeriodChange', () => {
     const data = { content: sampleEntries, totalPages: 2 };
-    const currentStudent = { rank: 2, studentId: 's-2', studentName: 'Bob Smith', totalPoints: 1200 };
+    const currentStudent = {
+      rank: 2,
+      studentId: 's-2',
+      studentName: 'Bob Smith',
+      totalPoints: 1200,
+    };
     const onPeriodChange = vi.fn();
     const onPageChange = vi.fn();
 
@@ -43,7 +62,7 @@ describe('LeaderboardTable Component', () => {
         onPeriodChange={onPeriodChange}
         page={0}
         onPageChange={onPageChange}
-      />
+      />,
     );
 
     expect(screen.getByText(/Your Rank #2/i)).toBeInTheDocument();

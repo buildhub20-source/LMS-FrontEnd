@@ -36,7 +36,8 @@ export const adminAssessmentService = {
 
   // Time & Scheduling Management
   extend: (id, minutes) => http.post(ep.extend(id), { minutes }),
-  updateSchedule: (id, { startTime, endTime }) => http.patch(ep.schedule(id), { startTime, endTime }),
+  updateSchedule: (id, { startTime, endTime }) =>
+    http.patch(ep.schedule(id), { startTime, endTime }),
 };
 
 export default adminAssessmentService;

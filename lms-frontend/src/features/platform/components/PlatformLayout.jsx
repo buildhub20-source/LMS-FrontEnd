@@ -136,7 +136,16 @@ export const PlatformLayout = () => {
 
           {/* Navigation Items */}
           <nav style={{ padding: '16px 10px', display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <div style={{ padding: '4px 10px 8px', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)' }}>
+            <div
+              style={{
+                padding: '4px 10px 8px',
+                fontSize: 10,
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                color: 'var(--text-muted)',
+              }}
+            >
               Core Services
             </div>
             {NAV_ITEMS.map((item) => {
@@ -190,7 +199,15 @@ export const PlatformLayout = () => {
         </div>
 
         {/* Footer User Profile & Actions */}
-        <div style={{ padding: 14, borderTop: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div
+          style={{
+            padding: 14,
+            borderTop: '1px solid var(--border-color)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10,
+          }}
+        >
           <div
             style={{
               display: 'flex',
@@ -252,7 +269,15 @@ export const PlatformLayout = () => {
       </aside>
 
       {/* ── Main Layout Column ── */}
-      <div style={{ display: 'flex', flex: 1, flexDirection: 'column', overflow: 'hidden', background: 'var(--background)' }}>
+      <div
+        style={{
+          display: 'flex',
+          flex: 1,
+          flexDirection: 'column',
+          overflow: 'hidden',
+          background: 'var(--background)',
+        }}
+      >
         {/* Sticky Header Topbar */}
         <header
           style={{

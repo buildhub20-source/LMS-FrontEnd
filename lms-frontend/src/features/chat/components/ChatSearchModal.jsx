@@ -20,18 +20,13 @@ function HighlightedText({ text, query }) {
           </mark>
         ) : (
           part
-        )
+        ),
       )}
     </>
   );
 }
 
-export default function ChatSearchModal({
-  isOpen,
-  onClose,
-  activeChannel,
-  onSelectResult,
-}) {
+export default function ChatSearchModal({ isOpen, onClose, activeChannel, onSelectResult }) {
   const [query, setQuery] = useState('');
   const [scope, setScope] = useState('channel'); // 'channel' | 'all'
   const [results, setResults] = useState([]);
@@ -68,7 +63,9 @@ export default function ChatSearchModal({
         const data = await chatService.searchMessages({ query: trimmed, channelId });
         const list = Array.isArray(data)
           ? data
-          : (Array.isArray(data?.data) ? data.data : (data?.results ?? []));
+          : Array.isArray(data?.data)
+            ? data.data
+            : (data?.results ?? []);
         setResults(list);
         setHasSearched(true);
       } catch (err) {
@@ -94,7 +91,11 @@ export default function ChatSearchModal({
 
   if (!isOpen) return null;
 
-  const currentChannelName = activeChannel?.displayName || activeChannel?.display_name || activeChannel?.name || 'Current Channel';
+  const currentChannelName =
+    activeChannel?.displayName ||
+    activeChannel?.display_name ||
+    activeChannel?.name ||
+    'Current Channel';
 
   return createPortal(
     <div
@@ -169,9 +170,11 @@ export default function ChatSearchModal({
                 Found {results.length} message{results.length > 1 ? 's' : ''}
               </div>
               {results.map((msg) => {
-                const senderName = msg.sender_name || msg.senderName || msg.sender_email?.split('@')[0] || 'User';
+                const senderName =
+                  msg.sender_name || msg.senderName || msg.sender_email?.split('@')[0] || 'User';
                 const channelName = msg.channel_display_name || msg.channel_name || 'Channel';
-                const hasFiles = (Array.isArray(msg.attachments) && msg.attachments.length > 0) ||
+                const hasFiles =
+                  (Array.isArray(msg.attachments) && msg.attachments.length > 0) ||
                   (typeof msg.attachments === 'string' && msg.attachments.length > 2);
 
                 return (
@@ -190,7 +193,9 @@ export default function ChatSearchModal({
                   >
                     <div className="chat-search-result-item__top">
                       <div className="chat-search-result-item__sender">
-                        <div className={`chat-search-result-item__avatar chat-avatar--gradient-${getAvatarColorIndex(msg.sender_id || msg.senderId || senderName)}`}>
+                        <div
+                          className={`chat-search-result-item__avatar chat-avatar--gradient-${getAvatarColorIndex(msg.sender_id || msg.senderId || senderName)}`}
+                        >
                           {senderName[0]?.toUpperCase() || 'U'}
                         </div>
                         <span className="chat-search-result-item__sender-name">{senderName}</span>
@@ -224,7 +229,10 @@ export default function ChatSearchModal({
             <div className="chat-search-modal__empty">
               <MessageSquare size={36} className="chat-search-modal__empty-icon" />
               <h4>No messages found</h4>
-              <p>No results matching "{query}" {scope === 'channel' ? `in #${currentChannelName}` : 'across all channels'}.</p>
+              <p>
+                No results matching &ldquo;{query}&rdquo;{' '}
+                {scope === 'channel' ? `in #${currentChannelName}` : 'across all channels'}.
+              </p>
             </div>
           ) : (
             <div className="chat-search-modal__hint">
@@ -234,6 +242,6 @@ export default function ChatSearchModal({
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }

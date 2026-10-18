@@ -1,85 +1,84 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import {
-  Building2, Palette, Shield, Bell, Globe, Save,
-  ArrowLeft, Check, Upload, RefreshCw, Key, Lock,
-  ChevronRight, AlertCircle, Sparkles
-} from 'lucide-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Building2, Palette, Save, ArrowLeft, Check, ChevronRight } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Button from '../../../components/common/Button';
-import Alert from '../../../components/feedback/Alert';
+import Spinner from '../../../components/common/Spinner';
+import ErrorState from '../../../components/common/ErrorState';
 import { useToast } from '../../../components/feedback/Toast';
 import tenantService from '../services/tenantService';
 import { ROUTES } from '../../../constants/routes';
+import { tenantSlugFromHostname } from '../../../utils/tenantHostname';
+import { normalizeError } from '../../../utils/errorUtils';
 
 const TABS = [
   { id: 'general', label: 'General', icon: <Building2 size={16} /> },
-  { id: 'branding', label: 'Branding & Theme', icon: <Palette size={16} /> },
-  { id: 'security', label: 'Security & Access', icon: <Shield size={16} /> },
-  { id: 'notifications', label: 'Notifications', icon: <Bell size={16} /> },
+  { id: 'branding', label: 'Branding', icon: <Palette size={16} /> },
 ];
 
 const PRESET_COLORS = [
-  '#6366f1', '#3b82f6', '#0ea5e9', '#10b981',
-  '#f59e0b', '#ec4899', '#8b5cf6', '#1e293b'
+  '#6366f1',
+  '#3b82f6',
+  '#0ea5e9',
+  '#10b981',
+  '#f59e0b',
+  '#ec4899',
+  '#8b5cf6',
+  '#1e293b',
 ];
 
+const EDITABLE_FIELDS = ['name', 'supportEmail', 'description', 'primaryColor', 'logoUrl'];
+
+const toForm = (settings = {}) => ({
+  name: settings.name ?? '',
+  supportEmail: settings.supportEmail ?? '',
+  description: settings.description ?? '',
+  primaryColor: settings.primaryColor ?? '#10b981',
+  logoUrl: settings.logoUrl ?? '',
+});
+
+const changedFields = (initial, current) =>
+  EDITABLE_FIELDS.reduce((changes, field) => {
+    if ((current[field] ?? '') !== (initial[field] ?? '')) changes[field] = current[field].trim();
+    return changes;
+  }, {});
+
 export const OrganizationSettingsPage = () => {
+  const settings = useQuery({
+    queryKey: ['tenant', 'current'],
+    queryFn: () => tenantService.getCurrent(),
+  });
+
+  if (settings.isLoading) return <Spinner />;
+  if (settings.error) return <ErrorState error={settings.error} onRetry={settings.refetch} />;
+
+  // Remount with fresh values whenever the saved settings change.
+  return <SettingsForm key={JSON.stringify(settings.data ?? {})} initial={toForm(settings.data)} />;
+};
+
+const SettingsForm = ({ initial }) => {
   const navigate = useNavigate();
   const toast = useToast();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('general');
-  const [isSaving, setIsSaving] = useState(false);
+  const [form, setForm] = useState(initial);
 
-  // Form states
-  const [general, setGeneral] = useState({
-    name: 'Acme Learning Academy',
-    subdomain: 'acme-academy',
-    customDomain: 'learn.acme.edu',
-    supportEmail: 'support@acme.edu',
-    timezone: 'UTC (GMT+00:00)',
-    language: 'en-US',
+  const changes = changedFields(initial, form);
+  const hasChanges = Object.keys(changes).length > 0;
+
+  const save = useMutation({
+    mutationFn: (payload) => tenantService.updateSettings(payload),
+    onSuccess: (saved) => {
+      queryClient.setQueryData(['tenant', 'current'], saved);
+      toast.success('Organization settings saved.');
+    },
+    onError: (error) => toast.error(normalizeError(error).message),
   });
 
-  const [branding, setBranding] = useState({
-    primaryColor: '#6366f1',
-    themeMode: 'system',
-    logoUrl: '',
-    portalTitle: 'Acme Learning Portal',
-  });
-
-  const [security, setSecurity] = useState({
-    enableSso: false,
-    enforce2fa: true,
-    allowSelfRegistration: false,
-    sessionTimeoutMinutes: 60,
-  });
-
-  const [notifications, setNotifications] = useState({
-    senderName: 'Acme Academy Notifications',
-    emailCourseCompletion: true,
-    emailAssessmentAssigned: true,
-    weeklyDigest: true,
-  });
-
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      if (activeTab === 'branding') {
-        await tenantService.updateBranding(branding).catch(() => null);
-      } else {
-        await tenantService.updateSettings({
-          general,
-          security,
-          notifications,
-        }).catch(() => null);
-      }
-      toast.success('Organization settings saved successfully!');
-    } catch {
-      toast.error('Failed to save settings. Please try again.');
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  const update = (field) => (e) => setForm({ ...form, [field]: e.target.value });
+  const slug = tenantSlugFromHostname();
+  const baseDomain = import.meta.env.VITE_TENANT_BASE_DOMAIN || 'localhost';
 
   const inputStyle = {
     width: '100%',
@@ -91,7 +90,6 @@ export const OrganizationSettingsPage = () => {
     fontSize: 14,
     outline: 'none',
   };
-
   const labelStyle = {
     display: 'block',
     fontSize: 13,
@@ -99,17 +97,12 @@ export const OrganizationSettingsPage = () => {
     color: 'var(--text-primary)',
     marginBottom: 6,
   };
-
-  const helpTextStyle = {
-    fontSize: 12,
-    color: 'var(--text-muted)',
-    marginTop: 4,
-  };
+  const helpTextStyle = { fontSize: 12, color: 'var(--text-muted)', marginTop: 4 };
 
   return (
     <PageContainer
       title="Organization Settings"
-      subtitle="Customize workspace parameters, brand visual tokens, and security policies."
+      subtitle="Your institute's name, contact details and branding."
       actions={
         <div style={{ display: 'flex', gap: 10 }}>
           <Button
@@ -121,8 +114,9 @@ export const OrganizationSettingsPage = () => {
           </Button>
           <Button
             variant="primary"
-            onClick={handleSave}
-            isLoading={isSaving}
+            onClick={() => save.mutate(changes)}
+            isLoading={save.isPending}
+            disabled={!hasChanges || save.isPending}
             iconLeft={<Save size={15} />}
           >
             Save Changes
@@ -130,42 +124,65 @@ export const OrganizationSettingsPage = () => {
         </div>
       }
     >
-      <div style={{ maxWidth: 1000, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
-        {/* Breadcrumb */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)' }}>
-          <Link to={ROUTES.ORGANIZATION} style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>
+      <div
+        style={{
+          maxWidth: 1000,
+          margin: '0 auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 24,
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            fontSize: 13,
+            color: 'var(--text-muted)',
+          }}
+        >
+          <Link
+            to={ROUTES.ORGANIZATION}
+            style={{ color: 'var(--text-muted)', textDecoration: 'none' }}
+          >
             Organization
           </Link>
           <ChevronRight size={13} />
           <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Settings</span>
         </div>
 
-        {/* Tab Navigation */}
-        <div style={{
-          display: 'flex',
-          gap: 6,
-          borderBottom: '1px solid var(--border-color)',
-          paddingBottom: 2,
-          overflowX: 'auto',
-        }}>
+        <div
+          role="tablist"
+          style={{
+            display: 'flex',
+            gap: 6,
+            borderBottom: '1px solid var(--border-color)',
+            paddingBottom: 2,
+            overflowX: 'auto',
+          }}
+        >
           {TABS.map((t) => (
             <button
               key={t.id}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === t.id}
               onClick={() => setActiveTab(t.id)}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
                 padding: '10px 18px',
-                borderRadius: '8px 8px 0 0',
                 border: 'none',
+                borderRadius: '8px 8px 0 0',
                 background: activeTab === t.id ? 'var(--surface-medium)' : 'transparent',
-                borderBottom: activeTab === t.id ? '2.5px solid var(--primary)' : '2.5px solid transparent',
+                borderBottom:
+                  activeTab === t.id ? '2.5px solid var(--primary)' : '2.5px solid transparent',
                 color: activeTab === t.id ? 'var(--primary)' : 'var(--text-muted)',
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: 700,
                 cursor: 'pointer',
-                transition: 'all 0.15s ease',
                 whiteSpace: 'nowrap',
               }}
             >
@@ -175,304 +192,149 @@ export const OrganizationSettingsPage = () => {
           ))}
         </div>
 
-        {/* ── TAB CONTENT ── */}
-        <div style={{
-          background: 'var(--bg-primary)',
-          border: '1px solid var(--border-color)',
-          borderRadius: 16,
-          padding: 28,
-          boxShadow: '0 4px 20px -2px rgba(0,0,0,0.04)',
-        }}>
-          {/* General Tab */}
+        <div
+          style={{
+            background: 'var(--bg-primary)',
+            border: '1px solid var(--border-color)',
+            borderRadius: 16,
+            padding: 28,
+          }}
+        >
           {activeTab === 'general' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                  gap: 20,
+                }}
+              >
                 <div>
-                  <label style={labelStyle}>Organization Name</label>
+                  <label htmlFor="org-name" style={labelStyle}>
+                    Organization Name
+                  </label>
                   <input
+                    id="org-name"
                     style={inputStyle}
-                    value={general.name}
-                    onChange={(e) => setGeneral({ ...general, name: e.target.value })}
+                    maxLength={160}
+                    value={form.name}
+                    onChange={update('name')}
                   />
-                  <span style={helpTextStyle}>The official public title of your academy.</span>
+                  <span style={helpTextStyle}>
+                    Shown on the sign-in page, dashboards and certificates.
+                  </span>
                 </div>
 
                 <div>
-                  <label style={labelStyle}>Support Email</label>
+                  <label htmlFor="org-support-email" style={labelStyle}>
+                    Support Email
+                  </label>
                   <input
+                    id="org-support-email"
                     style={inputStyle}
                     type="email"
-                    value={general.supportEmail}
-                    onChange={(e) => setGeneral({ ...general, supportEmail: e.target.value })}
+                    maxLength={255}
+                    value={form.supportEmail}
+                    onChange={update('supportEmail')}
                   />
-                  <span style={helpTextStyle}>Displayed on student help dialogs and emails.</span>
+                  <span style={helpTextStyle}>Where learners are told to send questions.</span>
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-                <div>
-                  <label style={labelStyle}>Subdomain</label>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <input
-                      style={{ ...inputStyle, borderRadius: '8px 0 0 8px' }}
-                      value={general.subdomain}
-                      onChange={(e) => setGeneral({ ...general, subdomain: e.target.value })}
-                    />
-                    <span style={{
-                      padding: '9px 12px',
-                      background: 'var(--surface-medium)',
-                      border: '1px solid var(--border-color)',
-                      borderLeft: 'none',
-                      borderRadius: '0 8px 8px 0',
-                      fontSize: 13,
-                      color: 'var(--text-muted)',
-                    }}>
-                      .lmsplatform.io
-                    </span>
-                  </div>
-                </div>
-
-                <div>
-                  <label style={labelStyle}>Custom Domain</label>
-                  <input
-                    style={inputStyle}
-                    placeholder="e.g. learn.myacademy.com"
-                    value={general.customDomain}
-                    onChange={(e) => setGeneral({ ...general, customDomain: e.target.value })}
-                  />
-                  <span style={helpTextStyle}>Requires CNAME DNS verification.</span>
-                </div>
+              <div>
+                <label htmlFor="org-description" style={labelStyle}>
+                  Description
+                </label>
+                <textarea
+                  id="org-description"
+                  style={{ ...inputStyle, minHeight: 90, resize: 'vertical' }}
+                  maxLength={2000}
+                  value={form.description}
+                  onChange={update('description')}
+                />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-                <div>
-                  <label style={labelStyle}>Default Timezone</label>
-                  <select
-                    style={inputStyle}
-                    value={general.timezone}
-                    onChange={(e) => setGeneral({ ...general, timezone: e.target.value })}
-                  >
-                    <option value="UTC (GMT+00:00)">UTC (GMT+00:00)</option>
-                    <option value="EST (GMT-05:00)">Eastern Standard Time (GMT-05:00)</option>
-                    <option value="PST (GMT-08:00)">Pacific Standard Time (GMT-08:00)</option>
-                    <option value="IST (GMT+05:30)">Indian Standard Time (GMT+05:30)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={labelStyle}>Portal Language</label>
-                  <select
-                    style={inputStyle}
-                    value={general.language}
-                    onChange={(e) => setGeneral({ ...general, language: e.target.value })}
-                  >
-                    <option value="en-US">English (US)</option>
-                    <option value="en-GB">English (UK)</option>
-                    <option value="es-ES">Spanish</option>
-                    <option value="fr-FR">French</option>
-                  </select>
-                </div>
+              <div>
+                <span style={labelStyle}>Workspace Address</span>
+                <p style={{ margin: 0, fontSize: 14, color: 'var(--text-primary)' }}>
+                  {slug ? `${slug}.${baseDomain}` : 'Not available'}
+                </p>
+                <span style={helpTextStyle}>
+                  Set when the workspace was created. Using your own domain is not supported yet.
+                </span>
               </div>
             </div>
           )}
 
-          {/* Branding Tab */}
           {activeTab === 'branding' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
               <div>
-                <label style={labelStyle}>Primary Brand Accent Color</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8 }}>
+                <span style={labelStyle}>Primary Brand Color</span>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    marginTop: 8,
+                    flexWrap: 'wrap',
+                  }}
+                >
                   {PRESET_COLORS.map((c) => (
                     <button
                       key={c}
                       type="button"
-                      onClick={() => setBranding({ ...branding, primaryColor: c })}
+                      aria-label={`Use color ${c}`}
+                      aria-pressed={form.primaryColor === c}
+                      onClick={() => setForm({ ...form, primaryColor: c })}
                       style={{
-                        width: 34, height: 34, borderRadius: '50%',
-                        background: c, border: branding.primaryColor === c ? '3px solid #ffffff' : 'none',
-                        boxShadow: branding.primaryColor === c ? `0 0 0 2px ${c}` : 'none',
+                        width: 34,
+                        height: 34,
+                        borderRadius: '50%',
+                        background: c,
+                        border: form.primaryColor === c ? '3px solid #ffffff' : 'none',
+                        boxShadow: form.primaryColor === c ? `0 0 0 2px ${c}` : 'none',
                         cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       }}
                     >
-                      {branding.primaryColor === c && <Check size={14} color="#ffffff" />}
+                      {form.primaryColor === c && <Check size={14} color="#ffffff" />}
                     </button>
                   ))}
                   <input
                     type="color"
-                    value={branding.primaryColor}
-                    onChange={(e) => setBranding({ ...branding, primaryColor: e.target.value })}
-                    style={{ width: 34, height: 34, padding: 0, border: 'none', borderRadius: '50%', cursor: 'pointer' }}
+                    aria-label="Custom brand color"
+                    value={form.primaryColor}
+                    onChange={update('primaryColor')}
+                    style={{
+                      width: 34,
+                      height: 34,
+                      padding: 0,
+                      border: 'none',
+                      borderRadius: '50%',
+                      cursor: 'pointer',
+                    }}
                   />
                 </div>
-                <span style={helpTextStyle}>Applies to student navigation, call-to-action buttons, and badges.</span>
               </div>
 
               <div>
-                <label style={labelStyle}>Portal Title</label>
+                <label htmlFor="org-logo-url" style={labelStyle}>
+                  Logo URL
+                </label>
                 <input
+                  id="org-logo-url"
                   style={inputStyle}
-                  value={branding.portalTitle}
-                  onChange={(e) => setBranding({ ...branding, portalTitle: e.target.value })}
+                  type="url"
+                  placeholder="https://"
+                  maxLength={1024}
+                  value={form.logoUrl}
+                  onChange={update('logoUrl')}
                 />
-              </div>
-
-              <div>
-                <label style={labelStyle}>Theme Preference</label>
-                <div style={{ display: 'flex', gap: 12, marginTop: 6 }}>
-                  {['system', 'light', 'dark'].map((mode) => (
-                    <button
-                      key={mode}
-                      type="button"
-                      onClick={() => setBranding({ ...branding, themeMode: mode })}
-                      style={{
-                        padding: '10px 20px',
-                        borderRadius: 10,
-                        border: '1.5px solid',
-                        borderColor: branding.themeMode === mode ? 'var(--primary)' : 'var(--border-color)',
-                        background: branding.themeMode === mode ? 'color-mix(in srgb, var(--primary) 12%, transparent)' : 'transparent',
-                        color: branding.themeMode === mode ? 'var(--primary)' : 'var(--text-primary)',
-                        fontSize: 13,
-                        fontWeight: 700,
-                        textTransform: 'capitalize',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      {mode} Mode
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Security Tab */}
-          {activeTab === 'security' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '16px 20px',
-                borderRadius: 10,
-                background: 'var(--surface-medium)',
-                border: '1px solid var(--border-color)',
-              }}>
-                <div>
-                  <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
-                    Single Sign-On (SSO / SAML 2.0)
-                  </p>
-                  <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>
-                    Allow enterprise members to sign in using Okta, Google Workspace, or Azure AD.
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={security.enableSso}
-                  onChange={(e) => setSecurity({ ...security, enableSso: e.target.checked })}
-                  style={{ width: 18, height: 18, cursor: 'pointer' }}
-                />
-              </div>
-
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '16px 20px',
-                borderRadius: 10,
-                background: 'var(--surface-medium)',
-                border: '1px solid var(--border-color)',
-              }}>
-                <div>
-                  <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
-                    Enforce Two-Factor Authentication (2FA)
-                  </p>
-                  <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>
-                    Require multi-factor verification for Instructor and Administrator roles.
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={security.enforce2fa}
-                  onChange={(e) => setSecurity({ ...security, enforce2fa: e.target.checked })}
-                  style={{ width: 18, height: 18, cursor: 'pointer' }}
-                />
-              </div>
-
-              <div style={{ maxWidth: 300 }}>
-                <label style={labelStyle}>Session Inactivity Timeout (Minutes)</label>
-                <input
-                  style={inputStyle}
-                  type="number"
-                  min="15"
-                  max="1440"
-                  value={security.sessionTimeoutMinutes}
-                  onChange={(e) => setSecurity({ ...security, sessionTimeoutMinutes: Number(e.target.value) })}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Notifications Tab */}
-          {activeTab === 'notifications' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <div>
-                <label style={labelStyle}>Email Sender Name</label>
-                <input
-                  style={inputStyle}
-                  value={notifications.senderName}
-                  onChange={(e) => setNotifications({ ...notifications, senderName: e.target.value })}
-                />
-              </div>
-
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '16px 20px',
-                borderRadius: 10,
-                background: 'var(--surface-medium)',
-                border: '1px solid var(--border-color)',
-              }}>
-                <div>
-                  <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
-                    Course Completion Certificate Email
-                  </p>
-                  <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>
-                    Automatically email PDF certificates when a student finishes 100% of a course.
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={notifications.emailCourseCompletion}
-                  onChange={(e) => setNotifications({ ...notifications, emailCourseCompletion: e.target.checked })}
-                  style={{ width: 18, height: 18, cursor: 'pointer' }}
-                />
-              </div>
-
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '16px 20px',
-                borderRadius: 10,
-                background: 'var(--surface-medium)',
-                border: '1px solid var(--border-color)',
-              }}>
-                <div>
-                  <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
-                    Assessment Assignment Alerts
-                  </p>
-                  <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>
-                    Notify students when a new timed coding test is published.
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={notifications.emailAssessmentAssigned}
-                  onChange={(e) => setNotifications({ ...notifications, emailAssessmentAssigned: e.target.checked })}
-                  style={{ width: 18, height: 18, cursor: 'pointer' }}
-                />
+                <span style={helpTextStyle}>
+                  An https link to a PNG or SVG. Used on certificates.
+                </span>
               </div>
             </div>
           )}

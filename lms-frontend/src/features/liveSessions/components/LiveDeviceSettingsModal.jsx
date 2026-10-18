@@ -1,10 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, Mic, Video, Volume2, Settings2 } from 'lucide-react';
 
-export const LiveDeviceSettingsModal = ({
-  isOpen,
-  onClose,
-}) => {
+export const LiveDeviceSettingsModal = ({ isOpen, onClose }) => {
   const [audioDevices, setAudioDevices] = useState([]);
   const [videoDevices, setVideoDevices] = useState([]);
   const [selectedMic, setSelectedMic] = useState('');

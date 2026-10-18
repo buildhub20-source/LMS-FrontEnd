@@ -1,8 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Monitor, Lock, Eye, Clock, Award, FileText, CheckCircle2,
-  ArrowRight, ArrowLeft, XCircle, Play, Loader2, Video,
-  Shield, AlertCircle, AlertTriangle, Check, RefreshCw
+  Monitor,
+  Lock,
+  Eye,
+  Clock,
+  Award,
+  FileText,
+  CheckCircle2,
+  ArrowRight,
+  ArrowLeft,
+  XCircle,
+  Play,
+  Loader2,
+  Video,
+  Shield,
+  AlertCircle,
+  AlertTriangle,
+  Check,
+  RefreshCw,
 } from 'lucide-react';
 import Button from '../../../components/common/Button';
 
@@ -48,7 +63,9 @@ export const ExamLockdownOverlay = ({
   const isReadyToEnter = isScreenActive && !loading && !error;
 
   const onCountdownCompleteRef = useRef(onCountdownComplete);
-  useEffect(() => { onCountdownCompleteRef.current = onCountdownComplete; }, [onCountdownComplete]);
+  useEffect(() => {
+    onCountdownCompleteRef.current = onCountdownComplete;
+  }, [onCountdownComplete]);
 
   // 15-Second Launch Countdown
   useEffect(() => {
@@ -125,7 +142,8 @@ export const ExamLockdownOverlay = ({
                   width: 40,
                   height: 40,
                   borderRadius: 10,
-                  background: 'linear-gradient(135deg, rgba(99,102,241,0.25) 0%, rgba(79,70,229,0.15) 100%)',
+                  background:
+                    'linear-gradient(135deg, rgba(99,102,241,0.25) 0%, rgba(79,70,229,0.15) 100%)',
                   border: '1px solid rgba(99,102,241,0.4)',
                   display: 'flex',
                   alignItems: 'center',
@@ -137,8 +155,18 @@ export const ExamLockdownOverlay = ({
                 <Shield size={20} />
               </div>
               <div>
-                <h2 style={{ margin: 0, fontSize: 17, fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.02em' }}>
-                  {lobbyStep === 'RULES' ? 'Examination Rules & Security' : 'Pre-Flight System Checks'}
+                <h2
+                  style={{
+                    margin: 0,
+                    fontSize: 17,
+                    fontWeight: 800,
+                    color: '#f8fafc',
+                    letterSpacing: '-0.02em',
+                  }}
+                >
+                  {lobbyStep === 'RULES'
+                    ? 'Examination Rules & Security'
+                    : 'Pre-Flight System Checks'}
                 </h2>
                 <p style={{ margin: '2px 0 0', fontSize: 12, color: '#94a3b8' }}>
                   {lobbyStep === 'RULES'
@@ -219,9 +247,12 @@ export const ExamLockdownOverlay = ({
 
           {/* ── STEP 1: EXAMINATION RULES & SECURITY ── */}
           {lobbyStep === 'RULES' && (
-            <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+            <div
+              style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 18 }}
+            >
               <p style={{ margin: 0, fontSize: 13, color: '#cbd5e1', lineHeight: 1.6 }}>
-                Please review the security and integrity guidelines below before continuing to the system checks:
+                Please review the security and integrity guidelines below before continuing to the
+                system checks:
               </p>
 
               <div
@@ -236,49 +267,102 @@ export const ExamLockdownOverlay = ({
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <div style={{ padding: 6, borderRadius: 8, background: 'rgba(99,102,241,0.15)', color: '#818cf8', flexShrink: 0 }}>
+                  <div
+                    style={{
+                      padding: 6,
+                      borderRadius: 8,
+                      background: 'rgba(99,102,241,0.15)',
+                      color: '#818cf8',
+                      flexShrink: 0,
+                    }}
+                  >
                     <Monitor size={16} />
                   </div>
                   <div>
-                    <strong style={{ fontSize: 13, color: '#f1f5f9' }}>1. Screen Recording (Cloudflare R2):</strong>
-                    <p style={{ margin: '2px 0 0', fontSize: 12, color: '#94a3b8', lineHeight: 1.4 }}>
-                      Continuous screen stream is recorded and uploaded to encrypted Cloudflare R2 storage for instructor audit.
+                    <strong style={{ fontSize: 13, color: '#f1f5f9' }}>
+                      1. Screen Recording (Cloudflare R2):
+                    </strong>
+                    <p
+                      style={{ margin: '2px 0 0', fontSize: 12, color: '#94a3b8', lineHeight: 1.4 }}
+                    >
+                      Continuous screen stream is recorded and uploaded to encrypted Cloudflare R2
+                      storage for instructor audit.
                     </p>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <div style={{ padding: 6, borderRadius: 8, background: 'rgba(239,68,68,0.15)', color: '#f87171', flexShrink: 0 }}>
+                  <div
+                    style={{
+                      padding: 6,
+                      borderRadius: 8,
+                      background: 'rgba(239,68,68,0.15)',
+                      color: '#f87171',
+                      flexShrink: 0,
+                    }}
+                  >
                     <Eye size={16} />
                   </div>
                   <div>
-                    <strong style={{ fontSize: 13, color: '#f1f5f9' }}>2. Fullscreen &amp; Tab-Switch Lockdown:</strong>
-                    <p style={{ margin: '2px 0 0', fontSize: 12, color: '#94a3b8', lineHeight: 1.4 }}>
-                      Switching tabs, minimizing, or exiting fullscreen triggers strikes. Exceeding <strong>{maxStrikes} strikes</strong> automatically terminates and submits your assessment.
+                    <strong style={{ fontSize: 13, color: '#f1f5f9' }}>
+                      2. Fullscreen &amp; Tab-Switch Lockdown:
+                    </strong>
+                    <p
+                      style={{ margin: '2px 0 0', fontSize: 12, color: '#94a3b8', lineHeight: 1.4 }}
+                    >
+                      Switching tabs, minimizing, or exiting fullscreen triggers strikes. Exceeding{' '}
+                      <strong>{maxStrikes} strikes</strong> automatically terminates and submits
+                      your assessment.
                     </p>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <div style={{ padding: 6, borderRadius: 8, background: 'rgba(245,158,11,0.15)', color: '#fbbf24', flexShrink: 0 }}>
+                  <div
+                    style={{
+                      padding: 6,
+                      borderRadius: 8,
+                      background: 'rgba(245,158,11,0.15)',
+                      color: '#fbbf24',
+                      flexShrink: 0,
+                    }}
+                  >
                     <Lock size={16} />
                   </div>
                   <div>
-                    <strong style={{ fontSize: 13, color: '#f1f5f9' }}>3. Browser Sandboxing:</strong>
-                    <p style={{ margin: '2px 0 0', fontSize: 12, color: '#94a3b8', lineHeight: 1.4 }}>
-                      Right-click, developer console (F12), inspect element, and external clipboard paste are locked.
+                    <strong style={{ fontSize: 13, color: '#f1f5f9' }}>
+                      3. Browser Sandboxing:
+                    </strong>
+                    <p
+                      style={{ margin: '2px 0 0', fontSize: 12, color: '#94a3b8', lineHeight: 1.4 }}
+                    >
+                      Right-click, developer console (F12), inspect element, and external clipboard
+                      paste are locked.
                     </p>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <div style={{ padding: 6, borderRadius: 8, background: 'rgba(16,185,129,0.15)', color: '#34d399', flexShrink: 0 }}>
+                  <div
+                    style={{
+                      padding: 6,
+                      borderRadius: 8,
+                      background: 'rgba(16,185,129,0.15)',
+                      color: '#34d399',
+                      flexShrink: 0,
+                    }}
+                  >
                     <Shield size={16} />
                   </div>
                   <div>
-                    <strong style={{ fontSize: 13, color: '#f1f5f9' }}>4. Academic Honor Code:</strong>
-                    <p style={{ margin: '2px 0 0', fontSize: 12, color: '#94a3b8', lineHeight: 1.4 }}>
-                      All submitted code and answers must be authored independently without external assistance or AI tools.
+                    <strong style={{ fontSize: 13, color: '#f1f5f9' }}>
+                      4. Academic Honor Code:
+                    </strong>
+                    <p
+                      style={{ margin: '2px 0 0', fontSize: 12, color: '#94a3b8', lineHeight: 1.4 }}
+                    >
+                      All submitted code and answers must be authored independently without external
+                      assistance or AI tools.
                     </p>
                   </div>
                 </div>
@@ -325,7 +409,9 @@ export const ExamLockdownOverlay = ({
                 }}
               >
                 <span style={{ fontSize: 12, color: '#94a3b8' }}>
-                  {!agreedTerms ? '⚠️ Check the honor code declaration to continue' : '✅ Ready to proceed'}
+                  {!agreedTerms
+                    ? '⚠️ Check the honor code declaration to continue'
+                    : '✅ Ready to proceed'}
                 </span>
                 <Button
                   variant="primary"
@@ -353,7 +439,9 @@ export const ExamLockdownOverlay = ({
 
           {/* ── STEP 2: PRE-FLIGHT SYSTEM CHECKS ── */}
           {lobbyStep === 'CHECKS' && (
-            <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div
+              style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 16 }}
+            >
               <p style={{ margin: 0, fontSize: 13, color: '#cbd5e1', lineHeight: 1.6 }}>
                 Grant screen access and verify your environment before entering the assessment:
               </p>
@@ -377,7 +465,9 @@ export const ExamLockdownOverlay = ({
                         width: 36,
                         height: 36,
                         borderRadius: 8,
-                        background: isScreenActive ? 'rgba(16, 185, 129, 0.15)' : 'rgba(99, 102, 241, 0.15)',
+                        background: isScreenActive
+                          ? 'rgba(16, 185, 129, 0.15)'
+                          : 'rgba(99, 102, 241, 0.15)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -391,7 +481,9 @@ export const ExamLockdownOverlay = ({
                         Screen Recording Access
                       </strong>
                       <span style={{ fontSize: 12, color: isScreenActive ? '#34d399' : '#94a3b8' }}>
-                        {isScreenActive ? '● Screen Stream Active & Verified (Monitor)' : 'Select Entire Screen (Monitor) when prompted'}
+                        {isScreenActive
+                          ? '● Screen Stream Active & Verified (Monitor)'
+                          : 'Select Entire Screen (Monitor) when prompted'}
                       </span>
                     </div>
                   </div>
@@ -533,8 +625,8 @@ export const ExamLockdownOverlay = ({
                         {error
                           ? error
                           : loading
-                          ? 'Syncing question drafts…'
-                          : `${questionsCount} Problem${questionsCount === 1 ? '' : 's'} Ready ${hasResumedCode ? '(Drafts Restored)' : ''}`}
+                            ? 'Syncing question drafts…'
+                            : `${questionsCount} Problem${questionsCount === 1 ? '' : 's'} Ready ${hasResumedCode ? '(Drafts Restored)' : ''}`}
                       </span>
                     </div>
                   </div>
@@ -557,11 +649,18 @@ export const ExamLockdownOverlay = ({
                         cursor: loading ? 'not-allowed' : 'pointer',
                         transition: 'all 0.15s ease',
                       }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.25)'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)'; }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(239, 68, 68, 0.25)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
+                      }}
                       title="Retry fetching assessment questions & state"
                     >
-                      <RefreshCw size={12} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
+                      <RefreshCw
+                        size={12}
+                        style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }}
+                      />
                       {loading ? 'Retrying…' : 'Retry Check'}
                     </button>
                   ) : (
@@ -572,8 +671,8 @@ export const ExamLockdownOverlay = ({
                         background: error
                           ? 'rgba(239, 68, 68, 0.15)'
                           : loading
-                          ? 'rgba(99, 102, 241, 0.15)'
-                          : 'rgba(16, 185, 129, 0.15)',
+                            ? 'rgba(99, 102, 241, 0.15)'
+                            : 'rgba(16, 185, 129, 0.15)',
                         border: `1px solid ${error ? 'rgba(239, 68, 68, 0.3)' : loading ? 'rgba(99, 102, 241, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`,
                         color: error ? '#f87171' : loading ? '#818cf8' : '#34d399',
                         fontSize: 12,
@@ -701,7 +800,7 @@ export const ExamLockdownOverlay = ({
     const realMarks = attempt?.totalMarks ?? totalMarks;
     const realAttemptNum = attempt?.attemptNumber ?? attemptNumber;
     const realMaxAttempts = attempt?.maxAttempts ?? maxAttempts;
-    const ringOffset = 282.74 - (282.74 * ((15 - launchCountdown) / 15));
+    const ringOffset = 282.74 - 282.74 * ((15 - launchCountdown) / 15);
 
     return (
       <div
@@ -709,7 +808,8 @@ export const ExamLockdownOverlay = ({
           position: 'fixed',
           inset: 0,
           zIndex: 99999,
-          background: 'radial-gradient(ellipse at center, rgba(15, 23, 42, 0.98) 0%, rgba(4, 7, 15, 0.99) 100%)',
+          background:
+            'radial-gradient(ellipse at center, rgba(15, 23, 42, 0.98) 0%, rgba(4, 7, 15, 0.99) 100%)',
           backdropFilter: 'blur(20px)',
           display: 'flex',
           alignItems: 'center',
@@ -724,7 +824,8 @@ export const ExamLockdownOverlay = ({
           style={{
             maxWidth: 720,
             width: '100%',
-            background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(8, 12, 24, 0.95) 100%)',
+            background:
+              'linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(8, 12, 24, 0.95) 100%)',
             border: '1px solid rgba(99, 102, 241, 0.3)',
             borderRadius: 24,
             padding: '36px 36px 30px',
@@ -789,16 +890,41 @@ export const ExamLockdownOverlay = ({
               </defs>
             </svg>
             <div style={{ position: 'absolute', textAlign: 'center' }}>
-              <span style={{ fontSize: 32, fontWeight: 900, fontFamily: 'monospace', color: '#ffffff', display: 'block', lineHeight: 1 }}>
+              <span
+                style={{
+                  fontSize: 32,
+                  fontWeight: 900,
+                  fontFamily: 'monospace',
+                  color: '#ffffff',
+                  display: 'block',
+                  lineHeight: 1,
+                }}
+              >
                 {launchCountdown}
               </span>
-              <span style={{ fontSize: 10, fontWeight: 700, color: '#818cf8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              <span
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  color: '#818cf8',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
                 SEC
               </span>
             </div>
           </div>
 
-          <h2 style={{ margin: '0 0 6px', fontSize: 19, fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.02em' }}>
+          <h2
+            style={{
+              margin: '0 0 6px',
+              fontSize: 19,
+              fontWeight: 800,
+              color: '#f8fafc',
+              letterSpacing: '-0.02em',
+            }}
+          >
             {assessmentTitle}
           </h2>
           <p style={{ margin: '0 0 24px', fontSize: 12, color: '#94a3b8' }}>
@@ -844,7 +970,15 @@ export const ExamLockdownOverlay = ({
                 <FileText size={18} />
               </div>
               <div>
-                <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600, display: 'block', textTransform: 'uppercase' }}>
+                <span
+                  style={{
+                    fontSize: 11,
+                    color: '#94a3b8',
+                    fontWeight: 600,
+                    display: 'block',
+                    textTransform: 'uppercase',
+                  }}
+                >
                   Problem Count
                 </span>
                 <strong style={{ fontSize: 14, color: '#f1f5f9' }}>
@@ -882,7 +1016,15 @@ export const ExamLockdownOverlay = ({
                 <Clock size={18} />
               </div>
               <div>
-                <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600, display: 'block', textTransform: 'uppercase' }}>
+                <span
+                  style={{
+                    fontSize: 11,
+                    color: '#94a3b8',
+                    fontWeight: 600,
+                    display: 'block',
+                    textTransform: 'uppercase',
+                  }}
+                >
                   Time Budget
                 </span>
                 <strong style={{ fontSize: 14, color: '#f1f5f9' }}>
@@ -920,7 +1062,15 @@ export const ExamLockdownOverlay = ({
                 <Award size={18} />
               </div>
               <div>
-                <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600, display: 'block', textTransform: 'uppercase' }}>
+                <span
+                  style={{
+                    fontSize: 11,
+                    color: '#94a3b8',
+                    fontWeight: 600,
+                    display: 'block',
+                    textTransform: 'uppercase',
+                  }}
+                >
                   Total Weightage
                 </span>
                 <strong style={{ fontSize: 14, color: '#f1f5f9' }}>
@@ -958,7 +1108,15 @@ export const ExamLockdownOverlay = ({
                 <Shield size={18} />
               </div>
               <div>
-                <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600, display: 'block', textTransform: 'uppercase' }}>
+                <span
+                  style={{
+                    fontSize: 11,
+                    color: '#94a3b8',
+                    fontWeight: 600,
+                    display: 'block',
+                    textTransform: 'uppercase',
+                  }}
+                >
                   Session Attempt
                 </span>
                 <strong style={{ fontSize: 14, color: '#f1f5f9' }}>
@@ -1048,8 +1206,9 @@ export const ExamLockdownOverlay = ({
             Assessment Terminated
           </h2>
           <p style={{ fontSize: 13, color: '#fca5a5', lineHeight: 1.6, marginBottom: 16 }}>
-            You have exceeded the maximum allowed security violation strikes (<strong>{maxStrikes} strikes</strong>).
-            Your session has been terminated and auto-submitted for review.
+            You have exceeded the maximum allowed security violation strikes (
+            <strong>{maxStrikes} strikes</strong>). Your session has been terminated and
+            auto-submitted for review.
           </p>
           <p style={{ fontSize: 12, color: '#94a3b8', margin: 0 }}>
             Finalizing and redirecting to results…
@@ -1124,7 +1283,15 @@ export const ExamLockdownOverlay = ({
               marginBottom: 16,
             }}
           >
-            <p style={{ margin: '0 0 2px', fontSize: 11, fontWeight: 700, color: '#fef3c7', textTransform: 'uppercase' }}>
+            <p
+              style={{
+                margin: '0 0 2px',
+                fontSize: 11,
+                fontWeight: 700,
+                color: '#fef3c7',
+                textTransform: 'uppercase',
+              }}
+            >
               Violation Reason:
             </p>
             <p style={{ margin: 0, fontSize: 12, color: '#fde68a', fontFamily: 'monospace' }}>
@@ -1133,7 +1300,11 @@ export const ExamLockdownOverlay = ({
           </div>
 
           <p style={{ fontSize: 12, color: '#cbd5e1', lineHeight: 1.5, marginBottom: 20 }}>
-            Please return to your fullscreen exam window. You have <strong>{remainingStrikes} strike{remainingStrikes === 1 ? '' : 's'} remaining</strong> before your exam is automatically terminated.
+            Please return to your fullscreen exam window. You have{' '}
+            <strong>
+              {remainingStrikes} strike{remainingStrikes === 1 ? '' : 's'} remaining
+            </strong>{' '}
+            before your exam is automatically terminated.
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

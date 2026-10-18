@@ -1,6 +1,6 @@
+import { SERVER_EVENTS } from '../constants/chatConstants';
 import chatService from './chatService';
 import chatSocketService from './chatSocketService';
-import { SERVER_EVENTS } from '../constants/chatConstants';
 
 /**
  * Singleton service for tracking unread chat message counts across
@@ -24,7 +24,8 @@ class ChatUnreadService {
     this.isInitialized = true;
 
     // Fetch initial unread counts via REST
-    chatService.getUnreadCounts()
+    chatService
+      .getUnreadCounts()
       .then((counts) => {
         if (counts && typeof counts === 'object') {
           this.setCounts(counts);

@@ -48,8 +48,6 @@ const AVATAR_COLORS = [
   'bg-violet-100 text-violet-700',
 ];
 
-
-
 function formatDate(str) {
   if (!str) return '—';
   return new Date(str).toLocaleDateString('en-US', {
@@ -232,7 +230,9 @@ export const UserListPage = () => {
       if (type === 'lock') await userService.lock(u.id);
       if (type === 'unlock') await userService.unlock(u.id);
       if (type === 'delete') await userService.delete(u.id);
-      toastSuccess(type === 'delete' ? `${u.fullName} has been removed.` : `${u.fullName} has been ${type}d.`);
+      toastSuccess(
+        type === 'delete' ? `${u.fullName} has been removed.` : `${u.fullName} has been ${type}d.`,
+      );
       setConfirmAction(null);
       loadUsers();
     } catch (err) {
@@ -344,7 +344,8 @@ export const UserListPage = () => {
     deactivate: 'This user will lose access to the platform but their data is preserved.',
     lock: 'This user will be locked out and cannot sign in.',
     unlock: 'This user will be able to sign in again.',
-    delete: 'Are you sure you want to remove this user? This action will remove the user from the active platform user directory.',
+    delete:
+      'Are you sure you want to remove this user? This action will remove the user from the active platform user directory.',
   };
 
   return (
@@ -367,7 +368,6 @@ export const UserListPage = () => {
             Manage user accounts, roles, and access status.
           </p>
         </div>
-
       </div>
 
       {/* Filters bar */}
@@ -485,243 +485,250 @@ export const UserListPage = () => {
                     <col style={{ width: '10%' }} />
                   </colgroup>
                   <tbody style={{ display: 'table-row-group' }}>
-                  {users.map((u) => (
-                    <tr
-                      key={u.id}
-                      style={{
-                        borderBottom: '1px solid var(--border-subtle)',
-                        transition: 'background 0.1s ease',
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                    >
-                      <td style={{ padding: '14px 24px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <div
-                            style={{
-                              width: 36,
-                              height: 36,
-                              borderRadius: '50%',
-                              background: 'var(--surface-medium)',
-                              border: '1px solid var(--border-color)',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: 13,
-                              fontWeight: 700,
-                              color: 'var(--text-secondary)',
-                              flexShrink: 0,
-                            }}
-                          >
-                            {getInitials(u.fullName ?? u.email ?? '?')}
-                          </div>
-                          <div>
-                            <p
-                              style={{
-                                margin: 0,
-                                fontSize: 14,
-                                fontWeight: 600,
-                                color: 'var(--text-primary)',
-                              }}
-                            >
-                              {u.fullName}
-                            </p>
-                            <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
-                              {u.email}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td style={{ padding: '14px 24px' }}>
-                        <StatusBadge user={u} />
-                      </td>
-                      <td style={{ padding: '14px 24px' }}>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                          {(u.roles ?? []).length > 0 ? (
-                            (Array.isArray(u.roles) ? u.roles : [...(u.roles ?? [])]).map(
-                              (roleName) => (
-                                <span
-                                  key={roleName}
-                                  style={{
-                                    borderRadius: 6,
-                                    background: 'var(--surface-medium)',
-                                    border: '1px solid var(--border-color)',
-                                    padding: '2px 8px',
-                                    fontSize: 12,
-                                    fontWeight: 600,
-                                    color: 'var(--text-secondary)',
-                                  }}
-                                >
-                                  {roleName}
-                                </span>
-                              ),
-                            )
-                          ) : (
-                            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                              No roles
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td
-                        style={{ padding: '14px 24px', fontSize: 13, color: 'var(--text-muted)' }}
+                    {users.map((u) => (
+                      <tr
+                        key={u.id}
+                        style={{
+                          borderBottom: '1px solid var(--border-subtle)',
+                          transition: 'background 0.1s ease',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--hover-bg)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                       >
-                        {formatDate(u.createdAt)}
-                      </td>
-                      <td style={{ padding: '14px 24px', textAlign: 'right' }}>
-                        <div style={{ position: 'relative', display: 'inline-block' }}>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (openMenuId === u.id) {
-                                setOpenMenuId(null);
-                              } else {
-                                const rect = e.currentTarget.getBoundingClientRect();
-                                setMenuOpenUpward(window.innerHeight - rect.bottom < 260);
-                                setOpenMenuId(u.id);
-                              }
-                            }}
-                            style={{
-                              background: 'transparent',
-                              border: 'none',
-                              cursor: 'pointer',
-                              color: 'var(--text-muted)',
-                              padding: 6,
-                              borderRadius: 6,
-                              display: 'flex',
-                              alignItems: 'center',
-                            }}
-                          >
-                            <MoreVertical size={16} />
-                          </button>
-                          {openMenuId === u.id && (
+                        <td style={{ padding: '14px 24px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                             <div
                               style={{
-                                position: 'absolute',
-                                right: 0,
-                                ...(menuOpenUpward
-                                  ? { bottom: 32, top: 'auto' }
-                                  : { top: 36, bottom: 'auto' }),
-                                zIndex: 50,
-                                width: 160,
-                                borderRadius: 8,
+                                width: 36,
+                                height: 36,
+                                borderRadius: '50%',
+                                background: 'var(--surface-medium)',
                                 border: '1px solid var(--border-color)',
-                                background: 'var(--surface-dark)',
-                                padding: '4px 0',
-                                boxShadow: '0 8px 30px rgba(0,0,0,0.35)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: 13,
+                                fontWeight: 700,
+                                color: 'var(--text-secondary)',
+                                flexShrink: 0,
                               }}
                             >
-                              <PermissionGuard required={[PERMISSIONS.USER_WRITE]} fallback={null}>
-                                <>
-                                  {u.locked ? (
-                                    <MenuItem
-                                      icon={<Unlock size={14} />}
-                                      label="Unlock"
-                                      onClick={() => {
-                                        setConfirmAction({
-                                          user: u,
-                                          type: 'unlock',
-                                          loading: false,
-                                        });
-                                        setOpenMenuId(null);
-                                      }}
-                                    />
-                                  ) : (
-                                    <MenuItem
-                                      icon={<Lock size={14} />}
-                                      label="Lock"
-                                      danger
-                                      onClick={() => {
-                                        setConfirmAction({ user: u, type: 'lock', loading: false });
-                                        setOpenMenuId(null);
-                                      }}
-                                    />
-                                  )}
-                                  {u.active ? (
-                                    <MenuItem
-                                      icon={<UserX size={14} />}
-                                      label="Deactivate"
-                                      danger
-                                      onClick={() => {
-                                        setConfirmAction({
-                                          user: u,
-                                          type: 'deactivate',
-                                          loading: false,
-                                        });
-                                        setOpenMenuId(null);
-                                      }}
-                                    />
-                                  ) : (
-                                    <MenuItem
-                                      icon={<UserCheck size={14} />}
-                                      label="Activate"
-                                      onClick={() => {
-                                        setConfirmAction({
-                                          user: u,
-                                          type: 'activate',
-                                          loading: false,
-                                        });
-                                        setOpenMenuId(null);
-                                      }}
-                                    />
-                                  )}
-                                  <div
-                                    style={{
-                                      margin: '4px 0',
-                                      borderTop: '1px solid var(--border-color)',
-                                    }}
-                                  />
-                                  <MenuItem
-                                    icon={<ShieldCheck size={14} />}
-                                    label="Edit Roles"
-                                    onClick={() => {
-                                      openEditRoles(u);
-                                      setOpenMenuId(null);
-                                    }}
-                                  />
-                                  <MenuItem
-                                    icon={<Pencil size={14} />}
-                                    label="Edit Profile"
-                                    onClick={() => {
-                                      openEditUser(u);
-                                      setOpenMenuId(null);
-                                    }}
-                                  />
-                                  <MenuItem
-                                    icon={<Trash2 size={14} />}
-                                    label="Remove"
-                                    danger
-                                    onClick={() => {
-                                      setConfirmAction({
-                                        user: u,
-                                        type: 'delete',
-                                        loading: false,
-                                      });
-                                      setOpenMenuId(null);
-                                    }}
-                                  />
-                                  <div
-                                    style={{
-                                      margin: '4px 0',
-                                      borderTop: '1px solid var(--border-color)',
-                                    }}
-                                  />
-                                </>
-                              </PermissionGuard>
-                              <MenuItem
-                                icon={<History size={14} />}
-                                label="Status History"
-                                onClick={() => {
-                                  openStatusHistory(u);
-                                  setOpenMenuId(null);
-                                }}
-                              />
+                              {getInitials(u.fullName ?? u.email ?? '?')}
                             </div>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                            <div>
+                              <p
+                                style={{
+                                  margin: 0,
+                                  fontSize: 14,
+                                  fontWeight: 600,
+                                  color: 'var(--text-primary)',
+                                }}
+                              >
+                                {u.fullName}
+                              </p>
+                              <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
+                                {u.email}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{ padding: '14px 24px' }}>
+                          <StatusBadge user={u} />
+                        </td>
+                        <td style={{ padding: '14px 24px' }}>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                            {(u.roles ?? []).length > 0 ? (
+                              (Array.isArray(u.roles) ? u.roles : [...(u.roles ?? [])]).map(
+                                (roleName) => (
+                                  <span
+                                    key={roleName}
+                                    style={{
+                                      borderRadius: 6,
+                                      background: 'var(--surface-medium)',
+                                      border: '1px solid var(--border-color)',
+                                      padding: '2px 8px',
+                                      fontSize: 12,
+                                      fontWeight: 600,
+                                      color: 'var(--text-secondary)',
+                                    }}
+                                  >
+                                    {roleName}
+                                  </span>
+                                ),
+                              )
+                            ) : (
+                              <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                                No roles
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td
+                          style={{ padding: '14px 24px', fontSize: 13, color: 'var(--text-muted)' }}
+                        >
+                          {formatDate(u.createdAt)}
+                        </td>
+                        <td style={{ padding: '14px 24px', textAlign: 'right' }}>
+                          <div style={{ position: 'relative', display: 'inline-block' }}>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (openMenuId === u.id) {
+                                  setOpenMenuId(null);
+                                } else {
+                                  const rect = e.currentTarget.getBoundingClientRect();
+                                  setMenuOpenUpward(window.innerHeight - rect.bottom < 260);
+                                  setOpenMenuId(u.id);
+                                }
+                              }}
+                              style={{
+                                background: 'transparent',
+                                border: 'none',
+                                cursor: 'pointer',
+                                color: 'var(--text-muted)',
+                                padding: 6,
+                                borderRadius: 6,
+                                display: 'flex',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <MoreVertical size={16} />
+                            </button>
+                            {openMenuId === u.id && (
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  right: 0,
+                                  ...(menuOpenUpward
+                                    ? { bottom: 32, top: 'auto' }
+                                    : { top: 36, bottom: 'auto' }),
+                                  zIndex: 50,
+                                  width: 160,
+                                  borderRadius: 8,
+                                  border: '1px solid var(--border-color)',
+                                  background: 'var(--surface-dark)',
+                                  padding: '4px 0',
+                                  boxShadow: '0 8px 30px rgba(0,0,0,0.35)',
+                                }}
+                              >
+                                <PermissionGuard
+                                  required={[PERMISSIONS.USER_WRITE]}
+                                  fallback={null}
+                                >
+                                  <>
+                                    {u.locked ? (
+                                      <MenuItem
+                                        icon={<Unlock size={14} />}
+                                        label="Unlock"
+                                        onClick={() => {
+                                          setConfirmAction({
+                                            user: u,
+                                            type: 'unlock',
+                                            loading: false,
+                                          });
+                                          setOpenMenuId(null);
+                                        }}
+                                      />
+                                    ) : (
+                                      <MenuItem
+                                        icon={<Lock size={14} />}
+                                        label="Lock"
+                                        danger
+                                        onClick={() => {
+                                          setConfirmAction({
+                                            user: u,
+                                            type: 'lock',
+                                            loading: false,
+                                          });
+                                          setOpenMenuId(null);
+                                        }}
+                                      />
+                                    )}
+                                    {u.active ? (
+                                      <MenuItem
+                                        icon={<UserX size={14} />}
+                                        label="Deactivate"
+                                        danger
+                                        onClick={() => {
+                                          setConfirmAction({
+                                            user: u,
+                                            type: 'deactivate',
+                                            loading: false,
+                                          });
+                                          setOpenMenuId(null);
+                                        }}
+                                      />
+                                    ) : (
+                                      <MenuItem
+                                        icon={<UserCheck size={14} />}
+                                        label="Activate"
+                                        onClick={() => {
+                                          setConfirmAction({
+                                            user: u,
+                                            type: 'activate',
+                                            loading: false,
+                                          });
+                                          setOpenMenuId(null);
+                                        }}
+                                      />
+                                    )}
+                                    <div
+                                      style={{
+                                        margin: '4px 0',
+                                        borderTop: '1px solid var(--border-color)',
+                                      }}
+                                    />
+                                    <MenuItem
+                                      icon={<ShieldCheck size={14} />}
+                                      label="Edit Roles"
+                                      onClick={() => {
+                                        openEditRoles(u);
+                                        setOpenMenuId(null);
+                                      }}
+                                    />
+                                    <MenuItem
+                                      icon={<Pencil size={14} />}
+                                      label="Edit Profile"
+                                      onClick={() => {
+                                        openEditUser(u);
+                                        setOpenMenuId(null);
+                                      }}
+                                    />
+                                    <MenuItem
+                                      icon={<Trash2 size={14} />}
+                                      label="Remove"
+                                      danger
+                                      onClick={() => {
+                                        setConfirmAction({
+                                          user: u,
+                                          type: 'delete',
+                                          loading: false,
+                                        });
+                                        setOpenMenuId(null);
+                                      }}
+                                    />
+                                    <div
+                                      style={{
+                                        margin: '4px 0',
+                                        borderTop: '1px solid var(--border-color)',
+                                      }}
+                                    />
+                                  </>
+                                </PermissionGuard>
+                                <MenuItem
+                                  icon={<History size={14} />}
+                                  label="Status History"
+                                  onClick={() => {
+                                    openStatusHistory(u);
+                                    setOpenMenuId(null);
+                                  }}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -895,7 +902,13 @@ export const UserListPage = () => {
             </div>
 
             {/* Pagination — always visible at bottom */}
-            <div style={{ borderTop: '1px solid var(--border-color)', padding: '12px 24px', flexShrink: 0 }}>
+            <div
+              style={{
+                borderTop: '1px solid var(--border-color)',
+                padding: '12px 24px',
+                flexShrink: 0,
+              }}
+            >
               <AdminPagination
                 page={page}
                 totalPages={totalPages}

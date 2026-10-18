@@ -12,7 +12,11 @@ export const ActiveSessionsCard = () => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
-  const { data: sessions, isLoading, error } = useQuery({
+  const {
+    data: sessions,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['active-sessions'],
     queryFn: profileService.getSessions,
   });
@@ -47,7 +51,9 @@ export const ActiveSessionsCard = () => {
         {sessionList.length === 0 ? (
           <div style={{ padding: 24, textAlign: 'center', color: 'var(--text-muted)' }}>
             <Globe size={32} style={{ margin: '0 auto 8px', opacity: 0.5 }} />
-            <p style={{ margin: 0, fontSize: 14, fontWeight: 500 }}>No active session history found.</p>
+            <p style={{ margin: 0, fontSize: 14, fontWeight: 500 }}>
+              No active session history found.
+            </p>
           </div>
         ) : (
           <AnimatePresence>
@@ -78,14 +84,26 @@ export const ActiveSessionsCard = () => {
                     flexWrap: 'wrap',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 16, minWidth: 240, flex: 1 }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 16,
+                      minWidth: 240,
+                      flex: 1,
+                    }}
+                  >
                     <div
                       style={{
                         width: 44,
                         height: 44,
                         borderRadius: 12,
-                        background: session.current ? 'rgba(99, 102, 241, 0.15)' : 'var(--surface-dark, #0f172a)',
-                        color: session.current ? 'var(--primary, #6366f1)' : 'var(--text-secondary)',
+                        background: session.current
+                          ? 'rgba(99, 102, 241, 0.15)'
+                          : 'var(--surface-dark, #0f172a)',
+                        color: session.current
+                          ? 'var(--primary, #6366f1)'
+                          : 'var(--text-secondary)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -95,8 +113,12 @@ export const ActiveSessionsCard = () => {
                       <Icon size={22} />
                     </div>
                     <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                        <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-primary)' }}>
+                      <div
+                        style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}
+                      >
+                        <span
+                          style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-primary)' }}
+                        >
                           {session.userAgent || 'Web Browser'}
                         </span>
                         {session.current && (
@@ -117,11 +139,21 @@ export const ActiveSessionsCard = () => {
                           </span>
                         )}
                       </div>
-                      <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                      <div
+                        style={{
+                          fontSize: 12,
+                          color: 'var(--text-muted)',
+                          marginTop: 4,
+                          display: 'flex',
+                          gap: 16,
+                          flexWrap: 'wrap',
+                        }}
+                      >
                         <span>IP: {session.ipAddress || '127.0.0.1'}</span>
                         {session.lastAccessedAt && (
                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                            <Clock size={12} /> Last active: {new Date(session.lastAccessedAt).toLocaleString()}
+                            <Clock size={12} /> Last active:{' '}
+                            {new Date(session.lastAccessedAt).toLocaleString()}
                           </span>
                         )}
                       </div>
@@ -132,7 +164,9 @@ export const ActiveSessionsCard = () => {
                     <Button
                       variant="secondary"
                       size="sm"
-                      isLoading={revokeMutation.isPending && revokeMutation.variables === session.id}
+                      isLoading={
+                        revokeMutation.isPending && revokeMutation.variables === session.id
+                      }
                       onClick={() => revokeMutation.mutate(session.id)}
                       style={{ borderRadius: 8 }}
                     >
@@ -145,9 +179,21 @@ export const ActiveSessionsCard = () => {
           </AnimatePresence>
         )}
 
-        <div style={{ marginTop: 12, paddingTop: 16, borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+        <div
+          style={{
+            marginTop: 12,
+            paddingTop: 16,
+            borderTop: '1px solid var(--border-color)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 12,
+          }}
+        >
           <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
-            If you suspect unauthorized access, click sign out to terminate all non-current sessions immediately.
+            If you suspect unauthorized access, click sign out to terminate all non-current sessions
+            immediately.
           </p>
           <Button
             variant="danger"

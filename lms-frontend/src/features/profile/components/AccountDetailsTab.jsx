@@ -18,13 +18,19 @@ export const AccountDetailsTab = ({ user }) => {
   const userPermissions = user?.permissions || [];
 
   const filteredPermissions = userPermissions.filter((p) =>
-    p.toLowerCase().includes(permissionQuery.toLowerCase())
+    p.toLowerCase().includes(permissionQuery.toLowerCase()),
   );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* Overview Cards Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gap: 20,
+        }}
+      >
         {/* User ID Card with Copy */}
         <motion.div
           whileHover={{ y: -2 }}
@@ -37,13 +43,37 @@ export const AccountDetailsTab = ({ user }) => {
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+              }}
+            >
               System User ID
             </span>
             <Key size={16} style={{ color: 'var(--primary, #6366f1)' }} />
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginTop: 10 }}>
-            <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 13, color: 'var(--text-primary)', wordBreak: 'break-all' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 8,
+              marginTop: 10,
+            }}
+          >
+            <span
+              style={{
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                fontSize: 13,
+                color: 'var(--text-primary)',
+                wordBreak: 'break-all',
+              }}
+            >
               {user.id || 'N/A'}
             </span>
             {user.id && (
@@ -85,7 +115,15 @@ export const AccountDetailsTab = ({ user }) => {
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+              }}
+            >
               Assigned Roles
             </span>
             <Shield size={16} style={{ color: '#a855f7' }} />
@@ -102,7 +140,8 @@ export const AccountDetailsTab = ({ user }) => {
                     fontWeight: 700,
                     padding: '4px 12px',
                     borderRadius: 20,
-                    background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2))',
+                    background:
+                      'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2))',
                     border: '1px solid rgba(168, 85, 247, 0.4)',
                     color: '#c084fc',
                     display: 'inline-flex',
@@ -129,12 +168,27 @@ export const AccountDetailsTab = ({ user }) => {
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+              }}
+            >
               Member Since
             </span>
             <Calendar size={16} style={{ color: '#10b981' }} />
           </div>
-          <p style={{ margin: '10px 0 0', fontWeight: 700, fontSize: 14, color: 'var(--text-primary)' }}>
+          <p
+            style={{
+              margin: '10px 0 0',
+              fontWeight: 700,
+              fontSize: 14,
+              color: 'var(--text-primary)',
+            }}
+          >
             {user.createdAt
               ? new Date(user.createdAt).toLocaleDateString(undefined, {
                   year: 'numeric',
@@ -153,7 +207,10 @@ export const AccountDetailsTab = ({ user }) => {
           subtitle="Real-time list of security authorities granted to your user session."
         >
           <div style={{ marginBottom: 16, position: 'relative', maxWidth: 360 }}>
-            <Search size={16} style={{ position: 'absolute', left: 12, top: 12, color: 'var(--text-muted)' }} />
+            <Search
+              size={16}
+              style={{ position: 'absolute', left: 12, top: 12, color: 'var(--text-muted)' }}
+            />
             <input
               type="text"
               placeholder="Search permissions (e.g., COURSE_READ)..."
@@ -171,9 +228,20 @@ export const AccountDetailsTab = ({ user }) => {
             />
           </div>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, maxHeight: 220, overflowY: 'auto', paddingRight: 4 }}>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 8,
+              maxHeight: 220,
+              overflowY: 'auto',
+              paddingRight: 4,
+            }}
+          >
             {filteredPermissions.length === 0 ? (
-              <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>No matching permissions found.</p>
+              <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+                No matching permissions found.
+              </p>
             ) : (
               filteredPermissions.map((perm) => (
                 <span

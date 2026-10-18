@@ -46,10 +46,12 @@ export const chatService = {
   getMembers: (channelId) => chatApi.get(`/channels/${channelId}/members`).then(unwrap),
 
   /** Add member to group channel */
-  addMember: (channelId, userId) => chatApi.post(`/channels/${channelId}/members`, { userId }).then(unwrap),
+  addMember: (channelId, userId) =>
+    chatApi.post(`/channels/${channelId}/members`, { userId }).then(unwrap),
 
   /** Remove member from group channel */
-  removeMember: (channelId, userId) => chatApi.delete(`/channels/${channelId}/members/${userId}`).then(unwrap),
+  removeMember: (channelId, userId) =>
+    chatApi.delete(`/channels/${channelId}/members/${userId}`).then(unwrap),
 
   /** Get message history (cursor-based pagination) */
   getMessages: (channelId, { before, limit } = {}) => {
@@ -92,13 +94,15 @@ export const chatService = {
   },
 
   /** Edit a message (Phase 2) */
-  editMessage: (messageId, content) => chatApi.put(`/messages/${messageId}`, { content }).then(unwrap),
+  editMessage: (messageId, content) =>
+    chatApi.put(`/messages/${messageId}`, { content }).then(unwrap),
 
   /** Delete a message (Phase 2) */
   deleteMessage: (messageId) => chatApi.delete(`/messages/${messageId}`).then(unwrap),
 
   /** Mark channel as read (Phase 2) */
-  markAsRead: (channelId, messageId) => chatApi.post(`/channels/${channelId}/read`, { messageId }).then(unwrap),
+  markAsRead: (channelId, messageId) =>
+    chatApi.post(`/channels/${channelId}/read`, { messageId }).then(unwrap),
 
   /** Get unread counts (Phase 2) */
   getUnreadCounts: () => chatApi.get('/unread-counts').then(unwrap),
@@ -126,12 +130,10 @@ export const chatService = {
     chatApi.put(`/channels/${channelId}`, payload).then(unwrap),
 
   /** Archive a channel (Phase 3) */
-  archiveChannel: (channelId) =>
-    chatApi.post(`/channels/${channelId}/archive`).then(unwrap),
+  archiveChannel: (channelId) => chatApi.post(`/channels/${channelId}/archive`).then(unwrap),
 
   /** Unarchive a channel (Phase 3) */
-  unarchiveChannel: (channelId) =>
-    chatApi.post(`/channels/${channelId}/unarchive`).then(unwrap),
+  unarchiveChannel: (channelId) => chatApi.post(`/channels/${channelId}/unarchive`).then(unwrap),
 };
 
 export default chatService;

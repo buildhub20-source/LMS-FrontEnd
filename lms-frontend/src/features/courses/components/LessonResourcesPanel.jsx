@@ -4,10 +4,7 @@ export const LessonResourcesPanel = ({ currentLesson, course }) => {
   const lessonTitle = currentLesson?.title || 'Lesson';
 
   // Gather any resources from current lesson or standard course study materials
-  const resources = [
-    ...(currentLesson?.resources || []),
-    ...(currentLesson?.attachments || []),
-  ];
+  const resources = [...(currentLesson?.resources || []), ...(currentLesson?.attachments || [])];
 
   // Default helpful course reference materials if no explicit attachments are configured
   const defaultItems = [
@@ -161,7 +158,9 @@ export const LessonResourcesPanel = ({ currentLesson, course }) => {
                 transition: 'background 0.15s ease',
               }}
               onMouseEnter={(e) => (e.currentTarget.style.background = '#3f3f46')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--surface-light, #27272a)')}
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background = 'var(--surface-light, #27272a)')
+              }
             >
               <Download size={13} />
               {item.action || 'Download'}

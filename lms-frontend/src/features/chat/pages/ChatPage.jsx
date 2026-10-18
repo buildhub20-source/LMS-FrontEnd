@@ -1,6 +1,16 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { AlertCircle, MessageSquare, WifiOff, FileText, Download, Search, UserPlus, Shield, Trash2 } from 'lucide-react';
+import {
+  AlertCircle,
+  MessageSquare,
+  WifiOff,
+  FileText,
+  Download,
+  Search,
+  UserPlus,
+  Shield,
+  Trash2,
+} from 'lucide-react';
 import { getAvatarColorIndex } from '../utils/chatHelpers';
 import useAuth from '../../auth/hooks/useAuth';
 import { useChat } from '../hooks/useChat';
@@ -46,8 +56,12 @@ export default function ChatPage() {
   // If a specific channelId was requested via URL and isn't loaded in channel list yet, fetch it
   useEffect(() => {
     if (!targetChannelId) return;
-    if (channels.length > 0 && !channels.some((c) => c.id === targetChannelId || String(c.id) === String(targetChannelId))) {
-      chatService.getChannel(targetChannelId)
+    if (
+      channels.length > 0 &&
+      !channels.some((c) => c.id === targetChannelId || String(c.id) === String(targetChannelId))
+    ) {
+      chatService
+        .getChannel(targetChannelId)
         .then((channel) => {
           if (channel?.id) {
             onChannelCreated(channel);
@@ -125,7 +139,8 @@ export default function ChatPage() {
       return;
     }
 
-    chatService.getMembers(activeChannelId)
+    chatService
+      .getMembers(activeChannelId)
       .then((data) => {
         const list = Array.isArray(data) ? data : (data?.data ?? []);
         setChannelMembers(list);
@@ -148,19 +163,22 @@ export default function ChatPage() {
           const p = JSON.parse(msg.attachments);
           if (Array.isArray(p)) atts = p;
           else if (p && typeof p === 'object') atts = [p];
-        } catch {}
+        } catch {
+          /* not JSON: treat as no attachments */
+        }
       } else if (msg?.attachments && typeof msg?.attachments === 'object') {
         atts = [msg.attachments];
       }
 
       atts.forEach((att) => {
         if (!att) return;
-        const name = typeof att === 'string'
-          ? att.split('/').pop() || 'file'
-          : (att.name || att.originalName || att.filename || 'file');
+        const name =
+          typeof att === 'string'
+            ? att.split('/').pop() || 'file'
+            : att.name || att.originalName || att.filename || 'file';
         const url = typeof att === 'string' ? att : att.url;
         const size = typeof att === 'object' ? att.size : null;
-        const mime = typeof att === 'object' ? (att.mimeType || att.mimetype) : null;
+        const mime = typeof att === 'object' ? att.mimeType || att.mimetype : null;
         list.push({
           name,
           url,
@@ -192,16 +210,19 @@ export default function ChatPage() {
     currentUser?.role === 'ADMIN' ||
     currentUser?.roles?.includes('ADMIN') ||
     channelMembers.some(
-      (m) => String(m.user_id || m.userId || m.id) === String(currentUser?.id) &&
-        ['OWNER', 'ADMIN', 'owner', 'admin'].includes(m.role)
-    )
+      (m) =>
+        String(m.user_id || m.userId || m.id) === String(currentUser?.id) &&
+        ['OWNER', 'ADMIN', 'owner', 'admin'].includes(m.role),
+    ),
   );
 
   const handleRemoveMember = async (userId) => {
     if (!window.confirm('Are you sure you want to remove this member?')) return;
     try {
       await chatService.removeMember(activeChannelId, userId);
-      setChannelMembers((prev) => prev.filter((m) => String(m.user_id || m.userId || m.id) !== String(userId)));
+      setChannelMembers((prev) =>
+        prev.filter((m) => String(m.user_id || m.userId || m.id) !== String(userId)),
+      );
     } catch (err) {
       console.error('Failed to remove member:', err);
       alert(err?.response?.data?.error || 'Failed to remove member');
@@ -222,21 +243,24 @@ export default function ChatPage() {
   }, []);
 
   // Jump smoothly to search result message, switching channel if needed
-  const handleJumpToSearchResult = useCallback(({ channelId, messageId }) => {
-    setActiveHeaderTab('chat');
-    if (channelId && channelId !== activeChannelId) {
-      selectChannel(channelId);
-    }
-    // Allow DOM to settle if switching channels
-    setTimeout(() => {
-      const el = document.getElementById(`chat-msg-${messageId}`);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        el.classList.add('chat-message--target-highlight');
-        setTimeout(() => el.classList.remove('chat-message--target-highlight'), 3000);
+  const handleJumpToSearchResult = useCallback(
+    ({ channelId, messageId }) => {
+      setActiveHeaderTab('chat');
+      if (channelId && channelId !== activeChannelId) {
+        selectChannel(channelId);
       }
-    }, 300);
-  }, [activeChannelId, selectChannel]);
+      // Allow DOM to settle if switching channels
+      setTimeout(() => {
+        const el = document.getElementById(`chat-msg-${messageId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.classList.add('chat-message--target-highlight');
+          setTimeout(() => el.classList.remove('chat-message--target-highlight'), 3000);
+        }
+      }, 300);
+    },
+    [activeChannelId, selectChannel],
+  );
 
   // When the chat backend is not available, show a friendly unavailable state
   if (connectionError && !isConnected && channels.length === 0) {
@@ -250,7 +274,8 @@ export default function ChatPage() {
               </div>
               <h3 className="chat-empty__title">Chat Service Unavailable</h3>
               <p className="chat-empty__text">
-                The real-time chat server is currently offline. This feature will be available once the chat service is started.
+                The real-time chat server is currently offline. This feature will be available once
+                the chat service is started.
               </p>
             </div>
           </div>
@@ -265,7 +290,9 @@ export default function ChatPage() {
       {!isConnected && channels.length > 0 && (
         <div className="chat-status-bar chat-status-bar--offline">
           <AlertCircle size={15} className="chat-status-icon" />
-          <span>{connectionError ? 'Reconnecting to chat server...' : 'Connecting to chat server...'}</span>
+          <span>
+            {connectionError ? 'Reconnecting to chat server...' : 'Connecting to chat server...'}
+          </span>
         </div>
       )}
 
@@ -312,7 +339,9 @@ export default function ChatPage() {
                   </div>
                   {channelFiles.length === 0 ? (
                     <div className="chat-empty">
-                      <p className="chat-empty__text">No files have been shared in this channel yet.</p>
+                      <p className="chat-empty__text">
+                        No files have been shared in this channel yet.
+                      </p>
                       <button
                         type="button"
                         className="chat-btn chat-btn--primary"
@@ -324,18 +353,26 @@ export default function ChatPage() {
                   ) : (
                     <div className="chat-channel-files-grid">
                       {channelFiles.map((file, idx) => {
-                        const isImg = file.mime?.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(file.name);
+                        const isImg =
+                          file.mime?.startsWith('image/') ||
+                          /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(file.name);
                         return (
                           <div key={idx} className="chat-channel-file-card">
                             <div className="chat-channel-file-card__icon">
                               {isImg && file.url ? (
-                                <img src={file.url} alt={file.name} className="chat-channel-file-thumb" />
+                                <img
+                                  src={file.url}
+                                  alt={file.name}
+                                  className="chat-channel-file-thumb"
+                                />
                               ) : (
                                 <FileText size={24} />
                               )}
                             </div>
                             <div className="chat-channel-file-card__info">
-                              <span className="chat-channel-file-name" title={file.name}>{file.name}</span>
+                              <span className="chat-channel-file-name" title={file.name}>
+                                {file.name}
+                              </span>
                               <span className="chat-channel-file-meta">
                                 Shared by {file.senderName}
                                 {file.size ? ` • ${(file.size / 1024).toFixed(0)} KB` : ''}
@@ -390,7 +427,9 @@ export default function ChatPage() {
                   {filteredChannelMembers.length === 0 ? (
                     <div className="chat-empty">
                       <p className="chat-empty__text">
-                        {memberSearchQuery ? 'No members match your search.' : 'No members found in this channel.'}
+                        {memberSearchQuery
+                          ? 'No members match your search.'
+                          : 'No members found in this channel.'}
                       </p>
                       {memberSearchQuery && (
                         <button
@@ -407,7 +446,11 @@ export default function ChatPage() {
                       {filteredChannelMembers.map((member) => {
                         const mid = member.user_id || member.userId || member.id;
                         const online = presence.isOnline ? presence.isOnline(mid) : false;
-                        const name = member.name || member.display_name || member.email?.split('@')[0] || 'Member';
+                        const name =
+                          member.name ||
+                          member.display_name ||
+                          member.email?.split('@')[0] ||
+                          'Member';
                         const isOwner = member.role === 'owner' || member.role === 'OWNER';
                         const isAdmin = member.role === 'admin' || member.role === 'ADMIN';
                         const isSelf = String(mid) === String(currentUser?.id);
@@ -415,19 +458,25 @@ export default function ChatPage() {
                         return (
                           <div key={mid} className="chat-channel-member-card">
                             <div className="chat-channel-member-card__avatar-wrap">
-                              <div className={`chat-message__avatar chat-avatar--gradient-${getAvatarColorIndex(mid || name)}`}>
+                              <div
+                                className={`chat-message__avatar chat-avatar--gradient-${getAvatarColorIndex(mid || name)}`}
+                              >
                                 {name[0]?.toUpperCase() || '?'}
                               </div>
                               <span
                                 className={`chat-presence-dot ${
-                                  online ? 'chat-presence-dot--online' : 'chat-presence-dot--offline'
+                                  online
+                                    ? 'chat-presence-dot--online'
+                                    : 'chat-presence-dot--offline'
                                 }`}
                                 title={online ? 'Online' : 'Offline'}
                               />
                             </div>
                             <div className="chat-channel-member-card__info">
                               <div className="chat-channel-member-name-row">
-                                <span className="chat-channel-member-name" title={name}>{name}</span>
+                                <span className="chat-channel-member-name" title={name}>
+                                  {name}
+                                </span>
                                 {isSelf && <span className="chat-self-badge">you</span>}
                                 {isOwner && (
                                   <span className="chat-owner-badge" title="Owner">
@@ -450,16 +499,19 @@ export default function ChatPage() {
                               </span>
                             </div>
 
-                            {isOwnerOrAdmin && !isOwner && !isSelf && activeChannel.type === 'GROUP' && (
-                              <button
-                                type="button"
-                                className="chat-channel-member-remove-btn"
-                                onClick={() => handleRemoveMember(mid)}
-                                title="Remove member"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            )}
+                            {isOwnerOrAdmin &&
+                              !isOwner &&
+                              !isSelf &&
+                              activeChannel.type === 'GROUP' && (
+                                <button
+                                  type="button"
+                                  className="chat-channel-member-remove-btn"
+                                  onClick={() => handleRemoveMember(mid)}
+                                  title="Remove member"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              )}
                           </div>
                         );
                       })}
@@ -517,13 +569,7 @@ export default function ChatPage() {
                 channel={activeChannel}
                 currentUser={currentUser}
                 presence={presence}
-                onChannelUpdated={(updated) => {
-                  updateChannel(updated);
-                  if (updated.name || updated.description) {
-                    activeChannel.name = updated.name;
-                    activeChannel.description = updated.description;
-                  }
-                }}
+                onChannelUpdated={updateChannel}
               />
 
               {/* Message & Conversation Search Modal */}

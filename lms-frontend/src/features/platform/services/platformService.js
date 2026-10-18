@@ -29,7 +29,7 @@ client.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 const unwrap = (response) => {
@@ -57,11 +57,13 @@ export const platformService = {
   scheduleDeletion: (id) => client.post(`${endpoint}/tenants/${id}/schedule-deletion`).then(unwrap),
 
   // Impersonation / Temporary Debug Access
-  impersonateTenant: (id, payload = {}) => client.post(`${endpoint}/tenants/${id}/impersonate`, payload).then(unwrap),
+  impersonateTenant: (id, payload = {}) =>
+    client.post(`${endpoint}/tenants/${id}/impersonate`, payload).then(unwrap),
 
   // Tenant Config (Feature flags & quotas)
   getTenantConfig: (id) => client.get(`${endpoint}/tenants/${id}/config`).then(unwrap),
-  updateTenantConfig: (id, payload) => client.put(`${endpoint}/tenants/${id}/config`, payload).then(unwrap),
+  updateTenantConfig: (id, payload) =>
+    client.put(`${endpoint}/tenants/${id}/config`, payload).then(unwrap),
 
   // Audit logs
   listAuditLogs: (params) => client.get(`${endpoint}/audit-logs`, { params }).then(unwrap),
@@ -71,11 +73,13 @@ export const platformService = {
   listActiveAnnouncements: () => client.get(`${endpoint}/announcements/active`).then(unwrap),
   createAnnouncement: (payload) => client.post(`${endpoint}/announcements`, payload).then(unwrap),
   deleteAnnouncement: (id) => client.delete(`${endpoint}/announcements/${id}`).then(unwrap),
-  toggleAnnouncement: (id, active) => client.post(`${endpoint}/announcements/${id}/toggle?active=${active}`).then(unwrap),
+  toggleAnnouncement: (id, active) =>
+    client.post(`${endpoint}/announcements/${id}/toggle?active=${active}`).then(unwrap),
 
   // Live Classes — Usage & Config (Platform Admin)
   getTenantLiveUsage: (id) => client.get(`${endpoint}/tenants/${id}/live-usage`).then(unwrap),
-  updateTenantLiveConfig: (id, payload) => client.put(`${endpoint}/tenants/${id}/live-config`, payload).then(unwrap),
+  updateTenantLiveConfig: (id, payload) =>
+    client.put(`${endpoint}/tenants/${id}/live-config`, payload).then(unwrap),
 };
 
 export default platformService;

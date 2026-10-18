@@ -1,24 +1,38 @@
 import React, { useState, useMemo } from 'react';
 import {
-  Trophy, Award, Crown, Medal, Swords, Database, Lightbulb,
-  Zap, Search, Download, Sparkles, Filter, ChevronRight,
-  TrendingUp, CheckCircle, Clock, ExternalLink
+  Trophy,
+  Award,
+  Crown,
+  Medal,
+  Swords,
+  Database,
+  Lightbulb,
+  Zap,
+  Search,
+  Download,
+  Sparkles,
+  Filter,
+  ChevronRight,
+  TrendingUp,
+  CheckCircle,
+  Clock,
+  ExternalLink,
 } from 'lucide-react';
 import {
   useAdminAssessmentAnalytics,
   useAdminAssessmentQuestions,
-  useAdminAssessment
+  useAdminAssessment,
 } from '../hooks/useAdminAssessments';
 import {
   LEETCODE_BADGES,
   LEADERBOARD_CATEGORIES,
   generateLeaderboard,
-  exportLeaderboardToCsv
+  exportLeaderboardToCsv,
 } from '../utils/badgeDefinitions';
-import LeetCodeBadge from './LeetCodeBadge';
-import BadgeDetailModal from './BadgeDetailModal';
 import Spinner from '../../../components/common/Spinner';
 import Alert from '../../../components/feedback/Alert';
+import LeetCodeBadge from './LeetCodeBadge';
+import BadgeDetailModal from './BadgeDetailModal';
 
 export const AssessmentLeaderboardTab = ({ assessmentId }) => {
   const { data: analytics, isLoading, error } = useAdminAssessmentAnalytics(assessmentId);
@@ -45,8 +59,7 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
         (s.studentEmail && s.studentEmail.toLowerCase().includes(searchTerm.toLowerCase()));
 
       const matchesBadge =
-        filterBadgeId === 'ALL' ||
-        (s.badges && s.badges.some((b) => b.id === filterBadgeId));
+        filterBadgeId === 'ALL' || (s.badges && s.badges.some((b) => b.id === filterBadgeId));
 
       return matchesSearch && matchesBadge;
     });
@@ -69,17 +82,27 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
   }, [studentStats, questions]);
   const speedMvp = useMemo(() => {
     // Student with highest score among fastest
-    return fullLeaderboard.find((s) => s.badges.some((b) => b.id === 'speed_demon')) || fullLeaderboard[0];
+    return (
+      fullLeaderboard.find((s) => s.badges.some((b) => b.id === 'speed_demon')) ||
+      fullLeaderboard[0]
+    );
   }, [fullLeaderboard]);
 
-  const activeCategoryObj = LEADERBOARD_CATEGORIES.find((c) => c.id === activeCategory) || LEADERBOARD_CATEGORIES[0];
+  const activeCategoryObj =
+    LEADERBOARD_CATEGORIES.find((c) => c.id === activeCategory) || LEADERBOARD_CATEGORIES[0];
 
   const handleExportCsv = () => {
-    exportLeaderboardToCsv(fullLeaderboard, assessment?.title || 'Assessment', activeCategoryObj.label);
+    exportLeaderboardToCsv(
+      fullLeaderboard,
+      assessment?.title || 'Assessment',
+      activeCategoryObj.label,
+    );
   };
 
   const handleBadgeClick = (badge) => {
-    const studentsWithBadge = fullLeaderboard.filter((s) => s.badges.some((b) => b.id === badge.id));
+    const studentsWithBadge = fullLeaderboard.filter((s) =>
+      s.badges.some((b) => b.id === badge.id),
+    );
     setSelectedBadgeModal({ badge, students: studentsWithBadge });
   };
 
@@ -125,7 +148,9 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
               >
                 <Trophy size={20} />
               </div>
-              <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>
+              <h2
+                style={{ margin: 0, fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}
+              >
                 Assessment Leaderboard &amp; Badges
               </h2>
             </div>
@@ -155,10 +180,12 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                 opacity: fullLeaderboard.length === 0 ? 0.6 : 1,
               }}
               onMouseEnter={(e) => {
-                if (fullLeaderboard.length > 0) e.currentTarget.style.background = 'var(--border-color, #3f3f46)';
+                if (fullLeaderboard.length > 0)
+                  e.currentTarget.style.background = 'var(--border-color, #3f3f46)';
               }}
               onMouseLeave={(e) => {
-                if (fullLeaderboard.length > 0) e.currentTarget.style.background = 'var(--bg-secondary, #27272a)';
+                if (fullLeaderboard.length > 0)
+                  e.currentTarget.style.background = 'var(--bg-secondary, #27272a)';
               }}
             >
               <Download size={15} /> Export CSV
@@ -180,7 +207,9 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                   gap: 8,
                   padding: '8px 16px',
                   borderRadius: 10,
-                  border: isActive ? '1.5px solid #f59e0b' : '1px solid var(--border-color, #3f3f46)',
+                  border: isActive
+                    ? '1.5px solid #f59e0b'
+                    : '1px solid var(--border-color, #3f3f46)',
                   background: isActive
                     ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(217, 119, 6, 0.08))'
                     : 'var(--bg-secondary, #27272a)',
@@ -192,7 +221,15 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                   boxShadow: isActive ? '0 4px 14px rgba(245, 158, 11, 0.25)' : 'none',
                 }}
               >
-                <span>{cat.id === 'ALL' ? '🏆' : cat.id === 'CODING' ? '💻' : cat.id === 'SQL' ? '🗄️' : '🧠'}</span>
+                <span>
+                  {cat.id === 'ALL'
+                    ? '🏆'
+                    : cat.id === 'CODING'
+                      ? '💻'
+                      : cat.id === 'SQL'
+                        ? '🗄️'
+                        : '🧠'}
+                </span>
                 <span>{cat.label}</span>
               </button>
             );
@@ -212,10 +249,28 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
           }}
         >
           <div style={{ textAlign: 'center', marginBottom: 28 }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#f59e0b', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                color: '#f59e0b',
+                fontSize: 13,
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
               <Sparkles size={14} /> Podium Honors
             </div>
-            <h3 style={{ margin: '4px 0 0', fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
+            <h3
+              style={{
+                margin: '4px 0 0',
+                fontSize: 18,
+                fontWeight: 700,
+                color: 'var(--text-primary)',
+              }}
+            >
               Top Performers • {activeCategoryObj.label}
             </h3>
           </div>
@@ -282,11 +337,19 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                   </div>
                 </div>
 
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center' }}>
+                <div
+                  style={{
+                    fontSize: 15,
+                    fontWeight: 700,
+                    color: 'var(--text-primary)',
+                    textAlign: 'center',
+                  }}
+                >
                   {top2.studentName || 'Student #2'}
                 </div>
                 <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>
-                  {top2.currentCategoryScore.score} / {top2.currentCategoryScore.totalMarks} ({top2.currentCategoryScore.percentage}%)
+                  {top2.currentCategoryScore.score} / {top2.currentCategoryScore.totalMarks} (
+                  {top2.currentCategoryScore.percentage}%)
                 </div>
 
                 {/* Silver Pedestal */}
@@ -294,7 +357,8 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                   style={{
                     width: '100%',
                     height: 90,
-                    background: 'linear-gradient(180deg, rgba(148, 163, 184, 0.25) 0%, rgba(100, 116, 139, 0.08) 100%)',
+                    background:
+                      'linear-gradient(180deg, rgba(148, 163, 184, 0.25) 0%, rgba(100, 116, 139, 0.08) 100%)',
                     borderRadius: '12px 12px 0 0',
                     border: '1px solid rgba(148, 163, 184, 0.35)',
                     display: 'flex',
@@ -323,7 +387,13 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                 }}
               >
                 {/* Crown Icon */}
-                <span style={{ fontSize: 28, marginBottom: 4, filter: 'drop-shadow(0 4px 8px rgba(245, 158, 11, 0.5))' }}>
+                <span
+                  style={{
+                    fontSize: 28,
+                    marginBottom: 4,
+                    filter: 'drop-shadow(0 4px 8px rgba(245, 158, 11, 0.5))',
+                  }}
+                >
                   👑
                 </span>
 
@@ -369,11 +439,19 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                   </div>
                 </div>
 
-                <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)', textAlign: 'center' }}>
+                <div
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 800,
+                    color: 'var(--text-primary)',
+                    textAlign: 'center',
+                  }}
+                >
                   {top1.studentName || 'Champion'}
                 </div>
                 <div style={{ fontSize: 13, color: '#f59e0b', fontWeight: 600, marginBottom: 8 }}>
-                  {top1.currentCategoryScore.score} / {top1.currentCategoryScore.totalMarks} ({top1.currentCategoryScore.percentage}%)
+                  {top1.currentCategoryScore.score} / {top1.currentCategoryScore.totalMarks} (
+                  {top1.currentCategoryScore.percentage}%)
                 </div>
 
                 {/* Gold Pedestal */}
@@ -381,7 +459,8 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                   style={{
                     width: '100%',
                     height: 125,
-                    background: 'linear-gradient(180deg, rgba(245, 158, 11, 0.35) 0%, rgba(217, 119, 6, 0.1) 100%)',
+                    background:
+                      'linear-gradient(180deg, rgba(245, 158, 11, 0.35) 0%, rgba(217, 119, 6, 0.1) 100%)',
                     borderRadius: '16px 16px 0 0',
                     border: '1.5px solid rgba(245, 158, 11, 0.55)',
                     boxShadow: '0 0 25px rgba(245, 158, 11, 0.25)',
@@ -394,7 +473,16 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                   }}
                 >
                   <span style={{ fontSize: 28 }}>🥇</span>
-                  <span style={{ fontSize: 14, fontWeight: 800, color: '#fef08a', letterSpacing: '0.05em' }}>GOLD MVP</span>
+                  <span
+                    style={{
+                      fontSize: 14,
+                      fontWeight: 800,
+                      color: '#fef08a',
+                      letterSpacing: '0.05em',
+                    }}
+                  >
+                    GOLD MVP
+                  </span>
                   {top1.badges.length > 0 && (
                     <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
                       {top1.badges.slice(0, 2).map((b) => (
@@ -458,11 +546,19 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                   </div>
                 </div>
 
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center' }}>
+                <div
+                  style={{
+                    fontSize: 15,
+                    fontWeight: 700,
+                    color: 'var(--text-primary)',
+                    textAlign: 'center',
+                  }}
+                >
                   {top3.studentName || 'Student #3'}
                 </div>
                 <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>
-                  {top3.currentCategoryScore.score} / {top3.currentCategoryScore.totalMarks} ({top3.currentCategoryScore.percentage}%)
+                  {top3.currentCategoryScore.score} / {top3.currentCategoryScore.totalMarks} (
+                  {top3.currentCategoryScore.percentage}%)
                 </div>
 
                 {/* Bronze Pedestal */}
@@ -470,7 +566,8 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                   style={{
                     width: '100%',
                     height: 75,
-                    background: 'linear-gradient(180deg, rgba(217, 119, 6, 0.25) 0%, rgba(120, 53, 15, 0.08) 100%)',
+                    background:
+                      'linear-gradient(180deg, rgba(217, 119, 6, 0.25) 0%, rgba(120, 53, 15, 0.08) 100%)',
                     borderRadius: '12px 12px 0 0',
                     border: '1px solid rgba(217, 119, 6, 0.35)',
                     display: 'flex',
@@ -526,8 +623,26 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
             👑
           </div>
           <div style={{ overflow: 'hidden' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#f59e0b', textTransform: 'uppercase' }}>Overall Leader</div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: '#f59e0b',
+                textTransform: 'uppercase',
+              }}
+            >
+              Overall Leader
+            </div>
+            <div
+              style={{
+                fontSize: 14,
+                fontWeight: 700,
+                color: 'var(--text-primary)',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+              }}
+            >
               {overallMvp?.studentName || 'None yet'}
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
@@ -564,12 +679,32 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
             ⚔️
           </div>
           <div style={{ overflow: 'hidden' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#a855f7', textTransform: 'uppercase' }}>Algorithm Knight</div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: '#a855f7',
+                textTransform: 'uppercase',
+              }}
+            >
+              Algorithm Knight
+            </div>
+            <div
+              style={{
+                fontSize: 14,
+                fontWeight: 700,
+                color: 'var(--text-primary)',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+              }}
+            >
               {codingMvp?.studentName || 'None yet'}
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-              {codingMvp ? `${codingMvp.currentCategoryScore.percentage}% algorithms` : 'No submissions'}
+              {codingMvp
+                ? `${codingMvp.currentCategoryScore.percentage}% algorithms`
+                : 'No submissions'}
             </div>
           </div>
         </div>
@@ -602,8 +737,26 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
             🗄️
           </div>
           <div style={{ overflow: 'hidden' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#3b82f6', textTransform: 'uppercase' }}>SQL Grandmaster</div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: '#3b82f6',
+                textTransform: 'uppercase',
+              }}
+            >
+              SQL Grandmaster
+            </div>
+            <div
+              style={{
+                fontSize: 14,
+                fontWeight: 700,
+                color: 'var(--text-primary)',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+              }}
+            >
               {sqlMvp?.studentName || 'None yet'}
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
@@ -640,8 +793,26 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
             ⚡
           </div>
           <div style={{ overflow: 'hidden' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#06b6d4', textTransform: 'uppercase' }}>Speed Champion</div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: '#06b6d4',
+                textTransform: 'uppercase',
+              }}
+            >
+              Speed Champion
+            </div>
+            <div
+              style={{
+                fontSize: 14,
+                fontWeight: 700,
+                color: 'var(--text-primary)',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+              }}
+            >
               {speedMvp?.studentName || 'None yet'}
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
@@ -670,7 +841,13 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
           <div style={{ position: 'relative', minWidth: 240 }}>
             <Search
               size={15}
-              style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}
+              style={{
+                position: 'absolute',
+                left: 12,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'var(--text-muted)',
+              }}
             />
             <input
               type="text"
@@ -692,7 +869,9 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
 
           {/* Badge Filter */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 500 }}>Badge:</span>
+            <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 500 }}>
+              Badge:
+            </span>
             <select
               value={filterBadgeId}
               onChange={(e) => setFilterBadgeId(e.target.value)}
@@ -733,13 +912,23 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
         }}
       >
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, textAlign: 'left' }}>
+          <table
+            style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, textAlign: 'left' }}
+          >
             <thead>
-              <tr style={{ background: 'var(--bg-secondary, #27272a)', borderBottom: '1px solid var(--border-color, #3f3f46)', color: 'var(--text-muted)' }}>
+              <tr
+                style={{
+                  background: 'var(--bg-secondary, #27272a)',
+                  borderBottom: '1px solid var(--border-color, #3f3f46)',
+                  color: 'var(--text-muted)',
+                }}
+              >
                 <th style={{ padding: '14px 16px', fontWeight: 600, width: 80 }}>Rank</th>
                 <th style={{ padding: '14px 16px', fontWeight: 600 }}>Student</th>
                 <th style={{ padding: '14px 16px', fontWeight: 600 }}>Badges Unlocked</th>
-                <th style={{ padding: '14px 16px', fontWeight: 600 }}>{activeCategoryObj.label} Score</th>
+                <th style={{ padding: '14px 16px', fontWeight: 600 }}>
+                  {activeCategoryObj.label} Score
+                </th>
                 <th style={{ padding: '14px 16px', fontWeight: 600, width: 120 }}>Overall Score</th>
                 <th style={{ padding: '14px 16px', fontWeight: 600, width: 90 }}>Grade</th>
                 <th style={{ padding: '14px 16px', fontWeight: 600, width: 90 }}>Attempts</th>
@@ -749,12 +938,24 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
             <tbody>
               {displayedStudents.length === 0 ? (
                 <tr>
-                  <td colSpan={8} style={{ padding: 48, textAlign: 'center', color: 'var(--text-muted)' }}>
+                  <td
+                    colSpan={8}
+                    style={{ padding: 48, textAlign: 'center', color: 'var(--text-muted)' }}
+                  >
                     <div style={{ fontSize: 32, marginBottom: 8 }}>🏆</div>
-                    <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--text-primary)', marginBottom: 4 }}>
+                    <div
+                      style={{
+                        fontWeight: 600,
+                        fontSize: 15,
+                        color: 'var(--text-primary)',
+                        marginBottom: 4,
+                      }}
+                    >
                       No Leaderboard Standings Yet
                     </div>
-                    <div>Students will automatically appear here as they complete their assessments.</div>
+                    <div>
+                      Students will automatically appear here as they complete their assessments.
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -772,20 +973,22 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                         background: isTop1
                           ? 'rgba(245, 158, 11, 0.04)'
                           : isTop2
-                          ? 'rgba(148, 163, 184, 0.03)'
-                          : isTop3
-                          ? 'rgba(217, 119, 6, 0.03)'
-                          : 'transparent',
+                            ? 'rgba(148, 163, 184, 0.03)'
+                            : isTop3
+                              ? 'rgba(217, 119, 6, 0.03)'
+                              : 'transparent',
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-secondary, #27272a)')}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background = 'var(--bg-secondary, #27272a)')
+                      }
                       onMouseLeave={(e) => {
                         e.currentTarget.style.background = isTop1
                           ? 'rgba(245, 158, 11, 0.04)'
                           : isTop2
-                          ? 'rgba(148, 163, 184, 0.03)'
-                          : isTop3
-                          ? 'rgba(217, 119, 6, 0.03)'
-                          : 'transparent';
+                            ? 'rgba(148, 163, 184, 0.03)'
+                            : isTop3
+                              ? 'rgba(217, 119, 6, 0.03)'
+                              : 'transparent';
                       }}
                     >
                       {/* Rank */}
@@ -798,7 +1001,9 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                           ) : isTop3 ? (
                             <span style={{ fontSize: 18 }}>🥉</span>
                           ) : (
-                            <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>#{s.rank}</span>
+                            <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>
+                              #{s.rank}
+                            </span>
                           )}
                         </div>
                       </td>
@@ -811,7 +1016,13 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                               width: 32,
                               height: 32,
                               borderRadius: '50%',
-                              background: isTop1 ? '#f59e0b' : isTop2 ? '#94a3b8' : isTop3 ? '#d97706' : 'var(--border-color, #3f3f46)',
+                              background: isTop1
+                                ? '#f59e0b'
+                                : isTop2
+                                  ? '#94a3b8'
+                                  : isTop3
+                                    ? '#d97706'
+                                    : 'var(--border-color, #3f3f46)',
                               color: '#fff',
                               display: 'flex',
                               alignItems: 'center',
@@ -836,7 +1047,14 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
 
                       {/* Badges Unlocked */}
                       <td style={{ padding: '14px 16px' }}>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: 6,
+                            alignItems: 'center',
+                          }}
+                        >
                           {s.badges && s.badges.length > 0 ? (
                             s.badges.map((b) => (
                               <LeetCodeBadge
@@ -847,7 +1065,13 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                               />
                             ))
                           ) : (
-                            <span style={{ fontSize: 12, color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                            <span
+                              style={{
+                                fontSize: 12,
+                                color: 'var(--text-muted)',
+                                fontStyle: 'italic',
+                              }}
+                            >
                               No badges yet
                             </span>
                           )}
@@ -856,8 +1080,16 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
 
                       {/* Category Score & Progress */}
                       <td style={{ padding: '14px 16px' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: 140 }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                        <div
+                          style={{ display: 'flex', flexDirection: 'column', gap: 4, width: 140 }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              fontSize: 12,
+                            }}
+                          >
                             <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
                               {s.currentCategoryScore.score} / {s.currentCategoryScore.totalMarks}
                             </span>
@@ -865,7 +1097,14 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                               {s.currentCategoryScore.percentage}%
                             </span>
                           </div>
-                          <div style={{ height: 6, borderRadius: 99, background: 'var(--border-color, #3f3f46)', overflow: 'hidden' }}>
+                          <div
+                            style={{
+                              height: 6,
+                              borderRadius: 99,
+                              background: 'var(--border-color, #3f3f46)',
+                              overflow: 'hidden',
+                            }}
+                          >
                             <div
                               style={{
                                 height: '100%',
@@ -879,7 +1118,13 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                       </td>
 
                       {/* Overall Score */}
-                      <td style={{ padding: '14px 16px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                      <td
+                        style={{
+                          padding: '14px 16px',
+                          fontWeight: 600,
+                          color: 'var(--text-primary)',
+                        }}
+                      >
                         {s.overallScore.score} / {s.overallScore.totalMarks}
                         <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 4 }}>
                           ({s.overallScore.percentage}%)
@@ -899,16 +1144,18 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                               s.gradeLetter === 'A+' || s.gradeLetter === 'A'
                                 ? 'rgba(16, 185, 129, 0.15)'
                                 : s.gradeLetter === 'B'
-                                ? 'rgba(59, 130, 246, 0.15)'
-                                : 'rgba(148, 163, 184, 0.15)',
+                                  ? 'rgba(59, 130, 246, 0.15)'
+                                  : 'rgba(148, 163, 184, 0.15)',
                             color:
                               s.gradeLetter === 'A+' || s.gradeLetter === 'A'
                                 ? '#10b981'
                                 : s.gradeLetter === 'B'
-                                ? '#3b82f6'
-                                : 'var(--text-muted)',
+                                  ? '#3b82f6'
+                                  : 'var(--text-muted)',
                             border: `1px solid ${
-                              s.gradeLetter === 'A+' || s.gradeLetter === 'A' ? '#10b98140' : '#3b82f640'
+                              s.gradeLetter === 'A+' || s.gradeLetter === 'A'
+                                ? '#10b98140'
+                                : '#3b82f640'
                             }`,
                           }}
                         >
@@ -932,7 +1179,10 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
                             borderRadius: 6,
                             fontSize: 11,
                             fontWeight: 600,
-                            background: s.status === 'COMPLETED' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(234, 179, 8, 0.1)',
+                            background:
+                              s.status === 'COMPLETED'
+                                ? 'rgba(16, 185, 129, 0.1)'
+                                : 'rgba(234, 179, 8, 0.1)',
                             color: s.status === 'COMPLETED' ? '#10b981' : '#eab308',
                           }}
                         >

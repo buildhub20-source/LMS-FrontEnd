@@ -1,7 +1,18 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-  Check, X, Award, FileText, Send, ChevronRight, ChevronLeft,
-  MessageSquare, Trash2, CornerDownRight, Plus, Sparkles, ExternalLink
+  Check,
+  X,
+  Award,
+  FileText,
+  Send,
+  ChevronRight,
+  ChevronLeft,
+  MessageSquare,
+  Trash2,
+  CornerDownRight,
+  Plus,
+  Sparkles,
+  ExternalLink,
 } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 import Button from '../../../components/common/Button';
@@ -11,17 +22,31 @@ import Badge from '../../../components/common/Badge';
 import Alert from '../../../components/feedback/Alert';
 import gradingService from '../services/gradingService';
 import rubricService from '../services/rubricService';
+import AiSuggestionPanel from '../components/AiSuggestionPanel';
+import { prefillFromSuggestion } from '../utils/aiSuggestion';
 
 /** Maps submission language strings to Monaco language identifiers */
 const LANG_MAP = {
-  JAVA: 'java', java: 'java', Java: 'java',
-  PYTHON: 'python', python: 'python', Python: 'python',
-  JAVASCRIPT: 'javascript', javascript: 'javascript', JavaScript: 'javascript',
-  'C++': 'cpp', CPP: 'cpp', cpp: 'cpp',
-  C: 'c', c: 'c',
-  TYPESCRIPT: 'typescript', typescript: 'typescript',
-  GO: 'go', go: 'go',
-  RUST: 'rust', rust: 'rust',
+  JAVA: 'java',
+  java: 'java',
+  Java: 'java',
+  PYTHON: 'python',
+  python: 'python',
+  Python: 'python',
+  JAVASCRIPT: 'javascript',
+  javascript: 'javascript',
+  JavaScript: 'javascript',
+  'C++': 'cpp',
+  CPP: 'cpp',
+  cpp: 'cpp',
+  C: 'c',
+  c: 'c',
+  TYPESCRIPT: 'typescript',
+  typescript: 'typescript',
+  GO: 'go',
+  go: 'go',
+  RUST: 'rust',
+  rust: 'rust',
 };
 const getMonacoLang = (lang) => LANG_MAP[lang] || 'plaintext';
 
@@ -48,6 +73,12 @@ export const GradingWorkflowPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState(null);
 
+  // AI grading suggestion for the selected submission
+  const [aiSuggestion, setAiSuggestion] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState(null);
+  const aiForSubmissionRef = useRef(null);
+
   const fetchData = async () => {
     setLoading(true);
     setError(null);
@@ -69,16 +100,61 @@ export const GradingWorkflowPage = () => {
     }
   };
 
+  // Switching submissions must not carry over the previous one's scores or suggestion.
+  const selectSubmission = (sub) => {
+    setSelectedSub(sub);
+    setRubricScores({});
+    setManualScore('');
+    setStatus('ACCEPTED');
+  };
+
+  const handleAiSuggest = async () => {
+    if (!selectedSub) return;
+    const subId = selectedSub.id;
+    setAiLoading(true);
+    setAiError(null);
+    try {
+      const suggestion = await gradingService.requestAiSuggestion(subId, selectedRubricId);
+      if (aiForSubmissionRef.current !== subId) return;
+      setAiSuggestion(suggestion);
+      const prefill = prefillFromSuggestion(
+        suggestion,
+        rubrics.find((r) => r.id === selectedRubricId),
+      );
+      if (prefill.rubricScores) setRubricScores((prev) => ({ ...prev, ...prefill.rubricScores }));
+      setManualScore(prefill.manualScore);
+      setStatus(prefill.status);
+    } catch (err) {
+      if (aiForSubmissionRef.current === subId) {
+        setAiError(err?.response?.data?.message || 'AI grading failed. Please grade manually.');
+      }
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
 
-  // Load annotations when active submission changes
+  // Load annotations and any earlier AI suggestion when the active submission changes
   useEffect(() => {
+    setAiSuggestion(null);
+    setAiError(null);
+    aiForSubmissionRef.current = selectedSub?.id ?? null;
     if (!selectedSub) {
       setAnnotations([]);
       return;
     }
+    const subId = selectedSub.id;
+    gradingService
+      .getAiSuggestion(subId)
+      .then((s) => {
+        if (aiForSubmissionRef.current === subId) setAiSuggestion(s);
+      })
+      .catch(() => {
+        /* no suggestion requested yet */
+      });
     const stored = localStorage.getItem(`lms_code_annotations_${selectedSub.id}`);
     if (stored) {
       try {
@@ -102,10 +178,15 @@ export const GradingWorkflowPage = () => {
         isWholeLine: true,
         className: 'monaco-annotated-line',
         glyphMarginClassName: 'monaco-annotation-glyph',
-        glyphMarginHoverMessage: { value: `**Review Comment (Line ${ann.lineNumber})**: ${ann.comment}` },
+        glyphMarginHoverMessage: {
+          value: `**Review Comment (Line ${ann.lineNumber})**: ${ann.comment}`,
+        },
       },
     }));
-    decorationsRef.current = editorRef.current.deltaDecorations(decorationsRef.current, newDecorations);
+    decorationsRef.current = editorRef.current.deltaDecorations(
+      decorationsRef.current,
+      newDecorations,
+    );
   };
 
   useEffect(() => {
@@ -178,9 +259,11 @@ export const GradingWorkflowPage = () => {
 
     try {
       // Append inline annotations summary to rubric feedback
-      const annotationsSummary = annotations.length > 0
-        ? `\n\n[Inline Code Review Annotations]:\n` + annotations.map((a) => `• Line ${a.lineNumber}: ${a.comment}`).join('\n')
-        : '';
+      const annotationsSummary =
+        annotations.length > 0
+          ? `\n\n[Inline Code Review Annotations]:\n` +
+            annotations.map((a) => `• Line ${a.lineNumber}: ${a.comment}`).join('\n')
+          : '';
 
       const rubricScoresPayload = Object.keys(rubricScores).map((critId, idx) => ({
         criterionId: critId,
@@ -210,7 +293,15 @@ export const GradingWorkflowPage = () => {
   return (
     <div style={{ width: '100%' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10 }}>
+        <h1
+          style={{
+            fontSize: '1.5rem',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+          }}
+        >
           <Award size={24} color="var(--primary-color, #4f46e5)" /> Instructor Grading Workflow
         </h1>
         <p style={{ color: 'var(--text-secondary, #6b7280)', fontSize: '0.9rem' }}>
@@ -218,40 +309,78 @@ export const GradingWorkflowPage = () => {
         </p>
       </div>
 
-      {error && <div style={{ marginBottom: 16 }}><Alert tone="error">{error}</Alert></div>}
-      {successMsg && <div style={{ marginBottom: 16 }}><Alert tone="success">{successMsg}</Alert></div>}
+      {error && (
+        <div style={{ marginBottom: 16 }}>
+          <Alert tone="error">{error}</Alert>
+        </div>
+      )}
+      {successMsg && (
+        <div style={{ marginBottom: 16 }}>
+          <Alert tone="success">{successMsg}</Alert>
+        </div>
+      )}
 
       {loading ? (
         <p>Loading grading queue...</p>
       ) : pending.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: 60, background: '#f9fafb', borderRadius: 8, border: '1px solid #e5e7eb' }}>
+        <div
+          style={{
+            textAlign: 'center',
+            padding: 60,
+            background: '#f9fafb',
+            borderRadius: 8,
+            border: '1px solid #e5e7eb',
+          }}
+        >
           <Check size={40} color="#10b981" style={{ marginBottom: 12 }} />
           <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>All Caught Up!</h3>
-          <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>There are no pending student submissions requiring manual grading.</p>
+          <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>
+            There are no pending student submissions requiring manual grading.
+          </p>
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 24 }}>
           {/* Submission List */}
-          <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, padding: 12 }}>
-            <h3 style={{ fontSize: '0.9rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', marginBottom: 12, paddingLeft: 8 }}>
+          <div
+            style={{
+              background: '#fff',
+              border: '1px solid #e5e7eb',
+              borderRadius: 8,
+              padding: 12,
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                color: '#6b7280',
+                textTransform: 'uppercase',
+                marginBottom: 12,
+                paddingLeft: 8,
+              }}
+            >
               Pending Queue ({pending.length})
             </h3>
             {pending.map((sub) => (
               <div
                 key={sub.id}
-                onClick={() => setSelectedSub(sub)}
+                onClick={() => selectSubmission(sub)}
                 style={{
                   padding: 12,
                   borderRadius: 6,
                   cursor: 'pointer',
                   marginBottom: 8,
                   background: selectedSub?.id === sub.id ? '#eef2ff' : '#f9fafb',
-                  borderLeft: selectedSub?.id === sub.id ? '4px solid #4f46e5' : '4px solid transparent',
+                  borderLeft:
+                    selectedSub?.id === sub.id ? '4px solid #4f46e5' : '4px solid transparent',
                 }}
               >
-                <div style={{ fontSize: '0.875rem', fontWeight: 600 }}>Question: {sub.questionId.slice(0, 8)}...</div>
+                <div style={{ fontSize: '0.875rem', fontWeight: 600 }}>
+                  Question: {sub.questionId.slice(0, 8)}...
+                </div>
                 <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: 4 }}>
-                  Language: {sub.language} | Submitted: {new Date(sub.submittedAt).toLocaleTimeString()}
+                  Language: {sub.language} | Submitted:{' '}
+                  {new Date(sub.submittedAt).toLocaleTimeString()}
                 </div>
               </div>
             ))}
@@ -259,13 +388,38 @@ export const GradingWorkflowPage = () => {
 
           {/* Submission Details & Grading Form */}
           {selectedSub && (
-            <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, padding: 24 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <div
+              style={{
+                background: '#fff',
+                border: '1px solid #e5e7eb',
+                borderRadius: 8,
+                padding: 24,
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 16,
+                }}
+              >
                 <div>
                   <h2 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Submission Code</h2>
-                  <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>Attempt ID: {selectedSub.attemptId}</span>
+                  <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>
+                    Attempt ID: {selectedSub.attemptId}
+                  </span>
                 </div>
-                <span style={{ background: '#dbeafe', color: '#1e40af', padding: '4px 10px', borderRadius: 12, fontSize: '0.8rem', fontWeight: 600 }}>
+                <span
+                  style={{
+                    background: '#dbeafe',
+                    color: '#1e40af',
+                    padding: '4px 10px',
+                    borderRadius: 12,
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                  }}
+                >
                   {selectedSub.language}
                 </span>
               </div>
@@ -310,7 +464,8 @@ export const GradingWorkflowPage = () => {
                     lineNumbersMinChars: 3,
                     scrollBeyondLastLine: false,
                     fontSize: 13,
-                    fontFamily: "'Cascadia Code', 'Fira Code', 'JetBrains Mono', Consolas, monospace",
+                    fontFamily:
+                      "'Cascadia Code', 'Fira Code', 'JetBrains Mono', Consolas, monospace",
                     wordWrap: 'on',
                     renderLineHighlight: 'all',
                     padding: { top: 12, bottom: 12 },
@@ -326,8 +481,23 @@ export const GradingWorkflowPage = () => {
               </div>
 
               {/* ── PR-Style Inline Code Annotations Panel ── */}
-              <div style={{ marginTop: 16, background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 16 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <div
+                style={{
+                  marginTop: 16,
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 8,
+                  padding: 16,
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: 12,
+                  }}
+                >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <MessageSquare size={16} color="#6366f1" />
                     <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#1e293b' }}>
@@ -341,15 +511,46 @@ export const GradingWorkflowPage = () => {
 
                 {/* Composer for Active Line */}
                 {activeLine && (
-                  <div style={{ background: '#fff', border: '1px solid #cbd5e1', borderRadius: 6, padding: 12, marginBottom: 14, boxShadow: '0 2px 4px rgba(0,0,0,0.04)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                      <span style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#4f46e5', fontWeight: 600, fontSize: '0.75rem', padding: '2px 8px', borderRadius: 4 }}>
+                  <div
+                    style={{
+                      background: '#fff',
+                      border: '1px solid #cbd5e1',
+                      borderRadius: 6,
+                      padding: 12,
+                      marginBottom: 14,
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: 8,
+                      }}
+                    >
+                      <span
+                        style={{
+                          background: 'rgba(99, 102, 241, 0.1)',
+                          color: '#4f46e5',
+                          fontWeight: 600,
+                          fontSize: '0.75rem',
+                          padding: '2px 8px',
+                          borderRadius: 4,
+                        }}
+                      >
                         Reviewing Line {activeLine}
                       </span>
                       <button
                         type="button"
                         onClick={() => setActiveLine(null)}
-                        style={{ border: 'none', background: 'transparent', color: '#94a3b8', cursor: 'pointer', fontSize: '0.8rem' }}
+                        style={{
+                          border: 'none',
+                          background: 'transparent',
+                          color: '#94a3b8',
+                          cursor: 'pointer',
+                          fontSize: '0.8rem',
+                        }}
                       >
                         Cancel
                       </button>
@@ -377,11 +578,27 @@ export const GradingWorkflowPage = () => {
 
                 {/* List of Posted Annotations */}
                 {annotations.length === 0 && !activeLine ? (
-                  <div style={{ textAlign: 'center', padding: '16px', color: '#94a3b8', fontSize: '0.825rem' }}>
-                    No inline annotations added yet. Click any line number in the editor above to leave line-by-line feedback.
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      padding: '16px',
+                      color: '#94a3b8',
+                      fontSize: '0.825rem',
+                    }}
+                  >
+                    No inline annotations added yet. Click any line number in the editor above to
+                    leave line-by-line feedback.
                   </div>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 220, overflowY: 'auto' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 8,
+                      maxHeight: 220,
+                      overflowY: 'auto',
+                    }}
+                  >
                     {annotations.map((ann) => (
                       <div
                         key={ann.id}
@@ -394,7 +611,14 @@ export const GradingWorkflowPage = () => {
                           fontSize: '0.85rem',
                         }}
                       >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: 4,
+                          }}
+                        >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                             <span
                               onClick={() => handleJumpToLine(ann.lineNumber)}
@@ -414,19 +638,31 @@ export const GradingWorkflowPage = () => {
                             >
                               Line {ann.lineNumber} <ExternalLink size={10} />
                             </span>
-                            <span style={{ fontWeight: 600, color: '#334155', fontSize: '0.8rem' }}>{ann.author}</span>
-                            <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>{ann.createdAt}</span>
+                            <span style={{ fontWeight: 600, color: '#334155', fontSize: '0.8rem' }}>
+                              {ann.author}
+                            </span>
+                            <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>
+                              {ann.createdAt}
+                            </span>
                           </div>
                           <button
                             type="button"
                             onClick={() => handleDeleteAnnotation(ann.id)}
-                            style={{ border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer', padding: 2 }}
+                            style={{
+                              border: 'none',
+                              background: 'transparent',
+                              color: '#ef4444',
+                              cursor: 'pointer',
+                              padding: 2,
+                            }}
                             title="Delete comment"
                           >
                             <Trash2 size={13} />
                           </button>
                         </div>
-                        <div style={{ color: '#1e293b', lineHeight: 1.4, paddingLeft: 2 }}>{ann.comment}</div>
+                        <div style={{ color: '#1e293b', lineHeight: 1.4, paddingLeft: 2 }}>
+                          {ann.comment}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -434,32 +670,114 @@ export const GradingWorkflowPage = () => {
               </div>
 
               {/* Grading Form */}
-              <form onSubmit={handleSubmitGrade} style={{ marginTop: 24, paddingTop: 24, borderTop: '1px solid #e5e7eb' }}>
-                <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: 16 }}>Evaluate Submission</h3>
+              <form
+                onSubmit={handleSubmitGrade}
+                style={{ marginTop: 24, paddingTop: 24, borderTop: '1px solid #e5e7eb' }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: 12,
+                    flexWrap: 'wrap',
+                    marginBottom: 16,
+                  }}
+                >
+                  <h3 style={{ fontSize: '1rem', fontWeight: 600, margin: 0 }}>
+                    Evaluate Submission
+                  </h3>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={handleAiSuggest}
+                    isLoading={aiLoading}
+                    disabled={aiLoading}
+                  >
+                    <Sparkles size={16} style={{ marginRight: 6 }} />
+                    {aiSuggestion?.status === 'SUGGESTED' ? 'Suggest again' : 'Suggest with AI'}
+                  </Button>
+                </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+                {aiLoading && (
+                  <p
+                    role="status"
+                    style={{
+                      fontSize: '0.85rem',
+                      color: 'var(--text-muted, #6b7280)',
+                      marginTop: 0,
+                    }}
+                  >
+                    Running the code against the test cases. This usually takes under a minute.
+                  </p>
+                )}
+                {aiError && (
+                  <div style={{ marginBottom: 16 }}>
+                    <Alert tone="error">{aiError}</Alert>
+                  </div>
+                )}
+                <AiSuggestionPanel suggestion={aiSuggestion} />
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: 16,
+                    marginBottom: 16,
+                  }}
+                >
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, marginBottom: 6 }}>Attach Rubric</label>
+                    <label
+                      style={{
+                        display: 'block',
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                        marginBottom: 6,
+                      }}
+                    >
+                      Attach Rubric
+                    </label>
                     <select
                       value={selectedRubricId}
                       onChange={(e) => handleSelectRubric(e.target.value)}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #ccc' }}
+                      style={{
+                        width: '100%',
+                        padding: '8px 12px',
+                        borderRadius: 6,
+                        border: '1px solid #ccc',
+                      }}
                     >
                       <option value="">No Rubric (Direct Score)</option>
                       {rubrics.map((r) => (
-                        <option key={r.id} value={r.id}>{r.title}</option>
+                        <option key={r.id} value={r.id}>
+                          {r.title}
+                        </option>
                       ))}
                     </select>
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, marginBottom: 6 }}>Submission Decision</label>
+                    <label
+                      style={{
+                        display: 'block',
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                        marginBottom: 6,
+                      }}
+                    >
+                      Submission Decision
+                    </label>
                     <select
                       value={status}
                       onChange={(e) => setStatus(e.target.value)}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #ccc' }}
+                      style={{
+                        width: '100%',
+                        padding: '8px 12px',
+                        borderRadius: 6,
+                        border: '1px solid #ccc',
+                      }}
                     >
-                      <option value="ACCEPTED">ACCEPTED (Full Marks)</option>
+                      <option value="ACCEPTED">ACCEPTED</option>
                       <option value="WRONG_ANSWER">WRONG_ANSWER</option>
                       <option value="PARTIAL_SUCCESS">PARTIAL_SUCCESS</option>
                       <option value="MANUALLY_GRADED">MANUALLY_GRADED</option>
@@ -469,30 +787,71 @@ export const GradingWorkflowPage = () => {
 
                 {/* Rubric Evaluation Form */}
                 {selectedRubricId && rubrics.find((r) => r.id === selectedRubricId)?.criteria && (
-                  <div style={{ background: '#f9fafb', padding: 16, borderRadius: 6, marginBottom: 16 }}>
-                    <h4 style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: 12 }}>Rubric Evaluation</h4>
-                    {rubrics.find((r) => r.id === selectedRubricId).criteria.map((c) => (
-                      <div key={c.id} style={{ marginBottom: 12, background: '#fff', padding: 12, borderRadius: 6, border: '1px solid #e5e7eb' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                          <span style={{ fontWeight: 600, fontSize: '0.875rem' }}>{c.criterionName}</span>
-                          <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>Max: {c.maxPoints} pts (Weight: x{c.weight})</span>
+                  <div
+                    style={{
+                      background: '#f9fafb',
+                      padding: 16,
+                      borderRadius: 6,
+                      marginBottom: 16,
+                    }}
+                  >
+                    <h4 style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: 12 }}>
+                      Rubric Evaluation
+                    </h4>
+                    {rubrics
+                      .find((r) => r.id === selectedRubricId)
+                      .criteria.map((c) => (
+                        <div
+                          key={c.id}
+                          style={{
+                            marginBottom: 12,
+                            background: '#fff',
+                            padding: 12,
+                            borderRadius: 6,
+                            border: '1px solid #e5e7eb',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              marginBottom: 4,
+                            }}
+                          >
+                            <span style={{ fontWeight: 600, fontSize: '0.875rem' }}>
+                              {c.criterionName}
+                            </span>
+                            <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>
+                              Max: {c.maxPoints} pts (Weight: x{c.weight})
+                            </span>
+                          </div>
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '120px 1fr',
+                              gap: 12,
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Input
+                              type="number"
+                              min={0}
+                              max={c.maxPoints}
+                              value={rubricScores[c.id]?.score ?? c.maxPoints}
+                              onChange={(e) =>
+                                handleRubricScoreChange(c.id, 'score', e.target.value)
+                              }
+                            />
+                            <Input
+                              placeholder="Feedback comment for this criterion..."
+                              value={rubricScores[c.id]?.feedback ?? ''}
+                              onChange={(e) =>
+                                handleRubricScoreChange(c.id, 'feedback', e.target.value)
+                              }
+                            />
+                          </div>
                         </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 12, alignItems: 'center' }}>
-                          <Input
-                            type="number"
-                            min={0}
-                            max={c.maxPoints}
-                            value={rubricScores[c.id]?.score ?? c.maxPoints}
-                            onChange={(e) => handleRubricScoreChange(c.id, 'score', e.target.value)}
-                          />
-                          <Input
-                            placeholder="Feedback comment for this criterion..."
-                            value={rubricScores[c.id]?.feedback ?? ''}
-                            onChange={(e) => handleRubricScoreChange(c.id, 'feedback', e.target.value)}
-                          />
-                        </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 )}
 

@@ -13,7 +13,9 @@
 
 @theme inline {
   /* ── Font ─────────────────────────────────────────── */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-sans:
+    'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
   --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, Menlo, monospace;
   --font-heading: var(--font-sans);
 
@@ -129,27 +131,54 @@
   --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 
   @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
   @keyframes scale-in {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
   @keyframes slide-up {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   @keyframes shimmer {
-    0% { background-position: -1000px 0; }
-    100% { background-position: 1000px 0; }
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
   }
   @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
   @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
   }
 }
 
@@ -258,7 +287,9 @@ html {
 
 body {
   margin: 0;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 a {
@@ -269,7 +300,10 @@ a:hover {
   text-decoration: underline;
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   font: inherit;
   color: inherit;
 }
@@ -289,20 +323,35 @@ img {
   scrollbar-color: var(--border) var(--background);
   scrollbar-width: thin;
 }
-*::-webkit-scrollbar { width: 8px; height: 8px; }
-*::-webkit-scrollbar-track { background: var(--background); }
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: var(--background);
+}
 *::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 999px;
 }
-*::-webkit-scrollbar-thumb:hover { background: var(--muted-foreground); }
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
 
 /* ── Animation Helpers ──────────────────────────────── */
 @keyframes fadeSlideIn {
-  to { opacity: 1; filter: blur(0); transform: translateY(0); }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
 }
 @keyframes slideRightIn {
-  to { opacity: 1; filter: blur(0); transform: translateX(0); }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0);
+  }
 }
 
 .animate-element,
@@ -313,26 +362,46 @@ img {
   opacity: 0;
 }
 .animate-element {
-  filter: blur(8px); transform: translateY(16px);
+  filter: blur(8px);
+  transform: translateY(16px);
   animation-name: fadeSlideIn;
 }
 .animate-slide-right {
-  filter: blur(8px); transform: translateX(28px);
+  filter: blur(8px);
+  transform: translateX(28px);
   animation-name: slideRightIn;
 }
 
-.animate-delay-100 { animation-delay: 100ms; }
-.animate-delay-200 { animation-delay: 200ms; }
-.animate-delay-300 { animation-delay: 300ms; }
-.animate-delay-400 { animation-delay: 400ms; }
-.animate-delay-500 { animation-delay: 500ms; }
-.animate-delay-600 { animation-delay: 600ms; }
-.animate-delay-700 { animation-delay: 700ms; }
-.animate-delay-800 { animation-delay: 800ms; }
+.animate-delay-100 {
+  animation-delay: 100ms;
+}
+.animate-delay-200 {
+  animation-delay: 200ms;
+}
+.animate-delay-300 {
+  animation-delay: 300ms;
+}
+.animate-delay-400 {
+  animation-delay: 400ms;
+}
+.animate-delay-500 {
+  animation-delay: 500ms;
+}
+.animate-delay-600 {
+  animation-delay: 600ms;
+}
+.animate-delay-700 {
+  animation-delay: 700ms;
+}
+.animate-delay-800 {
+  animation-delay: 800ms;
+}
 
 /* ── Reduced Motion ─────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -347,7 +416,9 @@ img {
   background-color: var(--card);
   box-shadow: var(--shadow-card);
   color: var(--card-foreground);
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .input-base {
@@ -358,9 +429,13 @@ img {
   padding: 0.5rem 0.875rem;
   font-size: 0.875rem;
   color: var(--foreground);
-  transition: border-color 200ms ease, box-shadow 200ms ease;
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
 }
-.input-base::placeholder { color: var(--muted-foreground); }
+.input-base::placeholder {
+  color: var(--muted-foreground);
+}
 .input-base:focus {
   border-color: var(--primary);
   outline: none;
@@ -387,12 +462,25 @@ img {
 }
 
 /* ── Accept Invitation responsive layout ────────────── */
-.accept-inv__left { display: none; }
-@media (min-width: 768px) { .accept-inv__left { display: flex; } }
+.accept-inv__left {
+  display: none;
+}
+@media (min-width: 768px) {
+  .accept-inv__left {
+    display: flex;
+  }
+}
 
 /* ── shadcn base layer ──────────────────────────────── */
 @layer base {
-  * { @apply border-border outline-ring/50; }
-  body { @apply bg-background text-foreground; }
-  button:not(:disabled), [role="button"]:not(:disabled) { cursor: pointer; }
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
 }

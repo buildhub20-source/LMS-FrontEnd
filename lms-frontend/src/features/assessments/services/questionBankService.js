@@ -1,6 +1,6 @@
 /**
  * Question Bank Service
- * 
+ *
  * Provides curated, industry-standard questions (Algorithms, Data Structures,
  * Web Dev, System Design, OOP) and allows instructors to save, search, filter,
  * and import questions across assessments.
@@ -39,7 +39,13 @@ Assume each input has exactly one solution, and you may not use the same element
       { inputData: '2 7 11 15\n9', expectedOutput: '0 1', sample: true, hidden: false, weight: 1 },
       { inputData: '3 2 4\n6', expectedOutput: '1 2', sample: true, hidden: false, weight: 1 },
       { inputData: '3 3\n6', expectedOutput: '0 1', sample: false, hidden: true, weight: 2 },
-      { inputData: '1 5 8 12 19 25\n27', expectedOutput: '2 4', sample: false, hidden: true, weight: 2 },
+      {
+        inputData: '1 5 8 12 19 25\n27',
+        expectedOutput: '2 4',
+        sample: false,
+        hidden: true,
+        weight: 2,
+      },
     ],
     options: [],
   },
@@ -61,7 +67,13 @@ Write a program that reads a line of text and prints \`true\` if it is a palindr
     outputFormat: 'Print "true" or "false".',
     constraints: '1 <= s.length <= 2 * 10^5\ns consists only of printable ASCII characters.',
     testCases: [
-      { inputData: 'A man, a plan, a canal: Panama', expectedOutput: 'true', sample: true, hidden: false, weight: 1 },
+      {
+        inputData: 'A man, a plan, a canal: Panama',
+        expectedOutput: 'true',
+        sample: true,
+        hidden: false,
+        weight: 1,
+      },
       { inputData: 'race a car', expectedOutput: 'false', sample: true, hidden: false, weight: 1 },
       { inputData: ' ', expectedOutput: 'true', sample: false, hidden: true, weight: 1 },
       { inputData: '0P', expectedOutput: 'false', sample: false, hidden: true, weight: 2 },
@@ -82,12 +94,25 @@ Write a program that reads a line of text and prints \`true\` if it is a palindr
     description: `Given a sequence of integers representing the nodes of a singly-linked list, reverse the list and print the reversed elements space-separated.`,
     inputFormat: 'Space-separated integers representing node values.',
     outputFormat: 'Space-separated integers in reversed order.',
-    constraints: 'The number of nodes in the list is in the range [0, 5000].\n-5000 <= Node.val <= 5000',
+    constraints:
+      'The number of nodes in the list is in the range [0, 5000].\n-5000 <= Node.val <= 5000',
     testCases: [
-      { inputData: '1 2 3 4 5', expectedOutput: '5 4 3 2 1', sample: true, hidden: false, weight: 1 },
+      {
+        inputData: '1 2 3 4 5',
+        expectedOutput: '5 4 3 2 1',
+        sample: true,
+        hidden: false,
+        weight: 1,
+      },
       { inputData: '1 2', expectedOutput: '2 1', sample: true, hidden: false, weight: 1 },
       { inputData: '42', expectedOutput: '42', sample: false, hidden: true, weight: 1 },
-      { inputData: '10 20 30 40 50 60', expectedOutput: '60 50 40 30 20 10', sample: false, hidden: true, weight: 2 },
+      {
+        inputData: '10 20 30 40 50 60',
+        expectedOutput: '60 50 40 30 20 10',
+        sample: false,
+        hidden: true,
+        weight: 2,
+      },
     ],
     options: [],
   },
@@ -138,10 +163,27 @@ Print \`true\` or \`false\`.`,
     constraints: '',
     testCases: [],
     options: [
-      { optionText: 'O(n)', isCorrect: false, explanation: 'Linear search is O(n), binary search halves search space each iteration.' },
-      { optionText: 'O(log n)', isCorrect: true, explanation: 'Binary search repeatedly divides the search space in half, resulting in logarithmic O(log n) time.' },
-      { optionText: 'O(n log n)', isCorrect: false, explanation: 'O(n log n) is typical for optimal comparison sorts like Merge Sort.' },
-      { optionText: 'O(1)', isCorrect: false, explanation: 'Hash table lookups can be O(1), but binary search is O(log n).' },
+      {
+        optionText: 'O(n)',
+        isCorrect: false,
+        explanation: 'Linear search is O(n), binary search halves search space each iteration.',
+      },
+      {
+        optionText: 'O(log n)',
+        isCorrect: true,
+        explanation:
+          'Binary search repeatedly divides the search space in half, resulting in logarithmic O(log n) time.',
+      },
+      {
+        optionText: 'O(n log n)',
+        isCorrect: false,
+        explanation: 'O(n log n) is typical for optimal comparison sorts like Merge Sort.',
+      },
+      {
+        optionText: 'O(1)',
+        isCorrect: false,
+        explanation: 'Hash table lookups can be O(1), but binary search is O(log n).',
+      },
     ],
   },
   {
@@ -161,10 +203,27 @@ Print \`true\` or \`false\`.`,
     constraints: '',
     testCases: [],
     options: [
-      { optionText: 'PUT is idempotent while POST is not idempotent.', isCorrect: true, explanation: 'Calling PUT multiple times with the same payload results in the exact same server state, whereas POST creates new side effects.' },
-      { optionText: 'POST is idempotent while PUT is not.', isCorrect: false, explanation: 'POST is non-idempotent by definition.' },
-      { optionText: 'Both PUT and POST are strictly idempotent.', isCorrect: false, explanation: 'POST is explicitly not idempotent.' },
-      { optionText: 'Neither PUT nor POST is idempotent.', isCorrect: false, explanation: 'PUT is guaranteed to be idempotent.' },
+      {
+        optionText: 'PUT is idempotent while POST is not idempotent.',
+        isCorrect: true,
+        explanation:
+          'Calling PUT multiple times with the same payload results in the exact same server state, whereas POST creates new side effects.',
+      },
+      {
+        optionText: 'POST is idempotent while PUT is not.',
+        isCorrect: false,
+        explanation: 'POST is non-idempotent by definition.',
+      },
+      {
+        optionText: 'Both PUT and POST are strictly idempotent.',
+        isCorrect: false,
+        explanation: 'POST is explicitly not idempotent.',
+      },
+      {
+        optionText: 'Neither PUT nor POST is idempotent.',
+        isCorrect: false,
+        explanation: 'PUT is guaranteed to be idempotent.',
+      },
     ],
   },
   {
@@ -184,10 +243,29 @@ Print \`true\` or \`false\`.`,
     constraints: '',
     testCases: [],
     options: [
-      { optionText: 'A subclass Square extending Rectangle throws an UnsupportedOperationException when setHeight is called separately from setWidth.', isCorrect: true, explanation: 'If a client expecting a Rectangle cannot safely substitute a Square without altering correctness, LSP is violated.' },
-      { optionText: 'A subclass overrides a parent method and returns a subtype of the parent return type (covariance).', isCorrect: false, explanation: 'Return type covariance is fully allowed and adheres to LSP.' },
-      { optionText: 'A class implements multiple interfaces with single responsibilities.', isCorrect: false, explanation: 'This describes the Interface Segregation Principle.' },
-      { optionText: 'A class depends upon abstractions rather than concrete classes.', isCorrect: false, explanation: 'This describes Dependency Inversion Principle.' },
+      {
+        optionText:
+          'A subclass Square extending Rectangle throws an UnsupportedOperationException when setHeight is called separately from setWidth.',
+        isCorrect: true,
+        explanation:
+          'If a client expecting a Rectangle cannot safely substitute a Square without altering correctness, LSP is violated.',
+      },
+      {
+        optionText:
+          'A subclass overrides a parent method and returns a subtype of the parent return type (covariance).',
+        isCorrect: false,
+        explanation: 'Return type covariance is fully allowed and adheres to LSP.',
+      },
+      {
+        optionText: 'A class implements multiple interfaces with single responsibilities.',
+        isCorrect: false,
+        explanation: 'This describes the Interface Segregation Principle.',
+      },
+      {
+        optionText: 'A class depends upon abstractions rather than concrete classes.',
+        isCorrect: false,
+        explanation: 'This describes Dependency Inversion Principle.',
+      },
     ],
   },
   {
@@ -254,10 +332,11 @@ export const questionBankService = {
     }
     if (search && search.trim()) {
       const q = search.trim().toLowerCase();
-      all = all.filter((item) =>
-        item.title.toLowerCase().includes(q) ||
-        item.description.toLowerCase().includes(q) ||
-        (item.tags && item.tags.some((t) => t.toLowerCase().includes(q)))
+      all = all.filter(
+        (item) =>
+          item.title.toLowerCase().includes(q) ||
+          item.description.toLowerCase().includes(q) ||
+          (item.tags && item.tags.some((t) => t.toLowerCase().includes(q))),
       );
     }
 
@@ -319,7 +398,10 @@ export const questionBankService = {
   /**
    * Export questions to JSON and trigger file download
    */
-  exportToJson: (questions, filename = `questions-export-${new Date().toISOString().slice(0, 10)}.json`) => {
+  exportToJson: (
+    questions,
+    filename = `questions-export-${new Date().toISOString().slice(0, 10)}.json`,
+  ) => {
     const jsonStr = JSON.stringify(questions, null, 2);
     const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
     downloadBlob(blob, filename);
@@ -328,11 +410,25 @@ export const questionBankService = {
   /**
    * Export questions to CSV and trigger file download
    */
-  exportToCsv: (questions, filename = `questions-export-${new Date().toISOString().slice(0, 10)}.csv`) => {
+  exportToCsv: (
+    questions,
+    filename = `questions-export-${new Date().toISOString().slice(0, 10)}.csv`,
+  ) => {
     const headers = [
-      'title', 'questionType', 'difficulty', 'marks', 'category', 'tags',
-      'timeLimitMs', 'memoryLimitMb', 'description', 'inputFormat', 'outputFormat',
-      'constraints', 'testCases', 'options'
+      'title',
+      'questionType',
+      'difficulty',
+      'marks',
+      'category',
+      'tags',
+      'timeLimitMs',
+      'memoryLimitMb',
+      'description',
+      'inputFormat',
+      'outputFormat',
+      'constraints',
+      'testCases',
+      'options',
     ];
 
     const escapeCsv = (val) => {
@@ -350,7 +446,7 @@ export const questionBankService = {
         escapeCsv(q.difficulty || 'MEDIUM'),
         escapeCsv(q.marks || 10),
         escapeCsv(q.category || 'algorithms'),
-        escapeCsv(Array.isArray(q.tags) ? q.tags.join(';') : (q.tags || '')),
+        escapeCsv(Array.isArray(q.tags) ? q.tags.join(';') : q.tags || ''),
         escapeCsv(q.timeLimitMs || 2000),
         escapeCsv(q.memoryLimitMb || 256),
         escapeCsv(q.description || ''),
@@ -374,43 +470,63 @@ export const questionBankService = {
   getSampleJsonTemplate: () => {
     return [
       {
-        title: "Two Sum Problem",
-        questionType: "CODING",
-        difficulty: "EASY",
+        title: 'Two Sum Problem',
+        questionType: 'CODING',
+        difficulty: 'EASY',
         marks: 10,
-        category: "algorithms",
-        tags: ["Arrays", "Hash Table"],
+        category: 'algorithms',
+        tags: ['Arrays', 'Hash Table'],
         timeLimitMs: 2000,
         memoryLimitMb: 256,
-        description: "Given an array of integers `nums` and integer `target`, return indices of two numbers adding to `target`.",
-        inputFormat: "First line: space-separated integers. Second line: integer target.",
-        outputFormat: "Two space-separated indices.",
-        constraints: "2 <= nums.length <= 10^4",
+        description:
+          'Given an array of integers `nums` and integer `target`, return indices of two numbers adding to `target`.',
+        inputFormat: 'First line: space-separated integers. Second line: integer target.',
+        outputFormat: 'Two space-separated indices.',
+        constraints: '2 <= nums.length <= 10^4',
         testCases: [
-          { inputData: "2 7 11 15\n9", expectedOutput: "0 1", sample: true, hidden: false, weight: 1 },
-          { inputData: "3 2 4\n6", expectedOutput: "1 2", sample: false, hidden: true, weight: 2 }
+          {
+            inputData: '2 7 11 15\n9',
+            expectedOutput: '0 1',
+            sample: true,
+            hidden: false,
+            weight: 1,
+          },
+          { inputData: '3 2 4\n6', expectedOutput: '1 2', sample: false, hidden: true, weight: 2 },
         ],
-        options: []
+        options: [],
       },
       {
-        title: "HTTP Status Codes - Resource Created",
-        questionType: "MULTIPLE_CHOICE",
-        difficulty: "EASY",
+        title: 'HTTP Status Codes - Resource Created',
+        questionType: 'MULTIPLE_CHOICE',
+        difficulty: 'EASY',
         marks: 5,
-        category: "web-dev",
-        tags: ["HTTP", "REST", "Networking"],
-        description: "Which HTTP status code signifies that a new resource has been successfully created?",
-        inputFormat: "",
-        outputFormat: "",
-        constraints: "",
+        category: 'web-dev',
+        tags: ['HTTP', 'REST', 'Networking'],
+        description:
+          'Which HTTP status code signifies that a new resource has been successfully created?',
+        inputFormat: '',
+        outputFormat: '',
+        constraints: '',
         testCases: [],
         options: [
-          { optionText: "200 OK", isCorrect: false, explanation: "Standard success response" },
-          { optionText: "201 Created", isCorrect: true, explanation: "Indicates resource creation success" },
-          { optionText: "204 No Content", isCorrect: false, explanation: "Action succeeded with no body" },
-          { optionText: "400 Bad Request", isCorrect: false, explanation: "Client-side error code" }
-        ]
-      }
+          { optionText: '200 OK', isCorrect: false, explanation: 'Standard success response' },
+          {
+            optionText: '201 Created',
+            isCorrect: true,
+            explanation: 'Indicates resource creation success',
+          },
+          {
+            optionText: '204 No Content',
+            isCorrect: false,
+            explanation: 'Action succeeded with no body',
+          },
+          {
+            optionText: '400 Bad Request',
+            isCorrect: false,
+            explanation: 'Client-side error code',
+          },
+        ],
+      },
     ];
   },
 
@@ -420,9 +536,20 @@ export const questionBankService = {
   getSampleCsvTemplate: () => {
     const sample = questionBankService.getSampleJsonTemplate();
     const headers = [
-      'title', 'questionType', 'difficulty', 'marks', 'category', 'tags',
-      'timeLimitMs', 'memoryLimitMb', 'description', 'inputFormat', 'outputFormat',
-      'constraints', 'testCases', 'options'
+      'title',
+      'questionType',
+      'difficulty',
+      'marks',
+      'category',
+      'tags',
+      'timeLimitMs',
+      'memoryLimitMb',
+      'description',
+      'inputFormat',
+      'outputFormat',
+      'constraints',
+      'testCases',
+      'options',
     ];
 
     const escapeCsv = (val) => {
@@ -434,22 +561,24 @@ export const questionBankService = {
 
     const rows = [headers.join(',')];
     for (const q of sample) {
-      rows.push([
-        escapeCsv(q.title),
-        escapeCsv(q.questionType),
-        escapeCsv(q.difficulty),
-        escapeCsv(q.marks),
-        escapeCsv(q.category),
-        escapeCsv(q.tags.join(';')),
-        escapeCsv(q.timeLimitMs),
-        escapeCsv(q.memoryLimitMb),
-        escapeCsv(q.description),
-        escapeCsv(q.inputFormat),
-        escapeCsv(q.outputFormat),
-        escapeCsv(q.constraints),
-        escapeCsv(q.testCases),
-        escapeCsv(q.options),
-      ].join(','));
+      rows.push(
+        [
+          escapeCsv(q.title),
+          escapeCsv(q.questionType),
+          escapeCsv(q.difficulty),
+          escapeCsv(q.marks),
+          escapeCsv(q.category),
+          escapeCsv(q.tags.join(';')),
+          escapeCsv(q.timeLimitMs),
+          escapeCsv(q.memoryLimitMb),
+          escapeCsv(q.description),
+          escapeCsv(q.inputFormat),
+          escapeCsv(q.outputFormat),
+          escapeCsv(q.constraints),
+          escapeCsv(q.testCases),
+          escapeCsv(q.options),
+        ].join(','),
+      );
     }
     return rows.join('\r\n');
   },
@@ -495,7 +624,7 @@ function parseJsonQuestions(content) {
   } catch (err) {
     return {
       questions: [],
-      errors: [{ index: 0, title: 'JSON Syntax', reason: 'Invalid JSON file: ' + err.message }]
+      errors: [{ index: 0, title: 'JSON Syntax', reason: 'Invalid JSON file: ' + err.message }],
     };
   }
 
@@ -504,7 +633,11 @@ function parseJsonQuestions(content) {
     if (validation.valid) {
       validQuestions.push(validation.question);
     } else {
-      errors.push({ index: idx + 1, title: item.title || `Item #${idx + 1}`, reason: validation.reason });
+      errors.push({
+        index: idx + 1,
+        title: item.title || `Item #${idx + 1}`,
+        reason: validation.reason,
+      });
     }
   });
 
@@ -520,11 +653,17 @@ function parseCsvQuestions(content) {
   if (lines.length < 2) {
     return {
       questions: [],
-      errors: [{ index: 0, title: 'CSV Structure', reason: 'CSV must contain a header row and at least one question row' }]
+      errors: [
+        {
+          index: 0,
+          title: 'CSV Structure',
+          reason: 'CSV must contain a header row and at least one question row',
+        },
+      ],
     };
   }
 
-  const headers = lines[0].map(h => h.trim());
+  const headers = lines[0].map((h) => h.trim());
   const headerMap = {};
   headers.forEach((h, i) => {
     headerMap[h.toLowerCase()] = i;
@@ -533,7 +672,9 @@ function parseCsvQuestions(content) {
   if (headerMap['title'] === undefined) {
     return {
       questions: [],
-      errors: [{ index: 0, title: 'CSV Headers', reason: 'Required header "title" is missing from CSV' }]
+      errors: [
+        { index: 0, title: 'CSV Headers', reason: 'Required header "title" is missing from CSV' },
+      ],
     };
   }
 
@@ -549,7 +690,9 @@ function parseCsvQuestions(content) {
     let tags = [];
     const rawTags = getCol('tags');
     if (rawTags) {
-      tags = rawTags.includes(';') ? rawTags.split(';').map(t => t.trim()) : rawTags.split(',').map(t => t.trim());
+      tags = rawTags.includes(';')
+        ? rawTags.split(';').map((t) => t.trim())
+        : rawTags.split(',').map((t) => t.trim());
     }
 
     let testCases = [];
@@ -657,14 +800,17 @@ function parseCsvLines(text) {
 }
 
 /** Validate single question object & normalize properties */
-function validateAndNormalizeQuestion(item, rowNum) {
+function validateAndNormalizeQuestion(item) {
   if (!item.title || !String(item.title).trim()) {
     return { valid: false, reason: 'Missing question title' };
   }
 
   const questionType = String(item.questionType || 'CODING').toUpperCase();
   if (questionType !== 'CODING' && questionType !== 'MULTIPLE_CHOICE') {
-    return { valid: false, reason: `Invalid questionType "${item.questionType}". Must be CODING or MULTIPLE_CHOICE.` };
+    return {
+      valid: false,
+      reason: `Invalid questionType "${item.questionType}". Must be CODING or MULTIPLE_CHOICE.`,
+    };
   }
 
   const difficulty = String(item.difficulty || 'MEDIUM').toUpperCase();
@@ -681,9 +827,14 @@ function validateAndNormalizeQuestion(item, rowNum) {
     if (!Array.isArray(item.options) || item.options.length < 2) {
       return { valid: false, reason: 'MULTIPLE_CHOICE question requires at least 2 options' };
     }
-    const hasCorrect = item.options.some(opt => opt.isCorrect === true || String(opt.isCorrect).toLowerCase() === 'true');
+    const hasCorrect = item.options.some(
+      (opt) => opt.isCorrect === true || String(opt.isCorrect).toLowerCase() === 'true',
+    );
     if (!hasCorrect) {
-      return { valid: false, reason: 'MULTIPLE_CHOICE question must have at least one correct option' };
+      return {
+        valid: false,
+        reason: 'MULTIPLE_CHOICE question must have at least one correct option',
+      };
     }
   }
 
@@ -700,18 +851,22 @@ function validateAndNormalizeQuestion(item, rowNum) {
     inputFormat: item.inputFormat || '',
     outputFormat: item.outputFormat || '',
     constraints: item.constraints || '',
-    testCases: Array.isArray(item.testCases) ? item.testCases.map(tc => ({
-      inputData: String(tc.inputData ?? ''),
-      expectedOutput: String(tc.expectedOutput ?? ''),
-      sample: Boolean(tc.sample),
-      hidden: Boolean(tc.hidden),
-      weight: parseInt(tc.weight, 10) || 1,
-    })) : [],
-    options: Array.isArray(item.options) ? item.options.map(opt => ({
-      optionText: String(opt.optionText ?? ''),
-      isCorrect: Boolean(opt.isCorrect),
-      explanation: String(opt.explanation ?? ''),
-    })) : [],
+    testCases: Array.isArray(item.testCases)
+      ? item.testCases.map((tc) => ({
+          inputData: String(tc.inputData ?? ''),
+          expectedOutput: String(tc.expectedOutput ?? ''),
+          sample: Boolean(tc.sample),
+          hidden: Boolean(tc.hidden),
+          weight: parseInt(tc.weight, 10) || 1,
+        }))
+      : [],
+    options: Array.isArray(item.options)
+      ? item.options.map((opt) => ({
+          optionText: String(opt.optionText ?? ''),
+          isCorrect: Boolean(opt.isCorrect),
+          explanation: String(opt.explanation ?? ''),
+        }))
+      : [],
   };
 
   return { valid: true, question: normalized };

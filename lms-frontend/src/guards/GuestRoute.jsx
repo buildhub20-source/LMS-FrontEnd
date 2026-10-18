@@ -1,6 +1,10 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { selectIsAuthenticated, selectUser, selectMustChangePassword } from '../features/auth/store/authSlice';
+import {
+  selectIsAuthenticated,
+  selectUser,
+  selectMustChangePassword,
+} from '../features/auth/store/authSlice';
 import { getDefaultRouteForRoles } from '../constants/roles';
 import { ROUTES } from '../constants/routes';
 import platformAuthStorage from '../features/platform/services/platformAuthStorage';

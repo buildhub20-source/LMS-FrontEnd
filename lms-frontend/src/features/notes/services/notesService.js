@@ -24,8 +24,7 @@ export const bookmarkService = {
   list: (params) => http.get(API_ENDPOINTS.studentBookmarks.base, { params }),
 
   /** Get bookmarks for a specific course. */
-  byCourse: (courseId) =>
-    http.get(API_ENDPOINTS.studentBookmarks.byCourse(courseId)),
+  byCourse: (courseId) => http.get(API_ENDPOINTS.studentBookmarks.byCourse(courseId)),
 
   /** Check if a specific lesson is bookmarked. */
   check: (courseId, lessonId) =>
@@ -35,8 +34,7 @@ export const bookmarkService = {
   toggle: (data) => http.post(API_ENDPOINTS.studentBookmarks.toggle, data),
 
   /** Delete a bookmark by ID. */
-  delete: (bookmarkId) =>
-    http.delete(API_ENDPOINTS.studentBookmarks.delete(bookmarkId)),
+  delete: (bookmarkId) => http.delete(API_ENDPOINTS.studentBookmarks.delete(bookmarkId)),
 };
 
 export default { notesService, bookmarkService };

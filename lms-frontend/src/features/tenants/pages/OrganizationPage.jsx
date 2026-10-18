@@ -1,45 +1,61 @@
 import { useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Building2, Globe, Mail, ShieldCheck, Settings, CreditCard,
-  Users, BookOpen, GraduationCap, HardDrive, Clock, ArrowUpRight,
-  ExternalLink, Sparkles, CheckCircle2, ChevronRight
+  Building2,
+  Globe,
+  Mail,
+  ShieldCheck,
+  Settings,
+  CreditCard,
+  Users,
+  BookOpen,
+  GraduationCap,
+  Clock,
+  ArrowUpRight,
+  ExternalLink,
+  Sparkles,
+  ChevronRight,
 } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
 import Button from '../../../components/common/Button';
 import Badge from '../../../components/common/Badge';
 import tenantService from '../services/tenantService';
+import analyticsService from '../../analytics/services/analyticsService';
 import { ROUTES } from '../../../constants/routes';
+import { QUERY_KEYS } from '../../../constants/appConstants';
+import { tenantSlugFromHostname } from '../../../utils/tenantHostname';
+
+const NOT_SET = 'Not set';
 
 export const OrganizationPage = () => {
   const navigate = useNavigate();
 
-  const { data: rawData } = useQuery({
+  const settings = useQuery({
     queryKey: ['tenant', 'current'],
-    queryFn: () => tenantService.getCurrent().catch(() => null),
+    queryFn: () => tenantService.getCurrent(),
+  });
+  const overview = useQuery({
+    queryKey: [...QUERY_KEYS.ANALYTICS, 'admin'],
+    queryFn: () => analyticsService.adminOverview(),
   });
 
-  const apiTenant = rawData?.data?.data ?? rawData?.data ?? rawData;
+  if (settings.isLoading) return <Spinner />;
 
-  // Fallback defaults for seamless rich UI experience
+  const apiOrg = settings.data ?? {};
+  const counts = overview.data ?? {};
+  const countOrDash = (value) =>
+    overview.isSuccess && Number.isFinite(Number(value)) ? Number(value).toLocaleString() : '—';
+
   const org = {
-    name: apiTenant?.name || 'Acme Learning Academy',
-    subdomain: apiTenant?.subdomain || 'acme-academy',
-    domain: apiTenant?.customDomain || 'learn.acme.edu',
-    contactEmail: apiTenant?.contactEmail || 'admin@acme-academy.com',
-    plan: apiTenant?.plan || 'Enterprise Pro',
-    status: apiTenant?.status || 'ACTIVE',
-    createdAt: apiTenant?.createdAt || '2025-01-15T08:00:00Z',
-    timezone: apiTenant?.timezone || 'UTC (GMT+0)',
-    totalStudents: apiTenant?.totalStudents || 1248,
-    totalInstructors: apiTenant?.totalInstructors || 42,
-    activeCourses: apiTenant?.activeCourses || 86,
-    storageUsedGb: apiTenant?.storageUsedGb || 148,
-    storageLimitGb: apiTenant?.storageLimitGb || 500,
+    name: apiOrg.name || 'Your organization',
+    domain: apiOrg.domain || tenantSlugFromHostname() || NOT_SET,
+    contactEmail: apiOrg.supportEmail || NOT_SET,
+    learners: countOrDash(counts.activeLearners),
+    instructors: countOrDash(counts.instructorCount),
+    publishedCourses: countOrDash(counts.publishedCourses),
+    members: countOrDash(counts.totalMembers),
   };
-
-  const storagePct = Math.round((org.storageUsedGb / org.storageLimitGb) * 100);
 
   return (
     <PageContainer
@@ -55,65 +71,95 @@ export const OrganizationPage = () => {
         </Button>
       }
     >
-      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
-        {/* ── Organization Hero Card ── */}
-        <div style={{
-          background: 'linear-gradient(135deg, #064e3b 0%, #047857 50%, #059669 100%)',
-          borderRadius: 20,
-          padding: '32px 36px',
-          color: '#ffffff',
-          boxShadow: '0 20px 40px rgba(5, 150, 105, 0.2)',
-          position: 'relative',
-          overflow: 'hidden',
+      <div
+        style={{
+          maxWidth: 1100,
+          margin: '0 auto',
           display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
+          flexDirection: 'column',
           gap: 24,
-        }}>
+        }}
+      >
+        {/* ── Organization Hero Card ── */}
+        <div
+          style={{
+            background: 'linear-gradient(135deg, #064e3b 0%, #047857 50%, #059669 100%)',
+            borderRadius: 20,
+            padding: '32px 36px',
+            color: '#ffffff',
+            boxShadow: '0 20px 40px rgba(5, 150, 105, 0.2)',
+            position: 'relative',
+            overflow: 'hidden',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 24,
+          }}
+        >
           {/* Decorative background glow */}
-          <div style={{
-            position: 'absolute', top: -50, right: -50, width: 220, height: 220,
-            borderRadius: '50%', background: 'rgba(255,255,255,0.06)', pointerEvents: 'none',
-          }} />
+          <div
+            style={{
+              position: 'absolute',
+              top: -50,
+              right: -50,
+              width: 220,
+              height: 220,
+              borderRadius: '50%',
+              background: 'rgba(255,255,255,0.06)',
+              pointerEvents: 'none',
+            }}
+          />
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20, position: 'relative', zIndex: 1 }}>
-            <div style={{
-              width: 68,
-              height: 68,
-              borderRadius: 16,
-              background: 'rgba(255,255,255,0.15)',
-              backdropFilter: 'blur(8px)',
-              border: '1.5px solid rgba(255,255,255,0.3)',
+          <div
+            style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
-            }}>
+              gap: 20,
+              position: 'relative',
+              zIndex: 1,
+            }}
+          >
+            <div
+              style={{
+                width: 68,
+                height: 68,
+                borderRadius: 16,
+                background: 'rgba(255,255,255,0.15)',
+                backdropFilter: 'blur(8px)',
+                border: '1.5px solid rgba(255,255,255,0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
+              }}
+            >
               <Building2 size={34} style={{ color: '#fbbf24' }} />
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, letterSpacing: '-0.02em', color: '#f0f9ff' }}>
+                <h1
+                  style={{
+                    margin: 0,
+                    fontSize: 24,
+                    fontWeight: 800,
+                    letterSpacing: '-0.02em',
+                    color: '#f0f9ff',
+                  }}
+                >
                   {org.name}
                 </h1>
-                <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  fontSize: 11,
-                  fontWeight: 700,
-                  background: 'rgba(34, 197, 94, 0.2)',
-                  border: '1px solid rgba(34, 197, 94, 0.4)',
-                  color: '#4ade80',
-                  padding: '3px 10px',
-                  borderRadius: 20,
-                  textTransform: 'uppercase',
-                }}>
-                  <CheckCircle2 size={12} /> {org.status}
-                </span>
               </div>
-              <p style={{ margin: '6px 0 0', fontSize: 13, opacity: 0.85, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <p
+                style={{
+                  margin: '6px 0 0',
+                  fontSize: 13,
+                  opacity: 0.85,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
                 <Globe size={13} /> {org.domain}
                 <span style={{ opacity: 0.5 }}>•</span>
                 <Mail size={13} /> {org.contactEmail}
@@ -141,140 +187,236 @@ export const OrganizationPage = () => {
               }}
             >
               <Sparkles size={15} style={{ color: '#fbbf24' }} />
-              {org.plan} Plan
+              View subscription
             </button>
           </div>
         </div>
 
         {/* ── Key Metrics Grid ── */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: 16,
-        }}>
-          {/* Learners Card */}
-          <div style={{
-            background: 'var(--bg-primary)',
-            border: '1px solid var(--border-color)',
-            borderRadius: 14,
-            padding: 20,
-            display: 'flex',
-            alignItems: 'center',
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
             gap: 16,
-            boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
-          }}>
-            <div style={{
-              width: 46, height: 46, borderRadius: 12,
-              background: 'var(--color-info-light, rgba(59,130,246,0.12))', color: 'var(--color-info, #3b82f6)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
+          }}
+        >
+          {/* Learners Card */}
+          <div
+            style={{
+              background: 'var(--bg-primary)',
+              border: '1px solid var(--border-color)',
+              borderRadius: 14,
+              padding: 20,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 16,
+              boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
+            }}
+          >
+            <div
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 12,
+                background: 'var(--color-info-light, rgba(59,130,246,0.12))',
+                color: 'var(--color-info, #3b82f6)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <GraduationCap size={22} />
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  color: 'var(--text-muted)',
+                }}
+              >
                 Active Learners
               </p>
-              <p style={{ margin: '2px 0 0', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
-                {org.totalStudents.toLocaleString()}
+              <p
+                style={{
+                  margin: '2px 0 0',
+                  fontSize: 20,
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                }}
+              >
+                {org.learners}
               </p>
             </div>
           </div>
 
           {/* Instructors Card */}
-          <div style={{
-            background: 'var(--bg-primary)',
-            border: '1px solid var(--border-color)',
-            borderRadius: 14,
-            padding: 20,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 16,
-            boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
-          }}>
-            <div style={{
-              width: 46, height: 46, borderRadius: 12,
-              background: 'rgba(16,185,129,0.12)', color: '#10b981',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
+          <div
+            style={{
+              background: 'var(--bg-primary)',
+              border: '1px solid var(--border-color)',
+              borderRadius: 14,
+              padding: 20,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 16,
+              boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
+            }}
+          >
+            <div
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 12,
+                background: 'rgba(16,185,129,0.12)',
+                color: '#10b981',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <Users size={22} />
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  color: 'var(--text-muted)',
+                }}
+              >
                 Instructors
               </p>
-              <p style={{ margin: '2px 0 0', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
-                {org.totalInstructors}
+              <p
+                style={{
+                  margin: '2px 0 0',
+                  fontSize: 20,
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                }}
+              >
+                {org.instructors}
               </p>
             </div>
           </div>
 
           {/* Published Courses */}
-          <div style={{
-            background: 'var(--bg-primary)',
-            border: '1px solid var(--border-color)',
-            borderRadius: 14,
-            padding: 20,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 16,
-            boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
-          }}>
-            <div style={{
-              width: 46, height: 46, borderRadius: 12,
-              background: 'rgba(245,158,11,0.12)', color: '#f59e0b',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
+          <div
+            style={{
+              background: 'var(--bg-primary)',
+              border: '1px solid var(--border-color)',
+              borderRadius: 14,
+              padding: 20,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 16,
+              boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
+            }}
+          >
+            <div
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 12,
+                background: 'rgba(245,158,11,0.12)',
+                color: '#f59e0b',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <BookOpen size={22} />
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-                Active Courses
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  color: 'var(--text-muted)',
+                }}
+              >
+                Published Courses
               </p>
-              <p style={{ margin: '2px 0 0', fontSize: 20, fontWeight: 800, color: 'var(--text-primary)' }}>
-                {org.activeCourses}
+              <p
+                style={{
+                  margin: '2px 0 0',
+                  fontSize: 20,
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                }}
+              >
+                {org.publishedCourses}
               </p>
             </div>
           </div>
 
-          {/* Cloud Storage Meter */}
-          <div style={{
-            background: 'var(--bg-primary)',
-            border: '1px solid var(--border-color)',
-            borderRadius: 14,
-            padding: 20,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            gap: 8,
-            boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <HardDrive size={16} style={{ color: '#0ea5e9' }} />
-                <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-                  Storage Usage
-                </span>
-              </div>
-              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
-                {org.storageUsedGb} / {org.storageLimitGb} GB
-              </span>
+          {/* Members */}
+          <div
+            style={{
+              background: 'var(--bg-primary)',
+              border: '1px solid var(--border-color)',
+              borderRadius: 14,
+              padding: 20,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 16,
+              boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
+            }}
+          >
+            <div
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 12,
+                background: 'rgba(14,165,233,0.12)',
+                color: '#0ea5e9',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Building2 size={22} />
             </div>
-            <div style={{ height: 6, background: 'var(--surface-medium)', borderRadius: 4, overflow: 'hidden' }}>
-              <div style={{
-                height: '100%', width: `${storagePct}%`,
-                background: 'linear-gradient(90deg, #0ea5e9, #3b82f6)',
-                borderRadius: 4,
-              }} />
+            <div>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  color: 'var(--text-muted)',
+                }}
+              >
+                Total Members
+              </p>
+              <p
+                style={{
+                  margin: '2px 0 0',
+                  fontSize: 20,
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                }}
+              >
+                {org.members}
+              </p>
             </div>
           </div>
         </div>
 
         {/* ── Quick Management Hub ── */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: 20,
-        }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: 20,
+          }}
+        >
           {/* Settings Card */}
           <div
             onClick={() => navigate(ROUTES.ORGANIZATION_SETTINGS)}
@@ -290,24 +432,48 @@ export const OrganizationPage = () => {
               justifyContent: 'space-between',
               gap: 16,
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = '';
+              e.currentTarget.style.boxShadow = '';
+            }}
           >
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-              <div style={{
-                width: 44, height: 44, borderRadius: 12,
-                background: 'var(--color-info-light, rgba(59,130,246,0.12))', color: 'var(--color-info, #3b82f6)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
+            <div
+              style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}
+            >
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 12,
+                  background: 'var(--color-info-light, rgba(59,130,246,0.12))',
+                  color: 'var(--color-info, #3b82f6)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
                 <Settings size={22} />
               </div>
               <ChevronRight size={18} style={{ color: 'var(--text-muted)' }} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+              <h3
+                style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}
+              >
                 Organization Settings
               </h3>
-              <p style={{ margin: '6px 0 0', fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              <p
+                style={{
+                  margin: '6px 0 0',
+                  fontSize: 13,
+                  color: 'var(--text-muted)',
+                  lineHeight: 1.5,
+                }}
+              >
                 Configure branding, custom domain, single sign-on (SSO), and email notifications.
               </p>
             </div>
@@ -328,24 +494,48 @@ export const OrganizationPage = () => {
               justifyContent: 'space-between',
               gap: 16,
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = '';
+              e.currentTarget.style.boxShadow = '';
+            }}
           >
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-              <div style={{
-                width: 44, height: 44, borderRadius: 12,
-                background: 'rgba(245,158,11,0.12)', color: '#f59e0b',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
+            <div
+              style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}
+            >
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 12,
+                  background: 'rgba(245,158,11,0.12)',
+                  color: '#f59e0b',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
                 <CreditCard size={22} />
               </div>
               <ChevronRight size={18} style={{ color: 'var(--text-muted)' }} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+              <h3
+                style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}
+              >
                 Subscription & Plans
               </h3>
-              <p style={{ margin: '6px 0 0', fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              <p
+                style={{
+                  margin: '6px 0 0',
+                  fontSize: 13,
+                  color: 'var(--text-muted)',
+                  lineHeight: 1.5,
+                }}
+              >
                 Manage your billing frequency, view invoices, and compare tier features.
               </p>
             </div>
@@ -366,24 +556,48 @@ export const OrganizationPage = () => {
               justifyContent: 'space-between',
               gap: 16,
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = '';
+              e.currentTarget.style.boxShadow = '';
+            }}
           >
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-              <div style={{
-                width: 44, height: 44, borderRadius: 12,
-                background: 'rgba(16,185,129,0.12)', color: '#10b981',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
+            <div
+              style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}
+            >
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 12,
+                  background: 'rgba(16,185,129,0.12)',
+                  color: '#10b981',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
                 <ShieldCheck size={22} />
               </div>
               <ChevronRight size={18} style={{ color: 'var(--text-muted)' }} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+              <h3
+                style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}
+              >
                 Roles & Access Control
               </h3>
-              <p style={{ margin: '6px 0 0', fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              <p
+                style={{
+                  margin: '6px 0 0',
+                  fontSize: 13,
+                  color: 'var(--text-muted)',
+                  lineHeight: 1.5,
+                }}
+              >
                 Fine-tune permissions for Instructors, Administrators, and Student roles.
               </p>
             </div>

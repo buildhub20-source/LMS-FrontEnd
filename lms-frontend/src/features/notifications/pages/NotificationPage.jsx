@@ -58,7 +58,11 @@ export const NotificationPage = () => {
   return (
     <PageContainer
       title="Notifications"
-      subtitle={unreadCount > 0 ? `You have ${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}` : 'All caught up!'}
+      subtitle={
+        unreadCount > 0
+          ? `You have ${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}`
+          : 'All caught up!'
+      }
       actions={
         <Button
           variant="secondary"

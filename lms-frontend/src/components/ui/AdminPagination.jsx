@@ -18,7 +18,15 @@ export const AdminPagination = ({ page, totalPages, totalElements, size, onPageC
   } else if (page < 4) {
     pageNumbers = [0, 1, 2, 3, 4, '...', totalPages - 1];
   } else if (page >= totalPages - 4) {
-    pageNumbers = [0, '...', totalPages - 5, totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1];
+    pageNumbers = [
+      0,
+      '...',
+      totalPages - 5,
+      totalPages - 4,
+      totalPages - 3,
+      totalPages - 2,
+      totalPages - 1,
+    ];
   } else {
     pageNumbers = [0, '...', page - 1, page, page + 1, '...', totalPages - 1];
   }
@@ -26,9 +34,18 @@ export const AdminPagination = ({ page, totalPages, totalElements, size, onPageC
   return (
     <div className="flex items-center justify-between gap-4 px-1">
       <p className="m-0 text-sm" style={{ color: 'var(--muted-foreground)' }}>
-        Showing <span className="font-semibold" style={{ color: 'var(--foreground)' }}>{startItem}</span>–
-        <span className="font-semibold" style={{ color: 'var(--foreground)' }}>{endItem}</span> of{' '}
-        <span className="font-semibold" style={{ color: 'var(--foreground)' }}>{totalElements}</span>
+        Showing{' '}
+        <span className="font-semibold" style={{ color: 'var(--foreground)' }}>
+          {startItem}
+        </span>
+        –
+        <span className="font-semibold" style={{ color: 'var(--foreground)' }}>
+          {endItem}
+        </span>{' '}
+        of{' '}
+        <span className="font-semibold" style={{ color: 'var(--foreground)' }}>
+          {totalElements}
+        </span>
       </p>
       <div className="flex items-center gap-2">
         <AdminButton
@@ -109,8 +126,18 @@ export const AdminErrorState = ({ message, onRetry }) => (
       className="mb-4 flex w-14 h-14 items-center justify-center rounded-2xl"
       style={{ background: 'var(--color-red-50)', color: 'var(--color-red-500)' }}
     >
-      <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+      <svg
+        className="w-7 h-7"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+        />
       </svg>
     </div>
     <h3 className="m-0 text-base font-semibold" style={{ color: 'var(--foreground)' }}>

@@ -2,9 +2,21 @@ import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
-  ShieldCheck, ArrowLeft, KeyRound, Edit, Trash2,
-  Calendar, CheckCircle, Search, Filter, ShieldAlert,
-  Users, Check, X, Copy, ChevronRight
+  ShieldCheck,
+  ArrowLeft,
+  KeyRound,
+  Edit,
+  Trash2,
+  Calendar,
+  CheckCircle,
+  Search,
+  Filter,
+  ShieldAlert,
+  Users,
+  Check,
+  X,
+  Copy,
+  ChevronRight,
 } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
@@ -32,7 +44,11 @@ export const RoleDetailsPage = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const { data: rawData, isLoading, error } = useQuery({
+  const {
+    data: rawData,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['role', roleId],
     queryFn: () => roleService.getById(roleId),
     enabled: Boolean(roleId),
@@ -43,17 +59,33 @@ export const RoleDetailsPage = () => {
 
   // Group permissions by category based on prefix or authority
   const permissions = role?.permissions || [];
-  
+
   const categorizedPerms = permissions.reduce((acc, p) => {
     let cat = 'Other';
     const auth = (p.authority || p.name || '').toUpperCase();
-    if (auth.startsWith('USER_') || auth.startsWith('ROLE') || auth.startsWith('PERMISSION') || auth.startsWith('INVITATION')) {
+    if (
+      auth.startsWith('USER_') ||
+      auth.startsWith('ROLE') ||
+      auth.startsWith('PERMISSION') ||
+      auth.startsWith('INVITATION')
+    ) {
       cat = 'People & Access';
-    } else if (auth.startsWith('COURSE_') || auth.startsWith('BATCH_') || auth.startsWith('STUDENT_') || auth.startsWith('INSTRUCTOR_') || auth.startsWith('ENROLLMENT')) {
+    } else if (
+      auth.startsWith('COURSE_') ||
+      auth.startsWith('BATCH_') ||
+      auth.startsWith('STUDENT_') ||
+      auth.startsWith('INSTRUCTOR_') ||
+      auth.startsWith('ENROLLMENT')
+    ) {
       cat = 'Learning & Courses';
     } else if (auth.startsWith('ASSESSMENT_')) {
       cat = 'Assessments & Grading';
-    } else if (auth.startsWith('AUDIT_') || auth.startsWith('ANALYTICS') || auth.startsWith('TENANT') || auth.startsWith('SUBSCRIPTION')) {
+    } else if (
+      auth.startsWith('AUDIT_') ||
+      auth.startsWith('ANALYTICS') ||
+      auth.startsWith('TENANT') ||
+      auth.startsWith('SUBSCRIPTION')
+    ) {
       cat = 'System & Operations';
     }
     if (!acc[cat]) acc[cat] = [];
@@ -71,16 +103,32 @@ export const RoleDetailsPage = () => {
 
     const auth = (p.authority || p.name || '').toUpperCase();
     if (selectedCategory === 'People & Access') {
-      return auth.startsWith('USER_') || auth.startsWith('ROLE') || auth.startsWith('PERMISSION') || auth.startsWith('INVITATION');
+      return (
+        auth.startsWith('USER_') ||
+        auth.startsWith('ROLE') ||
+        auth.startsWith('PERMISSION') ||
+        auth.startsWith('INVITATION')
+      );
     }
     if (selectedCategory === 'Learning & Courses') {
-      return auth.startsWith('COURSE_') || auth.startsWith('BATCH_') || auth.startsWith('STUDENT_') || auth.startsWith('INSTRUCTOR_') || auth.startsWith('ENROLLMENT');
+      return (
+        auth.startsWith('COURSE_') ||
+        auth.startsWith('BATCH_') ||
+        auth.startsWith('STUDENT_') ||
+        auth.startsWith('INSTRUCTOR_') ||
+        auth.startsWith('ENROLLMENT')
+      );
     }
     if (selectedCategory === 'Assessments & Grading') {
       return auth.startsWith('ASSESSMENT_');
     }
     if (selectedCategory === 'System & Operations') {
-      return auth.startsWith('AUDIT_') || auth.startsWith('ANALYTICS') || auth.startsWith('TENANT') || auth.startsWith('SUBSCRIPTION');
+      return (
+        auth.startsWith('AUDIT_') ||
+        auth.startsWith('ANALYTICS') ||
+        auth.startsWith('TENANT') ||
+        auth.startsWith('SUBSCRIPTION')
+      );
     }
     return true;
   });
@@ -104,14 +152,21 @@ export const RoleDetailsPage = () => {
   };
 
   if (isLoading) return <Spinner fullPage />;
-  if (error) return (
-    <PageContainer title="Role Details">
-      <Alert tone="error">{error?.response?.data?.message || 'Failed to load role details.'}</Alert>
-      <Button variant="secondary" onClick={() => navigate(ROUTES.ROLES)} style={{ marginTop: 16 }}>
-        Back to Roles
-      </Button>
-    </PageContainer>
-  );
+  if (error)
+    return (
+      <PageContainer title="Role Details">
+        <Alert tone="error">
+          {error?.response?.data?.message || 'Failed to load role details.'}
+        </Alert>
+        <Button
+          variant="secondary"
+          onClick={() => navigate(ROUTES.ROLES)}
+          style={{ marginTop: 16 }}
+        >
+          Back to Roles
+        </Button>
+      </PageContainer>
+    );
 
   return (
     <PageContainer
@@ -138,9 +193,25 @@ export const RoleDetailsPage = () => {
         </div>
       }
     >
-      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div
+        style={{
+          maxWidth: 1100,
+          margin: '0 auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 24,
+        }}
+      >
         {/* Breadcrumbs */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-muted)' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            fontSize: 13,
+            color: 'var(--text-muted)',
+          }}
+        >
           <Link to={ROUTES.ROLES} style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>
             Roles & Permissions
           </Link>
@@ -149,42 +220,55 @@ export const RoleDetailsPage = () => {
         </div>
 
         {/* Role Overview Card */}
-        <div style={{
-          background: 'var(--bg-primary)',
-          border: '1px solid var(--border-color)',
-          borderRadius: 16,
-          padding: '24px 28px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          flexWrap: 'wrap',
-          gap: 20,
-          boxShadow: '0 4px 20px -2px rgba(0,0,0,0.05)',
-        }}>
+        <div
+          style={{
+            background: 'var(--bg-primary)',
+            border: '1px solid var(--border-color)',
+            borderRadius: 16,
+            padding: '24px 28px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            flexWrap: 'wrap',
+            gap: 20,
+            boxShadow: '0 4px 20px -2px rgba(0,0,0,0.05)',
+          }}
+        >
           <div style={{ display: 'flex', gap: 18, alignItems: 'center' }}>
-            <div style={{
-              width: 56,
-              height: 56,
-              borderRadius: 14,
-              background: isSystemRole ? 'rgba(99,102,241,0.12)' : 'rgba(16,185,129,0.12)',
-              color: isSystemRole ? '#6366f1' : '#10b981',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}>
+            <div
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 14,
+                background: isSystemRole ? 'rgba(99,102,241,0.12)' : 'rgba(16,185,129,0.12)',
+                color: isSystemRole ? '#6366f1' : '#10b981',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
               <ShieldCheck size={28} />
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }}>
+                <h1
+                  style={{ margin: 0, fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }}
+                >
                   {role?.name}
                 </h1>
                 <Badge tone={isSystemRole ? 'primary' : 'success'}>
                   {isSystemRole ? 'System Default' : 'Custom Role'}
                 </Badge>
               </div>
-              <p style={{ margin: '6px 0 0', fontSize: 14, color: 'var(--text-muted)', maxWidth: 650 }}>
+              <p
+                style={{
+                  margin: '6px 0 0',
+                  fontSize: 14,
+                  color: 'var(--text-muted)',
+                  maxWidth: 650,
+                }}
+              >
                 {role?.description || 'No description provided for this role.'}
               </p>
             </div>
@@ -192,32 +276,66 @@ export const RoleDetailsPage = () => {
 
           {/* Quick Metrics */}
           <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-            <div style={{
-              background: 'var(--surface-medium)',
-              padding: '10px 18px',
-              borderRadius: 10,
-              border: '1px solid var(--border-color)',
-              minWidth: 120,
-            }}>
-              <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
+            <div
+              style={{
+                background: 'var(--surface-medium)',
+                padding: '10px 18px',
+                borderRadius: 10,
+                border: '1px solid var(--border-color)',
+                minWidth: 120,
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  color: 'var(--text-muted)',
+                  letterSpacing: '0.05em',
+                }}
+              >
                 Permissions
               </span>
-              <p style={{ margin: '2px 0 0', fontSize: 20, fontWeight: 800, color: 'var(--primary)' }}>
+              <p
+                style={{
+                  margin: '2px 0 0',
+                  fontSize: 20,
+                  fontWeight: 800,
+                  color: 'var(--primary)',
+                }}
+              >
                 {permissions.length}
               </p>
             </div>
 
-            <div style={{
-              background: 'var(--surface-medium)',
-              padding: '10px 18px',
-              borderRadius: 10,
-              border: '1px solid var(--border-color)',
-              minWidth: 120,
-            }}>
-              <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
+            <div
+              style={{
+                background: 'var(--surface-medium)',
+                padding: '10px 18px',
+                borderRadius: 10,
+                border: '1px solid var(--border-color)',
+                minWidth: 120,
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  color: 'var(--text-muted)',
+                  letterSpacing: '0.05em',
+                }}
+              >
                 Access Level
               </span>
-              <p style={{ margin: '2px 0 0', fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
+              <p
+                style={{
+                  margin: '2px 0 0',
+                  fontSize: 15,
+                  fontWeight: 700,
+                  color: 'var(--text-primary)',
+                }}
+              >
                 {isSystemRole ? 'Built-in' : 'Configurable'}
               </p>
             </div>
@@ -225,23 +343,37 @@ export const RoleDetailsPage = () => {
         </div>
 
         {/* Permissions Section */}
-        <div style={{
-          background: 'var(--bg-primary)',
-          border: '1px solid var(--border-color)',
-          borderRadius: 16,
-          padding: 24,
-          boxShadow: '0 4px 20px -2px rgba(0,0,0,0.05)',
-        }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: 16,
-            marginBottom: 20,
-          }}>
+        <div
+          style={{
+            background: 'var(--bg-primary)',
+            border: '1px solid var(--border-color)',
+            borderRadius: 16,
+            padding: 24,
+            boxShadow: '0 4px 20px -2px rgba(0,0,0,0.05)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 16,
+              marginBottom: 20,
+            }}
+          >
             <div>
-              <h2 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: 17,
+                  fontWeight: 700,
+                  color: 'var(--text-primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
                 <KeyRound size={18} style={{ color: 'var(--primary)' }} />
                 Granted Permissions ({permissions.length})
               </h2>
@@ -252,7 +384,16 @@ export const RoleDetailsPage = () => {
 
             {/* Search Input */}
             <div style={{ position: 'relative', width: 280 }}>
-              <Search size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <Search
+                size={15}
+                style={{
+                  position: 'absolute',
+                  left: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'var(--text-muted)',
+                }}
+              />
               <input
                 type="text"
                 placeholder="Search permissions…"
@@ -292,29 +433,36 @@ export const RoleDetailsPage = () => {
                   transition: 'all 0.15s ease',
                 }}
               >
-                {cat} {cat !== 'ALL' && categorizedPerms[cat] ? `(${categorizedPerms[cat].length})` : `(${permissions.length})`}
+                {cat}{' '}
+                {cat !== 'ALL' && categorizedPerms[cat]
+                  ? `(${categorizedPerms[cat].length})`
+                  : `(${permissions.length})`}
               </button>
             ))}
           </div>
 
           {/* Permissions Grid */}
           {filteredPerms.length === 0 ? (
-            <div style={{
-              padding: '36px 16px',
-              textAlign: 'center',
-              color: 'var(--text-muted)',
-              fontSize: 14,
-              border: '1px dashed var(--border-color)',
-              borderRadius: 12,
-            }}>
+            <div
+              style={{
+                padding: '36px 16px',
+                textAlign: 'center',
+                color: 'var(--text-muted)',
+                fontSize: 14,
+                border: '1px dashed var(--border-color)',
+                borderRadius: 12,
+              }}
+            >
               No permissions found matching &quot;{permSearch}&quot;
             </div>
           ) : (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-              gap: 12,
-            }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                gap: 12,
+              }}
+            >
               {filteredPerms.map((perm) => (
                 <div
                   key={perm.id || perm.authority || perm.name}
@@ -328,26 +476,49 @@ export const RoleDetailsPage = () => {
                     gap: 6,
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'monospace' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: 8,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: 13,
+                        fontWeight: 700,
+                        color: 'var(--text-primary)',
+                        fontFamily: 'monospace',
+                      }}
+                    >
                       {perm.authority || perm.name}
                     </span>
-                    <span style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 4,
-                      fontSize: 11,
-                      fontWeight: 600,
-                      color: 'var(--color-success, #22c55e)',
-                      background: 'var(--color-success-light, rgba(34,197,94,0.1))',
-                      padding: '2px 8px',
-                      borderRadius: 12,
-                    }}>
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 4,
+                        fontSize: 11,
+                        fontWeight: 600,
+                        color: 'var(--color-success, #22c55e)',
+                        background: 'var(--color-success-light, rgba(34,197,94,0.1))',
+                        padding: '2px 8px',
+                        borderRadius: 12,
+                      }}
+                    >
                       <Check size={12} /> Active
                     </span>
                   </div>
                   {perm.description && (
-                    <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 12,
+                        color: 'var(--text-muted)',
+                        lineHeight: 1.4,
+                      }}
+                    >
                       {perm.description}
                     </p>
                   )}
