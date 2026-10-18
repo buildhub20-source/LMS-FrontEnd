@@ -268,7 +268,7 @@ export const AdminGamificationPage = () => {
                 : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
             }`}
           >
-            <Shield className="h-3.5 w-3.5 text-emerald-500" />
+            <Shield className="h-3.5 w-3.5 text-brand-gold" />
             Levels
           </button>
           <button
@@ -357,7 +357,7 @@ export const AdminGamificationPage = () => {
                             <button
                               type="button"
                               onClick={() => handleSaveRule(rule.id, rule.active)}
-                              className="rounded-md bg-emerald-600 p-1 text-white hover:bg-emerald-700"
+                              className="rounded-md bg-primary p-1 text-primary-foreground hover:bg-primary/90"
                             >
                               <Check className="h-4 w-4" />
                             </button>

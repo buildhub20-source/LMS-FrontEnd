@@ -40,7 +40,7 @@ export const LiveAttendanceTable = ({ attendanceList = [], isLoading }) => {
         </div>
 
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center gap-3">
-          <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400">
+          <div className="p-3 rounded-lg bg-secondary text-foreground dark:bg-brand-yellow/10 dark:text-brand-yellow">
             <CheckCircle2 className="w-5 h-5" />
           </div>
           <div>

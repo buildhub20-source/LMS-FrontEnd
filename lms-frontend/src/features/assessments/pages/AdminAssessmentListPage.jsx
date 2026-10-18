@@ -1201,7 +1201,7 @@ export const AdminAssessmentListPage = () => {
                 transition: 'border-color 0.2s, background 0.2s',
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = 'var(--primary, #22c55e)';
+                e.target.style.borderColor = 'var(--primary, #121212)';
                 e.target.style.background = 'var(--card, #ffffff)';
               }}
               onBlur={(e) => {

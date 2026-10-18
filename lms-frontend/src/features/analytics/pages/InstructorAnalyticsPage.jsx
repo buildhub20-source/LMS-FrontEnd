@@ -298,7 +298,7 @@ export const InstructorAnalyticsPage = () => {
                   fontSize: 12,
                   fontWeight: 700,
                   textDecoration: 'none',
-                  boxShadow: '0 2px 10px rgba(34, 197, 94, 0.25)',
+                  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.12)',
                   transition: 'all 0.15s',
                 }}
               >
@@ -840,10 +840,12 @@ export const InstructorAnalyticsPage = () => {
                             maxWidth: 24,
                             minWidth: 10,
                             height: `${heightPct}%`,
-                            background: isHovered ? 'var(--primary)' : 'rgba(34, 197, 94, 0.5)',
+                            background: isHovered
+                              ? 'var(--primary)'
+                              : 'oklch(from var(--primary) l c h / 0.45)',
                             borderRadius: '6px 6px 0 0',
                             transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                            boxShadow: isHovered ? '0 0 12px rgba(34, 197, 94, 0.5)' : 'none',
+                            boxShadow: 'none',
                           }}
                         />
 

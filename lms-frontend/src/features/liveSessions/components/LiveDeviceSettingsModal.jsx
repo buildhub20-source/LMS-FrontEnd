@@ -132,7 +132,7 @@ export const LiveDeviceSettingsModal = ({ isOpen, onClose }) => {
           {/* Microphone Selector */}
           <div>
             <label className="font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
-              <Mic className="w-4 h-4 text-emerald-400" />
+              <Mic className="w-4 h-4 text-brand-yellow" />
               <span>Microphone</span>
             </label>
             <select
@@ -153,7 +153,7 @@ export const LiveDeviceSettingsModal = ({ isOpen, onClose }) => {
               <span className="text-[10px] text-slate-400">Input Level:</span>
               <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700/60">
                 <div
-                  className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-indigo-500 transition-all duration-75 rounded-full"
+                  className="h-full bg-brand-yellow transition-all duration-75 rounded-full"
                   style={{ width: `${Math.max(5, audioLevel)}%` }}
                 />
               </div>

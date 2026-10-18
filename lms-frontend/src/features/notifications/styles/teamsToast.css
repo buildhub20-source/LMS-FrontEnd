@@ -53,7 +53,7 @@
 .teams-toast-card__top-bar {
   height: 3px;
   width: 100%;
-  background: linear-gradient(90deg, var(--primary, #22c55e), var(--ring, #4ade80));
+  background: linear-gradient(90deg, var(--primary, #121212), var(--ring, #121212));
 }
 
 /* Header with Teams Logo / Category & Close Button */
@@ -75,7 +75,7 @@
   width: 18px;
   height: 18px;
   border-radius: 4px;
-  background: var(--primary, #22c55e);
+  background: var(--primary, #121212);
   color: var(--primary-foreground, #ffffff);
   display: flex;
   align-items: center;
@@ -86,7 +86,7 @@
 .teams-toast-header__title {
   font-size: 11.5px;
   font-weight: 600;
-  color: var(--primary, #22c55e);
+  color: var(--primary, #121212);
   letter-spacing: 0.2px;
 }
 
@@ -137,7 +137,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary, #22c55e), var(--ring, #4ade80));
+  background: linear-gradient(135deg, var(--primary, #121212), var(--ring, #121212));
   color: var(--primary-foreground, #ffffff);
   display: flex;
   align-items: center;

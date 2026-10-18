@@ -418,7 +418,7 @@ function HeroSpotlightCard({ course, onContinue }) {
             {course.durationMinutes ? `${course.durationMinutes} min` : 'Self-paced'}
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Layers size={14} className="text-emerald-500" />
+            <Layers size={14} className="text-brand-gold" />
             {course.modulesCount ? `${course.modulesCount} Modules` : 'Full Curriculum'}
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#f59e0b' }}>
@@ -1724,7 +1724,7 @@ export const MyCoursesPage = () => {
               style={{
                 fontSize: 12,
                 fontWeight: 700,
-                color: 'var(--color-primary, #16a34a)',
+                color: 'var(--color-primary, #121212)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.8px',
               }}
@@ -2051,7 +2051,7 @@ export const MyCoursesPage = () => {
                           background: cat === categoryFilter ? 'var(--background)' : 'transparent',
                           color:
                             cat === categoryFilter
-                              ? 'var(--color-primary, #16a34a)'
+                              ? 'var(--color-primary, #121212)'
                               : 'var(--text-primary)',
                           fontWeight: cat === categoryFilter ? 700 : 500,
                         }}

@@ -1,5 +1,6 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import appConfig from '../config/appConfig';
+import { GradusMindLogo } from '@/components/brand/GradusMindLogo';
 import { ROUTES } from '../constants/routes';
 import ThemeSlider from '../components/common/ThemeSlider';
 
@@ -19,7 +20,7 @@ export const AuthLayout = () => {
     <div
       className="relative min-h-screen"
       style={{
-        background: isFullScreen ? '#0f1117' : 'var(--background, #0f1117)',
+        background: isFullScreen ? '#0b0c0d' : 'var(--background, #0b0c0d)',
       }}
     >
       {/* Decorative floating circles (only on standard non-fullscreen auth cards) */}
@@ -27,7 +28,7 @@ export const AuthLayout = () => {
         <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
           <div
             className="absolute w-32 h-32 rounded-full opacity-30"
-            style={{ top: '8%', left: '5%', background: '#bbf7d0' }}
+            style={{ top: '8%', left: '5%', background: '#f6e27a' }}
           />
           <div
             className="absolute w-20 h-20 rounded-full opacity-25"
@@ -55,15 +56,15 @@ export const AuthLayout = () => {
             style={{ top: '5%', right: '8%', width: 120, height: 120 }}
             viewBox="0 0 100 100"
           >
-            <ellipse cx="50" cy="50" rx="20" ry="45" fill="#86efac" transform="rotate(-30 50 50)" />
-            <ellipse cx="60" cy="40" rx="15" ry="35" fill="#a7f3d0" transform="rotate(15 60 40)" />
+            <ellipse cx="50" cy="50" rx="20" ry="45" fill="#f6d200" transform="rotate(-30 50 50)" />
+            <ellipse cx="60" cy="40" rx="15" ry="35" fill="#c9973b" transform="rotate(15 60 40)" />
           </svg>
           <svg
             className="absolute opacity-15"
             style={{ bottom: '8%', left: '5%', width: 80, height: 80 }}
             viewBox="0 0 100 100"
           >
-            <ellipse cx="50" cy="50" rx="18" ry="40" fill="#86efac" transform="rotate(20 50 50)" />
+            <ellipse cx="50" cy="50" rx="18" ry="40" fill="#f6d200" transform="rotate(20 50 50)" />
           </svg>
         </div>
       )}
@@ -86,17 +87,11 @@ export const AuthLayout = () => {
             }}
           >
             <div className="flex items-center gap-3 mb-6">
-              {/* Graduation cap icon */}
               <div
                 className="w-10 h-10 rounded-xl flex items-center justify-center"
-                style={{ background: 'var(--accent)' }}
+                style={{ background: 'var(--brand-tile-bg)', color: 'var(--brand-tile-fg)' }}
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M21.5034 4.14819L12.5034 9.14819C12.193 9.32074 11.807 9.32074 11.4966 9.14819L2.49658 4.14819C2.17937 3.97193 1.77665 4.16853 1.72758 4.53232L1.03784 9.64687C1.01258 9.83424 1.08272 10.0215 1.22271 10.1475L11.6669 19.5475C11.854 19.7159 12.146 19.7159 12.3331 19.5475L22.7773 10.1475C22.9173 10.0215 22.9874 9.83424 22.9622 9.64687L22.2724 4.53232C22.2234 4.16853 21.8206 3.97193 21.5034 4.14819Z"
-                    fill="var(--primary)"
-                  />
-                </svg>
+                <GradusMindLogo size={26} />
               </div>
               <h2 className="text-xl font-bold" style={{ color: 'var(--foreground)', margin: 0 }}>
                 {appConfig.name}

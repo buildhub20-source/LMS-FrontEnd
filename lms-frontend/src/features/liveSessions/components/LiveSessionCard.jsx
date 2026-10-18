@@ -125,7 +125,7 @@ export const LiveSessionCard = ({
               href={session.recordingUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--link)] hover:underline"
             >
               <Film className="w-3.5 h-3.5" />
               Watch Recording
@@ -165,7 +165,7 @@ export const LiveSessionCard = ({
                 size="sm"
                 onClick={() => onStart(session.id)}
                 disabled={isStarting}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs"
               >
                 <Play className="w-3.5 h-3.5 mr-1.5" />
                 Start Class Now

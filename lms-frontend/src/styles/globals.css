@@ -76,6 +76,12 @@
   --color-green-600: #16a34a;
   --color-green-700: #15803d;
 
+  --color-brand-yellow: #f6d200;
+  --color-brand-yellow-hover: #ffe03a;
+  --color-brand-ink: #121212;
+  --color-brand-paper: #f3f1ea;
+  --color-brand-gold: #c9973b;
+
   /* ── shadcn/ui Token Mapping ──────────────────────── */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -183,83 +189,100 @@
 }
 
 /* ============================================================
-   Light Theme (Default) — Soft Pastel / Macaron
+   Light Theme (Default) — GradusMind "editorial"
+   Warm paper canvas, ink actions. Brand yellow is reserved for
+   "you are here" (the selected nav item) and never carries text
+   on a light surface, where it would fail contrast.
    ============================================================ */
 :root {
-  --background: #f5f7fa;
-  --foreground: #1a1a2e;
-  --card: #ffffff;
-  --card-foreground: #1a1a2e;
-  --popover: #ffffff;
-  --popover-foreground: #1a1a2e;
-  --primary: #22c55e;
+  --brand-yellow: #f6d200;
+  --brand-ink: #121212;
+  --brand-paper: #f3f1ea;
+  --brand-gold: #c9973b;
+
+  --background: #f3f1ea;
+  --foreground: #121212;
+  --card: #fffdf7;
+  --card-foreground: #121212;
+  --popover: #fffdf7;
+  --popover-foreground: #121212;
+  --primary: #121212;
   --primary-foreground: #ffffff;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #1a1a2e;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #f0fdf4;
-  --accent-foreground: #1a1a2e;
-  --destructive: #ef4444;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #22c55e;
-  --chart-1: #22c55e;
-  --chart-2: #3b82f6;
-  --chart-3: #f59e0b;
+  --secondary: #ebe8de;
+  --secondary-foreground: #121212;
+  --muted: #ebe8de;
+  --muted-foreground: #5f5e5a;
+  --accent: #ebe8de;
+  --accent-foreground: #121212;
+  --destructive: #dc2626;
+  --border: #e2ded2;
+  --input: #d6d1c3;
+  --ring: #121212;
+  --link: #7a5c00;
+  --chart-1: #121212;
+  --chart-2: #c9973b;
+  --chart-3: #3b82f6;
   --chart-4: #ec4899;
   --chart-5: #8b5cf6;
   --radius: 0.75rem;
-  --sidebar: #2d2d3f;
-  --sidebar-foreground: #e0e0f0;
-  --sidebar-primary: #22c55e;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #3d3d52;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #3d3d52;
-  --sidebar-ring: #22c55e;
-  --skeleton-bg: #e2e8f0;
-  --skeleton-subtle: #f1f5f9;
+  --sidebar: #f3f1ea;
+  --sidebar-foreground: #3a3936;
+  --sidebar-primary: #121212;
+  --sidebar-primary-foreground: #f6d200;
+  --sidebar-accent: #e8e4d8;
+  --sidebar-accent-foreground: #121212;
+  --sidebar-border: #e2ded2;
+  --sidebar-ring: #121212;
+  --brand-tile-bg: #121212;
+  --brand-tile-fg: #f3f1ea;
+  --brand-wordmark-accent: #9a7124;
+  --skeleton-bg: #e2ded2;
+  --skeleton-subtle: #ebe8de;
 }
 
 /* ============================================================
-   Dark Theme
+   Dark Theme — GradusMind "poster"
+   Near-black wall, yellow actions with ink text.
    ============================================================ */
 .dark,
 [data-theme='dark'] {
-  --background: #0f1117;
-  --foreground: #f0f0f5;
-  --card: #1c1e2e;
-  --card-foreground: #f0f0f5;
-  --popover: #1c1e2e;
-  --popover-foreground: #f0f0f5;
-  --primary: #4ade80;
-  --primary-foreground: #0f1117;
-  --secondary: #232538;
-  --secondary-foreground: #f0f0f5;
-  --muted: #232538;
-  --muted-foreground: #6e6e88;
-  --accent: #232538;
-  --accent-foreground: #f0f0f5;
+  --background: #0b0c0d;
+  --foreground: #eeede8;
+  --card: #16181b;
+  --card-foreground: #eeede8;
+  --popover: #16181b;
+  --popover-foreground: #eeede8;
+  --primary: #f6d200;
+  --primary-foreground: #121212;
+  --secondary: #1d2023;
+  --secondary-foreground: #eeede8;
+  --muted: #1d2023;
+  --muted-foreground: #a3a5a8;
+  --accent: #1d2023;
+  --accent-foreground: #eeede8;
   --destructive: #f87171;
-  --border: #2a2c42;
-  --input: #2a2c42;
-  --ring: #4ade80;
-  --chart-1: #4ade80;
-  --chart-2: #60a5fa;
-  --chart-3: #fbbf24;
+  --border: #26292d;
+  --input: #33373c;
+  --ring: #f6d200;
+  --link: #f6d200;
+  --chart-1: #f6d200;
+  --chart-2: #c9973b;
+  --chart-3: #60a5fa;
   --chart-4: #f472b6;
   --chart-5: #a78bfa;
-  --sidebar: #12141f;
-  --sidebar-foreground: #b8b8cc;
-  --sidebar-primary: #4ade80;
-  --sidebar-primary-foreground: #0f1117;
-  --sidebar-accent: #1c1e2e;
-  --sidebar-accent-foreground: #f0f0f5;
-  --sidebar-border: #2a2c42;
-  --sidebar-ring: #4ade80;
-  --skeleton-bg: #2a2c42;
-  --skeleton-subtle: #232538;
+  --sidebar: #111315;
+  --sidebar-foreground: #a3a5a8;
+  --sidebar-primary: #f6d200;
+  --sidebar-primary-foreground: #121212;
+  --sidebar-accent: #1d2023;
+  --sidebar-accent-foreground: #eeede8;
+  --sidebar-border: #26292d;
+  --sidebar-ring: #f6d200;
+  --brand-tile-bg: #f3f1ea;
+  --brand-tile-fg: #121212;
+  --brand-wordmark-accent: #c9973b;
+  --skeleton-bg: #26292d;
+  --skeleton-subtle: #1d2023;
 }
 
 /* ============================================================
@@ -293,7 +316,7 @@ body {
 }
 
 a {
-  color: var(--color-green-600);
+  color: var(--link);
   text-decoration: none;
 }
 a:hover {
@@ -309,13 +332,18 @@ textarea {
 }
 
 :focus-visible {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
 
 img {
   max-width: 100%;
   display: block;
+}
+
+::selection {
+  background: var(--brand-yellow);
+  color: var(--brand-ink);
 }
 
 /* ── Scrollbar (adapts to theme) ────────────────────── */
@@ -437,9 +465,9 @@ img {
   color: var(--muted-foreground);
 }
 .input-base:focus {
-  border-color: var(--primary);
+  border-color: var(--ring);
   outline: none;
-  box-shadow: 0 0 0 3px oklch(from var(--primary) l c h / 0.15);
+  box-shadow: 0 0 0 3px oklch(from var(--ring) l c h / 0.18);
 }
 .input-base:disabled {
   background-color: var(--muted);

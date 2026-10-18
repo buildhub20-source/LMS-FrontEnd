@@ -147,9 +147,9 @@ export const StudentDashboardPage = () => {
         analytics?.inProgressCount ??
         (courses.filter((c) => (c.progressPercent || 0) < 100).length || courses.length),
       subtext: `${courses.length} total enrolled`,
-      icon: <BookOpen size={20} className="text-emerald-400" />,
+      icon: <BookOpen size={20} className="text-brand-gold" />,
       color: 'var(--color-primary-500)',
-      bg: 'rgba(34, 197, 94, 0.1)',
+      bg: 'rgba(201, 151, 59, 0.12)',
     },
     {
       label: 'Completed Courses',
@@ -194,7 +194,7 @@ export const StudentDashboardPage = () => {
       <div
         style={{
           background:
-            'linear-gradient(135deg, rgba(34, 197, 94, 0.12) 0%, rgba(16, 185, 129, 0.1) 50%, rgba(34, 197, 94, 0.06) 100%)',
+            'linear-gradient(135deg, rgba(201, 151, 59, 0.14) 0%, rgba(246, 210, 0, 0.08) 55%, rgba(201, 151, 59, 0.04) 100%)',
           border: '1px solid var(--border-color)',
           borderRadius: 20,
           padding: '28px 32px',
