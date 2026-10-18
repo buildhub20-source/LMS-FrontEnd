@@ -293,7 +293,7 @@ describe('Microsoft Teams Style Notification Toast & Deduplication', () => {
 
     // Verify card content
     await vi.waitFor(() => {
-      expect(screen.getByText('LMS Chat')).toBeInTheDocument();
+      expect(screen.getByText('GradusMind Chat')).toBeInTheDocument();
     });
     expect(screen.getByText('Vinoth')).toBeInTheDocument();
     expect(screen.getByText('Hey')).toBeInTheDocument();

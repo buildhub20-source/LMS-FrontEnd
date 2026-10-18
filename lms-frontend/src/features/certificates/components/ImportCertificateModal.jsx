@@ -710,7 +710,7 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
             >
               <Upload size={28} color="#34d399" />
               <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
-                Upload Open Badges or LMS Credential JSON
+                Upload an Open Badges or credential JSON file
               </div>
               <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>
                 Click to browse your computer for a exported .json certificate payload

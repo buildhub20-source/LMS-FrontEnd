@@ -497,7 +497,7 @@ export const PublicCertificateVerifyPage = () => {
                     <div
                       style={{ fontSize: '14px', fontWeight: 600, color: '#CBD5E1', marginTop: 3 }}
                     >
-                      {verifiedData.organizationName || 'LMS Institutional Academy'}
+                      {verifiedData.organizationName || 'Issuing institute'}
                     </div>
                   </div>
                   <div>

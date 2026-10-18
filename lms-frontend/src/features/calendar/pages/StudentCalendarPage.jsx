@@ -213,7 +213,7 @@ export const StudentCalendarPage = () => {
         ? new Date(d.endTime).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
         : start;
       lines.push('BEGIN:VEVENT');
-      lines.push(`SUMMARY:${d.title || 'LMS Deadline'}`);
+      lines.push(`SUMMARY:${d.title || 'GradusMind deadline'}`);
       lines.push(`DESCRIPTION:${d.description || ''}`);
       if (start) lines.push(`DTSTART:${start}`);
       if (end) lines.push(`DTEND:${end}`);

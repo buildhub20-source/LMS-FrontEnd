@@ -549,7 +549,7 @@ export const PlatformTenantPage = () => {
                               onClick={() => {
                                 if (
                                   window.confirm(
-                                    `Pause ${tenant.name}'s cloud database? LMS access will stop, but all tenant data is retained.`,
+                                    `Pause ${tenant.name}'s cloud database? Access to GradusMind will stop, but all tenant data is retained.`,
                                   )
                                 )
                                   runAction('pauseCloudProject', tenant.id);

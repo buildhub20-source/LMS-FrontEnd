@@ -13,6 +13,7 @@ import BroadcastBanner from '../features/platform/components/BroadcastBanner';
 import TeamsNotificationHost from '../features/notifications/components/TeamsNotificationToast';
 import chatSocketService from '../features/chat/services/chatSocketService';
 import chatUnreadService from '../features/chat/services/chatUnreadService';
+import appConfig from '../config/appConfig';
 
 /**
  * AppShell — Figma-inspired layout.
@@ -42,7 +43,7 @@ export const AppShell = ({ navigation, tabNav }) => {
   // Manage Browser Tab Unread Count
   useEffect(() => {
     if (!user) {
-      document.title = 'LMS';
+      document.title = appConfig.name;
       return;
     }
 
@@ -51,9 +52,9 @@ export const AppShell = ({ navigation, tabNav }) => {
 
     const unsub = chatUnreadService.subscribe((totalUnread) => {
       if (totalUnread > 0) {
-        document.title = `(${totalUnread}) LMS`;
+        document.title = `(${totalUnread}) ${appConfig.name}`;
       } else {
-        document.title = 'LMS';
+        document.title = appConfig.name;
       }
     });
 
@@ -65,7 +66,7 @@ export const AppShell = ({ navigation, tabNav }) => {
   const handleSignOut = async () => {
     chatSocketService.disconnect();
     chatUnreadService.reset();
-    document.title = 'LMS';
+    document.title = appConfig.name;
     await logout();
     navigate(ROUTES.LOGIN, { replace: true, state: {} });
   };
