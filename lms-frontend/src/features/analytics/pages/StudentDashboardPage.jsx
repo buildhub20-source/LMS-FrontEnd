@@ -194,7 +194,7 @@ export const StudentDashboardPage = () => {
       <div
         style={{
           background:
-            'linear-gradient(135deg, rgba(201, 151, 59, 0.14) 0%, rgba(246, 210, 0, 0.08) 55%, rgba(201, 151, 59, 0.04) 100%)',
+            'linear-gradient(135deg, rgba(201, 151, 59, 0.14) 0%, rgba(223, 192, 74, 0.08) 55%, rgba(201, 151, 59, 0.04) 100%)',
           border: '1px solid var(--border-color)',
           borderRadius: 20,
           padding: '28px 32px',
@@ -560,7 +560,7 @@ export const StudentDashboardPage = () => {
                     style={{
                       height: '100%',
                       width: `${Math.min(100, continueCourse.progressPercent || 0)}%`,
-                      background: 'linear-gradient(90deg, #3b82f6, #10b981)',
+                      background: 'var(--primary)',
                       borderRadius: 99,
                       transition: 'width 0.4s ease',
                     }}
@@ -1449,10 +1449,10 @@ export const StudentDashboardPage = () => {
                               fontWeight: 700,
                               cursor: 'pointer',
                               border: 'none',
-                              background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-                              color: '#fff',
+                              background: 'var(--primary)',
+                              color: 'var(--primary-foreground)',
                               whiteSpace: 'nowrap',
-                              boxShadow: '0 2px 8px rgba(37, 99, 235, 0.3)',
+                              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.18)',
                             }}
                           >
                             <Download size={13} />

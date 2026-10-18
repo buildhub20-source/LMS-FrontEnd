@@ -3,8 +3,8 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-full);
-  background: var(--color-primary-100);
-  color: var(--color-primary-700);
+  background: var(--brand-tile-bg);
+  color: var(--brand-tile-fg);
   font-weight: var(--weight-semibold);
   overflow: hidden;
   flex-shrink: 0;

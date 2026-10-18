@@ -225,9 +225,9 @@ export const ProfileForm = ({ defaultValues, onSubmit, error = null }) => {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              background: 'linear-gradient(135deg, #1d4ed8, #2563eb)',
-              color: '#ffffff',
-              boxShadow: '0 4px 16px rgba(29, 78, 216, 0.4)',
+              background: 'var(--primary)',
+              color: 'var(--primary-foreground)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.18)',
             }}
           >
             <Save size={16} />

@@ -76,8 +76,8 @@
   --color-green-600: #16a34a;
   --color-green-700: #15803d;
 
-  --color-brand-yellow: #f6d200;
-  --color-brand-yellow-hover: #ffe03a;
+  --color-brand-yellow: #dfc04a;
+  --color-brand-yellow-hover: #e9cd62;
   --color-brand-ink: #121212;
   --color-brand-paper: #f3f1ea;
   --color-brand-gold: #c9973b;
@@ -195,7 +195,7 @@
    on a light surface, where it would fail contrast.
    ============================================================ */
 :root {
-  --brand-yellow: #f6d200;
+  --brand-yellow: #dfc04a;
   --brand-ink: #121212;
   --brand-paper: #f3f1ea;
   --brand-gold: #c9973b;
@@ -228,7 +228,7 @@
   --sidebar: #f3f1ea;
   --sidebar-foreground: #3a3936;
   --sidebar-primary: #121212;
-  --sidebar-primary-foreground: #f6d200;
+  --sidebar-primary-foreground: #dfc04a;
   --sidebar-accent: #e8e4d8;
   --sidebar-accent-foreground: #121212;
   --sidebar-border: #e2ded2;
@@ -238,6 +238,35 @@
   --brand-wordmark-accent: #9a7124;
   --skeleton-bg: #e2ded2;
   --skeleton-subtle: #ebe8de;
+
+  /* Sign-in page */
+  --si-page: #f3f1ea;
+  --si-page-2: #ece8dc;
+  --si-glow: rgba(201, 151, 59, 0.14);
+  --si-grid: rgba(18, 18, 18, 0.05);
+  --si-grid-strong: rgba(18, 18, 18, 0.12);
+  --si-shadow: rgba(60, 48, 20, 0.16);
+  --si-shadow-soft: rgba(60, 48, 20, 0.08);
+  --si-shell-border: #e2ded2;
+  --si-right: #ebe8de;
+  --si-card: #fffdf7;
+  --si-card-border: #e2ded2;
+  --si-title: #121212;
+  --si-accent-text: #9a7124;
+  --si-muted: #5f5e5a;
+  --si-label: #3a3936;
+  --si-faint: #6f6d67;
+  --si-input-bg: #ffffff;
+  --si-input-border: #d6d1c3;
+  --si-input-text: #121212;
+  --si-focus: #121212;
+  --si-focus-ring: rgba(18, 18, 18, 0.12);
+  --si-btn: #121212;
+  --si-btn-text: #ffffff;
+  --si-btn-hover: #2c2c2c;
+  --si-btn-shadow: rgba(18, 18, 18, 0.18);
+  --si-error-title: #b91c1c;
+  --si-error: #dc2626;
 }
 
 /* ============================================================
@@ -252,7 +281,7 @@
   --card-foreground: #eeede8;
   --popover: #16181b;
   --popover-foreground: #eeede8;
-  --primary: #f6d200;
+  --primary: #dfc04a;
   --primary-foreground: #121212;
   --secondary: #1d2023;
   --secondary-foreground: #eeede8;
@@ -263,26 +292,54 @@
   --destructive: #f87171;
   --border: #26292d;
   --input: #33373c;
-  --ring: #f6d200;
-  --link: #f6d200;
-  --chart-1: #f6d200;
+  --ring: #dfc04a;
+  --link: #dfc04a;
+  --chart-1: #dfc04a;
   --chart-2: #c9973b;
   --chart-3: #60a5fa;
   --chart-4: #f472b6;
   --chart-5: #a78bfa;
   --sidebar: #111315;
   --sidebar-foreground: #a3a5a8;
-  --sidebar-primary: #f6d200;
+  --sidebar-primary: #dfc04a;
   --sidebar-primary-foreground: #121212;
   --sidebar-accent: #1d2023;
   --sidebar-accent-foreground: #eeede8;
   --sidebar-border: #26292d;
-  --sidebar-ring: #f6d200;
+  --sidebar-ring: #dfc04a;
   --brand-tile-bg: #f3f1ea;
   --brand-tile-fg: #121212;
   --brand-wordmark-accent: #c9973b;
   --skeleton-bg: #26292d;
   --skeleton-subtle: #1d2023;
+
+  --si-page: #0b0c0d;
+  --si-page-2: #111315;
+  --si-glow: rgba(223, 192, 74, 0.08);
+  --si-grid: rgba(255, 255, 255, 0.04);
+  --si-grid-strong: rgba(255, 255, 255, 0.07);
+  --si-shadow: rgba(0, 0, 0, 0.6);
+  --si-shadow-soft: rgba(0, 0, 0, 0.35);
+  --si-shell-border: #26292d;
+  --si-right: #111315;
+  --si-card: #16181b;
+  --si-card-border: #26292d;
+  --si-title: #eeede8;
+  --si-accent-text: #dfc04a;
+  --si-muted: #a3a5a8;
+  --si-label: #c4c5c7;
+  --si-faint: #8d8f93;
+  --si-input-bg: #0f1113;
+  --si-input-border: #33373c;
+  --si-input-text: #eeede8;
+  --si-focus: #dfc04a;
+  --si-focus-ring: rgba(223, 192, 74, 0.18);
+  --si-btn: #dfc04a;
+  --si-btn-text: #121212;
+  --si-btn-hover: #e9cd62;
+  --si-btn-shadow: rgba(223, 192, 74, 0.22);
+  --si-error-title: #fca5a5;
+  --si-error: #f87171;
 }
 
 /* ============================================================

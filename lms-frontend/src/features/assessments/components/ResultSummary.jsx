@@ -29,9 +29,9 @@ export const ResultSummary = ({ report }) => {
       <div
         style={{
           background: passed
-            ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
+            ? 'var(--primary)'
             : 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
-          color: '#ffffff',
+          color: 'var(--primary-foreground)',
           borderRadius: 12,
           padding: '32px 24px',
           boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',

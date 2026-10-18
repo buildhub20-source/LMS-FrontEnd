@@ -159,9 +159,9 @@ export const CertificateListPage = () => {
             onClick={() => setIsImportModalOpen(true)}
             iconLeft={<Upload size={14} />}
             style={{
-              background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+              background: 'var(--primary)',
               fontWeight: 700,
-              boxShadow: '0 4px 14px rgba(99, 102, 241, 0.35)',
+              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.18)',
             }}
           >
             Import Certificate
@@ -825,7 +825,7 @@ export const CertificateListPage = () => {
                   onClick={() => setIsImportModalOpen(true)}
                   iconLeft={<Upload size={14} />}
                   style={{
-                    background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                    background: 'var(--primary)',
                     fontWeight: 700,
                   }}
                 >
@@ -931,8 +931,8 @@ export const CertificateListPage = () => {
                         padding: '10px 16px',
                         borderRadius: 8,
                         border: 'none',
-                        background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                        color: '#fff',
+                        background: 'var(--primary)',
+                        color: 'var(--primary-foreground)',
                         fontSize: 12,
                         fontWeight: 700,
                         cursor: 'pointer',

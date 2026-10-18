@@ -184,10 +184,7 @@ export const SubmitConfirmModal = ({
                 style={{
                   height: '100%',
                   width: `${completionPct}%`,
-                  background:
-                    completionPct === 100
-                      ? 'linear-gradient(90deg, #10b981 0%, #059669 100%)'
-                      : 'linear-gradient(90deg, #6366f1 0%, #4f46e5 100%)',
+                  background: completionPct === 100 ? 'var(--primary)' : 'var(--primary)',
                   borderRadius: 4,
                   transition: 'width 0.4s ease',
                 }}
@@ -323,10 +320,10 @@ export const SubmitConfirmModal = ({
             onClick={onConfirm}
             isLoading={isLoading}
             style={{
-              background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+              background: 'var(--primary)',
               fontWeight: 700,
               fontSize: 13,
-              boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)',
+              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.18)',
             }}
           >
             Confirm &amp; Submit Exam

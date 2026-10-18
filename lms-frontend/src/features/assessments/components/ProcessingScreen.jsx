@@ -156,7 +156,7 @@ export const ProcessingScreen = ({
                 height: 48,
                 borderRadius: '14px',
                 background: isCompleted
-                  ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                  ? 'var(--primary)'
                   : isError
                     ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
                     : 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
@@ -164,7 +164,7 @@ export const ProcessingScreen = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 boxShadow: isCompleted
-                  ? '0 8px 20px rgba(16, 185, 129, 0.4)'
+                  ? '0 8px 20px rgba(0, 0, 0, 0.18)'
                   : isError
                     ? '0 8px 20px rgba(239, 68, 68, 0.4)'
                     : '0 8px 20px rgba(99, 102, 241, 0.4)',
@@ -275,14 +275,14 @@ export const ProcessingScreen = ({
                 height: '100%',
                 width: `${progressPercent}%`,
                 background: isCompleted
-                  ? 'linear-gradient(90deg, #10b981 0%, #059669 100%)'
+                  ? 'var(--primary)'
                   : isError
                     ? 'linear-gradient(90deg, #ef4444 0%, #dc2626 100%)'
-                    : 'linear-gradient(90deg, #6366f1 0%, #10b981 100%)',
+                    : 'var(--primary)',
                 borderRadius: 99,
                 transition: 'width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)',
                 boxShadow: isCompleted
-                  ? '0 0 16px rgba(16, 185, 129, 0.7)'
+                  ? '0 0 16px rgba(0, 0, 0, 0.18)'
                   : isError
                     ? '0 0 16px rgba(239, 68, 68, 0.7)'
                     : '0 0 14px rgba(99, 102, 241, 0.5)',

@@ -180,9 +180,9 @@ export const AssessmentResultPage = () => {
               onClick={() => navigate(ROUTES.ASSESSMENT_ATTEMPT(assessmentId))}
               iconLeft={<PlayCircle size={15} />}
               style={{
-                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                background: 'var(--primary)',
                 fontWeight: 700,
-                boxShadow: '0 4px 14px rgba(16,185,129,0.35)',
+                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.18)',
               }}
             >
               {isNotStarted ? 'Start Assessment Now' : 'Retake Assessment'}
@@ -282,9 +282,9 @@ export const AssessmentResultPage = () => {
               <button
                 onClick={() => navigate(ROUTES.ASSESSMENT_ATTEMPT(assessmentId))}
                 style={{
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  background: 'var(--primary)',
                   border: '1px solid rgba(255,255,255,0.4)',
-                  color: '#ffffff',
+                  color: 'var(--primary-foreground)',
                   borderRadius: 10,
                   padding: '12px 24px',
                   fontSize: 14,
@@ -294,7 +294,7 @@ export const AssessmentResultPage = () => {
                   alignItems: 'center',
                   gap: 8,
                   whiteSpace: 'nowrap',
-                  boxShadow: '0 6px 20px rgba(16, 185, 129, 0.45)',
+                  boxShadow: '0 6px 20px rgba(0, 0, 0, 0.18)',
                   transition: 'all 0.2s ease',
                 }}
                 onMouseEnter={(e) => {
@@ -313,9 +313,9 @@ export const AssessmentResultPage = () => {
           <div
             style={{
               background: passed
-                ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
+                ? 'var(--primary)'
                 : 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
-              color: '#ffffff',
+              color: 'var(--primary-foreground)',
               borderRadius: 16,
               padding: '28px 28px',
               display: 'flex',
@@ -2351,11 +2351,11 @@ export const AssessmentResultPage = () => {
               onClick={() => navigate(ROUTES.ASSESSMENT_ATTEMPT(assessmentId))}
               iconLeft={<PlayCircle size={16} />}
               style={{
-                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                background: 'var(--primary)',
                 fontWeight: 800,
                 padding: '11px 26px',
                 fontSize: 14,
-                boxShadow: '0 4px 16px rgba(16,185,129,0.35)',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.18)',
               }}
             >
               Start Assessment Now

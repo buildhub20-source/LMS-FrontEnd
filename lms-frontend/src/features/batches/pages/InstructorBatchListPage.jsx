@@ -312,7 +312,7 @@ export const InstructorBatchListPage = () => {
                   width: 44,
                   height: 44,
                   borderRadius: 12,
-                  background: 'rgba(255, 255, 255, 0.6)',
+                  background: 'var(--secondary)',
                   border: `1px solid ${m.border}`,
                   display: 'flex',
                   alignItems: 'center',
@@ -705,9 +705,7 @@ export const InstructorBatchListPage = () => {
                         width: `${pct}%`,
                         borderRadius: 99,
                         background:
-                          pct >= 90
-                            ? 'linear-gradient(90deg, #f59e0b, #ef4444)'
-                            : 'linear-gradient(90deg, #3b82f6, #10b981)',
+                          pct >= 90 ? 'linear-gradient(90deg, #f59e0b, #ef4444)' : 'var(--primary)',
                         transition: 'width 0.3s ease',
                       }}
                     />
@@ -734,14 +732,14 @@ export const InstructorBatchListPage = () => {
                       fontSize: 12,
                       fontWeight: 700,
                       border: 'none',
-                      background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-                      color: '#fff',
+                      background: 'var(--primary)',
+                      color: 'var(--primary-foreground)',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: 6,
-                      boxShadow: '0 2px 10px rgba(37, 99, 235, 0.25)',
+                      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.18)',
                       transition: 'all 0.2s',
                     }}
                   >
@@ -942,7 +940,7 @@ export const InstructorBatchListPage = () => {
                       style={{
                         height: '100%',
                         width: `${pct}%`,
-                        background: 'linear-gradient(90deg, #3b82f6, #10b981)',
+                        background: 'var(--primary)',
                       }}
                     />
                   </div>
@@ -966,8 +964,8 @@ export const InstructorBatchListPage = () => {
                       fontSize: 13,
                       fontWeight: 700,
                       border: 'none',
-                      background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-                      color: '#fff',
+                      background: 'var(--primary)',
+                      color: 'var(--primary-foreground)',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',

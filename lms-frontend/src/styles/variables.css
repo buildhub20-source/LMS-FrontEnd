@@ -18,18 +18,25 @@
   --color-on-primary: #ffffff;
 
   /* ── Pastel Card Backgrounds ──────────────────────── */
-  --card-green: #e8f5e9;
-  --card-green-strong: #c8e6c9;
-  --card-yellow: #fff8e1;
-  --card-yellow-strong: #ffecb3;
-  --card-pink: #fce4ec;
-  --card-pink-strong: #f8bbd0;
-  --card-blue: #e3f2fd;
-  --card-blue-strong: #bbdefb;
-  --card-purple: #f3e5f5;
-  --card-purple-strong: #e1bee7;
-  --card-orange: #fff3e0;
-  --card-orange-strong: #ffe0b2;
+  /* Stat tiles share one neutral surface; the icon carries the category hue. */
+  --card-green: #fffdf7;
+  --card-green-strong: #ebe8de;
+  --card-green-border: #e2ded2;
+  --card-yellow: #fffdf7;
+  --card-yellow-strong: #ebe8de;
+  --card-yellow-border: #e2ded2;
+  --card-pink: #fffdf7;
+  --card-pink-strong: #ebe8de;
+  --card-pink-border: #e2ded2;
+  --card-blue: #fffdf7;
+  --card-blue-strong: #ebe8de;
+  --card-blue-border: #e2ded2;
+  --card-purple: #fffdf7;
+  --card-purple-strong: #ebe8de;
+  --card-purple-border: #e2ded2;
+  --card-orange: #fffdf7;
+  --card-orange-strong: #ebe8de;
+  --card-orange-border: #e2ded2;
 
   /* ── Semantic Status Colors ───────────────────────── */
   --color-success: #22c55e;
@@ -40,6 +47,12 @@
   --color-danger-light: #fee2e2;
   --color-info: #3b82f6;
   --color-info-light: #dbeafe;
+
+  /* Badge text that stays readable on its own 14% tint */
+  --badge-success-fg: #15803d;
+  --badge-warning-fg: #b45309;
+  --badge-danger-fg: #b91c1c;
+  --badge-info-fg: #1d4ed8;
 
   /* ── Surface / Background ─────────────────────────── */
   --color-bg: #f3f1ea;
@@ -186,16 +199,21 @@
 /* ── Dark Theme ──────────────────────────────────────── */
 [data-theme='dark'],
 html.dark {
+  --badge-success-fg: #4ade80;
+  --badge-warning-fg: #fbbf24;
+  --badge-danger-fg: #f87171;
+  --badge-info-fg: #93c5fd;
+
   --color-primary-50: #2a2508;
   --color-primary-100: #3a3310;
   --color-primary-200: #574b10;
   --color-primary-300: #8f7a0a;
-  --color-primary-400: #c9a800;
-  --color-primary-500: #f6d200;
-  --color-primary-600: #f6d200;
-  --color-primary-700: #ffe55c;
+  --color-primary-400: #b89c3a;
+  --color-primary-500: #dfc04a;
+  --color-primary-600: #dfc04a;
+  --color-primary-700: #ecd57a;
   --color-on-primary: #121212;
-  --calendar-today: #f6d200;
+  --calendar-today: #dfc04a;
   --calendar-event: #eeede8;
 
   --color-bg: #0b0c0d;
@@ -221,22 +239,28 @@ html.dark {
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.2);
 
   /* Pastel cards become muted in dark mode */
-  --card-green: #1a2e1e;
-  --card-green-strong: #244228;
-  --card-yellow: #2e2a18;
-  --card-yellow-strong: #3e3820;
-  --card-pink: #2e1a22;
-  --card-pink-strong: #42242e;
-  --card-blue: #1a222e;
-  --card-blue-strong: #243242;
-  --card-purple: #261a2e;
-  --card-purple-strong: #342442;
-  --card-orange: #2e2418;
-  --card-orange-strong: #3e3220;
+  --card-green: #16181b;
+  --card-green-strong: #1d2023;
+  --card-green-border: #26292d;
+  --card-yellow: #16181b;
+  --card-yellow-strong: #1d2023;
+  --card-yellow-border: #26292d;
+  --card-pink: #16181b;
+  --card-pink-strong: #1d2023;
+  --card-pink-border: #26292d;
+  --card-blue: #16181b;
+  --card-blue-strong: #1d2023;
+  --card-blue-border: #26292d;
+  --card-purple: #16181b;
+  --card-purple-strong: #1d2023;
+  --card-purple-border: #26292d;
+  --card-orange: #16181b;
+  --card-orange-strong: #1d2023;
+  --card-orange-border: #26292d;
 
   --sidebar-bg: #111315;
   --sidebar-icon: #8d8f93;
-  --sidebar-icon-active: #f6d200;
+  --sidebar-icon-active: #dfc04a;
   --sidebar-icon-hover: #c4c5c7;
 
   /* Skeleton Loading (dark) */

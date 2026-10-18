@@ -419,14 +419,12 @@ export const ExamLockdownOverlay = ({
                   onClick={() => setLobbyStep('CHECKS')}
                   iconRight={<ArrowRight size={15} />}
                   style={{
-                    background: agreedTerms
-                      ? 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)'
-                      : '#334155',
+                    background: agreedTerms ? 'var(--primary)' : '#334155',
                     padding: '11px 26px',
                     fontSize: 13,
                     fontWeight: 700,
                     borderRadius: 8,
-                    boxShadow: agreedTerms ? '0 4px 16px rgba(99,102,241,0.4)' : 'none',
+                    boxShadow: agreedTerms ? '0 4px 16px rgba(0, 0, 0, 0.18)' : 'none',
                     cursor: agreedTerms ? 'pointer' : 'not-allowed',
                     transition: 'all 0.2s ease',
                   }}
@@ -769,16 +767,14 @@ export const ExamLockdownOverlay = ({
                   variant="primary"
                   disabled={!isReadyToEnter}
                   onClick={onLaunchAssessment}
-                  iconRight={<Play size={14} fill="#ffffff" />}
+                  iconRight={<Play size={14} fill="currentColor" />}
                   style={{
-                    background: isReadyToEnter
-                      ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
-                      : '#334155',
+                    background: isReadyToEnter ? 'var(--primary)' : '#334155',
                     padding: '11px 32px',
                     fontSize: 13,
                     fontWeight: 800,
                     borderRadius: 8,
-                    boxShadow: isReadyToEnter ? '0 4px 20px rgba(16,185,129,0.4)' : 'none',
+                    boxShadow: isReadyToEnter ? '0 4px 20px rgba(0, 0, 0, 0.18)' : 'none',
                     cursor: isReadyToEnter ? 'pointer' : 'not-allowed',
                     transition: 'all 0.2s ease',
                   }}

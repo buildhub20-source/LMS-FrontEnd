@@ -194,7 +194,7 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
                     width: `${windowPct}%`,
                     background: isClosingSoon
                       ? 'linear-gradient(90deg, #f59e0b 0%, #ef4444 100%)'
-                      : 'linear-gradient(90deg, #6366f1 0%, #3b82f6 100%)',
+                      : 'var(--primary)',
                     borderRadius: 99,
                     transition: 'width 1s linear',
                     boxShadow: isClosingSoon

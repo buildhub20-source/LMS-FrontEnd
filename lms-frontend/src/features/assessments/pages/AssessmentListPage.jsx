@@ -226,7 +226,7 @@ function AssessmentCard({ item, info, onStart, onResume, onResult, onRetake }) {
         : isInProgress
           ? 'linear-gradient(90deg,#6366f1,#3b82f6)'
           : isCompleted
-            ? 'linear-gradient(90deg,#10b981,#34d399)'
+            ? 'var(--primary)'
             : 'linear-gradient(90deg,#10b981,#3b82f6)';
 
   const renderAction = () => {
@@ -522,7 +522,7 @@ function AssessmentCard({ item, info, onStart, onResume, onResult, onRetake }) {
                   width: `${ts.windowPct}%`,
                   background: isClosingSoon
                     ? 'linear-gradient(90deg,#ef4444,#f97316)'
-                    : 'linear-gradient(90deg,#6366f1,#10b981)',
+                    : 'var(--primary)',
                   borderRadius: 3,
                   transition: 'width 1s linear',
                 }}

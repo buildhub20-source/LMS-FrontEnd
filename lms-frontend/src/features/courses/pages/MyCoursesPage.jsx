@@ -486,9 +486,7 @@ function HeroSpotlightCard({ course, onContinue }) {
               style={{
                 height: '100%',
                 width: `${Math.min(100, progress)}%`,
-                background: isCompleted
-                  ? 'linear-gradient(90deg, #10b981 0%, #34d399 100%)'
-                  : 'linear-gradient(90deg, #3b82f6 0%, #10b981 100%)',
+                background: isCompleted ? 'var(--primary)' : 'var(--primary)',
                 borderRadius: 99,
                 transition: 'width 0.4s ease',
               }}
@@ -510,11 +508,9 @@ function HeroSpotlightCard({ course, onContinue }) {
             fontWeight: 800,
             cursor: 'pointer',
             border: 'none',
-            background: isCompleted
-              ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
-              : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-            color: '#fff',
-            boxShadow: '0 4px 18px rgba(37, 99, 235, 0.3)',
+            background: isCompleted ? 'var(--primary)' : 'var(--primary)',
+            color: 'var(--primary-foreground)',
+            boxShadow: '0 4px 18px rgba(0, 0, 0, 0.18)',
             transition: 'all 0.2s ease',
           }}
           onMouseEnter={(e) => {
@@ -762,9 +758,7 @@ function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark, on
               style={{
                 height: '100%',
                 width: `${Math.min(100, progress)}%`,
-                background: isCompleted
-                  ? '#10b981'
-                  : 'linear-gradient(90deg, #3b82f6 0%, #10b981 100%)',
+                background: isCompleted ? '#10b981' : 'var(--primary)',
                 borderRadius: 99,
                 transition: 'width 0.4s ease',
               }}
@@ -842,12 +836,12 @@ function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark, on
                 cursor: 'pointer',
                 border: 'none',
                 background: isCompleted
-                  ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
+                  ? 'var(--primary)'
                   : progress > 0
-                    ? 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)'
+                    ? 'var(--primary)'
                     : 'var(--text-primary)',
-                color: '#fff',
-                boxShadow: progress > 0 ? '0 2px 10px rgba(59, 130, 246, 0.3)' : 'none',
+                color: 'var(--primary-foreground)',
+                boxShadow: progress > 0 ? '0 2px 10px rgba(0, 0, 0, 0.18)' : 'none',
                 transition: 'opacity 0.15s ease',
                 whiteSpace: 'nowrap',
               }}
@@ -1058,9 +1052,7 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, on
               style={{
                 height: '100%',
                 width: `${Math.min(100, progress)}%`,
-                background: isCompleted
-                  ? '#10b981'
-                  : 'linear-gradient(90deg, #3b82f6 0%, #10b981 100%)',
+                background: isCompleted ? '#10b981' : 'var(--primary)',
                 borderRadius: 99,
               }}
             />
@@ -1108,11 +1100,11 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, on
               cursor: 'pointer',
               border: 'none',
               background: isCompleted
-                ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
+                ? 'var(--primary)'
                 : progress > 0
-                  ? 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)'
+                  ? 'var(--primary)'
                   : 'var(--text-primary)',
-              color: '#fff',
+              color: 'var(--primary-foreground)',
               transition: 'opacity 0.15s ease',
             }}
             onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}

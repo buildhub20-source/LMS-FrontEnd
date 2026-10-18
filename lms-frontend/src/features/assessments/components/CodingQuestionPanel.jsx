@@ -1013,10 +1013,8 @@ export const CodingQuestionPanel = ({
                     display: 'flex',
                     alignItems: 'center',
                     gap: 6,
-                    background: isRunning
-                      ? '#334155'
-                      : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    color: '#ffffff',
+                    background: isRunning ? '#334155' : 'var(--primary)',
+                    color: 'var(--primary-foreground)',
                     border: 'none',
                     borderRadius: 6,
                     padding: '6px 12px',
@@ -1024,7 +1022,7 @@ export const CodingQuestionPanel = ({
                     fontWeight: 700,
                     cursor: isRunning ? 'not-allowed' : 'pointer',
                     transition: 'all 0.15s ease',
-                    boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.18)',
                     opacity: isSubmittingQuestion ? 0.5 : 1,
                   }}
                 >
@@ -1069,9 +1067,9 @@ export const CodingQuestionPanel = ({
                     background: isSubmittingQuestion
                       ? '#334155'
                       : isQuestionSubmitted
-                        ? 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)'
+                        ? 'var(--primary)'
                         : 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                    color: '#ffffff',
+                    color: 'var(--primary-foreground)',
                     border: 'none',
                     borderRadius: 6,
                     padding: '6px 12px',

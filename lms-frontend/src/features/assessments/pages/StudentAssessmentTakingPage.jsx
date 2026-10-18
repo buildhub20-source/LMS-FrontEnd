@@ -366,12 +366,12 @@ export const StudentAssessmentTakingPage = () => {
                 onClick={() => navigate(ROUTES.ASSESSMENT_RESULT(latestAttemptId))}
                 iconLeft={<BarChart3 size={16} />}
                 style={{
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  background: 'var(--primary)',
                   width: '100%',
                   justifyContent: 'center',
                   padding: '11px 0',
                   fontWeight: 700,
-                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)',
+                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.18)',
                 }}
               >
                 View Result Analytics
@@ -600,12 +600,12 @@ export const StudentAssessmentTakingPage = () => {
             iconRight={<Send size={14} />}
             disabled={submitting}
             style={{
-              background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+              background: 'var(--primary)',
               fontWeight: 700,
               fontSize: 13,
               padding: '7px 16px',
               borderRadius: 8,
-              boxShadow: '0 4px 14px rgba(99, 102, 241, 0.35)',
+              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.18)',
             }}
           >
             Submit Exam

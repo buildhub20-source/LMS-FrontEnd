@@ -1,8 +1,8 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import appConfig from '../config/appConfig';
-import { GradusMindLogo } from '@/components/brand/GradusMindLogo';
 import { ROUTES } from '../constants/routes';
 import ThemeSlider from '../components/common/ThemeSlider';
+import { GradusMindLogo } from '@/components/brand/GradusMindLogo';
 
 /**
  * AuthLayout — Figma-inspired soft pastel background with decorative elements.
@@ -56,7 +56,7 @@ export const AuthLayout = () => {
             style={{ top: '5%', right: '8%', width: 120, height: 120 }}
             viewBox="0 0 100 100"
           >
-            <ellipse cx="50" cy="50" rx="20" ry="45" fill="#f6d200" transform="rotate(-30 50 50)" />
+            <ellipse cx="50" cy="50" rx="20" ry="45" fill="#dfc04a" transform="rotate(-30 50 50)" />
             <ellipse cx="60" cy="40" rx="15" ry="35" fill="#c9973b" transform="rotate(15 60 40)" />
           </svg>
           <svg
@@ -64,7 +64,7 @@ export const AuthLayout = () => {
             style={{ bottom: '8%', left: '5%', width: 80, height: 80 }}
             viewBox="0 0 100 100"
           >
-            <ellipse cx="50" cy="50" rx="18" ry="40" fill="#f6d200" transform="rotate(20 50 50)" />
+            <ellipse cx="50" cy="50" rx="18" ry="40" fill="#dfc04a" transform="rotate(20 50 50)" />
           </svg>
         </div>
       )}

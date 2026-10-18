@@ -672,8 +672,8 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
                 type="submit"
                 iconLeft={<ShieldCheck size={16} />}
                 style={{
-                  background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-                  boxShadow: '0 4px 14px rgba(99, 102, 241, 0.35)',
+                  background: 'var(--primary)',
+                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.18)',
                   fontWeight: 700,
                   padding: '10px 22px',
                 }}
@@ -792,7 +792,7 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
                 disabled={!title}
                 iconLeft={<Sparkles size={16} />}
                 style={{
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  background: 'var(--primary)',
                   fontWeight: 700,
                   padding: '10px 22px',
                 }}

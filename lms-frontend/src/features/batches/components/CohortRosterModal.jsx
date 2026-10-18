@@ -45,8 +45,8 @@ function CandidateAvatar({ name = '', size = 36 }) {
         height: size,
         borderRadius: '50%',
         flexShrink: 0,
-        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-        color: '#fff',
+        background: 'var(--brand-tile-bg)',
+        color: 'var(--brand-tile-fg)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -522,15 +522,13 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                 gap: 6,
                 padding: '8px 14px',
                 borderRadius: 99,
-                background: isAddMode
-                  ? 'var(--background)'
-                  : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+                background: isAddMode ? 'var(--background)' : 'var(--primary)',
                 border: isAddMode ? '1px solid var(--border)' : 'none',
-                color: isAddMode ? 'var(--text-secondary)' : '#fff',
+                color: isAddMode ? 'var(--text-secondary)' : 'var(--primary-foreground)',
                 fontSize: '12px',
                 fontWeight: 700,
                 cursor: 'pointer',
-                boxShadow: isAddMode ? 'none' : '0 2px 8px rgba(37, 99, 235, 0.25)',
+                boxShadow: isAddMode ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.18)',
                 transition: 'all 0.15s ease',
               }}
             >
@@ -647,15 +645,15 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                 style={{
                   padding: '9px 18px',
                   borderRadius: 99,
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  background: 'var(--primary)',
                   border: 'none',
-                  color: '#fff',
+                  color: 'var(--primary-foreground)',
                   fontSize: 13,
                   fontWeight: 700,
                   cursor:
                     !selectedStudentToEnroll || isSubmittingEnroll ? 'not-allowed' : 'pointer',
                   opacity: !selectedStudentToEnroll || isSubmittingEnroll ? 0.6 : 1,
-                  boxShadow: '0 2px 8px rgba(16, 185, 129, 0.25)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.18)',
                 }}
               >
                 {isSubmittingEnroll ? 'Enrolling...' : 'Confirm Enrollment'}

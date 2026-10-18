@@ -374,8 +374,8 @@ function Avatar({ name = '', size = 34 }) {
         height: size,
         borderRadius: '50%',
         flexShrink: 0,
-        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-        color: '#fff',
+        background: 'var(--brand-tile-bg)',
+        color: 'var(--brand-tile-fg)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -655,12 +655,10 @@ function CourseCard({ course, onAction, onClick }) {
                   fontSize: 12,
                   fontWeight: 700,
                   border: primary.danger ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
-                  background: primary.danger
-                    ? 'rgba(239, 68, 68, 0.15)'
-                    : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-                  color: primary.danger ? '#f87171' : '#fff',
+                  background: primary.danger ? 'rgba(239, 68, 68, 0.15)' : 'var(--primary)',
+                  color: primary.danger ? '#f87171' : 'var(--primary-foreground)',
                   cursor: 'pointer',
-                  boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(37, 99, 235, 0.35)',
+                  boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(0, 0, 0, 0.18)',
                   transition: 'all 0.2s',
                 }}
               >
@@ -899,12 +897,10 @@ function CourseListRow({ course, onAction, onClick }) {
               fontSize: 13,
               fontWeight: 700,
               border: primary.danger ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
-              background: primary.danger
-                ? 'rgba(239, 68, 68, 0.15)'
-                : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-              color: primary.danger ? '#f87171' : '#fff',
+              background: primary.danger ? 'rgba(239, 68, 68, 0.15)' : 'var(--primary)',
+              color: primary.danger ? '#f87171' : 'var(--primary-foreground)',
               cursor: 'pointer',
-              boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(37, 99, 235, 0.35)',
+              boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(0, 0, 0, 0.18)',
               transition: 'all 0.2s',
             }}
           >

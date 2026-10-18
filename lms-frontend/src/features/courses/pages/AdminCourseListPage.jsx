@@ -374,8 +374,8 @@ function Avatar({ name = '', size = 34 }) {
         height: size,
         borderRadius: '50%',
         flexShrink: 0,
-        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-        color: '#fff',
+        background: 'var(--brand-tile-bg)',
+        color: 'var(--brand-tile-fg)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -619,7 +619,7 @@ function CourseCard({ course, onAction, onClick }) {
               style={{
                 height: '100%',
                 width: `${progressPct}%`,
-                background: 'linear-gradient(90deg, #3b82f6 0%, #10b981 100%)',
+                background: 'var(--primary)',
                 borderRadius: 99,
                 boxShadow: '0 0 8px rgba(16, 185, 129, 0.3)',
                 transition: 'width 0.4s ease',
@@ -703,11 +703,9 @@ function CourseCard({ course, onAction, onClick }) {
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
                   border: primary.danger ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
-                  background: primary.danger
-                    ? 'rgba(239, 68, 68, 0.15)'
-                    : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-                  color: primary.danger ? '#f87171' : '#fff',
-                  boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(37, 99, 235, 0.35)',
+                  background: primary.danger ? 'rgba(239, 68, 68, 0.15)' : 'var(--primary)',
+                  color: primary.danger ? '#f87171' : 'var(--primary-foreground)',
+                  boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(0, 0, 0, 0.18)',
                   transition: 'all 0.2s',
                 }}
                 onMouseEnter={(e) => {
@@ -957,12 +955,10 @@ function CourseListRow({ course, onAction, onClick }) {
               fontSize: 13,
               fontWeight: 700,
               border: primary.danger ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
-              background: primary.danger
-                ? 'rgba(239, 68, 68, 0.15)'
-                : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-              color: primary.danger ? '#f87171' : '#fff',
+              background: primary.danger ? 'rgba(239, 68, 68, 0.15)' : 'var(--primary)',
+              color: primary.danger ? '#f87171' : 'var(--primary-foreground)',
               cursor: 'pointer',
-              boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(37, 99, 235, 0.35)',
+              boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(0, 0, 0, 0.18)',
               transition: 'all 0.2s',
             }}
           >
