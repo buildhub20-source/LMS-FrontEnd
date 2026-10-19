@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState, useMemo } from 'react';
 import { Eye, EyeOff, KeyRound, ShieldCheck, Check, X, Lock } from 'lucide-react';
@@ -21,7 +21,7 @@ export const ChangePasswordForm = () => {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     reset,
     formState: { errors, isSubmitting },
   } = useForm({
@@ -29,7 +29,7 @@ export const ChangePasswordForm = () => {
     defaultValues: { currentPassword: '', newPassword: '', confirmPassword: '' },
   });
 
-  const newPassword = watch('newPassword') || '';
+  const newPassword = useWatch({ control, name: 'newPassword' }) || '';
 
   // Password strength calculation
   const strengthMetrics = useMemo(() => {

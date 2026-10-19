@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   BookOpen,
   Search,
@@ -51,11 +51,7 @@ export default function QuestionBankPage() {
   const [exportQuestionsList, setExportQuestionsList] = useState([]);
   const [importFileModalOpen, setImportFileModalOpen] = useState(false);
 
-  useEffect(() => {
-    loadBank();
-  }, [selectedCategory, selectedDifficulty, selectedType, search]);
-
-  const loadBank = async () => {
+  const loadBank = useCallback(async () => {
     setLoading(true);
     try {
       const data = await questionBankService.getQuestions({
@@ -71,7 +67,12 @@ export default function QuestionBankPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedCategory, selectedDifficulty, selectedType, search, toast]);
+
+  useEffect(() => {
+    const timer = setTimeout(loadBank, 150);
+    return () => clearTimeout(timer);
+  }, [loadBank]);
 
   const toggleSelect = (id) => {
     setSelectedIds((prev) => {

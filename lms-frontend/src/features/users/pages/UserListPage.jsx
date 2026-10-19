@@ -192,9 +192,9 @@ export const UserListPage = () => {
   }, [page, pageSize, search, statusFilter]);
 
   useEffect(() => {
-    loadUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, pageSize, search, statusFilter]);
+    const timer = setTimeout(loadUsers, 0);
+    return () => clearTimeout(timer);
+  }, [loadUsers]);
 
   // Close action menu on outside click
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useContext } from 'react';
 import { Sun, Moon } from 'lucide-react';
-import { ThemeContext } from '../../../context/ThemeContext';
+import { ThemeContext } from '../../../context/theme';
 
 /**
  * ThemeSlider — Premium iOS/macOS styled capsule slider for switching themes.
@@ -34,15 +34,9 @@ export const ThemeSlider = ({ size = 'md', className = '', style = {}, showToolt
     return 'dark';
   };
 
-  const [currentTheme, setCurrentTheme] = useState(getInitialTheme);
+  const [standaloneTheme, setCurrentTheme] = useState(getInitialTheme);
+  const currentTheme = context?.theme ?? standaloneTheme;
   const isDark = currentTheme === 'dark';
-
-  // Sync state if context or DOM changes
-  useEffect(() => {
-    if (context?.theme && context.theme !== currentTheme) {
-      setCurrentTheme(context.theme);
-    }
-  }, [context?.theme]);
 
   // Listen to external theme changes across tabs/windows/DOM
   useEffect(() => {

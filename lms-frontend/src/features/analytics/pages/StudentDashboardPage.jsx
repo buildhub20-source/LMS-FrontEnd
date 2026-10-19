@@ -43,6 +43,7 @@ import certificateService from '../../certificates/services/certificateService';
 
 export const StudentDashboardPage = () => {
   const navigate = useNavigate();
+  const [resourceNow] = useState(() => Date.now());
   const { user } = useAuth();
   const studentName = user?.fullName || user?.firstName || user?.email?.split('@')[0] || 'Learner';
 
@@ -992,7 +993,7 @@ export const StudentDashboardPage = () => {
                   {toolkitResources.slice(0, 5).map((guide) => {
                     const isNew =
                       guide.createdAt &&
-                      Date.now() - new Date(guide.createdAt).getTime() < 7 * 24 * 3600 * 1000;
+                      resourceNow - new Date(guide.createdAt).getTime() < 7 * 24 * 3600 * 1000;
                     const fileTypeUpper = (guide.fileType || 'PDF').toUpperCase();
                     const badgeColor =
                       fileTypeUpper === 'DOCX' || fileTypeUpper === 'DOC'
@@ -1325,7 +1326,7 @@ export const StudentDashboardPage = () => {
                     filteredModalGuides.map((guide) => {
                       const isNew =
                         guide.createdAt &&
-                        Date.now() - new Date(guide.createdAt).getTime() < 7 * 24 * 3600 * 1000;
+                        resourceNow - new Date(guide.createdAt).getTime() < 7 * 24 * 3600 * 1000;
                       const fileTypeUpper = (guide.fileType || 'PDF').toUpperCase();
                       const badgeColor =
                         fileTypeUpper === 'DOCX' || fileTypeUpper === 'DOC'

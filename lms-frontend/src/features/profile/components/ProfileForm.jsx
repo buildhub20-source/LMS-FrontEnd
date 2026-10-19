@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { User, Mail, Phone, Briefcase, FileText, Lock, Save, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -12,7 +12,7 @@ export const ProfileForm = ({ defaultValues, onSubmit, error = null }) => {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors, isSubmitting, isDirty },
   } = useForm({
     resolver: zodResolver(profileSchema),
@@ -24,7 +24,7 @@ export const ProfileForm = ({ defaultValues, onSubmit, error = null }) => {
     },
   });
 
-  const bioValue = watch('bio') || '';
+  const bioValue = useWatch({ control, name: 'bio' }) || '';
 
   return (
     <form

@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { act, render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -153,7 +153,7 @@ describe('NotificationCenter & Real-Time Popover', () => {
     const firstItem = screen.getByText('Direct Message');
     fireEvent.click(firstItem);
 
-    await vi.waitFor(() => {
+    await waitFor(() => {
       expect(notificationService.markRead).toHaveBeenCalledWith('notif-1');
     });
     expect(onClose).toHaveBeenCalled();
@@ -174,7 +174,7 @@ describe('NotificationCenter & Real-Time Popover', () => {
     const markAllBtn = screen.getByRole('button', { name: /Mark all read/i });
     fireEvent.click(markAllBtn);
 
-    await vi.waitFor(() => {
+    await waitFor(() => {
       expect(notificationService.markAllRead).toHaveBeenCalled();
     });
   });
@@ -238,6 +238,8 @@ describe('Header Notification Bell Integration', () => {
     expect(screen.getByRole('dialog', { name: 'Notifications' })).toBeInTheDocument();
     expect(screen.getByText('Notifications')).toBeInTheDocument();
 
+    await screen.findByText('Direct Message From Sarah');
+
     // Click again to toggle close
     fireEvent.click(bellBtn);
     expect(screen.queryByRole('dialog', { name: 'Notifications' })).not.toBeInTheDocument();
@@ -271,7 +273,6 @@ describe('Microsoft Teams Style Notification Toast & Deduplication', () => {
       await import('../../../../src/features/notifications/components/TeamsNotificationToast');
     const { default: teamsToastService } =
       await import('../../../../src/features/notifications/services/teamsToastService');
-    const { act } = await import('@testing-library/react');
     teamsToastService.clear();
 
     render(<TeamsNotificationHost />, { wrapper: createWrapper() });
@@ -292,7 +293,7 @@ describe('Microsoft Teams Style Notification Toast & Deduplication', () => {
     });
 
     // Verify card content
-    await vi.waitFor(() => {
+    await waitFor(() => {
       expect(screen.getByText('LMS Chat')).toBeInTheDocument();
     });
     expect(screen.getByText('Vinoth')).toBeInTheDocument();
@@ -312,6 +313,6 @@ describe('Microsoft Teams Style Notification Toast & Deduplication', () => {
     const sendBtn = screen.getByRole('button', { name: /Send reply/i });
     expect(sendBtn).toBeInTheDocument();
 
-    teamsToastService.clear();
+    act(() => teamsToastService.clear());
   });
 });

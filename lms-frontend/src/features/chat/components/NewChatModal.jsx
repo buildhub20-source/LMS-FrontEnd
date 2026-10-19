@@ -5,7 +5,7 @@ import chatService from '../services/chatService';
 import { getAvatarColorIndex } from '../utils/chatHelpers';
 import { UserListSkeleton } from './ChatSkeletons';
 
-export default function NewChatModal({ isOpen, onClose, onChannelCreated }) {
+function NewChatModalContent({ isOpen, onClose, onChannelCreated }) {
   const [activeTab, setActiveTab] = useState('direct'); // 'direct' | 'group'
   const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState([]);
@@ -33,16 +33,8 @@ export default function NewChatModal({ isOpen, onClose, onChannelCreated }) {
   }, []);
 
   useEffect(() => {
-    if (!isOpen) {
-      setSearchQuery('');
-      setSelectedUserIds(new Set());
-      setGroupName('');
-      setGroupDesc('');
-      setError(null);
-      return;
-    }
-
-    fetchUsers(searchQuery);
+    const timer = setTimeout(() => fetchUsers(searchQuery), 150);
+    return () => clearTimeout(timer);
   }, [isOpen, searchQuery, fetchUsers]);
 
   if (!isOpen) return null;
@@ -282,4 +274,8 @@ export default function NewChatModal({ isOpen, onClose, onChannelCreated }) {
   );
 
   return typeof document !== 'undefined' ? createPortal(modalContent, document.body) : null;
+}
+
+export default function NewChatModal(props) {
+  return props.isOpen ? <NewChatModalContent {...props} /> : null;
 }

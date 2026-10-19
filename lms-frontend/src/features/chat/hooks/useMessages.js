@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import chatSocketService from '../services/chatSocketService';
 import chatService from '../services/chatService';
@@ -21,32 +21,46 @@ export function useMessages(channelId, userProp = null) {
 
   const [messages, setMessages] = useState([]);
   const [pinnedMessages, setPinnedMessages] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(Boolean(channelId));
   const [hasMore, setHasMore] = useState(true);
   const [replyTo, setReplyTo] = useState(null);
   const [typingUsers, setTypingUsers] = useState([]);
   const typingTimeouts = useRef(new Map());
+  const channelRequestRef = useRef({ id: channelId, generation: 0 });
+  useLayoutEffect(() => {
+    channelRequestRef.current = {
+      id: channelId,
+      generation: channelRequestRef.current.generation + 1,
+    };
+  }, [channelId]);
+  const [previousChannelId, setPreviousChannelId] = useState(channelId);
+  if (previousChannelId !== channelId) {
+    setPreviousChannelId(channelId);
+    setMessages([]);
+    setPinnedMessages([]);
+    setIsLoading(Boolean(channelId));
+    setHasMore(true);
+    setReplyTo(null);
+    setTypingUsers([]);
+  }
 
   // Load initial messages and pins when channel changes
   useEffect(() => {
-    if (!channelId) {
-      setMessages([]);
-      setPinnedMessages([]);
-      return;
-    }
-
-    setIsLoading(true);
-    setHasMore(true);
-    setReplyTo(null);
-
+    if (!channelId) return;
+    let cancelled = false;
     chatService
       .getPinnedMessages(channelId)
-      .then((pins) => setPinnedMessages(Array.isArray(pins) ? pins : []))
-      .catch(() => setPinnedMessages([]));
+      .then((pins) => {
+        if (!cancelled) setPinnedMessages(Array.isArray(pins) ? pins : []);
+      })
+      .catch(() => {
+        if (!cancelled) setPinnedMessages([]);
+      });
 
     chatService
       .getMessages(channelId, { limit: MESSAGES_PER_PAGE })
       .then((msgs) => {
+        if (cancelled) return;
         const list = msgs ?? [];
         setMessages(list);
         setHasMore(list.length >= MESSAGES_PER_PAGE);
@@ -58,16 +72,24 @@ export function useMessages(channelId, userProp = null) {
         }
       })
       .catch((err) => {
+        if (cancelled) return;
         console.error('Failed to load messages:', err);
         setHasMore(false);
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [channelId]);
 
   // Subscribe to real-time events
   useEffect(() => {
     if (!channelId) return;
+    let cancelled = false;
 
+    const timeouts = typingTimeouts.current;
     const unsubs = [
       chatSocketService.on(SERVER_EVENTS.NEW_MESSAGE, (msg) => {
         if (msg.channelId !== channelId) return;
@@ -109,7 +131,9 @@ export function useMessages(channelId, userProp = null) {
         if (ch !== channelId) return;
         chatService
           .getPinnedMessages(channelId)
-          .then((pins) => setPinnedMessages(Array.isArray(pins) ? pins : []))
+          .then((pins) => {
+            if (!cancelled) setPinnedMessages(Array.isArray(pins) ? pins : []);
+          })
           .catch(() => {});
       }),
 
@@ -117,7 +141,9 @@ export function useMessages(channelId, userProp = null) {
         if (ch !== channelId) return;
         chatService
           .getPinnedMessages(channelId)
-          .then((pins) => setPinnedMessages(Array.isArray(pins) ? pins : []))
+          .then((pins) => {
+            if (!cancelled) setPinnedMessages(Array.isArray(pins) ? pins : []);
+          })
           .catch(() => {});
       }),
 
@@ -173,9 +199,10 @@ export function useMessages(channelId, userProp = null) {
     ];
 
     return () => {
+      cancelled = true;
       unsubs.forEach((fn) => fn());
-      typingTimeouts.current.forEach((t) => clearTimeout(t));
-      typingTimeouts.current.clear();
+      timeouts.forEach((t) => clearTimeout(t));
+      timeouts.clear();
     };
   }, [channelId]);
 
@@ -183,6 +210,10 @@ export function useMessages(channelId, userProp = null) {
   const loadMore = useCallback(async () => {
     if (!channelId || isLoading || !hasMore || messages.length === 0) return;
 
+    const requestGeneration = channelRequestRef.current.generation;
+    const isCurrentRequest = () =>
+      channelRequestRef.current.id === channelId &&
+      channelRequestRef.current.generation === requestGeneration;
     setIsLoading(true);
     try {
       const oldest = messages[0];
@@ -190,12 +221,13 @@ export function useMessages(channelId, userProp = null) {
         before: oldest.id,
         limit: MESSAGES_PER_PAGE,
       });
+      if (!isCurrentRequest()) return;
       setMessages((prev) => [...(older ?? []), ...prev]);
       setHasMore((older?.length ?? 0) >= MESSAGES_PER_PAGE);
     } catch (err) {
-      console.error('Failed to load more messages:', err);
+      if (isCurrentRequest()) console.error('Failed to load more messages:', err);
     } finally {
-      setIsLoading(false);
+      if (isCurrentRequest()) setIsLoading(false);
     }
   }, [channelId, isLoading, hasMore, messages]);
 

@@ -12,6 +12,9 @@ export const Button = ({
   fullWidth = false,
   disabled = false,
   leftIcon = null,
+  rightIcon = null,
+  iconLeft = null,
+  iconRight = null,
   className = '',
   children,
   ...rest
@@ -34,8 +37,9 @@ export const Button = ({
       aria-busy={isLoading}
       {...rest}
     >
-      {isLoading ? <span className={styles.spinner} aria-hidden="true" /> : leftIcon}
+      {isLoading ? <span className={styles.spinner} aria-hidden="true" /> : (leftIcon ?? iconLeft)}
       {children}
+      {!isLoading && (rightIcon ?? iconRight)}
     </button>
   );
 };

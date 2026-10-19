@@ -1,4 +1,4 @@
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Input from '../../../components/common/Input';
 import Select from '../../../components/common/Select';
@@ -48,14 +48,13 @@ export const StudentForm = ({
     register,
     handleSubmit,
     control,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(studentSchema),
     defaultValues: { ...EMPTY_STUDENT, ...defaultValues },
   });
 
-  const fullName = watch('fullName');
+  const fullName = useWatch({ control, name: 'fullName' });
 
   const { fields, append, remove } = useFieldArray({ control, name: 'enrolments' });
 

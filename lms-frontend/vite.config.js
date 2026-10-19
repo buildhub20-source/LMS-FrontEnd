@@ -92,6 +92,9 @@ export default defineConfig(({ mode }) => {
             }
             if (['@reduxjs', 'react-redux', 'redux', '@tanstack'].includes(pkg)) return 'state';
             if (['react-hook-form', 'zod', '@hookform'].includes(pkg)) return 'forms';
+            if (['livekit-client', '@livekit'].includes(pkg)) return 'realtime-media';
+            if (['framer-motion', 'motion-dom', 'motion-utils'].includes(pkg)) return 'animation';
+            if (['radix-ui', '@radix-ui'].includes(pkg)) return 'ui-primitives';
             return 'vendor';
           },
         },

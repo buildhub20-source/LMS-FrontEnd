@@ -154,7 +154,8 @@ export const AuditLogsPage = () => {
   }, [page, pageSize, userId, actionFilter, resourceFilter]);
 
   useEffect(() => {
-    load();
+    const timer = setTimeout(load, 0);
+    return () => clearTimeout(timer);
   }, [load]);
 
   // close dropdowns on outside click

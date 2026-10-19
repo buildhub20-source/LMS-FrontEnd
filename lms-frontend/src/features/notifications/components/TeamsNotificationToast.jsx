@@ -90,6 +90,13 @@ function TeamsNotificationCard({ notification, onDismiss }) {
     notification.type === 'CHAT_MESSAGE' ||
     Boolean(channelId);
 
+  const handleDismiss = useCallback(() => {
+    setIsDismissing(true);
+    setTimeout(() => {
+      onDismiss(notification.toastId);
+    }, 200);
+  }, [onDismiss, notification.toastId]);
+
   // Auto-dismiss countdown (6.5s), paused if hovering or actively typing reply
   const startTimer = useCallback(() => {
     if (isReplying || sentSuccess) return;
@@ -97,7 +104,7 @@ function TeamsNotificationCard({ notification, onDismiss }) {
     timerRef.current = setTimeout(() => {
       handleDismiss();
     }, 6500);
-  }, [isReplying, sentSuccess]);
+  }, [isReplying, sentSuccess, handleDismiss]);
 
   const pauseTimer = useCallback(() => {
     clearTimeout(timerRef.current);
@@ -114,13 +121,6 @@ function TeamsNotificationCard({ notification, onDismiss }) {
       setTimeout(() => replyInputRef.current?.focus(), 50);
     }
   }, [isReplying]);
-
-  const handleDismiss = () => {
-    setIsDismissing(true);
-    setTimeout(() => {
-      onDismiss(notification.toastId);
-    }, 200);
-  };
 
   const handleCardClick = (e) => {
     // Don't navigate if clicking inputs, buttons, or during quick reply

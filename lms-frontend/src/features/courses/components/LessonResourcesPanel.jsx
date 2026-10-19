@@ -1,55 +1,11 @@
-import { FileText, Download, ExternalLink, Code2, BookOpen, Layers } from 'lucide-react';
+import { FileText, Download, BookOpen } from 'lucide-react';
 
-export const LessonResourcesPanel = ({ currentLesson, course }) => {
-  const lessonTitle = currentLesson?.title || 'Lesson';
-
-  // Gather any resources from current lesson or standard course study materials
-  const resources = [...(currentLesson?.resources || []), ...(currentLesson?.attachments || [])];
-
-  // Default helpful course reference materials if no explicit attachments are configured
-  const defaultItems = [
-    {
-      id: 'syllabus',
-      title: `${course?.title || 'Course'} - Syllabus & Objectives`,
-      type: 'PDF Document',
-      size: '1.2 MB',
-      icon: <FileText size={18} className="text-red-400" />,
-      action: 'Download',
-    },
-    {
-      id: 'cheatsheet',
-      title: `${lessonTitle} - Key Concepts & Reference`,
-      type: 'Markdown Summary',
-      size: '180 KB',
-      icon: <Code2 size={18} className="text-blue-400" />,
-      action: 'Download',
-    },
-    {
-      id: 'slides',
-      title: `${lessonTitle} - Presentation Slides`,
-      type: 'Slide Deck (PDF)',
-      size: '3.4 MB',
-      icon: <Layers size={18} className="text-amber-400" />,
-      action: 'Download',
-    },
-  ];
-
-  const displayList = resources.length > 0 ? resources : defaultItems;
+export const LessonResourcesPanel = ({ currentLesson }) => {
+  const displayList = [...(currentLesson?.resources || []), ...(currentLesson?.attachments || [])]
+    .filter((item) => item?.url);
 
   const handleDownload = (item) => {
-    if (item.url) {
-      window.open(item.url, '_blank', 'noopener,noreferrer');
-      return;
-    }
-    // Generate helpful summary text file
-    const content = `Course: ${course?.title || ''}\nLesson: ${lessonTitle}\nTopic: ${item.title}\nDate: ${new Date().toLocaleDateString()}\n\nWelcome to ${lessonTitle}. Review these study notes and practice tasks to master this module.`;
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${item.title.replace(/\s+/g, '_')}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+    window.open(item.url, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -80,11 +36,16 @@ export const LessonResourcesPanel = ({ currentLesson, course }) => {
           </h4>
         </div>
         <span style={{ fontSize: 11, color: 'var(--text-muted, #71717a)' }}>
-          {displayList.length} files available
+          {displayList.length} {displayList.length === 1 ? 'file' : 'files'} available
         </span>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, overflowY: 'auto' }}>
+        {displayList.length === 0 && (
+          <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted, #71717a)' }}>
+            No lesson resources have been uploaded yet.
+          </p>
+        )}
         {displayList.map((item) => (
           <div
             key={item.id || item.title}

@@ -26,7 +26,7 @@ function HighlightedText({ text, query }) {
   );
 }
 
-export default function ChatSearchModal({ isOpen, onClose, activeChannel, onSelectResult }) {
+function ChatSearchModalContent({ isOpen, onClose, activeChannel, onSelectResult }) {
   const [query, setQuery] = useState('');
   const [scope, setScope] = useState('channel'); // 'channel' | 'all'
   const [results, setResults] = useState([]);
@@ -36,28 +36,18 @@ export default function ChatSearchModal({ isOpen, onClose, activeChannel, onSele
 
   // Focus on open
   useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 50);
-    } else {
-      setQuery('');
-      setResults([]);
-      setHasSearched(false);
-    }
+    const timer = setTimeout(() => inputRef.current?.focus(), 50);
+    return () => clearTimeout(timer);
   }, [isOpen]);
 
   // Debounced search
   useEffect(() => {
     if (!isOpen) return;
     const trimmed = query.trim();
-    if (trimmed.length < 1) {
-      setResults([]);
-      setIsLoading(false);
-      setHasSearched(false);
-      return;
-    }
-
-    setIsLoading(true);
+    if (trimmed.length < 1) return;
+    let cancelled = false;
     const timer = setTimeout(async () => {
+      setIsLoading(true);
       try {
         const channelId = scope === 'channel' ? activeChannel?.id : undefined;
         const data = await chatService.searchMessages({ query: trimmed, channelId });
@@ -66,17 +56,21 @@ export default function ChatSearchModal({ isOpen, onClose, activeChannel, onSele
           : Array.isArray(data?.data)
             ? data.data
             : (data?.results ?? []);
+        if (cancelled) return;
         setResults(list);
         setHasSearched(true);
       } catch (err) {
         console.error('Search failed:', err);
-        setResults([]);
+        if (!cancelled) setResults([]);
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     }, 250);
 
-    return () => clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [query, scope, activeChannel?.id, isOpen]);
 
   // Keyboard navigation (Escape to close)
@@ -118,7 +112,12 @@ export default function ChatSearchModal({ isOpen, onClose, activeChannel, onSele
               className="chat-search-modal__input"
               placeholder="Search messages, links, code..."
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setResults([]);
+                setHasSearched(false);
+                setIsLoading(Boolean(e.target.value.trim()));
+              }}
             />
             {isLoading ? (
               <Loader2 size={16} className="chat-spinner-icon" />
@@ -244,4 +243,8 @@ export default function ChatSearchModal({ isOpen, onClose, activeChannel, onSele
     </div>,
     document.body,
   );
+}
+
+export default function ChatSearchModal(props) {
+  return props.isOpen ? <ChatSearchModalContent {...props} /> : null;
 }

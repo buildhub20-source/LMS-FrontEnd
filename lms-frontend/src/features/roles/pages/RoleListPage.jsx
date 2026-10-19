@@ -654,13 +654,13 @@ export const RoleListPage = () => {
   }, [userSearch, userPage, roleFilter]);
 
   useEffect(() => {
-    loadRoles();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const timer = setTimeout(loadRoles, 0);
+    return () => clearTimeout(timer);
+  }, [loadRoles]);
   useEffect(() => {
-    loadUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userSearch, userPage, roleFilter]);
+    const timer = setTimeout(loadUsers, 0);
+    return () => clearTimeout(timer);
+  }, [loadUsers]);
 
   const openCreate = () => {
     setEditRole(null);

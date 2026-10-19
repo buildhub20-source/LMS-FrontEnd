@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Megaphone,
   Plus,
@@ -42,11 +42,7 @@ export const AnnouncementComposer = () => {
   const [expiresAt, setExpiresAt] = useState('');
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    fetchAnnouncements();
-  }, []);
-
-  const fetchAnnouncements = async () => {
+  const fetchAnnouncements = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -57,7 +53,12 @@ export const AnnouncementComposer = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(fetchAnnouncements, 0);
+    return () => clearTimeout(timer);
+  }, [fetchAnnouncements]);
 
   const handleCreate = async (e) => {
     e.preventDefault();

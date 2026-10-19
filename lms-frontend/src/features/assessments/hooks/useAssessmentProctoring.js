@@ -140,7 +140,7 @@ export function useAssessmentProctoring({
       logViolation('SCREEN_RECORDING_ERROR', 'Screen recording permission was not granted.');
       return null;
     }
-  }, [logViolation, recordStrike]);
+  }, [logViolation, recordStrike, suppressRef]);
 
   // Stop screen recording on finish / cleanup
   const stopScreenRecording = useCallback(() => {
@@ -236,7 +236,7 @@ export function useAssessmentProctoring({
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
     };
-  }, [enabled, isRulesAgreed, isTerminated, recordStrike]);
+  }, [enabled, isRulesAgreed, isTerminated, recordStrike, suppressRef]);
 
   // ── 2. Visibility & Tab Switch Listener ───────────────────────────────────
   useEffect(() => {
@@ -261,7 +261,7 @@ export function useAssessmentProctoring({
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('blur', handleWindowBlur);
     };
-  }, [enabled, isRulesAgreed, isTerminated, recordStrike]);
+  }, [enabled, isRulesAgreed, isTerminated, recordStrike, suppressRef]);
 
   // ── 3. Malicious Keys & DevTools Prevention ──────────────────────────────
   useEffect(() => {
@@ -318,7 +318,7 @@ export function useAssessmentProctoring({
       window.removeEventListener('keydown', handleKeyDown, true);
       window.removeEventListener('contextmenu', handleContextMenu, true);
     };
-  }, [enabled, isRulesAgreed, recordStrike]);
+  }, [enabled, isRulesAgreed, recordStrike, suppressRef]);
 
   // Cleanup screen recording on unmount
   useEffect(() => {

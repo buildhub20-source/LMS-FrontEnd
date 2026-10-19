@@ -1,11 +1,5 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-
-export const ThemeContext = createContext({
-  theme: 'dark',
-  isDark: true,
-  toggleTheme: () => {},
-  setTheme: () => {},
-});
+import { useState, useEffect, useCallback } from 'react';
+import { ThemeContext } from './theme';
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setThemeState] = useState(() => {
@@ -60,8 +54,5 @@ export const ThemeProvider = ({ children }) => {
     </ThemeContext.Provider>
   );
 };
-
-// Convenience hook
-export const useTheme = () => useContext(ThemeContext);
 
 export default ThemeProvider;

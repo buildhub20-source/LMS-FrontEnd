@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useMemo } from 'react';
 
 /**
  * useAssessmentTimeState
@@ -20,8 +20,8 @@
  * }}
  */
 export const useAssessmentTimeState = (startTime, endTime) => {
-  const compute = useCallback(() => {
-    const now = Date.now();
+  const [now, setNow] = useState(() => Date.now());
+  const result = useMemo(() => {
     const start = startTime ? new Date(startTime).getTime() : null;
     const end = endTime ? new Date(endTime).getTime() : null;
 
@@ -88,20 +88,12 @@ export const useAssessmentTimeState = (startTime, endTime) => {
       startsAt: start ? new Date(start) : null,
       endsAt: null,
     };
-  }, [startTime, endTime]);
-
-  const [result, setResult] = useState(compute);
+  }, [startTime, endTime, now]);
 
   useEffect(() => {
-    setResult(compute());
-    const interval = setInterval(() => {
-      const next = compute();
-      setResult((prev) =>
-        prev.state === next.state && prev.countdown === next.countdown ? prev : next,
-      );
-    }, 1000);
+    const interval = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(interval);
-  }, [compute]);
+  }, []);
 
   return result;
 };

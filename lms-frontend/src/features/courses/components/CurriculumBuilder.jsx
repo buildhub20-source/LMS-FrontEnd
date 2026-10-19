@@ -32,13 +32,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import curriculumService from '../services/curriculumService';
 import { useToast } from '../../../components/feedback/Toast';
 import Button from '../../../components/common/Button';
-import LessonEditorModal, { LESSON_TYPE_MAP } from './LessonEditorModal';
-
-export function formatSectionTitle(title, index) {
-  if (!title) return `Section ${index}: Untitled Section`;
-  const cleanTitle = title.replace(/^section\s*\d*\s*:?\s*/i, '').trim();
-  return `Section ${index}: ${cleanTitle || title}`;
-}
+import { LESSON_TYPE_MAP } from '../constants/lessonTypes';
+import { formatSectionTitle } from '../utils/courseFormatting';
+import LessonEditorModal from './LessonEditorModal';
 
 // Sortable Individual Lesson Row Component
 const SortableLessonRow = ({ lesson, idx, moduleId, onEditLesson, onDeleteLesson }) => {

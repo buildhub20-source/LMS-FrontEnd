@@ -1,5 +1,5 @@
 import { useMemo, useEffect, useState, useRef } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Code2,
@@ -216,13 +216,15 @@ export const AdminQuestionForm = ({
     register,
     control,
     handleSubmit,
-    watch,
+    getValues,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(questionSchema),
     values: initialValues,
   });
+
+  const watchedValues = useWatch({ control });
 
   const { fields, append, remove } = useFieldArray({ control, name: 'testCases' });
   const {
@@ -231,10 +233,10 @@ export const AdminQuestionForm = ({
     remove: removeOption,
   } = useFieldArray({ control, name: 'options' });
 
-  const questionType = watch('questionType') || 'CODING';
-  const difficultyWatch = watch('difficulty') || 'MEDIUM';
-  const testCasesWatch = watch('testCases') || [];
-  const descriptionValue = watch('description') || '';
+  const questionType = watchedValues.questionType || 'CODING';
+  const difficultyWatch = watchedValues.difficulty || 'MEDIUM';
+  const testCasesWatch = watchedValues.testCases || [];
+  const descriptionValue = watchedValues.description || '';
 
   // Ensure options exist when switching to MULTIPLE_CHOICE
   useEffect(() => {
@@ -247,11 +249,13 @@ export const AdminQuestionForm = ({
   }, [questionType, optionFields.length, appendOption]);
 
   // Keep selectedCaseIndex within bounds
-  useEffect(() => {
+  const [previousCaseCount, setPreviousCaseCount] = useState(fields.length);
+  if (previousCaseCount !== fields.length) {
+    setPreviousCaseCount(fields.length);
     if (fields.length > 0 && selectedCaseIndex >= fields.length) {
       setSelectedCaseIndex(fields.length - 1);
     }
-  }, [fields.length, selectedCaseIndex]);
+  }
 
   // Summary counts
   const visibleCasesCount = testCasesWatch.filter(
@@ -297,7 +301,7 @@ export const AdminQuestionForm = ({
   };
 
   const handleDuplicateTestCase = (idx) => {
-    const current = watch(`testCases.${idx}`);
+    const current = getValues(`testCases.${idx}`);
     append({
       inputData: current?.inputData || '',
       expectedOutput: current?.expectedOutput || '',
@@ -318,10 +322,10 @@ export const AdminQuestionForm = ({
   };
 
   const handleToggleVisibility = (idx) => {
-    const isSample = Boolean(watch(`testCases.${idx}.sample`));
+    const isSample = Boolean(getValues(`testCases.${idx}.sample`));
     const isHidden =
-      watch(`testCases.${idx}.hidden`) !== undefined
-        ? Boolean(watch(`testCases.${idx}.hidden`))
+      getValues(`testCases.${idx}.hidden`) !== undefined
+        ? Boolean(getValues(`testCases.${idx}.hidden`))
         : !isSample;
     const nowSample = isHidden || !isSample;
 
@@ -340,7 +344,7 @@ export const AdminQuestionForm = ({
   // Helper to insert markdown in description textarea
   const insertDescMarkdown = (before, after = '', placeholder = '') => {
     const ta = descTextareaRef.current;
-    const current = watch('description') || '';
+    const current = getValues('description') || '';
     if (!ta) {
       setValue('description', current + before + placeholder + after, {
         shouldValidate: true,
@@ -363,7 +367,7 @@ export const AdminQuestionForm = ({
 
   // Helper to insert quick template into problem statement
   const insertTemplate = (templateType) => {
-    const current = watch('description') || '';
+    const current = getValues('description') || '';
     let snippet = '';
     if (templateType === 'example') {
       snippet = `\n\n### Example 1:\n- **Input:** \`nums = [2, 7, 11, 15], target = 9\`\n- **Output:** \`0 1\`\n- **Explanation:** \`nums[0] + nums[1] == 9\`, so indices are \`0 1\`.\n`;
@@ -378,7 +382,7 @@ export const AdminQuestionForm = ({
 
   // Helper for quick constraint pills
   const appendConstraint = (chip) => {
-    const current = watch('constraints') || '';
+    const current = getValues('constraints') || '';
     const updated = current ? `${current}\n${chip}` : chip;
     setValue('constraints', updated, { shouldValidate: true, shouldDirty: true });
     toast.success(`Appended: ${chip}`);
@@ -386,7 +390,7 @@ export const AdminQuestionForm = ({
 
   // Helper for format chips
   const appendFormat = (field, text) => {
-    const current = watch(field) || '';
+    const current = getValues(field) || '';
     const updated = current ? `${current}\n${text}` : text;
     setValue(field, updated, { shouldValidate: true, shouldDirty: true });
   };
@@ -502,7 +506,7 @@ export const AdminQuestionForm = ({
                   {questionType === 'CODING' ? 'Coding' : 'MCQ'}
                 </span>
                 <span style={{ color: 'var(--text-muted)' }} className="text-[11px] font-mono">
-                  {(watch('title') || '').length}/500
+                  {(watchedValues.title || '').length}/500
                 </span>
               </div>
             </div>
@@ -592,38 +596,50 @@ export const AdminQuestionForm = ({
                     {
                       icon: Bold,
                       title: 'Bold',
-                      action: () => insertDescMarkdown('**', '**', 'bold text'),
+                      before: '**',
+                      after: '**',
+                      placeholder: 'bold text',
                     },
                     {
                       icon: Italic,
                       title: 'Italic',
-                      action: () => insertDescMarkdown('*', '*', 'italic text'),
+                      before: '*',
+                      after: '*',
+                      placeholder: 'italic text',
                     },
                     {
                       label: '</>',
                       title: 'Inline Code',
-                      action: () => insertDescMarkdown('`', '`', 'code'),
+                      before: '`',
+                      after: '`',
+                      placeholder: 'code',
                     },
                     {
                       icon: Braces,
                       title: 'Code Block',
-                      action: () => insertDescMarkdown('\n```java\n', '\n```\n', '// code here'),
+                      before: '\n```java\n',
+                      after: '\n```\n',
+                      placeholder: '// code here',
                     },
                     {
                       icon: List,
                       title: 'Bulleted List',
-                      action: () => insertDescMarkdown('\n- ', '', 'List item'),
+                      before: '\n- ',
+                      after: '',
+                      placeholder: 'List item',
                     },
                     {
                       icon: Quote,
                       title: 'Quote',
-                      action: () => insertDescMarkdown('\n> ', '', 'Important note'),
+                      before: '\n> ',
+                      after: '',
+                      placeholder: 'Important note',
                     },
                   ].map((btn, idx) => (
                     <button
                       key={idx}
                       type="button"
-                      onClick={btn.action}
+                      onClick={() => insertDescMarkdown(btn.before, btn.after, btn.placeholder)}
                       style={{ color: 'var(--text-muted)' }}
                       className="p-1.5 rounded hover:bg-[var(--hover-bg)] hover:text-[var(--text-primary)] transition-colors text-xs font-mono"
                       title={btn.title}
@@ -904,7 +920,7 @@ export const AdminQuestionForm = ({
                 )}
 
                 {optionFields.map((field, index) => {
-                  const isCorrect = watch(`options.${index}.isCorrect`);
+                  const isCorrect = watchedValues.options?.[index]?.isCorrect;
                   const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
                   const letter = letters[index] || `#${index + 1}`;
 
@@ -1301,9 +1317,9 @@ export const AdminQuestionForm = ({
                       testCasesWatch[idx]?.hidden !== undefined
                         ? Boolean(testCasesWatch[idx]?.hidden)
                         : !isSample;
-                    const inputVal = watch(`testCases.${idx}.inputData`) || '';
-                    const outputVal = watch(`testCases.${idx}.expectedOutput`) || '';
-                    const currentWeight = watch(`testCases.${idx}.weight`) ?? 1;
+                    const inputVal = watchedValues.testCases?.[idx]?.inputData || '';
+                    const outputVal = watchedValues.testCases?.[idx]?.expectedOutput || '';
+                    const currentWeight = watchedValues.testCases?.[idx]?.weight ?? 1;
 
                     const inputCopyKey = `tc-${idx}-in`;
                     const outputCopyKey = `tc-${idx}-out`;
@@ -1745,7 +1761,7 @@ export const AdminQuestionForm = ({
       <QuestionPreviewModal
         isOpen={showPreviewModal}
         onClose={() => setShowPreviewModal(false)}
-        questionData={watch()}
+        questionData={watchedValues}
       />
     </>
   );

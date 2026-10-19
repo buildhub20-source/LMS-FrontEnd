@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   X,
@@ -25,25 +25,40 @@ import { adminAssessmentService } from '../services/adminAssessmentService';
 import { ROUTES } from '../../../constants/routes';
 import { useToast } from '../../../components/feedback/Toast';
 
-export default function ExportToAssessmentModal({
-  isOpen,
-  onClose,
-  selectedQuestions = [],
-  onSuccess,
-}) {
+function ExportToAssessmentContent({ isOpen, onClose, selectedQuestions = [], onSuccess }) {
   const navigate = useNavigate();
   const location = useLocation();
   const toast = useToast();
 
   const isAdmin = location.pathname.startsWith('/admin');
+  const [defaults] = useState(() => {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const types = [...new Set(selectedQuestions.map((q) => q.questionType))];
+    const label =
+      types.length === 1
+        ? types[0] === 'CODING'
+          ? 'Coding Assessment'
+          : 'MCQ Assessment'
+        : 'Comprehensive Assessment';
+    const minutes = selectedQuestions.reduce(
+      (sum, q) => sum + (q.questionType === 'CODING' ? 20 : 3),
+      0,
+    );
+    return {
+      title: `${label} - ${dateStr} (${selectedQuestions.length} Questions)`,
+      description: `Generated from Question Bank on ${now.toLocaleString()} with ${selectedQuestions.length} curated problems.`,
+      duration: Math.max(30, Math.min(180, minutes || 60)),
+    };
+  });
 
   // Mode: 'NEW' (create new assessment) | 'EXISTING' (add to existing assessment)
   const [mode, setMode] = useState('NEW');
 
   // Form states for New Assessment
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [durationMinutes, setDurationMinutes] = useState(60);
+  const [title, setTitle] = useState(defaults.title);
+  const [description, setDescription] = useState(defaults.description);
+  const [durationMinutes, setDurationMinutes] = useState(defaults.duration);
   const [maxAttempts, setMaxAttempts] = useState(1);
   const [randomizeQuestions, setRandomizeQuestions] = useState(false);
 
@@ -58,66 +73,31 @@ export default function ExportToAssessmentModal({
   const [createdResult, setCreatedResult] = useState(null);
 
   // Working copy of questions to export (allows removing individual items)
-  const [questionsToExport, setQuestionsToExport] = useState([]);
-
-  useEffect(() => {
-    if (isOpen) {
-      setQuestionsToExport([...selectedQuestions]);
-      setCreatedResult(null);
-      setIsProcessing(false);
-      setProgressText('');
-
-      // Auto-generate a descriptive title based on selected questions
-      const now = new Date();
-      const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      const types = Array.from(new Set(selectedQuestions.map((q) => q.questionType)));
-      const typeLabel =
-        types.length === 1
-          ? types[0] === 'CODING'
-            ? 'Coding Assessment'
-            : 'MCQ Assessment'
-          : 'Comprehensive Assessment';
-      setTitle(`${typeLabel} - ${dateStr} (${selectedQuestions.length} Questions)`);
-      setDescription(
-        `Generated from Question Bank on ${now.toLocaleString()} with ${selectedQuestions.length} curated problems.`,
-      );
-
-      // Calculate reasonable duration (e.g. 15 mins per coding problem, 2 mins per MCQ)
-      let estimatedMinutes = 0;
-      selectedQuestions.forEach((q) => {
-        if (q.questionType === 'CODING') estimatedMinutes += 20;
-        else estimatedMinutes += 3;
-      });
-      setDurationMinutes(Math.max(30, Math.min(180, estimatedMinutes || 60)));
-      setMode('NEW');
-    }
-  }, [isOpen, selectedQuestions]);
+  const [questionsToExport, setQuestionsToExport] = useState(() => [...selectedQuestions]);
 
   // Load existing draft/active assessments ONLY when switching to EXISTING tab
-  const loadExistingAssessments = async () => {
+  const loadExistingAssessments = useCallback(async () => {
     setLoadingExisting(true);
     try {
       const res = await adminAssessmentService.list({ size: 100 });
       const data = res?.data?.content || res?.data?.items || res?.content || res?.data || res || [];
       const list = Array.isArray(data) ? data : [];
       setExistingAssessments(list);
-      if (list.length > 0 && !selectedAssessmentId) {
-        setSelectedAssessmentId(list[0].id);
-      }
+      setSelectedAssessmentId((previous) => previous || list[0]?.id || '');
     } catch (err) {
       console.warn('Could not load existing assessments:', err);
       setExistingAssessments([]);
     } finally {
       setLoadingExisting(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (isOpen && mode === 'EXISTING') {
-      loadExistingAssessments();
+      const timer = setTimeout(loadExistingAssessments, 0);
+      return () => clearTimeout(timer);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, mode]);
+  }, [isOpen, mode, loadExistingAssessments]);
 
   const totalMarks = useMemo(() => {
     return questionsToExport.reduce((sum, q) => sum + (Number(q.marks) || 10), 0);
@@ -856,3 +836,9 @@ const inputStyle = {
   boxSizing: 'border-box',
   fontFamily: 'inherit',
 };
+
+export default function ExportToAssessmentModal(props) {
+  if (!props.isOpen) return null;
+  const selectionKey = (props.selectedQuestions ?? []).map((question) => question.id).join(',');
+  return <ExportToAssessmentContent key={selectionKey} {...props} />;
+}

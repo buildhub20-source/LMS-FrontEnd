@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   ShieldCheck,
@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import certificateService from '../services/certificateService';
 
-export const PublicCertificateVerifyPage = () => {
+const PublicCertificateVerifyContent = () => {
   const { serialNumber: urlSerial } = useParams();
   const navigate = useNavigate();
 
@@ -31,8 +31,8 @@ export const PublicCertificateVerifyPage = () => {
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
 
-  const verifyCertificate = async (serial) => {
-    const query = (serial || serialInput).trim();
+  const verifyCertificate = useCallback(async (serial) => {
+    const query = (serial || '').trim();
     if (!query) return;
 
     setLoading(true);
@@ -54,14 +54,14 @@ export const PublicCertificateVerifyPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (urlSerial) {
-      setSerialInput(urlSerial);
-      verifyCertificate(urlSerial);
+      const timer = setTimeout(() => verifyCertificate(urlSerial), 0);
+      return () => clearTimeout(timer);
     }
-  }, [urlSerial]);
+  }, [urlSerial, verifyCertificate]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -575,6 +575,11 @@ export const PublicCertificateVerifyPage = () => {
       </div>
     </div>
   );
+};
+
+export const PublicCertificateVerifyPage = () => {
+  const { serialNumber } = useParams();
+  return <PublicCertificateVerifyContent key={serialNumber ?? ''} />;
 };
 
 export default PublicCertificateVerifyPage;

@@ -25,13 +25,16 @@ export function useChat(initialChannelId = null) {
     return unsub;
   }, []);
 
-  // React if initialChannelId changes externally (e.g. navigation or URL change)
-  useEffect(() => {
+  const [previousInitialChannelId, setPreviousInitialChannelId] = useState(initialChannelId);
+  if (previousInitialChannelId !== initialChannelId) {
+    setPreviousInitialChannelId(initialChannelId);
     if (initialChannelId) {
       setActiveChannelId(initialChannelId);
-      chatUnreadService.clearChannel(initialChannelId);
       setUnreadCounts((prev) => ({ ...prev, [initialChannelId]: 0 }));
     }
+  }
+  useEffect(() => {
+    if (initialChannelId) chatUnreadService.clearChannel(initialChannelId);
   }, [initialChannelId]);
 
   // Fetch initial channels and unread counts via REST for immediate render
@@ -86,13 +89,6 @@ export function useChat(initialChannelId = null) {
 
   // Connect on mount, subscribe to events
   useEffect(() => {
-    // Sync current connection status immediately
-    const currentlyConnected = chatSocketService.getIsConnected();
-    setIsConnected(currentlyConnected);
-    if (currentlyConnected) setConnectionError(null);
-
-    chatSocketService.connect();
-
     const unsubs = [
       chatSocketService.on('connection_status', ({ connected }) => {
         setIsConnected(connected);
@@ -210,11 +206,12 @@ export function useChat(initialChannelId = null) {
     ];
 
     cleanupRef.current = unsubs;
+    chatSocketService.connect();
 
     return () => {
       unsubs.forEach((fn) => fn());
     };
-  }, []);
+  }, [initialChannelId]);
 
   const selectChannel = useCallback((channelId) => {
     setActiveChannelId(channelId);

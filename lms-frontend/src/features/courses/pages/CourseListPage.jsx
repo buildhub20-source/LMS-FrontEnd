@@ -1073,7 +1073,8 @@ export const CourseListPage = () => {
   }, [page, pageSize, search, statusFilter]);
 
   useEffect(() => {
-    load();
+    const timer = setTimeout(load, 0);
+    return () => clearTimeout(timer);
   }, [load]);
 
   const doAction = async (course, type, fn, msg) => {

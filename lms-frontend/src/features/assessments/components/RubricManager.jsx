@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Trash2, Award, CheckCircle, AlertCircle } from 'lucide-react';
 import Button from '../../../components/common/Button';
 import Input from '../../../components/common/Input';
@@ -31,7 +31,7 @@ export const RubricManager = () => {
   ]);
   const [saving, setSaving] = useState(false);
 
-  const fetchRubrics = async () => {
+  const fetchRubrics = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -42,11 +42,12 @@ export const RubricManager = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchRubrics();
-  }, []);
+    const timer = setTimeout(fetchRubrics, 0);
+    return () => clearTimeout(timer);
+  }, [fetchRubrics]);
 
   const handleAddCriterion = () => {
     setCriteria([...criteria, { criterionName: '', description: '', maxPoints: 10, weight: 1.0 }]);

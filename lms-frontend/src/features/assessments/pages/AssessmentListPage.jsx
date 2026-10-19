@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Clock,
@@ -645,7 +645,7 @@ export const AssessmentListPage = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
 
-  const fetchAssessments = async () => {
+  const fetchAssessments = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -699,11 +699,12 @@ export const AssessmentListPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchAssessments();
-  }, []);
+    const timer = setTimeout(fetchAssessments, 0);
+    return () => clearTimeout(timer);
+  }, [fetchAssessments]);
 
   const getInfo = (id) =>
     attemptMap[id] ?? { status: 'NOT_STARTED', attemptsUsed: 0, canRetake: true };

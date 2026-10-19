@@ -77,17 +77,33 @@ describe('LessonNotesPanel', () => {
 });
 
 describe('LessonResourcesPanel', () => {
-  it('renders default study resources and handles download click', () => {
+  it('shows an empty state instead of advertising files that were never uploaded', () => {
     const lesson = { id: 'l-101', title: 'Binary Search Basics' };
-    const course = { title: 'Algorithms' };
 
-    render(<LessonResourcesPanel currentLesson={lesson} course={course} />);
+    render(<LessonResourcesPanel currentLesson={lesson} />);
 
     expect(screen.getByText('Lesson Resources & Downloads')).toBeInTheDocument();
-    expect(screen.getByText(/Syllabus & Objectives/i)).toBeInTheDocument();
-    expect(screen.getByText(/Key Concepts & Reference/i)).toBeInTheDocument();
+    expect(screen.getByText('0 files available')).toBeInTheDocument();
+    expect(screen.getByText('No lesson resources have been uploaded yet.')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Download/i })).not.toBeInTheDocument();
+  });
 
-    const downloadButtons = screen.getAllByRole('button', { name: /Download/i });
-    expect(downloadButtons.length).toBeGreaterThan(0);
+  it('opens a resource only when the lesson has a real file URL', () => {
+    const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+    const lesson = {
+      id: 'l-101',
+      resources: [
+        { id: 'missing', title: 'Missing PDF', type: 'PDF' },
+        { id: 'uploaded', title: 'Uploaded PDF', type: 'PDF', url: 'https://example.com/file.pdf' },
+      ],
+    };
+
+    render(<LessonResourcesPanel currentLesson={lesson} />);
+
+    expect(screen.getByText('1 file available')).toBeInTheDocument();
+    expect(screen.queryByText('Missing PDF')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Download' }));
+    expect(open).toHaveBeenCalledWith('https://example.com/file.pdf', '_blank', 'noopener,noreferrer');
+    open.mockRestore();
   });
 });
