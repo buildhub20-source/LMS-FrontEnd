@@ -110,8 +110,8 @@ function QuestionPreviewContent({ onClose, questionData }) {
               width: 34,
               height: 34,
               borderRadius: 8,
-              background: 'rgba(99, 102, 241, 0.15)',
-              color: '#818cf8',
+              background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+              color: 'var(--link)',
             }}
           >
             <Monitor size={18} />

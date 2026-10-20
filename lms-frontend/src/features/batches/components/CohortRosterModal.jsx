@@ -45,8 +45,8 @@ function CandidateAvatar({ name = '', size = 36 }) {
         height: size,
         borderRadius: '50%',
         flexShrink: 0,
-        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-        color: '#fff',
+        background: 'var(--brand-tile-bg)',
+        color: 'var(--brand-tile-fg)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -283,9 +283,9 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                     letterSpacing: '0.05em',
                     padding: '3px 8px',
                     borderRadius: '6px',
-                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                    color: 'var(--color-primary, #6366f1)',
-                    border: '1px solid rgba(99, 102, 241, 0.2)',
+                    backgroundColor: 'color-mix(in srgb, var(--primary) 10%, transparent)',
+                    color: 'var(--color-primary, #121212)',
+                    border: '1px solid color-mix(in srgb, var(--primary) 20%, transparent)',
                   }}
                 >
                   {batch.code}
@@ -350,7 +350,7 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                     fontSize: '13px',
                   }}
                 >
-                  <BookOpen size={14} color="var(--color-primary, #6366f1)" />
+                  <BookOpen size={14} color="var(--color-primary, #121212)" />
                   <span>
                     Curriculum:{' '}
                     <strong style={{ color: 'var(--text-primary)' }}>{batch.courseTitle}</strong>
@@ -418,7 +418,7 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                 style={{
                   fontSize: '16px',
                   fontWeight: 700,
-                  color: 'var(--color-primary, #6366f1)',
+                  color: 'var(--color-primary, #121212)',
                   marginTop: 2,
                 }}
               >
@@ -484,7 +484,7 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                   boxSizing: 'border-box',
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = 'var(--color-primary, #6366f1)';
+                  e.target.style.borderColor = 'var(--color-primary, #121212)';
                 }}
                 onBlur={(e) => {
                   e.target.style.borderColor = 'var(--border)';
@@ -522,15 +522,13 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                 gap: 6,
                 padding: '8px 14px',
                 borderRadius: 99,
-                background: isAddMode
-                  ? 'var(--background)'
-                  : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+                background: isAddMode ? 'var(--background)' : 'var(--primary)',
                 border: isAddMode ? '1px solid var(--border)' : 'none',
-                color: isAddMode ? 'var(--text-secondary)' : '#fff',
+                color: isAddMode ? 'var(--text-secondary)' : 'var(--primary-foreground)',
                 fontSize: '12px',
                 fontWeight: 700,
                 cursor: 'pointer',
-                boxShadow: isAddMode ? 'none' : '0 2px 8px rgba(37, 99, 235, 0.25)',
+                boxShadow: isAddMode ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.18)',
                 transition: 'all 0.15s ease',
               }}
             >
@@ -594,7 +592,7 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                 gap: 6,
               }}
             >
-              <UserPlus size={15} color="var(--color-primary, #6366f1)" />
+              <UserPlus size={15} color="var(--color-primary, #121212)" />
               Enroll Existing Student from Institution Database into {batch.code}
             </div>
 
@@ -647,15 +645,15 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                 style={{
                   padding: '9px 18px',
                   borderRadius: 99,
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  background: 'var(--primary)',
                   border: 'none',
-                  color: '#fff',
+                  color: 'var(--primary-foreground)',
                   fontSize: 13,
                   fontWeight: 700,
                   cursor:
                     !selectedStudentToEnroll || isSubmittingEnroll ? 'not-allowed' : 'pointer',
                   opacity: !selectedStudentToEnroll || isSubmittingEnroll ? 0.6 : 1,
-                  boxShadow: '0 2px 8px rgba(16, 185, 129, 0.25)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.18)',
                 }}
               >
                 {isSubmittingEnroll ? 'Enrolling...' : 'Confirm Enrollment'}
@@ -674,7 +672,7 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                   width: 24,
                   height: 24,
                   border: '2px solid var(--border)',
-                  borderTopColor: 'var(--color-primary, #6366f1)',
+                  borderTopColor: 'var(--color-primary, #121212)',
                   borderRadius: '50%',
                   animation: 'spin 0.8s linear infinite',
                   marginBottom: 12,
@@ -731,7 +729,7 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
                       transition: 'all 0.15s ease',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--color-primary, #6366f1)';
+                      e.currentTarget.style.borderColor = 'var(--color-primary, #121212)';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.borderColor = 'var(--border)';
@@ -894,7 +892,7 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = 'var(--text-primary)';
-              e.currentTarget.style.borderColor = 'var(--color-primary, #6366f1)';
+              e.currentTarget.style.borderColor = 'var(--color-primary, #121212)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.color = 'var(--text-secondary)';

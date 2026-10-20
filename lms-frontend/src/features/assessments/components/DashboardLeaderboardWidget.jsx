@@ -227,7 +227,7 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
               style={{
                 fontSize: 11,
                 fontWeight: 700,
-                color: '#818cf8',
+                color: 'var(--link)',
                 textTransform: 'uppercase',
               }}
             >

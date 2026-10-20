@@ -115,7 +115,7 @@ export const RubricManager = () => {
               gap: 8,
             }}
           >
-            <Award size={20} color="var(--primary-color, #4f46e5)" /> Grading Rubrics
+            <Award size={20} color="var(--primary-color, #121212)" /> Grading Rubrics
           </h2>
           <p style={{ color: 'var(--text-secondary, #6b7280)', fontSize: '0.875rem' }}>
             Define structured criteria and point weightings for manual assessment evaluations.
@@ -346,7 +346,7 @@ export const RubricManager = () => {
                         }}
                       >
                         <span>{c.criterionName}</span>
-                        <span style={{ fontWeight: 600, color: '#4f46e5' }}>
+                        <span style={{ fontWeight: 600, color: 'var(--link)' }}>
                           {c.maxPoints} pts (x{c.weight})
                         </span>
                       </li>

@@ -322,7 +322,12 @@ export const AssessmentAnalyticsTab = ({ assessmentId }) => {
         <div style={cardStyle}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={labelStyle}>Score Range</span>
-            <div style={iconBoxStyle('rgba(99, 102, 241, 0.1)', '#6366f1')}>
+            <div
+              style={iconBoxStyle(
+                'color-mix(in srgb, var(--primary) 10%, transparent)',
+                'var(--primary)',
+              )}
+            >
               <TrendingUp size={18} />
             </div>
           </div>

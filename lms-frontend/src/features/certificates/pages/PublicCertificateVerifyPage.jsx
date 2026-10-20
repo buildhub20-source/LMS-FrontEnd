@@ -97,7 +97,8 @@ export const PublicCertificateVerifyPage = () => {
           transform: 'translateX(-50%)',
           width: '800px',
           height: '400px',
-          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%)',
+          background:
+            'radial-gradient(circle, color-mix(in srgb, var(--primary) 12%, transparent) 0%, transparent 70%)',
           pointerEvents: 'none',
           zIndex: 0,
         }}
@@ -113,8 +114,8 @@ export const PublicCertificateVerifyPage = () => {
               gap: 8,
               padding: '6px 14px',
               borderRadius: '20px',
-              backgroundColor: 'rgba(99, 102, 241, 0.12)',
-              border: '1px solid rgba(99, 102, 241, 0.3)',
+              backgroundColor: 'color-mix(in srgb, var(--primary) 12%, transparent)',
+              border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
               color: '#A5B4FC',
               fontSize: '12px',
               fontWeight: 700,
@@ -199,7 +200,7 @@ export const PublicCertificateVerifyPage = () => {
               gap: 8,
               padding: '12px 22px',
               borderRadius: '10px',
-              background: 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
+              background: 'var(--primary)',
               color: '#FFF',
               fontSize: '14px',
               fontWeight: 700,
@@ -207,7 +208,7 @@ export const PublicCertificateVerifyPage = () => {
               cursor: loading || !serialInput.trim() ? 'not-allowed' : 'pointer',
               opacity: loading || !serialInput.trim() ? 0.6 : 1,
               transition: 'all 0.15s ease',
-              boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
+              boxShadow: '0 4px 12px color-mix(in srgb, var(--primary) 30%, transparent)',
             }}
           >
             {loading ? (

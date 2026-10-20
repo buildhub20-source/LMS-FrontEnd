@@ -180,9 +180,9 @@ export const AssessmentResultPage = () => {
               onClick={() => navigate(ROUTES.ASSESSMENT_ATTEMPT(assessmentId))}
               iconLeft={<PlayCircle size={15} />}
               style={{
-                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                background: 'var(--primary)',
                 fontWeight: 700,
-                boxShadow: '0 4px 14px rgba(16,185,129,0.35)',
+                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.18)',
               }}
             >
               {isNotStarted ? 'Start Assessment Now' : 'Retake Assessment'}
@@ -205,7 +205,8 @@ export const AssessmentResultPage = () => {
               display: 'flex',
               alignItems: 'center',
               gap: 24,
-              boxShadow: '0 12px 32px rgba(0,0,0,0.3), 0 0 20px rgba(99,102,241,0.2)',
+              boxShadow:
+                '0 12px 32px rgba(0,0,0,0.3), 0 0 20px color-mix(in srgb, var(--primary) 20%, transparent)',
               position: 'relative',
               overflow: 'hidden',
             }}
@@ -282,9 +283,9 @@ export const AssessmentResultPage = () => {
               <button
                 onClick={() => navigate(ROUTES.ASSESSMENT_ATTEMPT(assessmentId))}
                 style={{
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  background: 'var(--primary)',
                   border: '1px solid rgba(255,255,255,0.4)',
-                  color: '#ffffff',
+                  color: 'var(--primary-foreground)',
                   borderRadius: 10,
                   padding: '12px 24px',
                   fontSize: 14,
@@ -294,7 +295,7 @@ export const AssessmentResultPage = () => {
                   alignItems: 'center',
                   gap: 8,
                   whiteSpace: 'nowrap',
-                  boxShadow: '0 6px 20px rgba(16, 185, 129, 0.45)',
+                  boxShadow: '0 6px 20px rgba(0, 0, 0, 0.18)',
                   transition: 'all 0.2s ease',
                 }}
                 onMouseEnter={(e) => {
@@ -313,9 +314,9 @@ export const AssessmentResultPage = () => {
           <div
             style={{
               background: passed
-                ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
+                ? 'var(--primary)'
                 : 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
-              color: '#ffffff',
+              color: 'var(--primary-foreground)',
               borderRadius: 16,
               padding: '28px 28px',
               display: 'flex',
@@ -382,7 +383,12 @@ export const AssessmentResultPage = () => {
         >
           {isNotStarted ? (
             <>
-              {statCard('Total Weightage', `${totalMarks} Marks`, <Award size={20} />, '#6366f1')}
+              {statCard(
+                'Total Weightage',
+                `${totalMarks} Marks`,
+                <Award size={20} />,
+                'var(--primary)',
+              )}
               {statCard(
                 'Max Attempts',
                 `${maxAttemptsAllowed} Allowed`,
@@ -410,7 +416,7 @@ export const AssessmentResultPage = () => {
                 'Time Spent',
                 `${minutesSpent}m ${secondsSpent}s`,
                 <Clock size={20} />,
-                '#6366f1',
+                'var(--primary)',
               )}
               {statCard(
                 'Attempts Used',
@@ -463,11 +469,11 @@ export const AssessmentResultPage = () => {
                     width: 32,
                     height: 32,
                     borderRadius: 8,
-                    background: 'rgba(99, 102, 241, 0.15)',
+                    background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#818cf8',
+                    color: 'var(--link)',
                   }}
                 >
                   <Video size={18} />
@@ -498,11 +504,11 @@ export const AssessmentResultPage = () => {
                   gap: 5,
                   fontSize: 12,
                   fontWeight: 600,
-                  color: '#6366f1',
+                  color: 'var(--link)',
                   textDecoration: 'none',
                   padding: '5px 10px',
                   borderRadius: 6,
-                  background: 'rgba(99, 102, 241, 0.1)',
+                  background: 'color-mix(in srgb, var(--primary) 10%, transparent)',
                 }}
               >
                 <span>Open in New Tab</span>
@@ -549,11 +555,11 @@ export const AssessmentResultPage = () => {
                     width: 36,
                     height: 36,
                     borderRadius: 10,
-                    background: 'rgba(99, 102, 241, 0.18)',
+                    background: 'color-mix(in srgb, var(--primary) 18%, transparent)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#818cf8',
+                    color: 'var(--link)',
                   }}
                 >
                   <BarChart2 size={20} />
@@ -681,7 +687,9 @@ export const AssessmentResultPage = () => {
                 >
                   Pass Rate
                 </span>
-                <p style={{ margin: '4px 0 0', fontSize: 20, fontWeight: 800, color: '#6366f1' }}>
+                <p
+                  style={{ margin: '4px 0 0', fontSize: 20, fontWeight: 800, color: 'var(--link)' }}
+                >
                   {classAnalytics?.passPercentage ?? 0}%
                 </p>
                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
@@ -795,8 +803,8 @@ export const AssessmentResultPage = () => {
           <div
             style={{
               background:
-                'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.06) 100%)',
-              border: '1px solid rgba(99, 102, 241, 0.2)',
+                'linear-gradient(135deg, color-mix(in srgb, var(--primary) 8%, transparent) 0%, rgba(139, 92, 246, 0.06) 100%)',
+              border: '1px solid color-mix(in srgb, var(--primary) 20%, transparent)',
               borderRadius: 12,
               padding: '20px 24px',
               display: 'flex',
@@ -809,7 +817,7 @@ export const AssessmentResultPage = () => {
                 width: 72,
                 height: 72,
                 borderRadius: '50%',
-                background: `conic-gradient(#6366f1 ${percentileRank * 3.6}deg, rgba(255,255,255,0.06) 0deg)`,
+                background: `conic-gradient(var(--primary) ${percentileRank * 3.6}deg, rgba(255,255,255,0.06) 0deg)`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -829,7 +837,9 @@ export const AssessmentResultPage = () => {
                   flexDirection: 'column',
                 }}
               >
-                <span style={{ fontSize: 18, fontWeight: 800, color: '#818cf8', lineHeight: 1 }}>
+                <span
+                  style={{ fontSize: 18, fontWeight: 800, color: 'var(--link)', lineHeight: 1 }}
+                >
                   {Math.round(percentileRank)}
                 </span>
                 <span
@@ -841,7 +851,7 @@ export const AssessmentResultPage = () => {
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                <Target size={16} style={{ color: '#818cf8' }} />
+                <Target size={16} style={{ color: 'var(--link)' }} />
                 <h4
                   style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}
                 >
@@ -850,8 +860,8 @@ export const AssessmentResultPage = () => {
               </div>
               <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>
                 You scored better than{' '}
-                <strong style={{ color: '#a5b4fc' }}>{percentileRank}%</strong> of all students who
-                attempted this assessment.
+                <strong style={{ color: 'var(--link)' }}>{percentileRank}%</strong> of all students
+                who attempted this assessment.
                 {percentileRank >= 90 && (
                   <span style={{ color: '#10b981', fontWeight: 600 }}>
                     {' '}
@@ -991,7 +1001,9 @@ export const AssessmentResultPage = () => {
                         color: isCurrent ? 'var(--text-primary)' : 'var(--text-muted)',
                         padding: '2px 6px',
                         borderRadius: 4,
-                        background: isCurrent ? 'rgba(99,102,241,0.15)' : 'transparent',
+                        background: isCurrent
+                          ? 'color-mix(in srgb, var(--primary) 15%, transparent)'
+                          : 'transparent',
                       }}
                     >
                       #{att.attemptNumber}
@@ -1360,7 +1372,7 @@ export const AssessmentResultPage = () => {
                           borderRadius: '50%',
                           flexShrink: 0,
                           background: isNotStarted
-                            ? 'rgba(99,102,241,0.15)'
+                            ? 'color-mix(in srgb, var(--primary) 15%, transparent)'
                             : scorePct >= 50
                               ? 'rgba(34,197,94,0.12)'
                               : 'rgba(239,68,68,0.1)',
@@ -1369,7 +1381,11 @@ export const AssessmentResultPage = () => {
                           justifyContent: 'center',
                           fontSize: 12,
                           fontWeight: 800,
-                          color: isNotStarted ? '#818cf8' : scorePct >= 50 ? '#22c55e' : '#ef4444',
+                          color: isNotStarted
+                            ? 'var(--primary)'
+                            : scorePct >= 50
+                              ? '#22c55e'
+                              : '#ef4444',
                         }}
                       >
                         {isNotStarted ? `Q${idx + 1}` : `${scorePct}%`}
@@ -1400,7 +1416,7 @@ export const AssessmentResultPage = () => {
                             fontSize: 14,
                             fontWeight: 800,
                             color: isNotStarted
-                              ? '#818cf8'
+                              ? 'var(--primary)'
                               : (q.scoreEarned ?? 0) > 0
                                 ? '#10b981'
                                 : '#ef4444',
@@ -1574,8 +1590,9 @@ export const AssessmentResultPage = () => {
                                           marginLeft: 40,
                                           padding: '8px 12px',
                                           borderRadius: 6,
-                                          background: 'rgba(99, 102, 241, 0.08)',
-                                          borderLeft: '3px solid #6366f1',
+                                          background:
+                                            'color-mix(in srgb, var(--primary) 8%, transparent)',
+                                          borderLeft: '3px solid var(--primary)',
                                           fontSize: 12,
                                           color: 'var(--text-secondary)',
                                           display: 'flex',
@@ -1585,7 +1602,11 @@ export const AssessmentResultPage = () => {
                                       >
                                         <Lightbulb
                                           size={14}
-                                          style={{ color: '#818cf8', marginTop: 1, flexShrink: 0 }}
+                                          style={{
+                                            color: 'var(--link)',
+                                            marginTop: 1,
+                                            flexShrink: 0,
+                                          }}
                                         />
                                         <span>{opt.explanation}</span>
                                       </div>
@@ -1635,14 +1656,15 @@ export const AssessmentResultPage = () => {
                                   marginTop: 16,
                                   padding: '12px 16px',
                                   borderRadius: 8,
-                                  background: 'rgba(99, 102, 241, 0.06)',
-                                  border: '1px solid rgba(99, 102, 241, 0.2)',
+                                  background: 'color-mix(in srgb, var(--primary) 6%, transparent)',
+                                  border:
+                                    '1px solid color-mix(in srgb, var(--primary) 20%, transparent)',
                                   display: 'flex',
                                   alignItems: 'center',
                                   gap: 10,
                                 }}
                               >
-                                <PlayCircle size={18} style={{ color: '#818cf8' }} />
+                                <PlayCircle size={18} style={{ color: 'var(--link)' }} />
                                 <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
                                   Automated code editor and runtime sandbox will open when you begin
                                   your attempt.
@@ -2030,9 +2052,10 @@ export const AssessmentResultPage = () => {
                               marginTop: 18,
                               padding: '16px 20px',
                               borderRadius: 10,
-                              background: 'rgba(99, 102, 241, 0.07)',
-                              border: '1px solid rgba(99, 102, 241, 0.22)',
-                              borderLeft: '4px solid #6366f1',
+                              background: 'color-mix(in srgb, var(--primary) 7%, transparent)',
+                              border:
+                                '1px solid color-mix(in srgb, var(--primary) 22%, transparent)',
+                              borderLeft: '4px solid var(--primary)',
                               display: 'flex',
                               alignItems: 'flex-start',
                               gap: 14,
@@ -2042,8 +2065,8 @@ export const AssessmentResultPage = () => {
                               style={{
                                 padding: 6,
                                 borderRadius: 8,
-                                background: 'rgba(99, 102, 241, 0.18)',
-                                color: '#818cf8',
+                                background: 'color-mix(in srgb, var(--primary) 18%, transparent)',
+                                color: 'var(--link)',
                                 flexShrink: 0,
                                 marginTop: 1,
                               }}
@@ -2210,13 +2233,18 @@ export const AssessmentResultPage = () => {
                         style={{
                           borderTop: '1px solid var(--border-color)',
                           cursor: isTerminal && !isCurrent ? 'pointer' : 'default',
-                          background: isCurrent ? 'rgba(99, 102, 241, 0.08)' : 'transparent',
-                          borderLeft: isCurrent ? '3px solid #6366f1' : '3px solid transparent',
+                          background: isCurrent
+                            ? 'color-mix(in srgb, var(--primary) 8%, transparent)'
+                            : 'transparent',
+                          borderLeft: isCurrent
+                            ? '3px solid var(--primary)'
+                            : '3px solid transparent',
                           transition: 'background 0.15s ease',
                         }}
                         onMouseEnter={(e) => {
                           if (isTerminal && !isCurrent)
-                            e.currentTarget.style.background = 'rgba(99, 102, 241, 0.05)';
+                            e.currentTarget.style.background =
+                              'color-mix(in srgb, var(--primary) 5%, transparent)';
                         }}
                         onMouseLeave={(e) => {
                           if (!isCurrent) e.currentTarget.style.background = 'transparent';
@@ -2232,8 +2260,8 @@ export const AssessmentResultPage = () => {
                                 fontWeight: 700,
                                 padding: '2px 5px',
                                 borderRadius: 4,
-                                background: 'rgba(99, 102, 241, 0.2)',
-                                color: '#818cf8',
+                                background: 'color-mix(in srgb, var(--primary) 20%, transparent)',
+                                color: 'var(--link)',
                                 textTransform: 'uppercase',
                                 letterSpacing: '0.04em',
                               }}
@@ -2254,7 +2282,7 @@ export const AssessmentResultPage = () => {
                         >
                           {att.score ?? 0} / {att.totalMarks}
                         </td>
-                        <td style={{ padding: '10px 14px', fontWeight: 700, color: '#6366f1' }}>
+                        <td style={{ padding: '10px 14px', fontWeight: 700, color: 'var(--link)' }}>
                           {att.percentage}%
                         </td>
                         <td
@@ -2288,19 +2316,22 @@ export const AssessmentResultPage = () => {
                                 gap: 4,
                                 padding: '4px 10px',
                                 borderRadius: 6,
-                                background: 'rgba(99, 102, 241, 0.12)',
-                                border: '1px solid rgba(99, 102, 241, 0.25)',
-                                color: '#a5b4fc',
+                                background: 'color-mix(in srgb, var(--primary) 12%, transparent)',
+                                border:
+                                  '1px solid color-mix(in srgb, var(--primary) 25%, transparent)',
+                                color: 'var(--link)',
                                 fontSize: 11,
                                 fontWeight: 700,
                                 cursor: 'pointer',
                                 transition: 'all 0.15s ease',
                               }}
                               onMouseEnter={(e) => {
-                                e.currentTarget.style.background = 'rgba(99, 102, 241, 0.2)';
+                                e.currentTarget.style.background =
+                                  'color-mix(in srgb, var(--primary) 20%, transparent)';
                               }}
                               onMouseLeave={(e) => {
-                                e.currentTarget.style.background = 'rgba(99, 102, 241, 0.12)';
+                                e.currentTarget.style.background =
+                                  'color-mix(in srgb, var(--primary) 12%, transparent)';
                               }}
                             >
                               <ArrowUpRight size={12} />
@@ -2308,7 +2339,7 @@ export const AssessmentResultPage = () => {
                             </button>
                           )}
                           {isCurrent && (
-                            <span style={{ fontSize: 11, fontWeight: 600, color: '#818cf8' }}>
+                            <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--link)' }}>
                               Viewing Now
                             </span>
                           )}
@@ -2327,7 +2358,7 @@ export const AssessmentResultPage = () => {
           <div
             style={{
               background: 'linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(30,27,75,0.7) 100%)',
-              border: '1px solid rgba(99,102,241,0.3)',
+              border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
               borderRadius: 14,
               padding: '20px 24px',
               display: 'flex',
@@ -2351,11 +2382,11 @@ export const AssessmentResultPage = () => {
               onClick={() => navigate(ROUTES.ASSESSMENT_ATTEMPT(assessmentId))}
               iconLeft={<PlayCircle size={16} />}
               style={{
-                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                background: 'var(--primary)',
                 fontWeight: 800,
                 padding: '11px 26px',
                 fontSize: 14,
-                boxShadow: '0 4px 16px rgba(16,185,129,0.35)',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.18)',
               }}
             >
               Start Assessment Now

@@ -109,7 +109,7 @@ export const LiveSessionRoomPage = () => {
           <Button
             variant="primary"
             onClick={handleLeave}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             <ArrowLeft className="w-4 h-4 mr-1.5" />
             Back to Course

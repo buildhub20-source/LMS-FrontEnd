@@ -429,8 +429,8 @@ function Avatar({ name = '', size = 32 }) {
         height: size,
         borderRadius: '50%',
         flexShrink: 0,
-        background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-        color: '#fff',
+        background: 'var(--primary)',
+        color: 'var(--primary-foreground)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -691,7 +691,7 @@ function AssessmentCard({ assessment, onAction, onClick }) {
               style={{
                 height: '100%',
                 width: `${Math.min(100, assessment.totalMarks || 100)}%`,
-                background: `linear-gradient(90deg, ${preset.accent} 0%, var(--primary, #10b981) 100%)`,
+                background: 'var(--primary)',
                 borderRadius: 99,
                 transition: 'width 0.4s ease',
               }}
@@ -790,12 +790,10 @@ function AssessmentCard({ assessment, onAction, onClick }) {
                   fontSize: 12,
                   fontWeight: 700,
                   border: primary.danger ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
-                  background: primary.danger
-                    ? 'rgba(239, 68, 68, 0.15)'
-                    : 'linear-gradient(135deg, var(--primary, #10b981) 0%, #059669 100%)',
-                  color: primary.danger ? '#f87171' : '#fff',
+                  background: primary.danger ? 'rgba(239, 68, 68, 0.15)' : 'var(--primary)',
+                  color: primary.danger ? '#f87171' : 'var(--primary-foreground)',
                   cursor: 'pointer',
-                  boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(16, 185, 129, 0.35)',
+                  boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(0, 0, 0, 0.18)',
                   transition: 'all 0.2s',
                 }}
               >
@@ -987,12 +985,10 @@ function AssessmentListRow({ assessment, onAction, onClick }) {
               fontSize: 13,
               fontWeight: 700,
               border: primary.danger ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
-              background: primary.danger
-                ? 'rgba(239, 68, 68, 0.15)'
-                : 'linear-gradient(135deg, var(--primary, #10b981) 0%, #059669 100%)',
-              color: primary.danger ? '#f87171' : '#fff',
+              background: primary.danger ? 'rgba(239, 68, 68, 0.15)' : 'var(--primary)',
+              color: primary.danger ? '#f87171' : 'var(--primary-foreground)',
               cursor: 'pointer',
-              boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(16, 185, 129, 0.35)',
+              boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(0, 0, 0, 0.18)',
               transition: 'all 0.2s',
             }}
           >
@@ -1201,7 +1197,7 @@ export const AdminAssessmentListPage = () => {
                 transition: 'border-color 0.2s, background 0.2s',
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = 'var(--primary, #22c55e)';
+                e.target.style.borderColor = 'var(--primary, #121212)';
                 e.target.style.background = 'var(--card, #ffffff)';
               }}
               onBlur={(e) => {

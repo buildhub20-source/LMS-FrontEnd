@@ -154,12 +154,12 @@ export const LiveClassesHubPage = () => {
                 width: 48,
                 height: 48,
                 borderRadius: 14,
-                background: 'linear-gradient(135deg, var(--primary) 0%, #059669 100%)',
+                background: 'var(--primary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#fff',
-                boxShadow: '0 8px 24px rgba(16, 185, 129, 0.3)',
+                color: 'var(--primary-foreground)',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.18)',
               }}
             >
               <Video size={24} />
@@ -221,18 +221,18 @@ export const LiveClassesHubPage = () => {
                 gap: 8,
                 padding: '11px 20px',
                 borderRadius: 12,
-                background: 'linear-gradient(135deg, var(--primary) 0%, #059669 100%)',
-                color: '#fff',
+                background: 'var(--primary)',
+                color: 'var(--primary-foreground)',
                 fontWeight: 700,
                 fontSize: 14,
                 border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 4px 16px rgba(16, 185, 129, 0.3)',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.18)',
                 transition: 'transform 0.15s ease, box-shadow 0.15s ease',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(16, 185, 129, 0.4)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.18)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'none';

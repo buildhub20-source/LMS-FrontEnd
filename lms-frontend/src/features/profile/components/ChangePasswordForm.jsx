@@ -105,7 +105,7 @@ export const ChangePasswordForm = () => {
               marginBottom: 6,
             }}
           >
-            <KeyRound size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+            <KeyRound size={15} style={{ color: 'var(--primary, #121212)' }} />
             Current Password <span style={{ color: '#ef4444' }}>*</span>
           </label>
           <div style={{ position: 'relative' }}>
@@ -147,7 +147,7 @@ export const ChangePasswordForm = () => {
               marginBottom: 6,
             }}
           >
-            <Lock size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+            <Lock size={15} style={{ color: 'var(--primary, #121212)' }} />
             New Password <span style={{ color: '#ef4444' }}>*</span>
           </label>
           <div style={{ position: 'relative' }}>
@@ -189,7 +189,7 @@ export const ChangePasswordForm = () => {
               marginBottom: 6,
             }}
           >
-            <ShieldCheck size={15} style={{ color: 'var(--primary, #6366f1)' }} />
+            <ShieldCheck size={15} style={{ color: 'var(--primary, #121212)' }} />
             Confirm New Password <span style={{ color: '#ef4444' }}>*</span>
           </label>
           <div style={{ position: 'relative' }}>
@@ -345,7 +345,7 @@ export const ChangePasswordForm = () => {
             padding: '10px 24px',
             borderRadius: 10,
             fontWeight: 600,
-            boxShadow: '0 4px 14px rgba(99, 102, 241, 0.35)',
+            boxShadow: '0 4px 14px color-mix(in srgb, var(--primary) 35%, transparent)',
           }}
         >
           Update Password

@@ -12,7 +12,9 @@
 
 /* ── Top hero banner ─────────────────────────────────────── */
 .heroBanner {
-  background: linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-primary-500) 100%);
+  /* Ink slab in both themes so its white text always holds. */
+  background: #121212;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: 28px 32px;
   margin-bottom: 24px;
@@ -379,7 +381,7 @@ html.dark .lifecycleBtnIcon.edit {
   align-items: center;
   justify-content: center;
   background: var(--color-primary-500);
-  color: #fff;
+  color: var(--color-on-primary);
   border-radius: var(--radius-full);
   font-size: 0.65rem;
   font-weight: 800;
@@ -530,7 +532,7 @@ html.dark .lifecycleBtnIcon.edit {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--color-on-primary);
 }
 
 .calloutText {

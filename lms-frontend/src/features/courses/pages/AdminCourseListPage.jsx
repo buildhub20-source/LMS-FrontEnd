@@ -183,12 +183,12 @@ const TECH_PRESETS = {
   },
   generic: {
     name: 'Core Curriculum',
-    accent: '#6366f1',
-    gradient: 'linear-gradient(135deg, #1e1b4b 0%, #4338ca 60%, #4f46e5 100%)',
-    glow: 'rgba(99, 102, 241, 0.25)',
-    border: 'rgba(99, 102, 241, 0.3)',
-    pillBg: 'rgba(99, 102, 241, 0.15)',
-    pillColor: '#a5b4fc',
+    accent: 'var(--primary)',
+    gradient: '#121212',
+    glow: 'color-mix(in srgb, var(--primary) 25%, transparent)',
+    border: 'color-mix(in srgb, var(--primary) 30%, transparent)',
+    pillBg: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+    pillColor: 'var(--link)',
     emblem: (
       <svg
         width="40"
@@ -374,8 +374,8 @@ function Avatar({ name = '', size = 34 }) {
         height: size,
         borderRadius: '50%',
         flexShrink: 0,
-        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-        color: '#fff',
+        background: 'var(--brand-tile-bg)',
+        color: 'var(--brand-tile-fg)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -437,7 +437,7 @@ function CourseCard({ course, onAction, onClick }) {
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-4px)';
-        e.currentTarget.style.borderColor = 'var(--primary, #22c55e)';
+        e.currentTarget.style.borderColor = 'var(--primary, #121212)';
         e.currentTarget.style.boxShadow = 'var(--shadow-md, 0 8px 24px rgba(0,0,0,0.08))';
       }}
       onMouseLeave={(e) => {
@@ -619,7 +619,7 @@ function CourseCard({ course, onAction, onClick }) {
               style={{
                 height: '100%',
                 width: `${progressPct}%`,
-                background: 'linear-gradient(90deg, #3b82f6 0%, #10b981 100%)',
+                background: 'var(--primary)',
                 borderRadius: 99,
                 boxShadow: '0 0 8px rgba(16, 185, 129, 0.3)',
                 transition: 'width 0.4s ease',
@@ -703,11 +703,9 @@ function CourseCard({ course, onAction, onClick }) {
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
                   border: primary.danger ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
-                  background: primary.danger
-                    ? 'rgba(239, 68, 68, 0.15)'
-                    : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-                  color: primary.danger ? '#f87171' : '#fff',
-                  boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(37, 99, 235, 0.35)',
+                  background: primary.danger ? 'rgba(239, 68, 68, 0.15)' : 'var(--primary)',
+                  color: primary.danger ? '#f87171' : 'var(--primary-foreground)',
+                  boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(0, 0, 0, 0.18)',
                   transition: 'all 0.2s',
                 }}
                 onMouseEnter={(e) => {
@@ -752,9 +750,9 @@ function CourseCard({ course, onAction, onClick }) {
               style={{
                 padding: '7px 10px',
                 borderRadius: 8,
-                border: '1px solid rgba(99,102,241,0.35)',
-                background: 'rgba(99,102,241,0.08)',
-                color: '#818cf8',
+                border: '1px solid color-mix(in srgb, var(--primary) 35%, transparent)',
+                background: 'color-mix(in srgb, var(--primary) 8%, transparent)',
+                color: 'var(--link)',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -762,10 +760,12 @@ function CourseCard({ course, onAction, onClick }) {
                 transition: 'all 0.15s ease',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(99,102,241,0.18)';
+                e.currentTarget.style.background =
+                  'color-mix(in srgb, var(--primary) 18%, transparent)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(99,102,241,0.08)';
+                e.currentTarget.style.background =
+                  'color-mix(in srgb, var(--primary) 8%, transparent)';
               }}
             >
               <Video size={15} />
@@ -828,7 +828,7 @@ function CourseListRow({ course, onAction, onClick }) {
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.borderColor = 'var(--primary, #22c55e)';
+        e.currentTarget.style.borderColor = 'var(--primary, #121212)';
         e.currentTarget.style.boxShadow = 'var(--shadow-md, 0 6px 18px rgba(0,0,0,0.06))';
       }}
       onMouseLeave={(e) => {
@@ -957,12 +957,10 @@ function CourseListRow({ course, onAction, onClick }) {
               fontSize: 13,
               fontWeight: 700,
               border: primary.danger ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
-              background: primary.danger
-                ? 'rgba(239, 68, 68, 0.15)'
-                : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-              color: primary.danger ? '#f87171' : '#fff',
+              background: primary.danger ? 'rgba(239, 68, 68, 0.15)' : 'var(--primary)',
+              color: primary.danger ? '#f87171' : 'var(--primary-foreground)',
               cursor: 'pointer',
-              boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(37, 99, 235, 0.35)',
+              boxShadow: primary.danger ? 'none' : '0 2px 10px rgba(0, 0, 0, 0.18)',
               transition: 'all 0.2s',
             }}
           >
@@ -1001,9 +999,9 @@ function CourseListRow({ course, onAction, onClick }) {
           style={{
             padding: '8px 10px',
             borderRadius: 8,
-            border: '1px solid rgba(99,102,241,0.35)',
-            background: 'rgba(99,102,241,0.08)',
-            color: '#818cf8',
+            border: '1px solid color-mix(in srgb, var(--primary) 35%, transparent)',
+            background: 'color-mix(in srgb, var(--primary) 8%, transparent)',
+            color: 'var(--link)',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -1011,10 +1009,11 @@ function CourseListRow({ course, onAction, onClick }) {
             transition: 'all 0.15s ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(99,102,241,0.18)';
+            e.currentTarget.style.background =
+              'color-mix(in srgb, var(--primary) 18%, transparent)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'rgba(99,102,241,0.08)';
+            e.currentTarget.style.background = 'color-mix(in srgb, var(--primary) 8%, transparent)';
           }}
         >
           <Video size={16} />
@@ -1293,7 +1292,7 @@ export const AdminCourseListPage = () => {
                 transition: 'border-color 0.2s, background 0.2s',
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = 'var(--primary, #22c55e)';
+                e.target.style.borderColor = 'var(--primary, #121212)';
                 e.target.style.background = 'var(--card, #ffffff)';
               }}
               onBlur={(e) => {

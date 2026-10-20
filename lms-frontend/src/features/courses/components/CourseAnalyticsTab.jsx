@@ -203,7 +203,7 @@ export const CourseAnalyticsTab = ({ courseId }) => {
                       style={{
                         height: '100%',
                         width: `${barHeightPct}%`,
-                        background: 'linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%)',
+                        background: 'var(--primary)',
                         borderRadius: 6,
                         transition: 'width 0.4s ease',
                       }}

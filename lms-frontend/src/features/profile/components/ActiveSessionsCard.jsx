@@ -75,10 +75,10 @@ export const ActiveSessionsCard = () => {
                     padding: '16px 20px',
                     borderRadius: 14,
                     background: session.current
-                      ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.04))'
+                      ? 'linear-gradient(135deg, color-mix(in srgb, var(--primary) 8%, transparent), rgba(168, 85, 247, 0.04))'
                       : 'var(--surface-medium, #1e293b)',
                     border: session.current
-                      ? '1px solid rgba(99, 102, 241, 0.3)'
+                      ? '1px solid color-mix(in srgb, var(--primary) 30%, transparent)'
                       : '1px solid var(--border-color, #334155)',
                     gap: 16,
                     flexWrap: 'wrap',
@@ -99,10 +99,10 @@ export const ActiveSessionsCard = () => {
                         height: 44,
                         borderRadius: 12,
                         background: session.current
-                          ? 'rgba(99, 102, 241, 0.15)'
+                          ? 'color-mix(in srgb, var(--primary) 15%, transparent)'
                           : 'var(--surface-dark, #0f172a)',
                         color: session.current
-                          ? 'var(--primary, #6366f1)'
+                          ? 'var(--primary, #121212)'
                           : 'var(--text-secondary)',
                         display: 'flex',
                         alignItems: 'center',

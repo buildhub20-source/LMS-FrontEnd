@@ -425,11 +425,11 @@ export const NotesBookmarksPage = () => {
                 width: 36,
                 height: 36,
                 borderRadius: 10,
-                background: 'rgba(99, 102, 241, 0.15)',
+                background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#6366f1',
+                color: 'var(--link)',
               }}
             >
               <Star size={18} />
@@ -570,9 +570,12 @@ export const NotesBookmarksPage = () => {
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.2s ease',
-              background: activeTab === TAB_BOOKMARKS ? '#6366f1' : 'transparent',
+              background: activeTab === TAB_BOOKMARKS ? 'var(--primary)' : 'transparent',
               color: activeTab === TAB_BOOKMARKS ? '#fff' : 'var(--text-muted)',
-              boxShadow: activeTab === TAB_BOOKMARKS ? '0 2px 8px rgba(99, 102, 241, 0.3)' : 'none',
+              boxShadow:
+                activeTab === TAB_BOOKMARKS
+                  ? '0 2px 8px color-mix(in srgb, var(--primary) 30%, transparent)'
+                  : 'none',
             }}
           >
             <Bookmark size={15} />
@@ -1190,14 +1193,14 @@ export const NotesBookmarksPage = () => {
                   width: 64,
                   height: 64,
                   borderRadius: 20,
-                  background: 'rgba(99, 102, 241, 0.1)',
+                  background: 'color-mix(in srgb, var(--primary) 10%, transparent)',
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   marginBottom: 16,
                 }}
               >
-                <Bookmark size={32} color="#818cf8" />
+                <Bookmark size={32} style={{ color: 'var(--link)' }} />
               </div>
               <h3
                 style={{
@@ -1222,8 +1225,8 @@ export const NotesBookmarksPage = () => {
                   padding: '10px 20px',
                   borderRadius: 10,
                   border: 'none',
-                  background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-                  color: '#fff',
+                  background: 'var(--primary)',
+                  color: 'var(--primary-foreground)',
                   fontSize: 13,
                   fontWeight: 700,
                   cursor: 'pointer',
@@ -1257,7 +1260,8 @@ export const NotesBookmarksPage = () => {
                     transition: 'all 0.2s ease',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.4)';
+                    e.currentTarget.style.borderColor =
+                      'color-mix(in srgb, var(--primary) 40%, transparent)';
                     e.currentTarget.style.transform = 'translateY(-2px)';
                   }}
                   onMouseLeave={(e) => {
@@ -1271,15 +1275,15 @@ export const NotesBookmarksPage = () => {
                         width: 40,
                         height: 40,
                         borderRadius: 10,
-                        background: 'rgba(99, 102, 241, 0.15)',
+                        background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#818cf8',
+                        color: 'var(--link)',
                         flexShrink: 0,
                       }}
                     >
-                      <Star size={20} fill="#818cf8" color="#818cf8" />
+                      <Star size={20} fill="currentColor" style={{ color: 'var(--link)' }} />
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <span
@@ -1322,8 +1326,8 @@ export const NotesBookmarksPage = () => {
                         padding: '6px 14px',
                         borderRadius: 8,
                         border: 'none',
-                        background: 'rgba(99, 102, 241, 0.15)',
-                        color: '#818cf8',
+                        background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+                        color: 'var(--link)',
                         fontSize: 12,
                         fontWeight: 700,
                         cursor: 'pointer',
@@ -1604,7 +1608,7 @@ export const NotesBookmarksPage = () => {
                 gap: 6,
               }}
             >
-              <Code size={14} color="#818cf8" />
+              <Code size={14} style={{ color: 'var(--link)' }} />
               Markdown Quick Tips
             </h3>
             <div

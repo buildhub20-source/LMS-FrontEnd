@@ -211,7 +211,7 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
                 fontWeight: 600,
                 cursor: 'pointer',
                 background:
-                  activeTab === 'manual' ? 'var(--color-primary, #6366f1)' : 'transparent',
+                  activeTab === 'manual' ? 'var(--color-primary, #121212)' : 'transparent',
                 color: activeTab === 'manual' ? '#fff' : 'var(--text-muted)',
               }}
             >
@@ -227,7 +227,7 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
                 fontSize: 12,
                 fontWeight: 600,
                 cursor: 'pointer',
-                background: activeTab === 'file' ? 'var(--color-primary, #6366f1)' : 'transparent',
+                background: activeTab === 'file' ? 'var(--color-primary, #121212)' : 'transparent',
                 color: activeTab === 'file' ? '#fff' : 'var(--text-muted)',
               }}
             >
@@ -635,15 +635,16 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
                   gap: 12,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = '#6366f1';
-                  e.currentTarget.style.background = 'rgba(99, 102, 241, 0.05)';
+                  e.currentTarget.style.borderColor = 'var(--primary)';
+                  e.currentTarget.style.background =
+                    'color-mix(in srgb, var(--primary) 5%, transparent)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.borderColor = 'var(--border-color)';
                   e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)';
                 }}
               >
-                <FileUp size={20} color="#818cf8" />
+                <FileUp size={20} style={{ color: 'var(--link)' }} />
                 <div style={{ textAlign: 'left' }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
                     {fileName ? fileName : 'Click to select PDF or Image certificate'}
@@ -672,8 +673,8 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
                 type="submit"
                 iconLeft={<ShieldCheck size={16} />}
                 style={{
-                  background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-                  boxShadow: '0 4px 14px rgba(99, 102, 241, 0.35)',
+                  background: 'var(--primary)',
+                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.18)',
                   fontWeight: 700,
                   padding: '10px 22px',
                 }}
@@ -792,7 +793,7 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
                 disabled={!title}
                 iconLeft={<Sparkles size={16} />}
                 style={{
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  background: 'var(--primary)',
                   fontWeight: 700,
                   padding: '10px 22px',
                 }}

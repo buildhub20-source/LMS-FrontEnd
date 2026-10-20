@@ -248,7 +248,7 @@ export const ProfilePage = () => {
                     height: '100%',
                     background:
                       completionPercent >= 80
-                        ? 'linear-gradient(90deg, #1d4ed8, #2563eb)'
+                        ? 'var(--primary)'
                         : 'linear-gradient(90deg, #d97706, #f59e0b)',
                     borderRadius: 3,
                   }}

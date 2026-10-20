@@ -421,7 +421,7 @@ export const BatchListPage = () => {
                 transition: 'border-color 0.2s, background 0.2s',
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = 'var(--primary, #22c55e)';
+                e.target.style.borderColor = 'var(--primary, #121212)';
                 e.target.style.background = 'var(--card, #ffffff)';
               }}
               onBlur={(e) => {
@@ -600,7 +600,7 @@ export const BatchListPage = () => {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-3px)';
-                  e.currentTarget.style.borderColor = 'var(--primary, #22c55e)';
+                  e.currentTarget.style.borderColor = 'var(--primary, #121212)';
                   e.currentTarget.style.boxShadow =
                     'var(--shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08))';
                 }}
@@ -789,9 +789,7 @@ export const BatchListPage = () => {
                         width: `${pct}%`,
                         borderRadius: 99,
                         background:
-                          pct >= 90
-                            ? 'linear-gradient(90deg, #f59e0b, #ef4444)'
-                            : 'linear-gradient(90deg, #3b82f6, #10b981)',
+                          pct >= 90 ? 'linear-gradient(90deg, #f59e0b, #ef4444)' : 'var(--primary)',
                         transition: 'width 0.3s ease',
                       }}
                     />
@@ -818,14 +816,14 @@ export const BatchListPage = () => {
                       fontSize: 12,
                       fontWeight: 700,
                       border: 'none',
-                      background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-                      color: '#fff',
+                      background: 'var(--primary)',
+                      color: 'var(--primary-foreground)',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: 6,
-                      boxShadow: '0 2px 10px rgba(37, 99, 235, 0.35)',
+                      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.18)',
                       transition: 'all 0.2s',
                     }}
                   >
@@ -924,7 +922,7 @@ export const BatchListPage = () => {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.borderColor = 'var(--primary, #22c55e)';
+                  e.currentTarget.style.borderColor = 'var(--primary, #121212)';
                   e.currentTarget.style.boxShadow = 'var(--shadow-md, 0 6px 18px rgba(0,0,0,0.06))';
                 }}
                 onMouseLeave={(e) => {
@@ -1053,7 +1051,7 @@ export const BatchListPage = () => {
                       style={{
                         height: '100%',
                         width: `${pct}%`,
-                        background: 'linear-gradient(90deg, #3b82f6, #10b981)',
+                        background: 'var(--primary)',
                       }}
                     />
                   </div>
@@ -1077,8 +1075,8 @@ export const BatchListPage = () => {
                       fontSize: 13,
                       fontWeight: 700,
                       border: 'none',
-                      background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-                      color: '#fff',
+                      background: 'var(--primary)',
+                      color: 'var(--primary-foreground)',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',

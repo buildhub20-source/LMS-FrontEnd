@@ -43,6 +43,7 @@ import { PERMISSIONS } from '../../../constants/permissions';
 import usePermission from '../../../hooks/usePermission';
 import useAuth from '../../auth/hooks/useAuth';
 import learningService from '../../learning/services/learningService';
+import useStudyTimer from '../../learning/hooks/useStudyTimer';
 import { formatSectionTitle } from '../components/CurriculumBuilder';
 import CourseAnalyticsTab from '../components/CourseAnalyticsTab';
 import courseService from '../services/courseService';
@@ -112,6 +113,8 @@ const CourseDetailsContent = () => {
     queryFn: () => learningService.getProgress(courseId),
     enabled: Boolean(courseId) && !isAdminOrInstructor,
   });
+  // Progress only loads for an enrolled student, so it doubles as the enrolment check.
+  useStudyTimer(courseId, progressQuery.isSuccess);
   const progressMutation = useMutation({
     mutationFn: (ids) => learningService.saveProgress(courseId, { completedLessonIds: ids }),
     onSuccess: (saved) => {

@@ -49,7 +49,7 @@ export const QuestionNavigator = ({
       >
         {!isCollapsed && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <ListOrdered size={14} style={{ color: '#818cf8' }} />
+            <ListOrdered size={14} style={{ color: 'var(--link)' }} />
             <span
               style={{
                 fontSize: 12,
@@ -117,12 +117,12 @@ export const QuestionNavigator = ({
                   margin: '0 auto',
                   borderRadius: 8,
                   border: isCurrent
-                    ? '1.5px solid #6366f1'
+                    ? '1.5px solid var(--primary)'
                     : hasCode
                       ? '1px solid rgba(16, 185, 129, 0.4)'
                       : '1px solid rgba(255, 255, 255, 0.08)',
                   background: isCurrent
-                    ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(79, 70, 229, 0.15) 100%)'
+                    ? 'linear-gradient(135deg, color-mix(in srgb, var(--primary) 25%, transparent) 0%, rgba(79, 70, 229, 0.15) 100%)'
                     : hasCode
                       ? 'rgba(16, 185, 129, 0.1)'
                       : 'rgba(255, 255, 255, 0.03)',
@@ -135,7 +135,9 @@ export const QuestionNavigator = ({
                   cursor: 'pointer',
                   position: 'relative',
                   transition: 'all 0.15s ease',
-                  boxShadow: isCurrent ? '0 0 12px rgba(99, 102, 241, 0.3)' : 'none',
+                  boxShadow: isCurrent
+                    ? '0 0 12px color-mix(in srgb, var(--primary) 30%, transparent)'
+                    : 'none',
                 }}
               >
                 {hasCode ? (
@@ -173,13 +175,17 @@ export const QuestionNavigator = ({
                 borderRadius: 8,
                 textAlign: 'left',
                 background: isCurrent
-                  ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(79, 70, 229, 0.1) 100%)'
+                  ? 'linear-gradient(135deg, color-mix(in srgb, var(--primary) 20%, transparent) 0%, rgba(79, 70, 229, 0.1) 100%)'
                   : 'rgba(255, 255, 255, 0.02)',
-                border: isCurrent ? '1px solid rgba(99, 102, 241, 0.45)' : '1px solid transparent',
+                border: isCurrent
+                  ? '1px solid color-mix(in srgb, var(--primary) 45%, transparent)'
+                  : '1px solid transparent',
                 cursor: 'pointer',
                 width: '100%',
                 transition: 'all 0.15s ease',
-                boxShadow: isCurrent ? '0 2px 10px rgba(99, 102, 241, 0.15)' : 'none',
+                boxShadow: isCurrent
+                  ? '0 2px 10px color-mix(in srgb, var(--primary) 15%, transparent)'
+                  : 'none',
               }}
             >
               {/* Question Number Badge */}
@@ -195,7 +201,7 @@ export const QuestionNavigator = ({
                   fontSize: 11,
                   fontWeight: 800,
                   background: isCurrent
-                    ? '#6366f1'
+                    ? 'var(--primary)'
                     : hasCode
                       ? 'rgba(16, 185, 129, 0.2)'
                       : 'rgba(255, 255, 255, 0.08)',

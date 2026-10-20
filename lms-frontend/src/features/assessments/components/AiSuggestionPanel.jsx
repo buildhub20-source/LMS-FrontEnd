@@ -51,7 +51,7 @@ export const AiSuggestionPanel = ({ suggestion }) => {
             alignItems: 'center',
           }}
         >
-          <Sparkles size={16} color="var(--primary-color, #4f46e5)" aria-hidden="true" />
+          <Sparkles size={16} color="var(--primary-color, #121212)" aria-hidden="true" />
           AI suggestion: {suggestion.score} / {suggestion.maxScore}
         </h4>
         <span style={muted}>

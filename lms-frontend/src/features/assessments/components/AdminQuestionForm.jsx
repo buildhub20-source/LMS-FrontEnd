@@ -1634,19 +1634,21 @@ export const AdminQuestionForm = ({
                 gap: 8,
                 padding: '10px 16px',
                 borderRadius: 8,
-                border: '1px solid rgba(99, 102, 241, 0.4)',
-                background: 'rgba(99, 102, 241, 0.1)',
-                color: '#6366f1',
+                border: '1px solid color-mix(in srgb, var(--primary) 40%, transparent)',
+                background: 'color-mix(in srgb, var(--primary) 10%, transparent)',
+                color: 'var(--link)',
                 fontWeight: 600,
                 fontSize: 14,
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(99, 102, 241, 0.2)';
+                e.currentTarget.style.background =
+                  'color-mix(in srgb, var(--primary) 20%, transparent)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(99, 102, 241, 0.1)';
+                e.currentTarget.style.background =
+                  'color-mix(in srgb, var(--primary) 10%, transparent)';
               }}
             >
               <Eye size={16} />
