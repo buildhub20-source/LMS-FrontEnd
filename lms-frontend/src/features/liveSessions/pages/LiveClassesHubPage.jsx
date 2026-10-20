@@ -201,13 +201,12 @@ export const LiveClassesHubPage = () => {
                         boxShadow: '0 0 8px #ef4444',
                       }}
                     />
-                    {metrics.liveCount} CLASS ACTIVE NOW
+                    {metrics.liveCount} {metrics.liveCount === 1 ? 'CLASS' : 'CLASSES'} LIVE NOW
                   </span>
                 )}
               </div>
               <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
-                Real-time interactive video lectures, collaborative whiteboards, and automatic
-                attendance tracking.
+                Live video classes with screen sharing, chat and automatic attendance.
               </p>
             </div>
           </div>
