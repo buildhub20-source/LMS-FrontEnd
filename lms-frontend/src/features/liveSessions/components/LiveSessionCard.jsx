@@ -27,6 +27,8 @@ export const LiveSessionCard = ({
   const isLive = session.status === 'LIVE';
   const isScheduled = session.status === 'SCHEDULED';
   const isEnded = session.status === 'ENDED';
+  // Its time slot passed without the class being started (set by the server).
+  const isMissed = session.status === 'MISSED';
 
   const formatTime = (dateStr) => {
     if (!dateStr) return '—';
@@ -81,12 +83,18 @@ export const LiveSessionCard = ({
               Ended
             </span>
           )}
+          {isMissed && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
+              Missed
+            </span>
+          )}
         </div>
 
-        <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 min-h-[40px] leading-relaxed">
-          {session.description ||
-            'Live interactive session covering course curriculum, Q&A, and practical exercises.'}
-        </p>
+        {session.description && (
+          <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 min-h-[40px] leading-relaxed">
+            {session.description}
+          </p>
+        )}
       </div>
 
       {/* ── Middle Telemetry / Metadata ── */}
@@ -175,6 +183,10 @@ export const LiveSessionCard = ({
                 Awaiting Instructor to Start
               </span>
             )
+          ) : isMissed ? (
+            <span className="text-xs text-slate-400 font-medium italic">
+              Not held: the scheduled time has passed
+            </span>
           ) : (
             <span className="inline-flex items-center gap-1 text-xs text-slate-400">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
