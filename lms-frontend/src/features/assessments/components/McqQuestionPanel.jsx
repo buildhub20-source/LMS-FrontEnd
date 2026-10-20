@@ -408,7 +408,7 @@ export const McqQuestionPanel = ({
                 <CheckCircle2 size={16} style={{ color: '#10b981' }} />
                 <span style={{ color: '#e2e8f0' }}>
                   Current Selection:{' '}
-                  <strong style={{ color: '#34d399' }}>
+                  <strong style={{ color: 'var(--badge-success-fg)' }}>
                     Option {OPTION_LETTERS[selectedOptionIndex] || `#${selectedOptionIndex + 1}`}
                   </strong>
                 </span>

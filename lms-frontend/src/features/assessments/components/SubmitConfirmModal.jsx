@@ -165,7 +165,7 @@ export const SubmitConfirmModal = ({
                 style={{
                   fontSize: 13,
                   fontWeight: 800,
-                  color: completionPct === 100 ? '#34d399' : 'var(--primary)',
+                  color: completionPct === 100 ? 'var(--badge-success-fg)' : 'var(--primary)',
                 }}
               >
                 {completionPct}% Complete
@@ -196,7 +196,7 @@ export const SubmitConfirmModal = ({
             <div style={{ display: 'flex', gap: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <CheckCircle2 size={15} style={{ color: '#10b981' }} />
-                <span style={{ fontSize: 13, fontWeight: 700, color: '#34d399' }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--badge-success-fg)' }}>
                   {answered.length}
                 </span>
                 <span style={{ fontSize: 12, color: '#94a3b8' }}>Answered</span>
@@ -283,7 +283,14 @@ export const SubmitConfirmModal = ({
               }}
             >
               <CheckCircle2 size={16} style={{ color: '#10b981', flexShrink: 0 }} />
-              <p style={{ margin: 0, fontSize: 12, color: '#34d399', fontWeight: 600 }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 12,
+                  color: 'var(--badge-success-fg)',
+                  fontWeight: 600,
+                }}
+              >
                 All questions have been answered. You are ready to submit!
               </p>
             </div>

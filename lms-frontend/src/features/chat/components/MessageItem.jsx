@@ -267,26 +267,12 @@ export default function MessageItem({
                         <div
                           key={att.id || idx}
                           className="chat-message__file-card chat-message__file-card--expired"
-                          style={{
-                            opacity: 0.7,
-                            borderStyle: 'dashed',
-                            cursor: 'default',
-                            background: 'rgba(255, 255, 255, 0.02)',
-                          }}
                           title="This attachment has expired per the organization's retention policy"
                         >
-                          <Clock size={18} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+                          <Clock size={18} className="chat-message__file-expired-icon" />
                           <div className="chat-message__file-meta">
-                            <span
-                              className="chat-message__file-name"
-                              style={{ textDecoration: 'line-through' }}
-                            >
-                              {fileName}
-                            </span>
-                            <span
-                              className="chat-message__file-size"
-                              style={{ color: 'var(--text-muted)', fontSize: 11 }}
-                            >
+                            <span className="chat-message__file-name">{fileName}</span>
+                            <span className="chat-message__file-size">
                               Expired per storage policy
                             </span>
                           </div>

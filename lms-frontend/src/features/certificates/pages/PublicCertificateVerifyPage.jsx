@@ -350,7 +350,8 @@ const PublicCertificateVerifyContent = () => {
                     style={{
                       fontSize: '13px',
                       fontWeight: 800,
-                      color: verifiedData.status === 'ACTIVE' ? '#34D399' : '#F87171',
+                      color:
+                        verifiedData.status === 'ACTIVE' ? 'var(--badge-success-fg)' : '#F87171',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
                     }}
@@ -397,7 +398,11 @@ const PublicCertificateVerifyContent = () => {
                     cursor: 'pointer',
                   }}
                 >
-                  {copied ? <Check size={12} color="#34D399" /> : <Copy size={12} />}
+                  {copied ? (
+                    <Check size={12} style={{ color: 'var(--badge-success-fg)' }} />
+                  ) : (
+                    <Copy size={12} />
+                  )}
                   {copied ? 'Copied' : 'Share'}
                 </button>
               </div>
@@ -530,7 +535,12 @@ const PublicCertificateVerifyContent = () => {
                       Credential Validity
                     </div>
                     <div
-                      style={{ fontSize: '14px', fontWeight: 600, color: '#34D399', marginTop: 3 }}
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        color: 'var(--badge-success-fg)',
+                        marginTop: 3,
+                      }}
                     >
                       Permanent / Valid
                     </div>

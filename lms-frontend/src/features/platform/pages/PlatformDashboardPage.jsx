@@ -348,7 +348,7 @@ export const PlatformDashboardPage = () => {
                   color: 'var(--text-muted)',
                 }}
               >
-                <HardDrive size={15} style={{ color: '#c084fc' }} /> JVM Heap Memory
+                <HardDrive size={15} style={{ color: 'var(--badge-accent-fg)' }} /> JVM Heap Memory
               </span>
               <span
                 style={{ fontFamily: 'monospace', fontWeight: 600, color: 'var(--text-primary)' }}

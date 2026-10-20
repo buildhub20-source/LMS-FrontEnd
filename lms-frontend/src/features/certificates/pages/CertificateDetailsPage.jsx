@@ -123,7 +123,7 @@ export const CertificateDetailsPage = () => {
                   boxShadow: '0 0 30px rgba(251,191,36,0.3)',
                 }}
               >
-                <Award size={42} style={{ color: '#fbbf24' }} />
+                <Award size={42} style={{ color: 'var(--badge-warning-fg)' }} />
               </div>
 
               <p
@@ -131,7 +131,7 @@ export const CertificateDetailsPage = () => {
                   fontSize: 13,
                   textTransform: 'uppercase',
                   letterSpacing: '0.2em',
-                  color: '#fbbf24',
+                  color: 'var(--badge-warning-fg)',
                   fontWeight: 700,
                   marginBottom: 8,
                 }}
@@ -263,7 +263,7 @@ export const CertificateDetailsPage = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  <BookOpen size={18} style={{ color: '#34d399' }} />
+                  <BookOpen size={18} style={{ color: 'var(--badge-success-fg)' }} />
                 </div>
                 <div>
                   <p
@@ -304,7 +304,7 @@ export const CertificateDetailsPage = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  <Calendar size={18} style={{ color: '#fbbf24' }} />
+                  <Calendar size={18} style={{ color: 'var(--badge-warning-fg)' }} />
                 </div>
                 <div>
                   <p

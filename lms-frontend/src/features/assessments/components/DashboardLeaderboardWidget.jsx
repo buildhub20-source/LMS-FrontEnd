@@ -113,7 +113,7 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
             gap: 6,
             fontSize: 13,
             fontWeight: 600,
-            color: '#60a5fa',
+            color: 'var(--badge-info-fg)',
             textDecoration: 'none',
           }}
         >
@@ -300,7 +300,7 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
               style={{
                 fontSize: 11,
                 fontWeight: 700,
-                color: '#60a5fa',
+                color: 'var(--badge-info-fg)',
                 textTransform: 'uppercase',
               }}
             >

@@ -230,8 +230,8 @@ export const ProcessingScreen = ({
           >
             {isCompleted ? (
               <>
-                <CheckCircle2 size={16} style={{ color: '#34d399' }} />
-                <span style={{ fontSize: 13, fontWeight: 700, color: '#34d399' }}>
+                <CheckCircle2 size={16} style={{ color: 'var(--badge-success-fg)' }} />
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--badge-success-fg)' }}>
                   Completed in{' '}
                   <strong style={{ color: '#ffffff', fontSize: 14 }}>{elapsedSecs}s</strong>
                 </span>
@@ -304,7 +304,11 @@ export const ProcessingScreen = ({
               <StageIcon
                 size={15}
                 style={{
-                  color: isCompleted ? '#34d399' : isError ? '#f87171' : 'var(--primary)',
+                  color: isCompleted
+                    ? 'var(--badge-success-fg)'
+                    : isError
+                      ? '#f87171'
+                      : 'var(--primary)',
                 }}
               />
               <span style={{ color: '#cbd5e1', fontWeight: 600 }}>{currentStageConfig.label}</span>
@@ -313,7 +317,11 @@ export const ProcessingScreen = ({
               style={{
                 fontFamily: 'monospace',
                 fontWeight: 700,
-                color: isCompleted ? '#34d399' : isError ? '#f87171' : 'var(--primary)',
+                color: isCompleted
+                  ? 'var(--badge-success-fg)'
+                  : isError
+                    ? '#f87171'
+                    : 'var(--primary)',
               }}
             >
               {progressPercent}%
@@ -430,7 +438,7 @@ export const ProcessingScreen = ({
                 fontSize: 11,
                 fontWeight: 700,
                 textTransform: 'uppercase',
-                color: '#34d399',
+                color: 'var(--badge-success-fg)',
                 letterSpacing: '0.05em',
               }}
             >
@@ -448,7 +456,7 @@ export const ProcessingScreen = ({
               }}
             >
               <span>{attendedCount}</span>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#34d399' }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--badge-success-fg)' }}>
                 ({completionPercent}%)
               </span>
             </div>
@@ -472,7 +480,7 @@ export const ProcessingScreen = ({
                 fontSize: 11,
                 fontWeight: 700,
                 textTransform: 'uppercase',
-                color: skippedCount > 0 ? '#fbbf24' : '#64748b',
+                color: skippedCount > 0 ? 'var(--badge-warning-fg)' : '#64748b',
                 letterSpacing: '0.05em',
               }}
             >
@@ -482,7 +490,7 @@ export const ProcessingScreen = ({
               style={{
                 fontSize: 22,
                 fontWeight: 800,
-                color: skippedCount > 0 ? '#fbbf24' : '#94a3b8',
+                color: skippedCount > 0 ? 'var(--badge-warning-fg)' : '#94a3b8',
                 marginTop: 4,
               }}
             >
@@ -542,7 +550,7 @@ export const ProcessingScreen = ({
                         background: isAnswered
                           ? 'rgba(16, 185, 129, 0.2)'
                           : 'rgba(255, 255, 255, 0.06)',
-                        color: isAnswered ? '#34d399' : '#64748b',
+                        color: isAnswered ? 'var(--badge-success-fg)' : '#64748b',
                         fontSize: 11,
                         fontWeight: 800,
                         display: 'flex',
@@ -593,7 +601,7 @@ export const ProcessingScreen = ({
                           padding: '3px 10px',
                           borderRadius: 20,
                           background: 'rgba(16, 185, 129, 0.15)',
-                          color: '#34d399',
+                          color: 'var(--badge-success-fg)',
                           border: '1px solid rgba(16, 185, 129, 0.3)',
                         }}
                       >

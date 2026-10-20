@@ -442,8 +442,16 @@ export const CodingQuestionPanel = ({
   };
 
   const difficultyColors = {
-    EASY: { bg: 'rgba(16, 185, 129, 0.15)', text: '#34d399', border: 'rgba(16, 185, 129, 0.3)' },
-    MEDIUM: { bg: 'rgba(245, 158, 11, 0.15)', text: '#fbbf24', border: 'rgba(245, 158, 11, 0.3)' },
+    EASY: {
+      bg: 'rgba(16, 185, 129, 0.15)',
+      text: 'var(--badge-success-fg)',
+      border: 'rgba(16, 185, 129, 0.3)',
+    },
+    MEDIUM: {
+      bg: 'rgba(245, 158, 11, 0.15)',
+      text: 'var(--badge-warning-fg)',
+      border: 'rgba(245, 158, 11, 0.3)',
+    },
     HARD: { bg: 'rgba(239, 68, 68, 0.15)', text: '#f87171', border: 'rgba(239, 68, 68, 0.3)' },
   }[question?.difficulty?.toUpperCase()] ?? {
     bg: 'color-mix(in srgb, var(--primary) 15%, transparent)',
@@ -876,7 +884,7 @@ export const CodingQuestionPanel = ({
                             borderRadius: 6,
                             border: '1px solid rgba(255, 255, 255, 0.06)',
                             fontSize: 12,
-                            color: '#34d399',
+                            color: 'var(--badge-success-fg)',
                             fontFamily: 'monospace',
                             whiteSpace: 'pre-wrap',
                             wordBreak: 'break-all',
@@ -986,7 +994,14 @@ export const CodingQuestionPanel = ({
                   </span>
                 )}
                 {saveStatus === 'saved' && !submitSaveStatus && (
-                  <span style={{ color: '#34d399', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span
+                    style={{
+                      color: 'var(--badge-success-fg)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                    }}
+                  >
                     <Check size={12} /> All changes saved
                   </span>
                 )}
@@ -1469,7 +1484,7 @@ export const CodingQuestionPanel = ({
                             background: '#070a13',
                             border: '1px solid rgba(255,255,255,0.06)',
                             fontSize: 12,
-                            color: '#34d399',
+                            color: 'var(--badge-success-fg)',
                             fontFamily: 'monospace',
                           }}
                         >
@@ -1538,7 +1553,7 @@ export const CodingQuestionPanel = ({
                                 fontWeight: 800,
                                 color:
                                   runResults.status === 'ACCEPTED' || runResults.status === 'RAN'
-                                    ? '#34d399'
+                                    ? 'var(--badge-success-fg)'
                                     : '#f87171',
                               }}
                             >
@@ -1590,7 +1605,7 @@ export const CodingQuestionPanel = ({
                                       : 'rgba(239, 68, 68, 0.2)',
                                   color:
                                     res.status === 'PASSED' || res.status === 'RAN'
-                                      ? '#34d399'
+                                      ? 'var(--badge-success-fg)'
                                       : '#f87171',
                                 }}
                               >
@@ -1630,7 +1645,7 @@ export const CodingQuestionPanel = ({
                                     background: '#0f172a',
                                     borderRadius: 4,
                                     overflowX: 'auto',
-                                    color: '#34d399',
+                                    color: 'var(--badge-success-fg)',
                                   }}
                                 >
                                   {res.isCustom
@@ -1651,7 +1666,7 @@ export const CodingQuestionPanel = ({
                                     overflowX: 'auto',
                                     color:
                                       res.status === 'PASSED' || res.status === 'RAN'
-                                        ? '#34d399'
+                                        ? 'var(--badge-success-fg)'
                                         : '#f87171',
                                   }}
                                 >

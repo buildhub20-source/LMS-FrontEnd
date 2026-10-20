@@ -1,6 +1,7 @@
 import { Info, Lock, Search } from 'lucide-react';
-import { getChannelDisplayName, getChannelIcon } from '../utils/chatHelpers';
+import { getChannelDisplayName } from '../utils/chatHelpers';
 import { CHANNEL_TYPES } from '../constants/chatConstants';
+import ChannelTypeIcon from './ChannelTypeIcon';
 import { ChannelHeaderSkeleton } from './ChatSkeletons';
 
 /**
@@ -47,7 +48,7 @@ export default function ChannelHeader({
             <span
               className={`chat-channel-icon-badge chat-channel-icon-badge--header chat-channel-icon-badge--${channel.type?.toLowerCase()}`}
             >
-              {getChannelIcon(channel.type)}
+              <ChannelTypeIcon type={channel.type} size={18} />
             </span>
             {isDirect && otherUserId && (
               <span

@@ -403,7 +403,7 @@ export const AssessmentResultPage = () => {
               )}
               {statCard(
                 'Status',
-                <span style={{ color: '#34d399', fontWeight: 800, fontSize: 14 }}>
+                <span style={{ color: 'var(--badge-success-fg)', fontWeight: 800, fontSize: 14 }}>
                   Ready to Attempt
                 </span>,
                 <PlayCircle size={20} />,
@@ -715,7 +715,14 @@ export const AssessmentResultPage = () => {
                 >
                   Submissions
                 </span>
-                <p style={{ margin: '4px 0 0', fontSize: 20, fontWeight: 800, color: '#fbbf24' }}>
+                <p
+                  style={{
+                    margin: '4px 0 0',
+                    fontSize: 20,
+                    fontWeight: 800,
+                    color: 'var(--badge-warning-fg)',
+                  }}
+                >
                   {classAnalytics?.totalParticipants ?? 0}
                 </p>
                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
@@ -869,10 +876,13 @@ export const AssessmentResultPage = () => {
                   </span>
                 )}
                 {percentileRank >= 75 && percentileRank < 90 && (
-                  <span style={{ color: '#34d399', fontWeight: 600 }}> Great job!</span>
+                  <span style={{ color: 'var(--badge-success-fg)', fontWeight: 600 }}>
+                    {' '}
+                    Great job!
+                  </span>
                 )}
                 {percentileRank >= 50 && percentileRank < 75 && (
-                  <span style={{ color: '#fbbf24', fontWeight: 600 }}>
+                  <span style={{ color: 'var(--badge-warning-fg)', fontWeight: 600 }}>
                     {' '}
                     Above median — keep going!
                   </span>
@@ -905,7 +915,7 @@ export const AssessmentResultPage = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#34d399',
+                  color: 'var(--badge-success-fg)',
                 }}
               >
                 <TrendingUp size={18} />
@@ -1035,7 +1045,7 @@ export const AssessmentResultPage = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#60a5fa',
+                  color: 'var(--badge-info-fg)',
                 }}
               >
                 <Hash size={18} />
@@ -1171,12 +1181,19 @@ export const AssessmentResultPage = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#34d399',
+                        color: 'var(--badge-success-fg)',
                       }}
                     >
                       <ThumbsUp size={14} />
                     </div>
-                    <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: '#34d399' }}>
+                    <h4
+                      style={{
+                        margin: 0,
+                        fontSize: 14,
+                        fontWeight: 700,
+                        color: 'var(--badge-success-fg)',
+                      }}
+                    >
                       Strengths
                     </h4>
                   </div>
@@ -1689,7 +1706,10 @@ export const AssessmentResultPage = () => {
                                     marginBottom: 8,
                                   }}
                                 >
-                                  <Terminal size={14} style={{ color: '#34d399' }} />
+                                  <Terminal
+                                    size={14}
+                                    style={{ color: 'var(--badge-success-fg)' }}
+                                  />
                                   <span
                                     style={{
                                       fontSize: 12,
@@ -1709,7 +1729,7 @@ export const AssessmentResultPage = () => {
                                     border: '1px solid rgba(255,255,255,0.08)',
                                     fontFamily: 'monospace',
                                     fontSize: 12,
-                                    color: '#34d399',
+                                    color: 'var(--badge-success-fg)',
                                     whiteSpace: 'pre-wrap',
                                     lineHeight: 1.5,
                                   }}
@@ -1731,7 +1751,7 @@ export const AssessmentResultPage = () => {
                                   }}
                                 >
                                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                    <FileText size={14} style={{ color: '#60a5fa' }} />
+                                    <FileText size={14} style={{ color: 'var(--badge-info-fg)' }} />
                                     <span
                                       style={{
                                         fontSize: 12,
@@ -1789,7 +1809,7 @@ export const AssessmentResultPage = () => {
                                                 padding: '2px 6px',
                                                 borderRadius: 4,
                                                 background: 'rgba(59, 130, 246, 0.15)',
-                                                color: '#60a5fa',
+                                                color: 'var(--badge-info-fg)',
                                               }}
                                             >
                                               Sample Case
@@ -1803,7 +1823,7 @@ export const AssessmentResultPage = () => {
                                                 padding: '2px 6px',
                                                 borderRadius: 4,
                                                 background: 'rgba(168, 85, 247, 0.15)',
-                                                color: '#c084fc',
+                                                color: 'var(--badge-accent-fg)',
                                               }}
                                             >
                                               Evaluation Case
@@ -1822,7 +1842,7 @@ export const AssessmentResultPage = () => {
                                                 ? 'rgba(239, 68, 68, 0.15)'
                                                 : 'rgba(255,255,255,0.06)',
                                             color: tc.passed
-                                              ? '#34d399'
+                                              ? 'var(--badge-success-fg)'
                                               : tc.actualOutput
                                                 ? '#f87171'
                                                 : 'var(--text-muted)',
@@ -1902,7 +1922,7 @@ export const AssessmentResultPage = () => {
                                                 background: 'rgba(0,0,0,0.25)',
                                                 fontFamily: 'monospace',
                                                 fontSize: 11,
-                                                color: '#34d399',
+                                                color: 'var(--badge-success-fg)',
                                               }}
                                             >
                                               {tc.expectedOutput || '(None)'}
@@ -1928,7 +1948,9 @@ export const AssessmentResultPage = () => {
                                                 background: 'rgba(0,0,0,0.25)',
                                                 fontFamily: 'monospace',
                                                 fontSize: 11,
-                                                color: tc.passed ? '#34d399' : '#f87171',
+                                                color: tc.passed
+                                                  ? 'var(--badge-success-fg)'
+                                                  : '#f87171',
                                               }}
                                             >
                                               {tc.actualOutput || '\u2014'}
@@ -1953,7 +1975,7 @@ export const AssessmentResultPage = () => {
                                     marginBottom: 10,
                                   }}
                                 >
-                                  <Award size={14} style={{ color: '#fbbf24' }} />
+                                  <Award size={14} style={{ color: 'var(--badge-warning-fg)' }} />
                                   <span
                                     style={{
                                       fontSize: 12,
@@ -2021,9 +2043,9 @@ export const AssessmentResultPage = () => {
                                                   ? 'rgba(245, 158, 11, 0.15)'
                                                   : 'rgba(255, 255, 255, 0.05)',
                                               color: isFull
-                                                ? '#34d399'
+                                                ? 'var(--badge-success-fg)'
                                                 : isPartial
-                                                  ? '#fbbf24'
+                                                  ? 'var(--badge-warning-fg)'
                                                   : 'var(--text-muted)',
                                               border: `1px solid ${isFull ? 'rgba(16, 185, 129, 0.3)' : isPartial ? 'rgba(245, 158, 11, 0.3)' : 'rgba(255, 255, 255, 0.1)'}`,
                                               display: 'inline-flex',
@@ -2181,7 +2203,7 @@ export const AssessmentResultPage = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#c084fc',
+                    color: 'var(--badge-accent-fg)',
                   }}
                 >
                   <RotateCcw size={14} />

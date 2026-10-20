@@ -126,7 +126,7 @@ export const QuestionNavigator = ({
                     : hasCode
                       ? 'rgba(16, 185, 129, 0.1)'
                       : 'rgba(255, 255, 255, 0.03)',
-                  color: isCurrent ? '#ffffff' : hasCode ? '#34d399' : '#94a3b8',
+                  color: isCurrent ? '#ffffff' : hasCode ? 'var(--badge-success-fg)' : '#94a3b8',
                   fontSize: 12,
                   fontWeight: 700,
                   display: 'flex',
@@ -205,7 +205,7 @@ export const QuestionNavigator = ({
                     : hasCode
                       ? 'rgba(16, 185, 129, 0.2)'
                       : 'rgba(255, 255, 255, 0.08)',
-                  color: isCurrent ? '#ffffff' : hasCode ? '#34d399' : '#94a3b8',
+                  color: isCurrent ? '#ffffff' : hasCode ? 'var(--badge-success-fg)' : '#94a3b8',
                   border: hasCode && !isCurrent ? '1px solid rgba(16, 185, 129, 0.4)' : 'none',
                 }}
               >
