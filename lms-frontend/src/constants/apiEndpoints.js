@@ -217,6 +217,8 @@ export const API_ENDPOINTS = Object.freeze({
     leave: (sessionId) => `/live-sessions/${sessionId}/leave`,
     end: (sessionId) => `/live-sessions/${sessionId}/end`,
     attendance: (sessionId) => `/live-sessions/${sessionId}/attendance`,
+    courseAttendance: (courseId) => `/courses/${courseId}/live-sessions/attendance`,
+    myAttendance: '/live-sessions/my-attendance',
     tenantUsage: (tenantId) => `/platform/tenants/${tenantId}/live-usage`,
     tenantConfig: (tenantId) => `/platform/tenants/${tenantId}/live-config`,
   },

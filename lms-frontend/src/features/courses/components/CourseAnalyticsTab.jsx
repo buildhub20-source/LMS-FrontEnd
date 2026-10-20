@@ -15,6 +15,7 @@ import Spinner from '../../../components/common/Spinner';
 import Alert from '../../../components/feedback/Alert';
 import Badge from '../../../components/common/Badge';
 import { formatDate } from '../../../utils/dateUtils';
+import CourseLiveAttendance from '../../liveSessions/components/CourseLiveAttendance';
 
 export const CourseAnalyticsTab = ({ courseId }) => {
   const {
@@ -23,16 +24,7 @@ export const CourseAnalyticsTab = ({ courseId }) => {
     error,
   } = useQuery({
     queryKey: ['course-analytics', courseId],
-    queryFn: async () => {
-      try {
-        const res = await http.get(`/courses/${courseId}/analytics`);
-        return res.data ?? res;
-      } catch (err) {
-        console.warn('Primary analytics endpoint failed, trying fallback path...', err);
-        const res = await http.get(`/courses/${courseId}/curriculum/analytics`);
-        return res.data ?? res;
-      }
-    },
+    queryFn: () => http.get(`/courses/${courseId}/curriculum/analytics`),
   });
 
   const [search, setSearch] = useState('');
@@ -100,7 +92,7 @@ export const CourseAnalyticsTab = ({ courseId }) => {
         {/* Attended */}
         <div style={cardStyle}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={labelStyle}>Attended Students</span>
+            <span style={labelStyle}>Started</span>
             <div style={iconBoxStyle('rgba(16, 185, 129, 0.1)', '#10b981')}>
               <UserCheck size={18} />
             </div>
@@ -108,15 +100,15 @@ export const CourseAnalyticsTab = ({ courseId }) => {
           <div style={valueStyle}>{attendedCount}</div>
           <span style={subtextStyle}>
             {totalEnrolledStudents > 0
-              ? `${Math.round((attendedCount / totalEnrolledStudents) * 100)}% attendance rate`
-              : '0% attendance'}
+              ? `${Math.round((attendedCount / totalEnrolledStudents) * 100)}% have completed a lesson`
+              : 'No students enrolled'}
           </span>
         </div>
 
         {/* Non-Attended */}
         <div style={cardStyle}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={labelStyle}>Non-Attended</span>
+            <span style={labelStyle}>Not started</span>
             <div style={iconBoxStyle('rgba(239, 68, 68, 0.1)', '#ef4444')}>
               <UserX size={18} />
             </div>
@@ -149,6 +141,8 @@ export const CourseAnalyticsTab = ({ courseId }) => {
           <span style={subtextStyle}>Across all enrolled</span>
         </div>
       </div>
+
+      <CourseLiveAttendance courseId={courseId} />
 
       {/* ── 2. Graphical Statistical Overview ── */}
       <div
@@ -235,9 +229,7 @@ export const CourseAnalyticsTab = ({ courseId }) => {
                   marginBottom: 6,
                 }}
               >
-                <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
-                  Attended Students
-                </span>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Started</span>
                 <span style={{ color: '#10b981', fontWeight: 700 }}>
                   {attendedCount} / {totalEnrolledStudents} (
                   {totalEnrolledStudents > 0
@@ -301,7 +293,7 @@ export const CourseAnalyticsTab = ({ courseId }) => {
                   marginBottom: 6,
                 }}
               >
-                <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Non-Attended</span>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Not started</span>
                 <span style={{ color: '#ef4444', fontWeight: 700 }}>
                   {nonAttendedCount} / {totalEnrolledStudents} (
                   {totalEnrolledStudents > 0
@@ -342,7 +334,7 @@ export const CourseAnalyticsTab = ({ courseId }) => {
               Individual Student Completion & Performance
             </h3>
             <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>
-              View progress percentage, attended status, and completion metrics per student.
+              View progress percentage, started status, and completion metrics per student.
             </p>
           </div>
 
@@ -394,7 +386,7 @@ export const CourseAnalyticsTab = ({ courseId }) => {
                       ? 'Completed'
                       : st === 'IN_PROGRESS'
                         ? 'In Progress'
-                        : 'Non Attended'}
+                        : 'Not started'}
                 </button>
               ))}
             </div>
@@ -505,7 +497,7 @@ export const CourseAnalyticsTab = ({ courseId }) => {
 const StatusBadge = ({ status }) => {
   if (status === 'COMPLETED') return <Badge tone="success">Completed</Badge>;
   if (status === 'IN_PROGRESS') return <Badge tone="info">In Progress</Badge>;
-  return <Badge tone="neutral">Non-Attended</Badge>;
+  return <Badge tone="neutral">Not started</Badge>;
 };
 
 /* ── Inline Design Token Styles ── */
