@@ -80,7 +80,7 @@ export const ProfilePage = () => {
   return (
     <PageContainer
       title="Account & Profile Management"
-      subtitle="Manage your identity settings, multi-factor security, active sessions, and system permissions."
+      subtitle="Manage your profile, password, active sessions, and permissions."
     >
       {/* Subtle, Elegant, Light/Dark Theme Adaptive Profile Banner */}
       <motion.div
@@ -329,7 +329,7 @@ export const ProfilePage = () => {
           {activeTab === 'security' && (
             <Card
               title="Security & Password Settings"
-              subtitle="Keep your account protected with a strong password and multi-factor security."
+              subtitle="Keep your account protected with a strong password."
             >
               <ChangePasswordForm />
             </Card>
