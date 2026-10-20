@@ -7,6 +7,10 @@ import { ROUTES } from '../../../constants/routes';
 import LeetCodeBadge from './LeetCodeBadge';
 import BadgeDetailModal from './BadgeDetailModal';
 
+// Only someone who actually scored in a category can lead it; otherwise the
+// card keeps its "awaiting submissions" state instead of crowning a 0%.
+const scored = (entry) => (entry && entry.currentCategoryScore?.score > 0 ? entry : null);
+
 export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
   const [selectedBadge, setSelectedBadge] = useState(null);
 
@@ -31,18 +35,16 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
     return generateLeaderboard(studentStats, 'ALL');
   }, [studentStats]);
 
-  const top1 = leaderboard[0];
+  const top1 = scored(leaderboard[0]);
 
   const codingChampion = React.useMemo(() => {
     if (!studentStats.length) return null;
-    const codingList = generateLeaderboard(studentStats, 'CODING');
-    return codingList[0];
+    return scored(generateLeaderboard(studentStats, 'CODING')[0]);
   }, [studentStats]);
 
   const sqlChampion = React.useMemo(() => {
     if (!studentStats.length) return null;
-    const sqlList = generateLeaderboard(studentStats, 'SQL');
-    return sqlList[0];
+    return scored(generateLeaderboard(studentStats, 'SQL')[0]);
   }, [studentStats]);
 
   const targetHistoryRoute = isInstructor
@@ -230,7 +232,7 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
               style={{
                 fontSize: 11,
                 fontWeight: 700,
-                color: '#818cf8',
+                color: 'var(--link)',
                 textTransform: 'uppercase',
               }}
             >

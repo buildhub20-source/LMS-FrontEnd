@@ -1,13 +1,19 @@
 {
-  "name": "LMS",
-  "short_name": "LMS",
-  "description": "Learning management system",
+  "name": "GradusMind",
+  "short_name": "GradusMind",
+  "description": "Courses, live classes, assessments and certificates for colleges, institutes and training teams.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f7f8fa",
-  "theme_color": "#3b6fe0",
+  "background_color": "#f3f1ea",
+  "theme_color": "#121212",
   "icons": [
-    { "src": "/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

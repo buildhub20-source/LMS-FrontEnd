@@ -121,7 +121,7 @@ export const GamificationDashboard = () => {
       <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <History className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+            <History className="h-5 w-5 text-[var(--link)]" />
             <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
               Points History & Ledger
             </h3>
@@ -147,7 +147,7 @@ export const GamificationDashboard = () => {
                   {pointsHistoryData?.content?.map((item) => (
                     <div key={item.id} className="flex items-center justify-between py-3">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary text-[var(--link)]  dark:text-[var(--link)]">
                           <Sparkles className="h-4 w-4" />
                         </div>
                         <div>

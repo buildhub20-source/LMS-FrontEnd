@@ -1,8 +1,10 @@
 import { FileText, Download, BookOpen } from 'lucide-react';
 
 export const LessonResourcesPanel = ({ currentLesson }) => {
-  const displayList = [...(currentLesson?.resources || []), ...(currentLesson?.attachments || [])]
-    .filter((item) => item?.url);
+  const displayList = [
+    ...(currentLesson?.resources || []),
+    ...(currentLesson?.attachments || []),
+  ].filter((item) => item?.url);
 
   const handleDownload = (item) => {
     window.open(item.url, '_blank', 'noopener,noreferrer');

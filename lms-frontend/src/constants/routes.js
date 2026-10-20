@@ -98,6 +98,7 @@ export const ROUTES = Object.freeze({
   GAMIFICATION: '/learn/gamification',
   CALENDAR: '/learn/calendar',
   NOTES_BOOKMARKS: '/learn/notes',
+  MY_ATTENDANCE: '/learn/attendance',
 
   // Public & Verification
   PUBLIC_CERTIFICATE_VERIFY: '/verify',

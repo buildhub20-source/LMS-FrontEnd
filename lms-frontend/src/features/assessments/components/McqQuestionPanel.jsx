@@ -143,7 +143,7 @@ export const McqQuestionPanel = ({
               alignItems: 'center',
               gap: 6,
               fontSize: 12,
-              color: saveStatus === 'saving' ? '#818cf8' : '#10b981',
+              color: saveStatus === 'saving' ? 'var(--primary)' : '#10b981',
               fontWeight: 500,
             }}
           >
@@ -249,7 +249,7 @@ export const McqQuestionPanel = ({
               fontWeight: 700,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
-              color: '#818cf8',
+              color: 'var(--link)',
             }}
           >
             Select One Correct Answer
@@ -291,19 +291,22 @@ export const McqQuestionPanel = ({
                   padding: '18px 20px',
                   borderRadius: 12,
                   cursor: 'pointer',
-                  border: isSelected ? '2px solid #6366f1' : '1px solid rgba(255, 255, 255, 0.08)',
+                  border: isSelected
+                    ? '2px solid var(--primary)'
+                    : '1px solid rgba(255, 255, 255, 0.08)',
                   background: isSelected
-                    ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(79, 70, 229, 0.08) 100%)'
+                    ? 'linear-gradient(135deg, color-mix(in srgb, var(--primary) 15%, transparent) 0%, rgba(79, 70, 229, 0.08) 100%)'
                     : 'rgba(255, 255, 255, 0.02)',
                   boxShadow: isSelected
-                    ? '0 0 20px rgba(99, 102, 241, 0.2), inset 0 0 10px rgba(99, 102, 241, 0.05)'
+                    ? '0 0 20px color-mix(in srgb, var(--primary) 20%, transparent), inset 0 0 10px color-mix(in srgb, var(--primary) 5%, transparent)'
                     : 'none',
                   transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                   userSelect: 'none',
                 }}
                 onMouseEnter={(e) => {
                   if (!isSelected) {
-                    e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.4)';
+                    e.currentTarget.style.borderColor =
+                      'color-mix(in srgb, var(--primary) 40%, transparent)';
                     e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
                   }
                 }}
@@ -326,7 +329,7 @@ export const McqQuestionPanel = ({
                     justifyContent: 'center',
                     fontSize: 15,
                     fontWeight: 800,
-                    background: isSelected ? '#6366f1' : 'rgba(255, 255, 255, 0.06)',
+                    background: isSelected ? 'var(--primary)' : 'rgba(255, 255, 255, 0.06)',
                     color: isSelected ? '#ffffff' : '#94a3b8',
                     border: isSelected ? 'none' : '1px solid rgba(255, 255, 255, 0.12)',
                     transition: 'all 0.2s ease',
@@ -354,13 +357,17 @@ export const McqQuestionPanel = ({
                     width: 22,
                     height: 22,
                     borderRadius: '50%',
-                    border: isSelected ? '2px solid #6366f1' : '2px solid rgba(255, 255, 255, 0.2)',
+                    border: isSelected
+                      ? '2px solid var(--primary)'
+                      : '2px solid rgba(255, 255, 255, 0.2)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                     transition: 'all 0.2s ease',
-                    background: isSelected ? 'rgba(99, 102, 241, 0.2)' : 'transparent',
+                    background: isSelected
+                      ? 'color-mix(in srgb, var(--primary) 20%, transparent)'
+                      : 'transparent',
                   }}
                 >
                   {isSelected && (
@@ -369,7 +376,7 @@ export const McqQuestionPanel = ({
                         width: 10,
                         height: 10,
                         borderRadius: '50%',
-                        background: '#6366f1',
+                        background: 'var(--primary)',
                       }}
                     />
                   )}

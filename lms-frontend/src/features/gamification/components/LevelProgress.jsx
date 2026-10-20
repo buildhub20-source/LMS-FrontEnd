@@ -43,7 +43,7 @@ export const LevelProgress = ({ currentLevel, levelProgress = 0, totalPoints = 0
       <div className="mt-4">
         <div className="h-3 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-indigo-600 transition-all duration-700 ease-out"
+            className="h-full rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-brand-ink transition-all duration-700 ease-out"
             style={{ width: `${Math.min(100, Math.max(0, levelProgress))}%` }}
           />
         </div>

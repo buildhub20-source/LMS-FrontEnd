@@ -138,6 +138,7 @@ const AdminGamificationPage = lazy(
 );
 const StudentCalendarPage = lazy(() => import('../features/calendar/pages/StudentCalendarPage'));
 const NotesBookmarksPage = lazy(() => import('../features/notes/pages/NotesBookmarksPage'));
+const MyAttendancePage = lazy(() => import('../features/liveSessions/pages/MyAttendancePage'));
 const NotificationPage = lazy(() => import('../features/notifications/pages/NotificationPage'));
 const ProfilePage = lazy(() => import('../features/profile/pages/ProfilePage'));
 const SecurityPage = lazy(() => import('../features/profile/pages/SecurityPage'));
@@ -383,6 +384,7 @@ export const router = createBrowserRouter([
           { path: ROUTES.GAMIFICATION, element: suspend(<GamificationDashboard />) },
           { path: ROUTES.CALENDAR, element: suspend(<StudentCalendarPage />) },
           { path: ROUTES.NOTES_BOOKMARKS, element: suspend(<NotesBookmarksPage />) },
+          { path: ROUTES.MY_ATTENDANCE, element: suspend(<MyAttendancePage />) },
           { path: ROUTES.ASSESSMENT_RESULT(), element: suspend(<AssessmentResultPage />) },
           { path: ROUTES.LEARNING(), element: suspend(<CourseDetailsPage />) },
           { path: ROUTES.LESSON(), element: suspend(<CourseDetailsPage />) },

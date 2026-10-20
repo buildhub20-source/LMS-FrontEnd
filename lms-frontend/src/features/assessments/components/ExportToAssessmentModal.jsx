@@ -214,7 +214,9 @@ function ExportToAssessmentContent({ isOpen, onClose, selectedQuestions = [], on
     } catch (err) {
       console.error('Export to Assessment failed:', err);
       toast.error(
-        err?.response?.data?.message || err?.message || 'Failed to export questions to assessment.',
+        (err?.response?.data?.message ?? err?.message) ||
+          err?.message ||
+          'Failed to export questions to assessment.',
       );
     } finally {
       setIsProcessing(false);

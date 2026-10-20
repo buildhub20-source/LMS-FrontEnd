@@ -84,6 +84,7 @@ export const API_ENDPOINTS = Object.freeze({
     course: (courseId) => `/courses/${courseId}`,
     lesson: (courseId, lessonId) => `/learning/courses/${courseId}/lessons/${lessonId}`,
     progress: (courseId) => `/learning/courses/${courseId}/progress`,
+    time: (courseId) => `/learning/courses/${courseId}/time`,
   },
   assessments: {
     base: '/student/assessments',
@@ -216,6 +217,8 @@ export const API_ENDPOINTS = Object.freeze({
     leave: (sessionId) => `/live-sessions/${sessionId}/leave`,
     end: (sessionId) => `/live-sessions/${sessionId}/end`,
     attendance: (sessionId) => `/live-sessions/${sessionId}/attendance`,
+    courseAttendance: (courseId) => `/courses/${courseId}/live-sessions/attendance`,
+    myAttendance: '/live-sessions/my-attendance',
     tenantUsage: (tenantId) => `/platform/tenants/${tenantId}/live-usage`,
     tenantConfig: (tenantId) => `/platform/tenants/${tenantId}/live-config`,
   },

@@ -9,9 +9,9 @@ const STATUS_CONFIG = {
   },
   [ATTEMPT_STATUS.SUBMITTED]: {
     label: 'Submitted',
-    bg: 'rgba(99, 102, 241, 0.12)',
-    color: '#6366f1',
-    dot: '#6366f1',
+    bg: 'color-mix(in srgb, var(--primary) 12%, transparent)',
+    color: 'var(--link)',
+    dot: 'var(--primary)',
   },
   [ATTEMPT_STATUS.TIMED_OUT]: {
     label: 'Timed Out',

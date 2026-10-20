@@ -43,7 +43,9 @@ export const useCreateAdminEnrollment = () => {
       success('Enrollment created successfully');
     },
     onError: (error) => {
-      toastError(error?.response?.data?.message || 'Failed to create enrollment');
+      toastError(
+        (error?.response?.data?.message ?? error?.message) || 'Failed to create enrollment',
+      );
     },
   });
 };
@@ -59,7 +61,7 @@ export const useUpdateAdminEnrollmentStatus = () => {
       success('Status updated successfully');
     },
     onError: (error) => {
-      toastError(error?.response?.data?.message || 'Failed to update status');
+      toastError((error?.response?.data?.message ?? error?.message) || 'Failed to update status');
     },
   });
 };
@@ -92,7 +94,9 @@ export const useCreateInstructorEnrollment = () => {
       success('Enrollment created successfully');
     },
     onError: (error) => {
-      toastError(error?.response?.data?.message || 'Failed to create enrollment');
+      toastError(
+        (error?.response?.data?.message ?? error?.message) || 'Failed to create enrollment',
+      );
     },
   });
 };
@@ -108,7 +112,7 @@ export const useUpdateInstructorEnrollmentStatus = () => {
       success('Status updated successfully');
     },
     onError: (error) => {
-      toastError(error?.response?.data?.message || 'Failed to update status');
+      toastError((error?.response?.data?.message ?? error?.message) || 'Failed to update status');
     },
   });
 };

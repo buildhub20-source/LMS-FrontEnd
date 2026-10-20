@@ -38,7 +38,7 @@ export const RubricManager = () => {
       const res = await rubricService.list();
       setRubrics(res?.content ?? []);
     } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to load rubrics');
+      setError((err?.response?.data?.message ?? err?.message) || 'Failed to load rubrics');
     } finally {
       setLoading(false);
     }
@@ -80,7 +80,7 @@ export const RubricManager = () => {
       setShowCreate(false);
       fetchRubrics();
     } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to create rubric');
+      setError((err?.response?.data?.message ?? err?.message) || 'Failed to create rubric');
     } finally {
       setSaving(false);
     }
@@ -92,7 +92,7 @@ export const RubricManager = () => {
       await rubricService.remove(id);
       fetchRubrics();
     } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to delete rubric');
+      setError((err?.response?.data?.message ?? err?.message) || 'Failed to delete rubric');
     }
   };
 
@@ -116,7 +116,7 @@ export const RubricManager = () => {
               gap: 8,
             }}
           >
-            <Award size={20} color="var(--primary-color, #4f46e5)" /> Grading Rubrics
+            <Award size={20} color="var(--primary-color, #121212)" /> Grading Rubrics
           </h2>
           <p style={{ color: 'var(--text-secondary, #6b7280)', fontSize: '0.875rem' }}>
             Define structured criteria and point weightings for manual assessment evaluations.
@@ -347,7 +347,7 @@ export const RubricManager = () => {
                         }}
                       >
                         <span>{c.criterionName}</span>
-                        <span style={{ fontWeight: 600, color: '#4f46e5' }}>
+                        <span style={{ fontWeight: 600, color: 'var(--link)' }}>
                           {c.maxPoints} pts (x{c.weight})
                         </span>
                       </li>

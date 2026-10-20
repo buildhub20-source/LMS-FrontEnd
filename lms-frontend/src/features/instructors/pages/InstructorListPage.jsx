@@ -50,8 +50,8 @@ function InstructorAvatar({ name = '', size = 44 }) {
         height: size,
         borderRadius: '50%',
         flexShrink: 0,
-        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-        color: '#fff',
+        background: 'var(--brand-tile-bg)',
+        color: 'var(--brand-tile-fg)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -391,7 +391,7 @@ export const InstructorListPage = () => {
                   width: 44,
                   height: 44,
                   borderRadius: 12,
-                  background: 'rgba(255, 255, 255, 0.6)',
+                  background: 'var(--secondary)',
                   border: `1px solid ${m.border}`,
                   display: 'flex',
                   alignItems: 'center',
@@ -453,7 +453,7 @@ export const InstructorListPage = () => {
                 transition: 'border-color 0.2s, background 0.2s',
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = 'var(--primary, #22c55e)';
+                e.target.style.borderColor = 'var(--primary, #121212)';
                 e.target.style.background = 'var(--card, #ffffff)';
               }}
               onBlur={(e) => {
@@ -637,7 +637,7 @@ export const InstructorListPage = () => {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-3px)';
-                e.currentTarget.style.borderColor = 'var(--color-primary, #6366f1)';
+                e.currentTarget.style.borderColor = 'var(--ring)';
                 e.currentTarget.style.boxShadow = 'var(--shadow-md)';
               }}
               onMouseLeave={(e) => {
@@ -663,9 +663,9 @@ export const InstructorListPage = () => {
                     fontSize: 11,
                     fontFamily: 'monospace',
                     fontWeight: 700,
-                    background: 'rgba(99, 102, 241, 0.1)',
-                    color: 'var(--color-primary, #6366f1)',
-                    border: '1px solid rgba(99, 102, 241, 0.2)',
+                    background: 'var(--secondary)',
+                    color: 'var(--foreground)',
+                    border: '1px solid var(--border)',
                   }}
                 >
                   {row.employeeCode}
@@ -733,7 +733,7 @@ export const InstructorListPage = () => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: 6,
-                    color: 'var(--color-primary, #6366f1)',
+                    color: 'var(--foreground)',
                     fontWeight: 600,
                   }}
                 >
@@ -760,7 +760,7 @@ export const InstructorListPage = () => {
                 }}
               >
                 <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <Clock size={13} color="var(--color-primary, #6366f1)" />
+                  <Clock size={13} color="var(--muted-foreground)" />
                   <span>
                     {row.yearsOfExperience != null ? `${row.yearsOfExperience} yrs exp.` : 'Senior'}
                   </span>
@@ -796,14 +796,14 @@ export const InstructorListPage = () => {
                     fontSize: 12,
                     fontWeight: 700,
                     border: 'none',
-                    background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-                    color: '#fff',
+                    background: 'var(--primary)',
+                    color: 'var(--primary-foreground)',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 6,
-                    boxShadow: '0 2px 10px rgba(37, 99, 235, 0.25)',
+                    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.18)',
                     transition: 'all 0.2s',
                   }}
                 >
@@ -1010,7 +1010,7 @@ export const InstructorListPage = () => {
                         <div
                           style={{
                             fontWeight: 600,
-                            color: 'var(--color-primary, #6366f1)',
+                            color: 'var(--foreground)',
                             fontSize: 13,
                           }}
                         >
@@ -1051,7 +1051,7 @@ export const InstructorListPage = () => {
                                 color: 'var(--text-primary)',
                               }}
                             >
-                              <Clock size={12} style={{ color: 'var(--color-primary, #6366f1)' }} />
+                              <Clock size={12} style={{ color: 'var(--muted-foreground)' }} />
                               <span>{row.yearsOfExperience} yrs exp.</span>
                             </div>
                           )}
@@ -1091,10 +1091,10 @@ export const InstructorListPage = () => {
                               fontSize: 12,
                               fontWeight: 700,
                               border: 'none',
-                              background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-                              color: '#fff',
+                              background: 'var(--primary)',
+                              color: 'var(--primary-foreground)',
                               cursor: 'pointer',
-                              boxShadow: '0 2px 8px rgba(37, 99, 235, 0.25)',
+                              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.18)',
                               transition: 'all 0.15s',
                             }}
                           >

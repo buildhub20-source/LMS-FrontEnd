@@ -213,10 +213,14 @@ export const ResourceManagementPage = () => {
     }
   };
 
-  const handleDownload = (res) => {
-    resourceService.downloadFile(res);
-    toast.success(`Downloaded ${res.title}`);
-    refetch();
+  const handleDownload = async (res) => {
+    const ok = await resourceService.downloadFile(res);
+    if (ok) {
+      toast.success(`Downloaded ${res.title}`);
+      refetch();
+    } else {
+      toast.error(`Couldn't download ${res.title}. Try again in a moment.`);
+    }
   };
 
   return (
@@ -289,9 +293,9 @@ export const ResourceManagementPage = () => {
             fontWeight: 700,
             cursor: 'pointer',
             border: 'none',
-            background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-            color: '#fff',
-            boxShadow: '0 4px 14px rgba(37, 99, 235, 0.25)',
+            background: 'var(--primary)',
+            color: 'var(--primary-foreground)',
+            boxShadow: '0 4px 14px rgba(0, 0, 0, 0.18)',
             transition: 'transform 0.15s ease',
           }}
           onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
@@ -326,7 +330,7 @@ export const ResourceManagementPage = () => {
               width: 40,
               height: 40,
               borderRadius: 10,
-              background: 'rgba(255, 255, 255, 0.6)',
+              background: 'var(--secondary)',
               border: '1px solid var(--card-blue-border)',
               display: 'flex',
               alignItems: 'center',
@@ -363,7 +367,7 @@ export const ResourceManagementPage = () => {
               width: 40,
               height: 40,
               borderRadius: 10,
-              background: 'rgba(255, 255, 255, 0.6)',
+              background: 'var(--secondary)',
               border: '1px solid var(--card-green-border)',
               display: 'flex',
               alignItems: 'center',
@@ -400,7 +404,7 @@ export const ResourceManagementPage = () => {
               width: 40,
               height: 40,
               borderRadius: 10,
-              background: 'rgba(255, 255, 255, 0.6)',
+              background: 'var(--secondary)',
               border: '1px solid var(--card-yellow-border)',
               display: 'flex',
               alignItems: 'center',
@@ -437,7 +441,7 @@ export const ResourceManagementPage = () => {
               width: 40,
               height: 40,
               borderRadius: 10,
-              background: 'rgba(255, 255, 255, 0.6)',
+              background: 'var(--secondary)',
               border: '1px solid var(--card-purple-border)',
               display: 'flex',
               alignItems: 'center',
@@ -1245,13 +1249,13 @@ export const ResourceManagementPage = () => {
                   style={{
                     padding: '9px 22px',
                     borderRadius: 10,
-                    background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+                    background: 'var(--primary)',
                     border: 'none',
-                    color: '#fff',
+                    color: 'var(--primary-foreground)',
                     cursor: 'pointer',
                     fontSize: 13,
                     fontWeight: 700,
-                    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
+                    boxShadow: '0 4px 14px rgba(0, 0, 0, 0.18)',
                   }}
                 >
                   {createMutation.isPending || updateMutation.isPending

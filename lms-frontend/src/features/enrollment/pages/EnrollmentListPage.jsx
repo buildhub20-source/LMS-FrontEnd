@@ -91,7 +91,7 @@ function StatusPill({ status }) {
 
 /* ─── Avatar with deterministic color ─────────────────────────────── */
 const AVATAR_PALETTE = [
-  { bg: '#7367f0', text: '#fff' },
+  { bg: 'var(--primary)', text: '#fff' },
   { bg: '#ea5455', text: '#fff' },
   { bg: '#28c76f', text: '#fff' },
   { bg: '#ff9f43', text: '#fff' },
@@ -910,9 +910,9 @@ export const EnrollmentListPage = () => {
                 padding: '16px 20px',
                 borderRadius: 10,
                 background:
-                  'linear-gradient(135deg, rgba(115, 103, 240, 0.12) 0%, rgba(115, 103, 240, 0.03) 100%)',
-                border: '1px solid rgba(115, 103, 240, 0.3)',
-                boxShadow: '0 4px 20px rgba(115, 103, 240, 0.08)',
+                  'linear-gradient(135deg, color-mix(in srgb, var(--primary) 12%, transparent) 0%, color-mix(in srgb, var(--primary) 3%, transparent) 100%)',
+                border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
+                boxShadow: '0 4px 20px color-mix(in srgb, var(--primary) 8%, transparent)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 16, minWidth: 0, flex: 1 }}>
@@ -921,13 +921,13 @@ export const EnrollmentListPage = () => {
                     width: 48,
                     height: 48,
                     borderRadius: 12,
-                    background: 'rgba(115, 103, 240, 0.2)',
+                    background: 'color-mix(in srgb, var(--primary) 20%, transparent)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: T.primary,
                     flexShrink: 0,
-                    boxShadow: '0 0 16px rgba(115, 103, 240, 0.25)',
+                    boxShadow: '0 0 16px color-mix(in srgb, var(--primary) 25%, transparent)',
                   }}
                 >
                   {topTab === 'COURSES' ? <BookOpen size={24} /> : <FileCheck2 size={24} />}
@@ -954,7 +954,7 @@ export const EnrollmentListPage = () => {
                         textTransform: 'uppercase',
                         padding: '2px 8px',
                         borderRadius: 99,
-                        background: 'rgba(115, 103, 240, 0.2)',
+                        background: 'color-mix(in srgb, var(--primary) 20%, transparent)',
                         color: T.primary,
                       }}
                     >
@@ -1049,19 +1049,22 @@ export const EnrollmentListPage = () => {
                     fontSize: 13,
                     fontWeight: 600,
                     borderRadius: 8,
-                    background: 'rgba(115, 103, 240, 0.18)',
+                    background: 'color-mix(in srgb, var(--primary) 18%, transparent)',
                     color: T.primary,
-                    border: '1px solid rgba(115, 103, 240, 0.35)',
+                    border: '1px solid color-mix(in srgb, var(--primary) 35%, transparent)',
                     cursor: 'pointer',
                     transition: 'all 0.15s ease',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(115, 103, 240, 0.28)';
+                    e.currentTarget.style.background =
+                      'color-mix(in srgb, var(--primary) 28%, transparent)';
                     e.currentTarget.style.borderColor = T.primary;
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'rgba(115, 103, 240, 0.18)';
-                    e.currentTarget.style.borderColor = 'rgba(115, 103, 240, 0.35)';
+                    e.currentTarget.style.background =
+                      'color-mix(in srgb, var(--primary) 18%, transparent)';
+                    e.currentTarget.style.borderColor =
+                      'color-mix(in srgb, var(--primary) 35%, transparent)';
                   }}
                 >
                   <ArrowLeftRight size={14} /> Switch{' '}
@@ -1199,7 +1202,7 @@ export const EnrollmentListPage = () => {
                     color: '#fff',
                     border: 'none',
                     cursor: 'pointer',
-                    boxShadow: '0 2px 8px rgba(115, 103, 240, 0.3)',
+                    boxShadow: '0 2px 8px color-mix(in srgb, var(--primary) 30%, transparent)',
                     transition: 'all 0.15s ease',
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.filter = 'brightness(1.1)')}
@@ -1253,7 +1256,7 @@ export const EnrollmentListPage = () => {
                   height: 38,
                   padding: '0 12px',
                   background: T.surface,
-                  border: `1px solid ${activeTarget ? 'rgba(115, 103, 240, 0.4)' : T.border}`,
+                  border: `1px solid ${activeTarget ? 'color-mix(in srgb, var(--primary) 40%, transparent)' : T.border}`,
                   borderRadius: 8,
                   cursor: 'pointer',
                   color: activeTarget ? T.textMain : T.textMuted,
@@ -1265,7 +1268,7 @@ export const EnrollmentListPage = () => {
                 onMouseEnter={(e) => (e.currentTarget.style.borderColor = T.primary)}
                 onMouseLeave={(e) =>
                   (e.currentTarget.style.borderColor = activeTarget
-                    ? 'rgba(115, 103, 240, 0.4)'
+                    ? 'color-mix(in srgb, var(--primary) 40%, transparent)'
                     : T.border)
                 }
               >
@@ -1822,7 +1825,7 @@ export const EnrollmentListPage = () => {
                         borderRadius: 8,
                         cursor: 'pointer',
                         background: isSelected
-                          ? 'rgba(115, 103, 240, 0.12)'
+                          ? 'color-mix(in srgb, var(--primary) 12%, transparent)'
                           : 'var(--surface-medium)',
                         border: isSelected ? `1px solid ${T.primary}` : `1px solid ${T.border}`,
                         transition: 'all 0.15s ease',
@@ -1890,7 +1893,7 @@ export const EnrollmentListPage = () => {
                                   fontSize: 11,
                                   fontWeight: 700,
                                   color: T.primary,
-                                  background: 'rgba(115, 103, 240, 0.2)',
+                                  background: 'color-mix(in srgb, var(--primary) 20%, transparent)',
                                   padding: '1px 7px',
                                   borderRadius: 4,
                                 }}
@@ -1946,7 +1949,9 @@ export const EnrollmentListPage = () => {
                             borderRadius: 6,
                             background: isSelected ? T.primary : 'transparent',
                             color: isSelected ? '#fff' : T.primary,
-                            border: isSelected ? 'none' : `1px solid rgba(115, 103, 240, 0.35)`,
+                            border: isSelected
+                              ? 'none'
+                              : `1px solid color-mix(in srgb, var(--primary) 35%, transparent)`,
                           }}
                         >
                           {isSelected ? 'Active Target' : 'Select'}

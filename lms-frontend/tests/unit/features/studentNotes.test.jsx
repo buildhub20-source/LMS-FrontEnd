@@ -103,7 +103,11 @@ describe('LessonResourcesPanel', () => {
     expect(screen.getByText('1 file available')).toBeInTheDocument();
     expect(screen.queryByText('Missing PDF')).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Download' }));
-    expect(open).toHaveBeenCalledWith('https://example.com/file.pdf', '_blank', 'noopener,noreferrer');
+    expect(open).toHaveBeenCalledWith(
+      'https://example.com/file.pdf',
+      '_blank',
+      'noopener,noreferrer',
+    );
     open.mockRestore();
   });
 });

@@ -67,7 +67,11 @@ export const EditCoursePage = () => {
       toast.success('Course deleted successfully.');
       navigate(coursesRoute);
     } catch (err) {
-      toast.error(err?.response?.data?.message || err?.message || 'Failed to delete course.');
+      toast.error(
+        (err?.response?.data?.message ?? err?.message) ||
+          err?.message ||
+          'Failed to delete course.',
+      );
     } finally {
       setIsDeleting(false);
     }

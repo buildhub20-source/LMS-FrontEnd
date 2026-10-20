@@ -158,7 +158,9 @@ export const AdminAssessmentDetailsPage = () => {
               setConfirmDialog(null);
             } catch (e) {
               console.error('Question add failed:', e);
-              toast.error(e?.response?.data?.message || e.message || 'Failed to add question');
+              toast.error(
+                (e?.response?.data?.message ?? e?.message) || e.message || 'Failed to add question',
+              );
               setConfirmDialog(null);
             }
           },
@@ -175,7 +177,9 @@ export const AdminAssessmentDetailsPage = () => {
       setTargetSectionId(null);
     } catch (e) {
       console.error('Question add failed:', e);
-      toast.error(e?.response?.data?.message || e.message || 'Failed to add question');
+      toast.error(
+        (e?.response?.data?.message ?? e?.message) || e.message || 'Failed to add question',
+      );
     }
   };
 
@@ -193,7 +197,11 @@ export const AdminAssessmentDetailsPage = () => {
         );
       }
     } catch (err) {
-      toast.error(err?.response?.data?.message || err?.message || 'Failed to duplicate assessment');
+      toast.error(
+        (err?.response?.data?.message ?? err?.message) ||
+          err?.message ||
+          'Failed to duplicate assessment',
+      );
     } finally {
       setIsDuplicating(false);
     }
@@ -236,7 +244,11 @@ export const AdminAssessmentDetailsPage = () => {
             }
             setConfirmDialog(null);
           } catch (e) {
-            toast.error(e?.response?.data?.message || e.message || 'Failed to remove question');
+            toast.error(
+              (e?.response?.data?.message ?? e?.message) ||
+                e.message ||
+                'Failed to remove question',
+            );
             setConfirmDialog(null);
           }
         },
@@ -259,7 +271,9 @@ export const AdminAssessmentDetailsPage = () => {
           }
           setConfirmDialog(null);
         } catch (e) {
-          toast.error(e?.response?.data?.message || e.message || 'Failed to delete question');
+          toast.error(
+            (e?.response?.data?.message ?? e?.message) || e.message || 'Failed to delete question',
+          );
           setConfirmDialog(null);
         }
       },
@@ -317,7 +331,9 @@ export const AdminAssessmentDetailsPage = () => {
       setEditingQuestion(null);
     } catch (e) {
       console.error('Question update failed:', e);
-      toast.error(e?.response?.data?.message || e.message || 'Failed to update question');
+      toast.error(
+        (e?.response?.data?.message ?? e?.message) || e.message || 'Failed to update question',
+      );
     }
   };
 
@@ -1106,7 +1122,7 @@ export const AdminAssessmentDetailsPage = () => {
                                           toast.success(`Updated section for "${q.title}"`);
                                         } catch (err) {
                                           toast.error(
-                                            err?.response?.data?.message ||
+                                            (err?.response?.data?.message ?? err?.message) ||
                                               err.message ||
                                               'Failed to update section',
                                           );
@@ -1255,7 +1271,7 @@ export const AdminAssessmentDetailsPage = () => {
                                         toast.success(`Moved "${q.title}" to section`);
                                       } catch (err) {
                                         toast.error(
-                                          err?.response?.data?.message ||
+                                          (err?.response?.data?.message ?? err?.message) ||
                                             err.message ||
                                             'Failed to move question',
                                         );
@@ -1404,7 +1420,9 @@ export const AdminAssessmentDetailsPage = () => {
                 );
               } catch (e) {
                 toast.error(
-                  e?.response?.data?.message || e.message || 'Failed to extend assessment window',
+                  (e?.response?.data?.message ?? e?.message) ||
+                    e.message ||
+                    'Failed to extend assessment window',
                 );
               }
             }}
@@ -1450,7 +1468,7 @@ export const AdminAssessmentDetailsPage = () => {
                     );
                   } catch (e) {
                     toast.error(
-                      e?.response?.data?.message ||
+                      (e?.response?.data?.message ?? e?.message) ||
                         e.message ||
                         'Failed to update result analytics',
                     );

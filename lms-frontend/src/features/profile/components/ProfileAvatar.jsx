@@ -218,7 +218,7 @@ export const ProfileAvatar = ({ user, onUpload, isUploading }) => {
                   marginTop: 12,
                   padding: '8px 20px',
                   borderRadius: 8,
-                  background: 'var(--primary, #6366f1)',
+                  background: 'var(--primary, #121212)',
                   color: '#fff',
                   border: 'none',
                   fontWeight: 600,

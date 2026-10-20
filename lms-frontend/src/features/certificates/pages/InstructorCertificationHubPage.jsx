@@ -46,8 +46,8 @@ function CandidateAvatar({ name = '', size = 36 }) {
         height: size,
         borderRadius: '50%',
         flexShrink: 0,
-        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-        color: '#fff',
+        background: 'var(--brand-tile-bg)',
+        color: 'var(--brand-tile-fg)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -414,7 +414,7 @@ export const InstructorCertificationHubPage = () => {
                   width: 44,
                   height: 44,
                   borderRadius: 12,
-                  background: 'rgba(255, 255, 255, 0.6)',
+                  background: 'var(--secondary)',
                   border: `1px solid ${m.border}`,
                   display: 'flex',
                   alignItems: 'center',
@@ -474,7 +474,7 @@ export const InstructorCertificationHubPage = () => {
                   transition: 'border-color 0.2s',
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = 'var(--color-primary, #6366f1)';
+                  e.target.style.borderColor = 'var(--color-primary, #121212)';
                 }}
                 onBlur={(e) => {
                   e.target.style.borderColor = 'var(--border)';
@@ -509,7 +509,7 @@ export const InstructorCertificationHubPage = () => {
                     }}
                     onMouseEnter={(e) => {
                       if (!active)
-                        e.currentTarget.style.borderColor = 'var(--color-primary, #6366f1)';
+                        e.currentTarget.style.borderColor = 'var(--color-primary, #121212)';
                     }}
                     onMouseLeave={(e) => {
                       if (!active) e.currentTarget.style.borderColor = 'var(--border)';
@@ -892,9 +892,7 @@ export const InstructorCertificationHubPage = () => {
                               width: `${c.progressPercent}%`,
                               height: '100%',
                               borderRadius: 99,
-                              background: c.isCompleted
-                                ? 'linear-gradient(90deg, #10b981 0%, #059669 100%)'
-                                : 'linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%)',
+                              background: c.isCompleted ? 'var(--primary)' : 'var(--primary)',
                             }}
                           />
                         </div>
@@ -940,9 +938,9 @@ export const InstructorCertificationHubPage = () => {
                             fontWeight: 600,
                             padding: '3px 8px',
                             borderRadius: 6,
-                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                            color: 'var(--color-primary, #6366f1)',
-                            border: '1px solid rgba(99, 102, 241, 0.25)',
+                            backgroundColor: 'color-mix(in srgb, var(--primary) 10%, transparent)',
+                            color: 'var(--color-primary, #121212)',
+                            border: '1px solid color-mix(in srgb, var(--primary) 25%, transparent)',
                           }}
                         >
                           Eligible for Minting
@@ -966,9 +964,11 @@ export const InstructorCertificationHubPage = () => {
                               gap: 4,
                               padding: '6px 12px',
                               borderRadius: 99,
-                              backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                              border: '1px solid rgba(99, 102, 241, 0.25)',
-                              color: 'var(--color-primary, #6366f1)',
+                              backgroundColor:
+                                'color-mix(in srgb, var(--primary) 10%, transparent)',
+                              border:
+                                '1px solid color-mix(in srgb, var(--primary) 25%, transparent)',
+                              color: 'var(--color-primary, #121212)',
                               fontSize: 12,
                               fontWeight: 600,
                               cursor: 'pointer',
@@ -1004,13 +1004,13 @@ export const InstructorCertificationHubPage = () => {
                             gap: 4,
                             padding: '6px 14px',
                             borderRadius: 99,
-                            background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+                            background: 'var(--primary)',
                             border: 'none',
-                            color: '#fff',
+                            color: 'var(--primary-foreground)',
                             fontSize: 12,
                             fontWeight: 700,
                             cursor: 'pointer',
-                            boxShadow: '0 2px 10px rgba(37, 99, 235, 0.25)',
+                            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.18)',
                           }}
                         >
                           <Award size={13} />
@@ -1101,7 +1101,7 @@ export const InstructorCertificationHubPage = () => {
                   style={{
                     fontFamily: 'monospace',
                     fontWeight: 700,
-                    color: 'var(--color-primary, #6366f1)',
+                    color: 'var(--color-primary, #121212)',
                   }}
                 >
                   {activeVerifyCert.serialNumber}

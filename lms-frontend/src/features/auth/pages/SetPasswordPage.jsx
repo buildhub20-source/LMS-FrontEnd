@@ -176,10 +176,10 @@ export const SetPasswordPage = () => {
           width: 60px;
           height: 60px;
           border-radius: 50%;
-          background: linear-gradient(135deg, #6366f1, #8b5cf6);
+          background: var(--primary);
           margin-bottom: 1.25rem;
           color: white;
-          box-shadow: 0 0 30px rgba(99,102,241,0.4);
+          box-shadow: 0 0 30px color-mix(in srgb, var(--primary) 40%, transparent);
         }
         .set-pw__title {
           font-size: 1.5rem;
@@ -235,8 +235,8 @@ export const SetPasswordPage = () => {
           box-sizing: border-box;
         }
         .set-pw__input:focus {
-          border-color: #6366f1;
-          box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+          border-color: var(--primary);
+          box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
         }
         .set-pw__input--error {
           border-color: rgba(239,68,68,0.6);
@@ -273,7 +273,7 @@ export const SetPasswordPage = () => {
           border: 1px solid rgba(255,255,255,0.06);
         }
         .set-pw__hints-icon {
-          color: #6366f1;
+          color: var(--link);
           flex-shrink: 0;
           margin-top: 1px;
         }
@@ -282,7 +282,7 @@ export const SetPasswordPage = () => {
           align-items: center;
           justify-content: center;
           gap: 0.5rem;
-          background: linear-gradient(135deg, #6366f1, #8b5cf6);
+          background: var(--primary);
           color: white;
           border: none;
           border-radius: 10px;

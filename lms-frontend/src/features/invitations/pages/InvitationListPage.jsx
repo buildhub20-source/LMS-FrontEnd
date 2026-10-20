@@ -790,9 +790,11 @@ export const InvitationListPage = () => {
                     justifyContent: 'space-between',
                     background: 'var(--input-bg)',
                     border: rolesDropdownOpen
-                      ? '1px solid var(--brand-primary, #6366f1)'
+                      ? '1px solid var(--brand-primary, #121212)'
                       : '1px solid var(--border-color)',
-                    boxShadow: rolesDropdownOpen ? '0 0 0 2px rgba(99,102,241,0.15)' : 'none',
+                    boxShadow: rolesDropdownOpen
+                      ? '0 0 0 2px color-mix(in srgb, var(--primary) 15%, transparent)'
+                      : 'none',
                     borderRadius: 8,
                     fontSize: 14,
                     color: createRoleName ? 'var(--text-primary)' : 'var(--text-muted)',
@@ -886,7 +888,7 @@ export const InvitationListPage = () => {
                                   height: 28,
                                   borderRadius: 6,
                                   background: isSelected
-                                    ? 'rgba(99,102,241,0.15)'
+                                    ? 'color-mix(in srgb, var(--primary) 15%, transparent)'
                                     : 'var(--surface-medium)',
                                   display: 'flex',
                                   alignItems: 'center',

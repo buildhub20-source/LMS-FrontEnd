@@ -179,7 +179,7 @@ export const StudentAssessmentTakingPage = () => {
         console.error('Final submit failed:', err);
         setSubmissionStage('error');
         setSubmissionErrorMsg(
-          err?.response?.data?.message ||
+          (err?.response?.data?.message ?? err?.message) ||
             err?.message ||
             'Submission failed. Please check your network connection and retry.',
         );
@@ -320,7 +320,7 @@ export const StudentAssessmentTakingPage = () => {
             width: '100%',
             background: '#0f172a',
             borderRadius: 16,
-            border: `1px solid ${isLimitReached ? 'rgba(99, 102, 241, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+            border: `1px solid ${isLimitReached ? 'color-mix(in srgb, var(--primary) 30%, transparent)' : 'rgba(239, 68, 68, 0.3)'}`,
             padding: 36,
             boxShadow: '0 25px 50px rgba(0,0,0,0.6)',
             textAlign: 'center',
@@ -366,12 +366,12 @@ export const StudentAssessmentTakingPage = () => {
                 onClick={() => navigate(ROUTES.ASSESSMENT_RESULT(latestAttemptId))}
                 iconLeft={<BarChart3 size={16} />}
                 style={{
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  background: 'var(--primary)',
                   width: '100%',
                   justifyContent: 'center',
                   padding: '11px 0',
                   fontWeight: 700,
-                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)',
+                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.18)',
                 }}
               >
                 View Result Analytics
@@ -486,13 +486,13 @@ export const StudentAssessmentTakingPage = () => {
               width: 32,
               height: 32,
               borderRadius: 8,
-              background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+              background: 'var(--primary)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#ffffff',
+              color: 'var(--primary-foreground)',
               flexShrink: 0,
-              boxShadow: '0 2px 8px rgba(99, 102, 241, 0.4)',
+              boxShadow: '0 2px 8px color-mix(in srgb, var(--primary) 40%, transparent)',
             }}
           >
             <Code2 size={18} />
@@ -600,12 +600,12 @@ export const StudentAssessmentTakingPage = () => {
             iconRight={<Send size={14} />}
             disabled={submitting}
             style={{
-              background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+              background: 'var(--primary)',
               fontWeight: 700,
               fontSize: 13,
               padding: '7px 16px',
               borderRadius: 8,
-              boxShadow: '0 4px 14px rgba(99, 102, 241, 0.35)',
+              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.18)',
             }}
           >
             Submit Exam
@@ -765,12 +765,12 @@ export const StudentAssessmentTakingPage = () => {
                   height: 28,
                   borderRadius: 6,
                   border: isCurrent
-                    ? '1.5px solid #6366f1'
+                    ? '1.5px solid var(--primary)'
                     : hasAnswer
                       ? '1px solid rgba(16, 185, 129, 0.4)'
                       : '1px solid rgba(255, 255, 255, 0.08)',
                   background: isCurrent
-                    ? '#6366f1'
+                    ? 'var(--primary)'
                     : hasAnswer
                       ? 'rgba(16, 185, 129, 0.15)'
                       : 'rgba(255, 255, 255, 0.03)',
@@ -782,7 +782,9 @@ export const StudentAssessmentTakingPage = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   transition: 'all 0.15s ease',
-                  boxShadow: isCurrent ? '0 0 10px rgba(99, 102, 241, 0.4)' : 'none',
+                  boxShadow: isCurrent
+                    ? '0 0 10px color-mix(in srgb, var(--primary) 40%, transparent)'
+                    : 'none',
                 }}
               >
                 {idx + 1}

@@ -209,9 +209,9 @@ export default function QuestionBankPage() {
                 textTransform: 'uppercase',
                 padding: '2px 8px',
                 borderRadius: 20,
-                background: 'rgba(99, 102, 241, 0.12)',
-                color: '#818cf8',
-                border: '1px solid rgba(99, 102, 241, 0.25)',
+                background: 'color-mix(in srgb, var(--primary) 12%, transparent)',
+                color: 'var(--link)',
+                border: '1px solid color-mix(in srgb, var(--primary) 25%, transparent)',
               }}
             >
               Curated Repository

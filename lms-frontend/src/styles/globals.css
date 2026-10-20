@@ -20,17 +20,19 @@
   --font-heading: var(--font-sans);
 
   /* ── Color Palette Scales ─────────────────────────── */
-  --color-slate-50: #f8fafc;
-  --color-slate-100: #f1f5f9;
-  --color-slate-200: #e2e8f0;
-  --color-slate-300: #cbd5e1;
-  --color-slate-400: #94a3b8;
-  --color-slate-500: #64748b;
-  --color-slate-600: #475569;
-  --color-slate-700: #334155;
-  --color-slate-800: #1e293b;
-  --color-slate-900: #0f172a;
-  --color-slate-950: #020617;
+  /* slate is redefined as the GradusMind warm neutral (paper → ink), so pages
+     built on Tailwind's slate classes no longer pick up a navy cast. */
+  --color-slate-50: #f8f6ef;
+  --color-slate-100: #f3f1ea;
+  --color-slate-200: #e2ded2;
+  --color-slate-300: #cfc9b8;
+  --color-slate-400: #9c988c;
+  --color-slate-500: #6f6d67;
+  --color-slate-600: #4a4945;
+  --color-slate-700: #33373c;
+  --color-slate-800: #1d2023;
+  --color-slate-900: #16181b;
+  --color-slate-950: #0b0c0d;
 
   --color-emerald-50: #ecfdf5;
   --color-emerald-100: #d1fae5;
@@ -75,6 +77,12 @@
   --color-green-500: #22c55e;
   --color-green-600: #16a34a;
   --color-green-700: #15803d;
+
+  --color-brand-yellow: #dfc04a;
+  --color-brand-yellow-hover: #e9cd62;
+  --color-brand-ink: #121212;
+  --color-brand-paper: #f3f1ea;
+  --color-brand-gold: #c9973b;
 
   /* ── shadcn/ui Token Mapping ──────────────────────── */
   --color-background: var(--background);
@@ -183,83 +191,157 @@
 }
 
 /* ============================================================
-   Light Theme (Default) — Soft Pastel / Macaron
+   Light Theme (Default) — GradusMind "editorial"
+   Warm paper canvas, ink actions. Brand yellow is reserved for
+   "you are here" (the selected nav item) and never carries text
+   on a light surface, where it would fail contrast.
    ============================================================ */
 :root {
-  --background: #f5f7fa;
-  --foreground: #1a1a2e;
-  --card: #ffffff;
-  --card-foreground: #1a1a2e;
-  --popover: #ffffff;
-  --popover-foreground: #1a1a2e;
-  --primary: #22c55e;
+  --brand-yellow: #dfc04a;
+  --brand-ink: #121212;
+  --brand-paper: #f3f1ea;
+  --brand-gold: #c9973b;
+
+  --background: #f3f1ea;
+  --foreground: #121212;
+  --card: #fffdf7;
+  --card-foreground: #121212;
+  --popover: #fffdf7;
+  --popover-foreground: #121212;
+  --primary: #121212;
   --primary-foreground: #ffffff;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #1a1a2e;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #f0fdf4;
-  --accent-foreground: #1a1a2e;
-  --destructive: #ef4444;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #22c55e;
-  --chart-1: #22c55e;
-  --chart-2: #3b82f6;
-  --chart-3: #f59e0b;
+  --secondary: #ebe8de;
+  --secondary-foreground: #121212;
+  --muted: #ebe8de;
+  --muted-foreground: #5f5e5a;
+  --accent: #ebe8de;
+  --accent-foreground: #121212;
+  --destructive: #dc2626;
+  --border: #e2ded2;
+  --input: #d6d1c3;
+  --ring: #121212;
+  --link: #7a5c00;
+  --chart-1: #121212;
+  --chart-2: #c9973b;
+  --chart-3: #3b82f6;
   --chart-4: #ec4899;
   --chart-5: #8b5cf6;
   --radius: 0.75rem;
-  --sidebar: #2d2d3f;
-  --sidebar-foreground: #e0e0f0;
-  --sidebar-primary: #22c55e;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #3d3d52;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #3d3d52;
-  --sidebar-ring: #22c55e;
-  --skeleton-bg: #e2e8f0;
-  --skeleton-subtle: #f1f5f9;
+  --sidebar: #f3f1ea;
+  --sidebar-foreground: #3a3936;
+  --sidebar-primary: #121212;
+  --sidebar-primary-foreground: #dfc04a;
+  --sidebar-accent: #e8e4d8;
+  --sidebar-accent-foreground: #121212;
+  --sidebar-border: #e2ded2;
+  --sidebar-ring: #121212;
+  --brand-tile-bg: #121212;
+  --brand-tile-fg: #f3f1ea;
+  --brand-wordmark-accent: #9a7124;
+  --skeleton-bg: #e2ded2;
+  --skeleton-subtle: #ebe8de;
+
+  /* Sign-in page */
+  --si-page: #f3f1ea;
+  --si-page-2: #ece8dc;
+  --si-glow: rgba(201, 151, 59, 0.14);
+  --si-grid: rgba(18, 18, 18, 0.05);
+  --si-grid-strong: rgba(18, 18, 18, 0.12);
+  --si-shadow: rgba(60, 48, 20, 0.16);
+  --si-shadow-soft: rgba(60, 48, 20, 0.08);
+  --si-shell-border: #e2ded2;
+  --si-right: #ebe8de;
+  --si-card: #fffdf7;
+  --si-card-border: #e2ded2;
+  --si-title: #121212;
+  --si-accent-text: #9a7124;
+  --si-muted: #5f5e5a;
+  --si-label: #3a3936;
+  --si-faint: #6f6d67;
+  --si-input-bg: #ffffff;
+  --si-input-border: #d6d1c3;
+  --si-input-text: #121212;
+  --si-focus: #121212;
+  --si-focus-ring: rgba(18, 18, 18, 0.12);
+  --si-btn: #121212;
+  --si-btn-text: #ffffff;
+  --si-btn-hover: #2c2c2c;
+  --si-btn-shadow: rgba(18, 18, 18, 0.18);
+  --si-error-title: #b91c1c;
+  --si-error: #dc2626;
 }
 
 /* ============================================================
-   Dark Theme
+   Dark Theme — GradusMind "poster"
+   Near-black wall, yellow actions with ink text.
    ============================================================ */
 .dark,
 [data-theme='dark'] {
-  --background: #0f1117;
-  --foreground: #f0f0f5;
-  --card: #1c1e2e;
-  --card-foreground: #f0f0f5;
-  --popover: #1c1e2e;
-  --popover-foreground: #f0f0f5;
-  --primary: #4ade80;
-  --primary-foreground: #0f1117;
-  --secondary: #232538;
-  --secondary-foreground: #f0f0f5;
-  --muted: #232538;
-  --muted-foreground: #6e6e88;
-  --accent: #232538;
-  --accent-foreground: #f0f0f5;
+  --background: #0b0c0d;
+  --foreground: #eeede8;
+  --card: #16181b;
+  --card-foreground: #eeede8;
+  --popover: #16181b;
+  --popover-foreground: #eeede8;
+  --primary: #dfc04a;
+  --primary-foreground: #121212;
+  --secondary: #1d2023;
+  --secondary-foreground: #eeede8;
+  --muted: #1d2023;
+  --muted-foreground: #a3a5a8;
+  --accent: #1d2023;
+  --accent-foreground: #eeede8;
   --destructive: #f87171;
-  --border: #2a2c42;
-  --input: #2a2c42;
-  --ring: #4ade80;
-  --chart-1: #4ade80;
-  --chart-2: #60a5fa;
-  --chart-3: #fbbf24;
+  --border: #26292d;
+  --input: #33373c;
+  --ring: #dfc04a;
+  --link: #dfc04a;
+  --chart-1: #dfc04a;
+  --chart-2: #c9973b;
+  --chart-3: #60a5fa;
   --chart-4: #f472b6;
   --chart-5: #a78bfa;
-  --sidebar: #12141f;
-  --sidebar-foreground: #b8b8cc;
-  --sidebar-primary: #4ade80;
-  --sidebar-primary-foreground: #0f1117;
-  --sidebar-accent: #1c1e2e;
-  --sidebar-accent-foreground: #f0f0f5;
-  --sidebar-border: #2a2c42;
-  --sidebar-ring: #4ade80;
-  --skeleton-bg: #2a2c42;
-  --skeleton-subtle: #232538;
+  --sidebar: #111315;
+  --sidebar-foreground: #a3a5a8;
+  --sidebar-primary: #dfc04a;
+  --sidebar-primary-foreground: #121212;
+  --sidebar-accent: #1d2023;
+  --sidebar-accent-foreground: #eeede8;
+  --sidebar-border: #26292d;
+  --sidebar-ring: #dfc04a;
+  --brand-tile-bg: #f3f1ea;
+  --brand-tile-fg: #121212;
+  --brand-wordmark-accent: #c9973b;
+  --skeleton-bg: #26292d;
+  --skeleton-subtle: #1d2023;
+
+  --si-page: #0b0c0d;
+  --si-page-2: #111315;
+  --si-glow: rgba(223, 192, 74, 0.08);
+  --si-grid: rgba(255, 255, 255, 0.04);
+  --si-grid-strong: rgba(255, 255, 255, 0.07);
+  --si-shadow: rgba(0, 0, 0, 0.6);
+  --si-shadow-soft: rgba(0, 0, 0, 0.35);
+  --si-shell-border: #26292d;
+  --si-right: #111315;
+  --si-card: #16181b;
+  --si-card-border: #26292d;
+  --si-title: #eeede8;
+  --si-accent-text: #dfc04a;
+  --si-muted: #a3a5a8;
+  --si-label: #c4c5c7;
+  --si-faint: #8d8f93;
+  --si-input-bg: #0f1113;
+  --si-input-border: #33373c;
+  --si-input-text: #eeede8;
+  --si-focus: #dfc04a;
+  --si-focus-ring: rgba(223, 192, 74, 0.18);
+  --si-btn: #dfc04a;
+  --si-btn-text: #121212;
+  --si-btn-hover: #e9cd62;
+  --si-btn-shadow: rgba(223, 192, 74, 0.22);
+  --si-error-title: #fca5a5;
+  --si-error: #f87171;
 }
 
 /* ============================================================
@@ -293,7 +375,7 @@ body {
 }
 
 a {
-  color: var(--color-green-600);
+  color: var(--link);
   text-decoration: none;
 }
 a:hover {
@@ -309,13 +391,18 @@ textarea {
 }
 
 :focus-visible {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
 
 img {
   max-width: 100%;
   display: block;
+}
+
+::selection {
+  background: var(--brand-yellow);
+  color: var(--brand-ink);
 }
 
 /* ── Scrollbar (adapts to theme) ────────────────────── */
@@ -437,9 +524,9 @@ img {
   color: var(--muted-foreground);
 }
 .input-base:focus {
-  border-color: var(--primary);
+  border-color: var(--ring);
   outline: none;
-  box-shadow: 0 0 0 3px oklch(from var(--primary) l c h / 0.15);
+  box-shadow: 0 0 0 3px oklch(from var(--ring) l c h / 0.18);
 }
 .input-base:disabled {
   background-color: var(--muted);

@@ -1,9 +1,10 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, Calendar, Clock } from 'lucide-react';
+import { ArrowLeft, Users, Calendar, Clock, Download } from 'lucide-react';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
 import LiveAttendanceTable from '../components/LiveAttendanceTable';
 import { useLiveSessionDetails, useLiveSessionAttendance } from '../hooks/useLiveSession';
+import { downloadCsv, slug } from '../../../utils/csv';
 
 export const LiveAttendancePage = () => {
   const { sessionId } = useParams();
@@ -22,6 +23,20 @@ export const LiveAttendancePage = () => {
       minute: '2-digit',
       hour12: true,
     }).format(new Date(dateStr));
+  };
+
+  const handleExport = () => {
+    downloadCsv(
+      `attendance-${slug(session?.title)}.csv`,
+      ['Name', 'Email', 'Joined at', 'Left at', 'Minutes attended'],
+      attendance.map((a) => [
+        a.userName,
+        a.userEmail,
+        a.joinedAt ? new Date(a.joinedAt).toISOString() : '',
+        a.leftAt ? new Date(a.leftAt).toISOString() : 'Still in class',
+        Math.round((a.durationSeconds || 0) / 60),
+      ]),
+    );
   };
 
   return (
@@ -50,6 +65,15 @@ export const LiveAttendancePage = () => {
               </p>
             </div>
           </div>
+
+          <button
+            type="button"
+            onClick={handleExport}
+            disabled={attendanceLoading || attendance.length === 0}
+            className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Download className="h-4 w-4" aria-hidden="true" /> Download CSV
+          </button>
 
           {session && (
             <div className="hidden sm:flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60 px-3.5 py-2 rounded-xl border border-slate-200/60 dark:border-slate-700/60">

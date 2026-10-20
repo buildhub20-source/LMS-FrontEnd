@@ -57,21 +57,45 @@ const AVATAR_PALETTE = [
 ];
 
 const ROLE_BADGE_COLORS = {
-  admin: { bg: 'rgba(115, 103, 240, 0.15)', color: '#7367f0' },
-  superadmin: { bg: 'rgba(115, 103, 240, 0.15)', color: '#7367f0' },
-  manager: { bg: 'rgba(255, 159, 67, 0.15)', color: '#ff9f43' },
-  editor: { bg: 'rgba(40, 199, 111, 0.15)', color: '#28c76f' },
-  support: { bg: 'rgba(0, 207, 232, 0.15)', color: '#00cfe8' },
-  user: { bg: 'rgba(40, 199, 111, 0.15)', color: '#28c76f' },
-  instructor: { bg: 'rgba(33, 150, 243, 0.15)', color: '#2196f3' },
-  student: { bg: 'rgba(156, 39, 176, 0.15)', color: '#d05ce3' },
+  admin: {
+    bg: 'rgba(115, 103, 240, 0.15)',
+    color: 'color-mix(in srgb, #7367f0 62%, var(--foreground))',
+  },
+  superadmin: {
+    bg: 'rgba(115, 103, 240, 0.15)',
+    color: 'color-mix(in srgb, #7367f0 62%, var(--foreground))',
+  },
+  manager: {
+    bg: 'rgba(255, 159, 67, 0.15)',
+    color: 'color-mix(in srgb, #ff9f43 62%, var(--foreground))',
+  },
+  editor: {
+    bg: 'rgba(40, 199, 111, 0.15)',
+    color: 'color-mix(in srgb, #28c76f 62%, var(--foreground))',
+  },
+  support: {
+    bg: 'rgba(0, 207, 232, 0.15)',
+    color: 'color-mix(in srgb, #00cfe8 62%, var(--foreground))',
+  },
+  user: {
+    bg: 'rgba(40, 199, 111, 0.15)',
+    color: 'color-mix(in srgb, #28c76f 62%, var(--foreground))',
+  },
+  instructor: {
+    bg: 'rgba(33, 150, 243, 0.15)',
+    color: 'color-mix(in srgb, #2196f3 62%, var(--foreground))',
+  },
+  student: {
+    bg: 'rgba(156, 39, 176, 0.15)',
+    color: 'color-mix(in srgb, #d05ce3 62%, var(--foreground))',
+  },
 };
 
 const ROLE_THEMES = {
   admin: {
     icon: ShieldCheck,
     label: 'Administrator',
-    color: '#818cf8',
+    color: 'color-mix(in srgb, #6366f1 62%, var(--foreground))',
     bg: 'rgba(99, 102, 241, 0.12)',
     border: 'rgba(99, 102, 241, 0.3)',
     glow: 'rgba(99, 102, 241, 0.2)',
@@ -83,7 +107,7 @@ const ROLE_THEMES = {
   superadmin: {
     icon: KeyRound,
     label: 'Super Admin',
-    color: '#f43f5e',
+    color: 'color-mix(in srgb, #f43f5e 62%, var(--foreground))',
     bg: 'rgba(244, 63, 94, 0.12)',
     border: 'rgba(244, 63, 94, 0.3)',
     glow: 'rgba(244, 63, 94, 0.2)',
@@ -94,7 +118,7 @@ const ROLE_THEMES = {
   instructor: {
     icon: GraduationCap,
     label: 'Instructor',
-    color: '#34d399',
+    color: 'color-mix(in srgb, #10b981 62%, var(--foreground))',
     bg: 'rgba(16, 185, 129, 0.12)',
     border: 'rgba(16, 185, 129, 0.3)',
     glow: 'rgba(16, 185, 129, 0.2)',
@@ -106,7 +130,7 @@ const ROLE_THEMES = {
   manager: {
     icon: Briefcase,
     label: 'Manager',
-    color: '#fbbf24',
+    color: 'color-mix(in srgb, #f59e0b 62%, var(--foreground))',
     bg: 'rgba(245, 158, 11, 0.12)',
     border: 'rgba(245, 158, 11, 0.3)',
     glow: 'rgba(245, 158, 11, 0.2)',
@@ -118,7 +142,7 @@ const ROLE_THEMES = {
   student: {
     icon: BookOpen,
     label: 'Student',
-    color: '#38bdf8',
+    color: 'color-mix(in srgb, #0ea5e9 62%, var(--foreground))',
     bg: 'rgba(14, 165, 233, 0.12)',
     border: 'rgba(14, 165, 233, 0.3)',
     glow: 'rgba(14, 165, 233, 0.2)',
@@ -130,7 +154,7 @@ const ROLE_THEMES = {
   default: {
     icon: Users,
     label: 'Custom Role',
-    color: '#a78bfa',
+    color: 'color-mix(in srgb, #8b5cf6 62%, var(--foreground))',
     bg: 'rgba(167, 139, 250, 0.12)',
     border: 'rgba(167, 139, 250, 0.3)',
     glow: 'rgba(167, 139, 250, 0.2)',
@@ -259,7 +283,12 @@ function AvatarStack({ users = [], max = 3 }) {
 /* ─── Status badge ─────────────────────────────────────────────────── */
 function StatusBadge({ user }) {
   const s = user.locked
-    ? { bg: 'rgba(234, 84, 85, 0.15)', color: '#ea5455', label: 'Locked', dot: '#ea5455' }
+    ? {
+        bg: 'rgba(234, 84, 85, 0.15)',
+        color: 'color-mix(in srgb, #ea5455 62%, var(--foreground))',
+        label: 'Locked',
+        dot: '#ea5455',
+      }
     : !user.active
       ? {
           bg: 'var(--surface-medium)',
@@ -268,8 +297,18 @@ function StatusBadge({ user }) {
           dot: '#94a3b8',
         }
       : !user.activated
-        ? { bg: 'rgba(255, 159, 67, 0.15)', color: '#ff9f43', label: 'Pending', dot: '#ff9f43' }
-        : { bg: 'rgba(40, 199, 111, 0.15)', color: '#28c76f', label: 'Active', dot: '#28c76f' };
+        ? {
+            bg: 'rgba(255, 159, 67, 0.15)',
+            color: 'color-mix(in srgb, #ff9f43 62%, var(--foreground))',
+            label: 'Pending',
+            dot: '#ff9f43',
+          }
+        : {
+            bg: 'rgba(40, 199, 111, 0.15)',
+            color: 'color-mix(in srgb, #28c76f 62%, var(--foreground))',
+            label: 'Active',
+            dot: '#28c76f',
+          };
   return (
     <span
       style={{
@@ -887,7 +926,7 @@ export const RoleListPage = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#818cf8',
+                color: 'color-mix(in srgb, #818cf8 62%, var(--foreground))',
               }}
             >
               <ShieldCheck size={18} />
@@ -927,7 +966,7 @@ export const RoleListPage = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#34d399',
+                color: 'color-mix(in srgb, #34d399 62%, var(--foreground))',
               }}
             >
               <Users size={18} />
@@ -969,7 +1008,7 @@ export const RoleListPage = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#fbbf24',
+                color: 'color-mix(in srgb, #fbbf24 62%, var(--foreground))',
               }}
             >
               <KeyRound size={18} />
@@ -1065,7 +1104,7 @@ export const RoleListPage = () => {
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = M.primary;
               e.currentTarget.style.transform = 'translateY(-3px)';
-              e.currentTarget.style.boxShadow = '0 8px 24px rgba(115, 103, 240, 0.2)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.borderColor = 'var(--border-color)';
@@ -1078,12 +1117,12 @@ export const RoleListPage = () => {
                 width: 46,
                 height: 46,
                 borderRadius: 12,
-                background: 'linear-gradient(135deg, #7367f0 0%, #a78bfa 100%)',
-                color: '#fff',
+                background: 'var(--primary)',
+                color: 'var(--primary-foreground)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 4px 16px rgba(115, 103, 240, 0.35)',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.18)',
               }}
             >
               <Plus size={24} />

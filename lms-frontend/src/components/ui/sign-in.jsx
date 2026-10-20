@@ -16,6 +16,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import appConfig from '../../config/appConfig';
+import { GradusMindLogo } from '../brand/GradusMindLogo';
 
 /* ── LMS / Vertex Geometric Emblem ────────────────────────────────── */
 export const VertexLogo = ({ size = 26, color = 'currentColor', className = '' }) => (
@@ -362,13 +363,13 @@ const LMSPerformanceShowcase = () => {
                 width: 22,
                 height: 22,
                 borderRadius: 6,
-                background: 'rgba(74, 222, 128, 0.14)',
+                background: 'rgba(201, 151, 59, 0.14)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <BarChart3 size={13} color="#16a34a" />
+              <BarChart3 size={13} color="#9a7124" />
             </div>
             <span style={{ fontSize: 11.5, fontWeight: 700, color: '#0f172a' }}>
               Learning Performance
@@ -502,7 +503,7 @@ const LMSPerformanceShowcase = () => {
                 padding: '0 3px',
                 cursor: 'pointer',
                 transition: 'background 0.2s ease',
-                background: activeCourse === 'webdev' ? 'rgba(74, 222, 128, 0.15)' : 'transparent',
+                background: activeCourse === 'webdev' ? 'rgba(201, 151, 59, 0.15)' : 'transparent',
               }}
             >
               <div
@@ -510,9 +511,9 @@ const LMSPerformanceShowcase = () => {
                 style={{
                   width: 5.5,
                   height: '54%',
-                  background: '#4ade80',
+                  background: '#c9973b',
                   borderRadius: '3px 3px 0 0',
-                  boxShadow: '0 2px 4px rgba(74, 222, 128, 0.2)',
+                  boxShadow: '0 2px 4px rgba(201, 151, 59, 0.2)',
                 }}
               />
               <div
@@ -559,9 +560,9 @@ const LMSPerformanceShowcase = () => {
                 style={{
                   width: 5.5,
                   height: '64%',
-                  background: '#4ade80',
+                  background: '#c9973b',
                   borderRadius: '3px 3px 0 0',
-                  boxShadow: '0 2px 6px rgba(74, 222, 128, 0.25)',
+                  boxShadow: '0 2px 6px rgba(201, 151, 59, 0.25)',
                 }}
               />
               <div
@@ -601,7 +602,7 @@ const LMSPerformanceShowcase = () => {
                 padding: '0 3px',
                 cursor: 'pointer',
                 transition: 'background 0.2s ease',
-                background: activeCourse === 'uiux' ? 'rgba(74, 222, 128, 0.15)' : 'transparent',
+                background: activeCourse === 'uiux' ? 'rgba(201, 151, 59, 0.15)' : 'transparent',
               }}
             >
               <div
@@ -609,7 +610,7 @@ const LMSPerformanceShowcase = () => {
                 style={{
                   width: 5.5,
                   height: '38%',
-                  background: '#4ade80',
+                  background: '#c9973b',
                   borderRadius: '3px 3px 0 0',
                 }}
               />
@@ -649,7 +650,7 @@ const LMSPerformanceShowcase = () => {
                 padding: '0 3px',
                 cursor: 'pointer',
                 transition: 'background 0.2s ease',
-                background: activeCourse === 'cloud' ? 'rgba(74, 222, 128, 0.15)' : 'transparent',
+                background: activeCourse === 'cloud' ? 'rgba(201, 151, 59, 0.15)' : 'transparent',
               }}
             >
               <div
@@ -657,7 +658,7 @@ const LMSPerformanceShowcase = () => {
                 style={{
                   width: 5.5,
                   height: '46%',
-                  background: '#4ade80',
+                  background: '#c9973b',
                   borderRadius: '3px 3px 0 0',
                 }}
               />
@@ -754,7 +755,7 @@ const LMSPerformanceShowcase = () => {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 3.5 }}>
                 <div
-                  style={{ width: 5, height: 5, borderRadius: '50%', background: '#4ade80' }}
+                  style={{ width: 5, height: 5, borderRadius: '50%', background: '#c9973b' }}
                   className="vertex-metric-dot"
                 />
                 <span style={{ fontSize: 8, color: '#64748b', fontWeight: 600 }}>
@@ -808,7 +809,7 @@ const LMSPerformanceShowcase = () => {
             }}
           >
             Data Science
-            <span style={{ width: 14, height: 2, background: '#4ade80', borderRadius: 99 }} />
+            <span style={{ width: 14, height: 2, background: '#c9973b', borderRadius: 99 }} />
           </span>
           <span
             style={{
@@ -876,7 +877,7 @@ export const SignInPage = ({
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  const brandName = (appConfig.name || 'LMS').replace(/\s*\(dev\)/i, '').trim();
+  const brandName = (appConfig.name || 'GradusMind').replace(/\s*\(dev\)/i, '').trim();
 
   const errorDetails =
     error && typeof error === 'object'
@@ -942,7 +943,7 @@ export const SignInPage = ({
             box-shadow: 0 8px 20px -2px rgba(15, 23, 42, 0.16), 0 2px 6px rgba(15, 23, 42, 0.08);
           }
           50% {
-            box-shadow: 0 10px 24px -2px rgba(15, 23, 42, 0.2), 0 0 12px rgba(74, 222, 128, 0.24);
+            box-shadow: 0 10px 24px -2px rgba(15, 23, 42, 0.2), 0 0 12px rgba(201, 151, 59, 0.24);
           }
         }
         .vertex-metric-tooltip {
@@ -950,8 +951,8 @@ export const SignInPage = ({
         }
 
         .vertex-col-datascience {
-          background: rgba(74, 222, 128, 0.08);
-          box-shadow: 0 0 8px rgba(74, 222, 128, 0.18);
+          background: rgba(201, 151, 59, 0.08);
+          box-shadow: 0 0 8px rgba(201, 151, 59, 0.18);
         }
 
         /* ── Live Pulsing Dots & Waves ── */
@@ -1097,11 +1098,11 @@ export const SignInPage = ({
           position: 'absolute',
           inset: 0,
           background: `
-            radial-gradient(at 10% 15%, rgba(74, 222, 128, 0.08) 0px, transparent 55%),
-            radial-gradient(at 88% 80%, rgba(96, 165, 250, 0.06) 0px, transparent 60%),
-            radial-gradient(at 85% 15%, rgba(28, 30, 46, 0.6) 0px, transparent 50%),
-            radial-gradient(at 20% 85%, rgba(35, 37, 56, 0.4) 0px, transparent 55%),
-            linear-gradient(135deg, #0f1117 0%, #12141f 50%, #0f1117 100%)
+            radial-gradient(at 10% 15%, var(--si-glow) 0px, transparent 55%),
+            radial-gradient(at 88% 80%, transparent 0px, transparent 60%),
+            radial-gradient(at 85% 15%, transparent 0px, transparent 50%),
+            radial-gradient(at 20% 85%, transparent 0px, transparent 55%),
+            linear-gradient(135deg, var(--si-page) 0%, var(--si-page-2) 50%, var(--si-page) 100%)
           `,
           pointerEvents: 'none',
         }}
@@ -1117,7 +1118,7 @@ export const SignInPage = ({
           width: 360,
           height: 360,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(74, 222, 128, 0.09) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(223, 192, 74, 0.09) 0%, transparent 70%)',
           filter: 'blur(40px)',
           pointerEvents: 'none',
         }}
@@ -1143,8 +1144,8 @@ export const SignInPage = ({
           position: 'absolute',
           inset: 0,
           backgroundImage: `
-            linear-gradient(to right, rgba(42, 44, 66, 0.35) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(42, 44, 66, 0.35) 1px, transparent 1px)
+            linear-gradient(to right, var(--si-grid) 1px, transparent 1px),
+            linear-gradient(to bottom, var(--si-grid) 1px, transparent 1px)
           `,
           backgroundSize: '56px 56px',
           maskImage: 'radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, transparent 75%)',
@@ -1162,7 +1163,7 @@ export const SignInPage = ({
           left: '3%',
           width: 120,
           height: 120,
-          background: 'rgba(74, 222, 128, 0.1)',
+          background: 'rgba(223, 192, 74, 0.1)',
           animation: 'floatCircle1 14s ease-in-out infinite',
         }}
       />
@@ -1195,7 +1196,7 @@ export const SignInPage = ({
           right: '6%',
           width: 130,
           height: 130,
-          background: 'rgba(74, 222, 128, 0.06)',
+          background: 'rgba(223, 192, 74, 0.06)',
           animation: 'floatCircle1 16s ease-in-out infinite',
         }}
       />
@@ -1207,10 +1208,10 @@ export const SignInPage = ({
           width: '100%',
           maxWidth: 1060,
           minHeight: 640,
-          background: '#12141f',
+          background: '#111315',
           borderRadius: 20,
           boxShadow:
-            '0 30px 80px -15px rgba(0, 0, 0, 0.7), 0 12px 28px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px #2a2c42',
+            '0 30px 80px -15px var(--si-shadow), 0 12px 28px -8px var(--si-shadow-soft), 0 0 0 1px var(--si-shell-border)',
           overflow: 'hidden',
           display: 'flex',
           flexWrap: 'wrap',
@@ -1223,11 +1224,11 @@ export const SignInPage = ({
           style={{
             flex: '1.05 1 450px',
             minWidth: 320,
-            background: '#12141f',
+            background: '#111315',
             backgroundImage: `
-              radial-gradient(ellipse at 20% 15%, rgba(74, 222, 128, 0.16) 0%, transparent 55%),
+              radial-gradient(ellipse at 20% 15%, rgba(223, 192, 74, 0.16) 0%, transparent 55%),
               radial-gradient(ellipse at 85% 85%, rgba(96, 165, 250, 0.12) 0%, transparent 55%),
-              radial-gradient(circle at 50% 50%, rgba(74, 222, 128, 0.05) 0%, transparent 65%),
+              radial-gradient(circle at 50% 50%, rgba(223, 192, 74, 0.05) 0%, transparent 65%),
               repeating-linear-gradient(
                 -45deg,
                 rgba(255, 255, 255, 0.02),
@@ -1235,9 +1236,9 @@ export const SignInPage = ({
                 transparent 1px,
                 transparent 13px
               ),
-              linear-gradient(180deg, #151726 0%, #0d0f17 100%)
+              linear-gradient(180deg, #16181b 0%, #0a0b0c 100%)
             `,
-            borderRight: '1px solid #2a2c42',
+            borderRight: '1px solid #26292d',
             padding: '38px 36px 24px',
             display: 'flex',
             flexDirection: 'column',
@@ -1254,7 +1255,7 @@ export const SignInPage = ({
               left: '-15%',
               width: '70%',
               height: '70%',
-              background: 'radial-gradient(circle, rgba(74, 222, 128, 0.14) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, rgba(223, 192, 74, 0.14) 0%, transparent 70%)',
               pointerEvents: 'none',
             }}
           />
@@ -1268,13 +1269,14 @@ export const SignInPage = ({
                   width: 32,
                   height: 32,
                   borderRadius: 8,
-                  background: 'rgba(74, 222, 128, 0.14)',
+                  background: '#f3f1ea',
+                  color: '#121212',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <GraduationCap size={18} color="#4ade80" />
+                <GradusMindLogo size={22} />
               </div>
               <span
                 style={{ fontSize: 13, fontWeight: 800, color: '#ffffff', letterSpacing: '0.04em' }}
@@ -1326,11 +1328,11 @@ export const SignInPage = ({
               zIndex: 10,
               textAlign: 'center',
               fontSize: 11,
-              color: '#6e6e88',
+              color: '#8d8f93',
               letterSpacing: '0.02em',
             }}
           >
-            &copy; {brandName} Platform 2025. All Rights Reserved
+            &copy; {new Date().getFullYear()} {brandName}. All rights reserved.
           </div>
         </div>
 
@@ -1339,10 +1341,10 @@ export const SignInPage = ({
           style={{
             flex: '1 1 430px',
             minWidth: 320,
-            background: '#12141f',
+            background: 'var(--si-right)',
             backgroundImage: `
-              linear-gradient(to right, rgba(42, 44, 66, 0.4) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(42, 44, 66, 0.4) 1px, transparent 1px)
+              linear-gradient(to right, var(--si-grid) 1px, transparent 1px),
+              linear-gradient(to bottom, var(--si-grid) 1px, transparent 1px)
             `,
             backgroundSize: '46px 46px',
             position: 'relative',
@@ -1361,7 +1363,7 @@ export const SignInPage = ({
               width: 96,
               height: 96,
               backgroundImage:
-                'repeating-linear-gradient(45deg, rgba(42, 44, 66, 0.5), rgba(42, 44, 66, 0.5) 1px, transparent 1px, transparent 6px)',
+                'repeating-linear-gradient(45deg, var(--si-grid-strong), var(--si-grid-strong) 1px, transparent 1px, transparent 6px)',
               pointerEvents: 'none',
               opacity: 0.9,
             }}
@@ -1374,7 +1376,7 @@ export const SignInPage = ({
               width: 96,
               height: 96,
               backgroundImage:
-                'repeating-linear-gradient(45deg, rgba(42, 44, 66, 0.5), rgba(42, 44, 66, 0.5) 1px, transparent 1px, transparent 6px)',
+                'repeating-linear-gradient(45deg, var(--si-grid-strong), var(--si-grid-strong) 1px, transparent 1px, transparent 6px)',
               pointerEvents: 'none',
               opacity: 0.9,
             }}
@@ -1385,10 +1387,10 @@ export const SignInPage = ({
             style={{
               width: '100%',
               maxWidth: 380,
-              background: '#1c1e2e',
+              background: 'var(--si-card)',
               borderRadius: 16,
-              border: '1px solid #2a2c42',
-              boxShadow: '0 16px 40px -8px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3)',
+              border: '1px solid var(--si-card-border)',
+              boxShadow: '0 16px 40px -8px var(--si-shadow), 0 2px 8px var(--si-shadow-soft)',
               padding: '34px 30px 32px',
               position: 'relative',
               zIndex: 10,
@@ -1401,13 +1403,14 @@ export const SignInPage = ({
                   width: 40,
                   height: 40,
                   borderRadius: 10,
-                  background: 'rgba(74, 222, 128, 0.12)',
+                  background: 'var(--brand-tile-bg)',
+                  color: 'var(--brand-tile-fg)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <GraduationCap size={22} color="#4ade80" />
+                <GradusMindLogo size={28} />
               </div>
             </div>
 
@@ -1417,18 +1420,19 @@ export const SignInPage = ({
                 margin: '12px 0 0',
                 fontSize: 19,
                 fontWeight: 700,
-                color: '#f0f0f5',
+                color: 'var(--si-title)',
                 textAlign: 'center',
                 letterSpacing: '-0.01em',
               }}
             >
-              Sign In to <span style={{ color: '#4ade80', fontWeight: 700 }}>{brandName}</span>
+              Sign In to{' '}
+              <span style={{ color: 'var(--si-accent-text)', fontWeight: 700 }}>{brandName}</span>
             </h2>
             <p
               style={{
                 margin: '5px auto 20px',
                 fontSize: 12,
-                color: '#94a3b8',
+                color: 'var(--si-muted)',
                 textAlign: 'center',
                 lineHeight: 1.45,
                 maxWidth: 290,
@@ -1454,11 +1458,23 @@ export const SignInPage = ({
               >
                 <div style={{ marginTop: 2 }}>{renderErrorIcon(errorDetails.type)}</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ margin: 0, fontSize: 11, fontWeight: 700, color: '#fca5a5' }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: 'var(--si-error-title)',
+                    }}
+                  >
                     {errorDetails.title}
                   </p>
                   <p
-                    style={{ margin: '2px 0 0', fontSize: 11, color: '#f87171', lineHeight: 1.35 }}
+                    style={{
+                      margin: '2px 0 0',
+                      fontSize: 11,
+                      color: 'var(--si-error)',
+                      lineHeight: 1.35,
+                    }}
                   >
                     {errorDetails.message}
                   </p>
@@ -1473,7 +1489,7 @@ export const SignInPage = ({
                       border: 'none',
                       padding: 2,
                       cursor: 'pointer',
-                      color: '#f87171',
+                      color: 'var(--si-error)',
                     }}
                   >
                     <X size={13} />
@@ -1496,7 +1512,7 @@ export const SignInPage = ({
                     display: 'block',
                     fontSize: 11,
                     fontWeight: 500,
-                    color: '#b8b8cc',
+                    color: 'var(--si-label)',
                     marginBottom: 5,
                   }}
                 >
@@ -1515,20 +1531,20 @@ export const SignInPage = ({
                     height: 38,
                     padding: '0 12px',
                     fontSize: 13,
-                    color: '#f0f0f5',
-                    background: '#151726',
-                    border: '1px solid #2a2c42',
+                    color: 'var(--si-input-text)',
+                    background: 'var(--si-input-bg)',
+                    border: '1px solid var(--si-input-border)',
                     borderRadius: 7,
                     outline: 'none',
                     boxSizing: 'border-box',
                     transition: 'border-color 0.15s, box-shadow 0.15s',
                   }}
                   onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#4ade80';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(74, 222, 128, 0.18)';
+                    e.currentTarget.style.borderColor = 'var(--si-focus)';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px var(--si-focus-ring)';
                   }}
                   onBlur={(e) => {
-                    e.currentTarget.style.borderColor = '#2a2c42';
+                    e.currentTarget.style.borderColor = 'var(--si-input-border)';
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 />
@@ -1546,7 +1562,7 @@ export const SignInPage = ({
                 >
                   <label
                     htmlFor="password"
-                    style={{ fontSize: 11, fontWeight: 500, color: '#b8b8cc' }}
+                    style={{ fontSize: 11, fontWeight: 500, color: 'var(--si-label)' }}
                   >
                     Password
                   </label>
@@ -1561,12 +1577,12 @@ export const SignInPage = ({
                         padding: 0,
                         fontSize: 11,
                         fontWeight: 500,
-                        color: '#94a3b8',
+                        color: 'var(--si-muted)',
                         cursor: 'pointer',
                         transition: 'color 0.15s',
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = '#4ade80')}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--si-accent-text)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--si-muted)')}
                     >
                       Forgot?
                     </button>
@@ -1587,20 +1603,20 @@ export const SignInPage = ({
                       paddingLeft: 12,
                       paddingRight: 34,
                       fontSize: 13,
-                      color: '#f0f0f5',
-                      background: '#151726',
-                      border: '1px solid #2a2c42',
+                      color: 'var(--si-input-text)',
+                      background: 'var(--si-input-bg)',
+                      border: '1px solid var(--si-input-border)',
                       borderRadius: 7,
                       outline: 'none',
                       boxSizing: 'border-box',
                       transition: 'border-color 0.15s, box-shadow 0.15s',
                     }}
                     onFocus={(e) => {
-                      e.currentTarget.style.borderColor = '#4ade80';
-                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(74, 222, 128, 0.18)';
+                      e.currentTarget.style.borderColor = 'var(--si-focus)';
+                      e.currentTarget.style.boxShadow = '0 0 0 3px var(--si-focus-ring)';
                     }}
                     onBlur={(e) => {
-                      e.currentTarget.style.borderColor = '#2a2c42';
+                      e.currentTarget.style.borderColor = 'var(--si-input-border)';
                       e.currentTarget.style.boxShadow = 'none';
                     }}
                   />
@@ -1616,13 +1632,13 @@ export const SignInPage = ({
                       border: 'none',
                       padding: 2,
                       cursor: 'pointer',
-                      color: '#94a3b8',
+                      color: 'var(--si-muted)',
                       display: 'flex',
                       alignItems: 'center',
                       transition: 'color 0.15s',
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = '#f0f0f5')}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--si-title)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--si-muted)')}
                     title={showPassword ? 'Hide password' : 'Show password'}
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
@@ -1640,12 +1656,12 @@ export const SignInPage = ({
                       display: 'block',
                       fontSize: 11,
                       fontWeight: 500,
-                      color: '#b8b8cc',
+                      color: 'var(--si-label)',
                       marginBottom: 5,
                     }}
                   >
                     Learning Workspace / Campus{' '}
-                    <span style={{ fontWeight: 400, color: '#6e6e88' }}>(optional)</span>
+                    <span style={{ fontWeight: 400, color: 'var(--si-faint)' }}>(optional)</span>
                   </label>
                   <input
                     id="tenantSlug"
@@ -1658,24 +1674,24 @@ export const SignInPage = ({
                       height: 38,
                       padding: '0 12px',
                       fontSize: 13,
-                      color: '#f0f0f5',
-                      background: '#151726',
-                      border: '1px solid #2a2c42',
+                      color: 'var(--si-input-text)',
+                      background: 'var(--si-input-bg)',
+                      border: '1px solid var(--si-input-border)',
                       borderRadius: 7,
                       outline: 'none',
                       boxSizing: 'border-box',
                       transition: 'border-color 0.15s, box-shadow 0.15s',
                     }}
                     onFocus={(e) => {
-                      e.currentTarget.style.borderColor = '#4ade80';
-                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(74, 222, 128, 0.18)';
+                      e.currentTarget.style.borderColor = 'var(--si-focus)';
+                      e.currentTarget.style.boxShadow = '0 0 0 3px var(--si-focus-ring)';
                     }}
                     onBlur={(e) => {
-                      e.currentTarget.style.borderColor = '#2a2c42';
+                      e.currentTarget.style.borderColor = 'var(--si-input-border)';
                       e.currentTarget.style.boxShadow = 'none';
                     }}
                   />
-                  <p style={{ margin: '3px 0 0', fontSize: 10, color: '#6e6e88' }}>
+                  <p style={{ margin: '3px 0 0', fontSize: 10, color: 'var(--si-faint)' }}>
                     {tenantSlugHint}
                   </p>
                 </div>
@@ -1692,13 +1708,13 @@ export const SignInPage = ({
                   style={{
                     width: 15,
                     height: 15,
-                    accentColor: '#4ade80',
+                    accentColor: 'var(--si-focus)',
                     cursor: 'pointer',
                   }}
                 />
                 <label
                   htmlFor="rememberMe"
-                  style={{ fontSize: 12, color: '#94a3b8', cursor: 'pointer' }}
+                  style={{ fontSize: 12, color: 'var(--si-muted)', cursor: 'pointer' }}
                 >
                   Remember for 30 days
                 </label>
@@ -1714,8 +1730,8 @@ export const SignInPage = ({
                   marginTop: 6,
                   borderRadius: 8,
                   border: 'none',
-                  background: 'linear-gradient(135deg, #4ade80 0%, #22c55e 100%)',
-                  color: '#0f1117',
+                  background: 'var(--si-btn)',
+                  color: 'var(--si-btn-text)',
                   fontSize: 13,
                   fontWeight: 700,
                   cursor: isSubmitting ? 'not-allowed' : 'pointer',
@@ -1725,24 +1741,22 @@ export const SignInPage = ({
                   justifyContent: 'center',
                   gap: 8,
                   transition: 'background 0.2s, transform 0.15s, box-shadow 0.2s, color 0.15s',
-                  boxShadow: '0 4px 16px rgba(74, 222, 128, 0.35)',
+                  boxShadow: '0 4px 16px var(--si-btn-shadow)',
                 }}
                 onMouseEnter={(e) => {
                   if (!isSubmitting) {
-                    e.currentTarget.style.background =
-                      'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)';
-                    e.currentTarget.style.color = '#ffffff';
+                    e.currentTarget.style.background = 'var(--si-btn-hover)';
+                    e.currentTarget.style.color = 'var(--si-btn-text)';
                     e.currentTarget.style.transform = 'translateY(-1px)';
-                    e.currentTarget.style.boxShadow = '0 6px 22px rgba(74, 222, 128, 0.45)';
+                    e.currentTarget.style.boxShadow = '0 6px 22px var(--si-btn-shadow)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isSubmitting) {
-                    e.currentTarget.style.background =
-                      'linear-gradient(135deg, #4ade80 0%, #22c55e 100%)';
-                    e.currentTarget.style.color = '#0f1117';
+                    e.currentTarget.style.background = 'var(--si-btn)';
+                    e.currentTarget.style.color = 'var(--si-btn-text)';
                     e.currentTarget.style.transform = '';
-                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(74, 222, 128, 0.35)';
+                    e.currentTarget.style.boxShadow = '0 4px 16px var(--si-btn-shadow)';
                   }
                 }}
               >
@@ -1759,13 +1773,14 @@ export const SignInPage = ({
                         cx="12"
                         cy="12"
                         r="10"
-                        stroke="rgba(15,17,23,0.3)"
+                        stroke="currentColor"
+                        strokeOpacity="0.3"
                         strokeWidth="3"
                         fill="none"
                       />
                       <path
                         d="M12 2a10 10 0 0 1 10 10"
-                        stroke="#0f1117"
+                        stroke="currentColor"
                         strokeWidth="3"
                         strokeLinecap="round"
                         fill="none"

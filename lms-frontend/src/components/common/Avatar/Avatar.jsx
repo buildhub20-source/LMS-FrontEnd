@@ -6,8 +6,18 @@ export const Avatar = ({ src, name = '', size = 'md', className = '' }) => {
   const [failed, setFailed] = useState(false);
   const showImage = src && !failed;
 
+  // Callers pass either a preset (sm, md, lg) or a pixel size.
+  const isPixelSize = typeof size === 'number';
+  const sizeStyle = isPixelSize
+    ? { width: size, height: size, fontSize: Math.round(size * 0.36) }
+    : undefined;
+
   return (
-    <span className={`${styles.avatar} ${styles[size]} ${className}`} title={name}>
+    <span
+      className={`${styles.avatar} ${isPixelSize ? '' : styles[size]} ${className}`}
+      style={sizeStyle}
+      title={name}
+    >
       {showImage ? (
         <img className={styles.image} src={src} alt={name} onError={() => setFailed(true)} />
       ) : (

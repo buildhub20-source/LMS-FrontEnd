@@ -26,7 +26,7 @@ export const environment = Object.freeze({
   notificationServiceUrl:
     raw.VITE_NOTIFICATION_SERVICE_URL ?? 'http://localhost:3002/api/v1/notifications',
   notificationWsUrl: raw.VITE_NOTIFICATION_WS_URL ?? 'http://localhost:3002',
-  appName: raw.VITE_APP_NAME ?? 'LMS',
+  appName: raw.VITE_APP_NAME ?? 'GradusMind',
   appEnv: raw.VITE_APP_ENV ?? raw.MODE,
   sentryDsn: raw.VITE_SENTRY_DSN ?? '',
   enableAnalytics: raw.VITE_ENABLE_ANALYTICS === 'true',

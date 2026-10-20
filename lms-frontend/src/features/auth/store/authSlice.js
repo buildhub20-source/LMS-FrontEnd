@@ -24,8 +24,9 @@ import { normalizeError, categorizeAuthError } from '../../../utils/errorUtils';
 export const login = createAsyncThunk('auth/login', async (credentials, { rejectWithValue }) => {
   try {
     // Real backend call — response is LoginResponse { tokens, user, mustChangePassword }
-    const data = await authService.login(credentials);
-    tokenStorage.setTokens(data.tokens);
+    const { rememberMe, ...loginRequest } = credentials;
+    const data = await authService.login(loginRequest);
+    tokenStorage.setTokens(data.tokens, { persist: Boolean(rememberMe) });
 
     // Fetch full profile and permissions so navigation and access guards work immediately
     let meData = null;
@@ -60,7 +61,18 @@ export const login = createAsyncThunk('auth/login', async (credentials, { reject
 
 export const loadSession = createAsyncThunk('auth/loadSession', async (_, { rejectWithValue }) => {
   try {
-    if (!tokenStorage.getAccessToken()) return null;
+    // After a reload only the refresh token survives: exchange it first rather
+    // than letting /auth/me fail with a 401 and refresh on the retry.
+    if (!tokenStorage.getAccessToken()) {
+      const refreshToken = tokenStorage.getRefreshToken();
+      if (!refreshToken) return null;
+      try {
+        tokenStorage.setTokens(await authService.refresh({ refreshToken }));
+      } catch {
+        tokenStorage.clear();
+        return null;
+      }
+    }
 
     // Real backend — GET /auth/me → CurrentUserResponse { user, roles, permissions }
     const data = await authService.getCurrentUser();

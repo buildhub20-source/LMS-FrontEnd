@@ -3,6 +3,7 @@ import { Menu, Bell, Mail, Bookmark, Search, LogOut, User } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import ThemeSlider from '../../common/ThemeSlider';
+import appConfig from '../../../config/appConfig';
 import notificationService from '../../../features/notifications/services/notificationService';
 import { useNotificationSocket } from '../../../features/notifications/hooks/useNotificationSocket';
 import NotificationDropdown from '../../../features/notifications/components/NotificationDropdown';
@@ -205,7 +206,7 @@ export const Header = ({ onToggleSidebar, tabNav }) => {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={async () => {
-                document.title = 'LMS';
+                document.title = appConfig.name;
                 await logout();
                 navigate(ROUTES.LOGIN, { replace: true, state: {} });
               }}

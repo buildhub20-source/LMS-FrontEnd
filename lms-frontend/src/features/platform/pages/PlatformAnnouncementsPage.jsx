@@ -48,7 +48,9 @@ export const PlatformAnnouncementsPage = () => {
       queryClient.invalidateQueries({ queryKey: ['active-broadcast-announcements'] });
     },
     onError: (err) =>
-      setActionError(err?.response?.data?.message || 'Failed to publish announcement.'),
+      setActionError(
+        (err?.response?.data?.message ?? err?.message) || 'Failed to publish announcement.',
+      ),
   });
 
   const toggleMutation = useMutation({

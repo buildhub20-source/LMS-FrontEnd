@@ -62,10 +62,10 @@
   --chart-amber: #f59e0b;
   --chart-emerald: #10b981;
 
-  /* ── Dashboard token palette (brand green) ─────────── */
+  /* ── Dashboard token palette (brand) ─────────────────── */
   --dashboard-accent: var(--primary);
-  --dashboard-accent-text: var(--color-green-600);
-  --dashboard-accent-soft: var(--color-green-50);
+  --dashboard-accent-text: var(--color-primary-700);
+  --dashboard-accent-soft: var(--color-primary-50);
 
   --dashboard-success-text: var(--color-green-600);
   --dashboard-success-soft: var(--color-green-50);
@@ -121,8 +121,8 @@
   --color-emerald-100: rgba(16, 185, 129, 0.2);
 
   /* ── Dashboard palette dark overrides ───────────────── */
-  --dashboard-accent-text: var(--color-green-500);
-  --dashboard-accent-soft: rgba(34, 197, 94, 0.12);
+  --dashboard-accent-text: var(--color-primary-700);
+  --dashboard-accent-soft: var(--color-primary-50);
 
   --dashboard-success-text: var(--color-emerald-500);
   --dashboard-success-soft: rgba(16, 185, 129, 0.12);

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { acceptInvitation } from '../store/authSlice';
 import { ROUTES } from '../../../constants/routes';
+import { GradusMindLogo } from '../../../components/brand/GradusMindLogo';
 
 const PASSWORD_RULES = [
   { label: 'At least 8 characters', test: (p) => p.length >= 8 },
@@ -118,14 +119,13 @@ export const AcceptInvitationPage = () => {
         <div style={styles.leftContent}>
           <div style={styles.logoArea}>
             <div style={styles.logoIcon}>
-              <ShieldCheck size={28} color="#fff" />
+              <GradusMindLogo size={30} style={{ color: '#121212' }} />
             </div>
-            <span style={styles.logoText}>LMS Platform</span>
+            <span style={styles.logoText}>GradusMind</span>
           </div>
           <h2 style={styles.brandHeading}>You&apos;ve been invited!</h2>
           <p style={styles.brandBody}>
-            Set up your password to activate your account and get full access to the Learning
-            Management System.
+            Set up your password to activate your account and get full access to GradusMind.
           </p>
           <div style={styles.featureList}>
             {[
@@ -147,12 +147,17 @@ export const AcceptInvitationPage = () => {
         <div style={styles.card}>
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: 32 }}>
-            <div style={{ ...styles.iconWrap('rgba(99,102,241,0.12)'), margin: '0 auto 16px' }}>
-              <ShieldCheck size={28} color="#6366f1" />
+            <div
+              style={{
+                ...styles.iconWrap('color-mix(in srgb, var(--primary) 12%, transparent)'),
+                margin: '0 auto 16px',
+              }}
+            >
+              <ShieldCheck size={28} style={{ color: 'var(--link)' }} />
             </div>
             <h1 style={styles.title}>Create your password</h1>
             <p style={styles.body}>
-              Welcome! Choose a secure password to activate your LMS account.
+              Welcome! Choose a secure password to activate your GradusMind account.
             </p>
           </div>
 
@@ -178,7 +183,7 @@ export const AcceptInvitationPage = () => {
                   required
                   autoFocus
                   style={styles.input}
-                  onFocus={(e) => (e.target.style.borderColor = '#6366f1')}
+                  onFocus={(e) => (e.target.style.borderColor = 'var(--primary)')}
                   onBlur={(e) => (e.target.style.borderColor = 'var(--border-color)')}
                 />
                 <button
@@ -263,7 +268,7 @@ export const AcceptInvitationPage = () => {
             Already have an account?{' '}
             <Link
               to={ROUTES.LOGIN}
-              style={{ color: '#6366f1', fontWeight: 600, textDecoration: 'none' }}
+              style={{ color: 'var(--link)', fontWeight: 600, textDecoration: 'none' }}
             >
               Sign in
             </Link>
@@ -282,7 +287,7 @@ const styles = {
   },
   leftPanel: {
     flex: 1,
-    background: 'linear-gradient(135deg, #312e81 0%, #4f46e5 50%, #7c3aed 100%)',
+    background: '#121212',
     padding: '48px 56px',
     display: 'flex',
     alignItems: 'center',
@@ -302,7 +307,7 @@ const styles = {
     width: 44,
     height: 44,
     borderRadius: 12,
-    background: 'rgba(255,255,255,0.2)',
+    background: '#f3f1ea',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -454,7 +459,7 @@ const styles = {
   submitBtn: (disabled) => ({
     width: '100%',
     padding: '14px 20px',
-    background: disabled ? 'var(--surface-medium)' : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+    background: disabled ? 'var(--surface-medium)' : 'var(--primary)',
     border: 'none',
     borderRadius: 12,
     color: disabled ? 'var(--text-muted)' : '#fff',
@@ -474,9 +479,9 @@ const styles = {
     justifyContent: 'center',
     marginTop: 20,
     padding: '12px 28px',
-    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+    background: 'var(--primary)',
     borderRadius: 12,
-    color: '#fff',
+    color: 'var(--primary-foreground)',
     fontWeight: 700,
     fontSize: 14,
     textDecoration: 'none',

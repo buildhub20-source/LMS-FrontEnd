@@ -119,7 +119,7 @@ export const LiveDeviceSettingsModal = ({ isOpen, onClose }) => {
         </button>
 
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30">
+          <div className="w-10 h-10 rounded-xl bg-primary/20 text-[var(--link)] flex items-center justify-center border border-border">
             <Settings2 className="w-5 h-5" />
           </div>
           <div>
@@ -132,13 +132,13 @@ export const LiveDeviceSettingsModal = ({ isOpen, onClose }) => {
           {/* Microphone Selector */}
           <div>
             <label className="font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
-              <Mic className="w-4 h-4 text-emerald-400" />
+              <Mic className="w-4 h-4 text-brand-yellow" />
               <span>Microphone</span>
             </label>
             <select
               value={selectedMic}
               onChange={(e) => setSelectedMic(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-ring"
             >
               {audioDevices.map((d, i) => (
                 <option key={d.deviceId || i} value={d.deviceId}>
@@ -153,7 +153,7 @@ export const LiveDeviceSettingsModal = ({ isOpen, onClose }) => {
               <span className="text-[10px] text-slate-400">Input Level:</span>
               <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700/60">
                 <div
-                  className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-indigo-500 transition-all duration-75 rounded-full"
+                  className="h-full bg-brand-yellow transition-all duration-75 rounded-full"
                   style={{ width: `${Math.max(5, audioLevel)}%` }}
                 />
               </div>
@@ -163,13 +163,13 @@ export const LiveDeviceSettingsModal = ({ isOpen, onClose }) => {
           {/* Camera Selector */}
           <div>
             <label className="font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
-              <Video className="w-4 h-4 text-indigo-400" />
+              <Video className="w-4 h-4 text-[var(--link)]" />
               <span>Camera</span>
             </label>
             <select
               value={selectedCam}
               onChange={(e) => setSelectedCam(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:ring-1 focus:ring-ring"
             >
               {videoDevices.map((d, i) => (
                 <option key={d.deviceId || i} value={d.deviceId}>
@@ -183,7 +183,7 @@ export const LiveDeviceSettingsModal = ({ isOpen, onClose }) => {
           {/* Speaker Test */}
           <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
             <div className="flex items-center gap-2 text-slate-300">
-              <Volume2 className="w-4 h-4 text-indigo-400" />
+              <Volume2 className="w-4 h-4 text-[var(--link)]" />
               <span>Speaker Output</span>
             </div>
             <button
@@ -200,7 +200,7 @@ export const LiveDeviceSettingsModal = ({ isOpen, onClose }) => {
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition-colors cursor-pointer"
+            className="px-5 py-2 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs transition-colors cursor-pointer"
           >
             Done
           </button>

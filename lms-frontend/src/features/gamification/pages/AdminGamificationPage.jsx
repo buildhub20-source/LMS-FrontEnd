@@ -43,7 +43,7 @@ export const AdminGamificationPage = () => {
     minPoints: 0,
     maxPoints: '',
     icon: 'shield',
-    color: '#6366f1',
+    color: 'var(--link)',
   });
 
   const [milestoneModal, setMilestoneModal] = useState({ isOpen: false, milestone: null });
@@ -136,7 +136,7 @@ export const AdminGamificationPage = () => {
         minPoints: level.minPoints,
         maxPoints: level.maxPoints != null ? level.maxPoints : '',
         icon: level.icon || 'shield',
-        color: level.color || '#6366f1',
+        color: level.color || 'var(--primary)',
       });
       setLevelModal({ isOpen: true, level });
     } else {
@@ -146,7 +146,7 @@ export const AdminGamificationPage = () => {
         minPoints: 0,
         maxPoints: '',
         icon: 'shield',
-        color: '#6366f1',
+        color: 'var(--link)',
       });
       setLevelModal({ isOpen: true, level: null });
     }
@@ -256,7 +256,7 @@ export const AdminGamificationPage = () => {
                 : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
             }`}
           >
-            <Award className="h-3.5 w-3.5 text-indigo-500" />
+            <Award className="h-3.5 w-3.5 text-brand-gold" />
             Badges
           </button>
           <button
@@ -268,7 +268,7 @@ export const AdminGamificationPage = () => {
                 : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
             }`}
           >
-            <Shield className="h-3.5 w-3.5 text-emerald-500" />
+            <Shield className="h-3.5 w-3.5 text-brand-gold" />
             Levels
           </button>
           <button
@@ -331,13 +331,11 @@ export const AdminGamificationPage = () => {
                             min="0"
                             value={rulePoints}
                             onChange={(e) => setRulePoints(e.target.value)}
-                            className="w-24 rounded-lg border border-indigo-500 px-2 py-1 text-sm font-bold focus:outline-none"
+                            className="w-24 rounded-lg border border-ring px-2 py-1 text-sm font-bold focus:outline-none"
                             autoFocus
                           />
                         ) : (
-                          <span className="font-bold text-indigo-600 dark:text-indigo-400">
-                            +{rule.points} pts
-                          </span>
+                          <span className="font-bold text-[var(--link)]">+{rule.points} pts</span>
                         )}
                       </td>
                       <td className="py-3 px-3">
@@ -357,7 +355,7 @@ export const AdminGamificationPage = () => {
                             <button
                               type="button"
                               onClick={() => handleSaveRule(rule.id, rule.active)}
-                              className="rounded-md bg-emerald-600 p-1 text-white hover:bg-emerald-700"
+                              className="rounded-md bg-primary p-1 text-primary-foreground hover:bg-primary/90"
                             >
                               <Check className="h-4 w-4" />
                             </button>
@@ -406,7 +404,7 @@ export const AdminGamificationPage = () => {
             <button
               type="button"
               onClick={() => openBadgeModal()}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:bg-indigo-700 transition"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-primary-foreground shadow-sm hover:bg-primary/90 transition"
             >
               <Plus className="h-4 w-4" />
               Add Badge
@@ -499,7 +497,7 @@ export const AdminGamificationPage = () => {
             <button
               type="button"
               onClick={() => openLevelModal()}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:bg-indigo-700 transition"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-primary-foreground shadow-sm hover:bg-primary/90 transition"
             >
               <Plus className="h-4 w-4" />
               Add Level
@@ -530,9 +528,7 @@ export const AdminGamificationPage = () => {
                       <td className="py-3 px-3 font-bold text-slate-900 dark:text-slate-100">
                         Level {lvl.levelNumber}
                       </td>
-                      <td className="py-3 px-3 font-semibold text-indigo-600 dark:text-indigo-400">
-                        {lvl.title}
-                      </td>
+                      <td className="py-3 px-3 font-semibold text-[var(--link)]">{lvl.title}</td>
                       <td className="py-3 px-3 text-xs text-slate-600 dark:text-slate-400">
                         {lvl.minPoints?.toLocaleString()}
                       </td>
@@ -579,7 +575,7 @@ export const AdminGamificationPage = () => {
             <button
               type="button"
               onClick={() => openMilestoneModal()}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:bg-indigo-700 transition"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-primary-foreground shadow-sm hover:bg-primary/90 transition"
             >
               <Plus className="h-4 w-4" />
               Add Milestone
@@ -783,7 +779,7 @@ export const AdminGamificationPage = () => {
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-indigo-600 px-4 py-2 text-xs font-bold text-white hover:bg-indigo-700"
+                  className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90"
                 >
                   Save Badge
                 </button>
@@ -865,7 +861,7 @@ export const AdminGamificationPage = () => {
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-indigo-600 px-4 py-2 text-xs font-bold text-white hover:bg-indigo-700"
+                  className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90"
                 >
                   Save Level
                 </button>
@@ -968,7 +964,7 @@ export const AdminGamificationPage = () => {
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-indigo-600 px-4 py-2 text-xs font-bold text-white hover:bg-indigo-700"
+                  className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90"
                 >
                   Save Milestone
                 </button>

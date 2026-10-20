@@ -88,4 +88,22 @@ describe('LiveSessionCard', () => {
     expect(screen.getByText('Ended')).toBeInTheDocument();
     expect(screen.getByText('Completed')).toBeInTheDocument();
   });
+
+  it('shows a missed class as not held, with no start button', () => {
+    render(
+      <MemoryRouter>
+        <LiveSessionCard
+          session={{ ...baseSession, status: 'MISSED', description: null }}
+          isInstructor={true}
+          onStart={vi.fn()}
+          onEnd={vi.fn()}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText('Missed')).toBeInTheDocument();
+    expect(screen.getByText(/Not held/)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Start Class Now/i })).not.toBeInTheDocument();
+    expect(screen.queryByText(/Live interactive session covering/)).not.toBeInTheDocument();
+  });
 });

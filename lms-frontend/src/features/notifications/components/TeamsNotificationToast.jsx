@@ -171,7 +171,7 @@ function TeamsNotificationCard({ notification, onDismiss }) {
         <div className="teams-toast-header__brand">
           <div className="teams-toast-header__icon-badge">{getHeaderIcon()}</div>
           <span className="teams-toast-header__title">
-            {isChatNotification ? 'LMS Chat' : 'LMS Notification'}
+            {isChatNotification ? 'GradusMind Chat' : 'GradusMind'}
           </span>
           <span className="teams-toast-header__dot">•</span>
           <span className="teams-toast-header__time">just now</span>

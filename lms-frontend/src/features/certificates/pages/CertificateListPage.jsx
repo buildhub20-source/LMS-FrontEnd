@@ -159,9 +159,9 @@ export const CertificateListPage = () => {
             onClick={() => setIsImportModalOpen(true)}
             iconLeft={<Upload size={14} />}
             style={{
-              background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+              background: 'var(--primary)',
               fontWeight: 700,
-              boxShadow: '0 4px 14px rgba(99, 102, 241, 0.35)',
+              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.18)',
             }}
           >
             Import Certificate
@@ -218,7 +218,7 @@ export const CertificateListPage = () => {
             >
               Imported External
             </div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: '#6366f1', marginTop: 4 }}>
+            <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--link)', marginTop: 4 }}>
               {isLoading ? '—' : importedCerts.length}
             </div>
           </div>
@@ -287,7 +287,7 @@ export const CertificateListPage = () => {
           <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
             {[
               { id: 'ALL', label: `All Credentials (${totalCount})` },
-              { id: 'LMS', label: `LMS Certified (${lmsCerts.length})` },
+              { id: 'LMS', label: `Earned on GradusMind (${lmsCerts.length})` },
               { id: 'IMPORTED', label: `Imported / External (${importedCerts.length})` },
             ].map((tab) => (
               <button
@@ -302,7 +302,7 @@ export const CertificateListPage = () => {
                   border: 'none',
                   background:
                     filterTab === tab.id
-                      ? 'var(--color-primary, #6366f1)'
+                      ? 'var(--color-primary, #121212)'
                       : 'var(--surface-medium)',
                   color: filterTab === tab.id ? '#ffffff' : 'var(--text-muted)',
                   transition: 'all 0.15s ease',
@@ -321,9 +321,9 @@ export const CertificateListPage = () => {
               gap: 6,
               padding: '7px 14px',
               borderRadius: 8,
-              border: '1px solid rgba(99, 102, 241, 0.3)',
-              background: 'rgba(99, 102, 241, 0.1)',
-              color: '#a5b4fc',
+              border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
+              background: 'color-mix(in srgb, var(--primary) 10%, transparent)',
+              color: 'var(--link)',
               fontSize: 12,
               fontWeight: 600,
               cursor: 'pointer',
@@ -363,7 +363,7 @@ export const CertificateListPage = () => {
                     key={cert.id}
                     style={{
                       background: 'var(--card)',
-                      border: '1px solid rgba(99, 102, 241, 0.35)',
+                      border: '1px solid color-mix(in srgb, var(--primary) 35%, transparent)',
                       borderRadius: 16,
                       padding: 24,
                       color: 'var(--text-primary)',
@@ -378,7 +378,8 @@ export const CertificateListPage = () => {
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'translateY(-3px)';
-                      e.currentTarget.style.boxShadow = '0 12px 28px rgba(99,102,241,0.2)';
+                      e.currentTarget.style.boxShadow =
+                        '0 12px 28px color-mix(in srgb, var(--primary) 20%, transparent)';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.transform = '';
@@ -400,11 +401,11 @@ export const CertificateListPage = () => {
                             width: 42,
                             height: 42,
                             borderRadius: 12,
-                            background: 'rgba(99, 102, 241, 0.12)',
+                            background: 'color-mix(in srgb, var(--primary) 12%, transparent)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: '#6366f1',
+                            color: 'var(--link)',
                           }}
                         >
                           <Award size={22} />
@@ -414,7 +415,7 @@ export const CertificateListPage = () => {
                             style={{
                               fontSize: 10,
                               fontWeight: 800,
-                              color: '#6366f1',
+                              color: 'var(--link)',
                               textTransform: 'uppercase',
                               letterSpacing: '0.8px',
                               display: 'inline-flex',
@@ -554,10 +555,10 @@ export const CertificateListPage = () => {
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: 6,
-                            background: 'rgba(99, 102, 241, 0.15)',
-                            border: '1px solid rgba(99, 102, 241, 0.3)',
+                            background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+                            border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
                             borderRadius: 8,
-                            color: '#a5b4fc',
+                            color: 'var(--link)',
                             padding: '8px 12px',
                             fontSize: 12,
                             fontWeight: 600,
@@ -616,14 +617,14 @@ export const CertificateListPage = () => {
                 <div
                   key={cert.id}
                   style={{
-                    background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4338ca 100%)',
+                    background: '#121212',
                     borderRadius: 16,
                     padding: 24,
                     color: '#ffffff',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 14,
-                    boxShadow: '0 10px 30px rgba(99,102,241,0.3)',
+                    boxShadow: '0 10px 30px color-mix(in srgb, var(--primary) 30%, transparent)',
                     position: 'relative',
                     overflow: 'hidden',
                     transition: 'transform 0.15s ease, box-shadow 0.15s ease',
@@ -631,11 +632,13 @@ export const CertificateListPage = () => {
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateY(-3px)';
-                    e.currentTarget.style.boxShadow = '0 18px 40px rgba(99,102,241,0.4)';
+                    e.currentTarget.style.boxShadow =
+                      '0 18px 40px color-mix(in srgb, var(--primary) 40%, transparent)';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.transform = '';
-                    e.currentTarget.style.boxShadow = '0 10px 30px rgba(99,102,241,0.3)';
+                    e.currentTarget.style.boxShadow =
+                      '0 10px 30px color-mix(in srgb, var(--primary) 30%, transparent)';
                   }}
                   onClick={() => navigate(ROUTES.CERTIFICATE_DETAILS(cert.id))}
                 >
@@ -679,7 +682,7 @@ export const CertificateListPage = () => {
                         opacity: 0.7,
                       }}
                     >
-                      LMS Certified
+                      Earned on GradusMind
                     </span>
                   </div>
 
@@ -790,8 +793,8 @@ export const CertificateListPage = () => {
               <div
                 style={{
                   background:
-                    'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.1) 100%)',
-                  border: '1px solid rgba(99, 102, 241, 0.3)',
+                    'linear-gradient(135deg, color-mix(in srgb, var(--primary) 15%, transparent) 0%, rgba(139, 92, 246, 0.1) 100%)',
+                  border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
                   borderRadius: 16,
                   padding: '20px 24px',
                   display: 'flex',
@@ -825,7 +828,7 @@ export const CertificateListPage = () => {
                   onClick={() => setIsImportModalOpen(true)}
                   iconLeft={<Upload size={14} />}
                   style={{
-                    background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                    background: 'var(--primary)',
                     fontWeight: 700,
                   }}
                 >
@@ -931,8 +934,8 @@ export const CertificateListPage = () => {
                         padding: '10px 16px',
                         borderRadius: 8,
                         border: 'none',
-                        background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                        color: '#fff',
+                        background: 'var(--primary)',
+                        color: 'var(--primary-foreground)',
                         fontSize: 12,
                         fontWeight: 700,
                         cursor: 'pointer',
@@ -962,7 +965,7 @@ export const CertificateListPage = () => {
               <h3
                 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: 'var(--text-primary)' }}
               >
-                About LMS Credentials
+                About your certificates
               </h3>
               <div
                 style={{

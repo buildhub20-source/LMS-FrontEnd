@@ -152,12 +152,12 @@ const TECH_PRESETS = {
   },
   generic: {
     name: 'Core Curriculum',
-    accent: '#6366f1',
-    gradient: 'linear-gradient(135deg, #1e1b4b 0%, #4338ca 60%, #4f46e5 100%)',
-    glow: 'rgba(99, 102, 241, 0.25)',
-    border: 'rgba(99, 102, 241, 0.3)',
-    pillBg: 'rgba(99, 102, 241, 0.15)',
-    pillColor: '#a5b4fc',
+    accent: 'var(--primary)',
+    gradient: '#121212',
+    glow: 'color-mix(in srgb, var(--primary) 25%, transparent)',
+    border: 'color-mix(in srgb, var(--primary) 30%, transparent)',
+    pillBg: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+    pillColor: 'var(--link)',
     emblem: (
       <svg
         width="40"
@@ -418,7 +418,7 @@ function HeroSpotlightCard({ course, onContinue }) {
             {course.durationMinutes ? `${course.durationMinutes} min` : 'Self-paced'}
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Layers size={14} className="text-emerald-500" />
+            <Layers size={14} className="text-brand-gold" />
             {course.modulesCount ? `${course.modulesCount} Modules` : 'Full Curriculum'}
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#f59e0b' }}>
@@ -486,9 +486,7 @@ function HeroSpotlightCard({ course, onContinue }) {
               style={{
                 height: '100%',
                 width: `${Math.min(100, progress)}%`,
-                background: isCompleted
-                  ? 'linear-gradient(90deg, #10b981 0%, #34d399 100%)'
-                  : 'linear-gradient(90deg, #3b82f6 0%, #10b981 100%)',
+                background: isCompleted ? 'var(--primary)' : 'var(--primary)',
                 borderRadius: 99,
                 transition: 'width 0.4s ease',
               }}
@@ -510,11 +508,9 @@ function HeroSpotlightCard({ course, onContinue }) {
             fontWeight: 800,
             cursor: 'pointer',
             border: 'none',
-            background: isCompleted
-              ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
-              : 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-            color: '#fff',
-            boxShadow: '0 4px 18px rgba(37, 99, 235, 0.3)',
+            background: isCompleted ? 'var(--primary)' : 'var(--primary)',
+            color: 'var(--primary-foreground)',
+            boxShadow: '0 4px 18px rgba(0, 0, 0, 0.18)',
             transition: 'all 0.2s ease',
           }}
           onMouseEnter={(e) => {
@@ -762,9 +758,7 @@ function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark, on
               style={{
                 height: '100%',
                 width: `${Math.min(100, progress)}%`,
-                background: isCompleted
-                  ? '#10b981'
-                  : 'linear-gradient(90deg, #3b82f6 0%, #10b981 100%)',
+                background: isCompleted ? '#10b981' : 'var(--primary)',
                 borderRadius: 99,
                 transition: 'width 0.4s ease',
               }}
@@ -817,14 +811,20 @@ function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark, on
                   fontSize: 12,
                   fontWeight: 600,
                   cursor: 'pointer',
-                  border: '1px solid rgba(99,102,241,0.3)',
-                  background: 'rgba(99,102,241,0.08)',
-                  color: '#6366f1',
+                  border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
+                  background: 'color-mix(in srgb, var(--primary) 8%, transparent)',
+                  color: 'var(--link)',
                   transition: 'all 0.15s ease',
                   whiteSpace: 'nowrap',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.18)')}
-                onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.08)')}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background =
+                    'color-mix(in srgb, var(--primary) 18%, transparent)')
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background =
+                    'color-mix(in srgb, var(--primary) 8%, transparent)')
+                }
               >
                 <Video size={13} /> Live
               </button>
@@ -842,12 +842,12 @@ function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark, on
                 cursor: 'pointer',
                 border: 'none',
                 background: isCompleted
-                  ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
+                  ? 'var(--primary)'
                   : progress > 0
-                    ? 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)'
+                    ? 'var(--primary)'
                     : 'var(--text-primary)',
-                color: '#fff',
-                boxShadow: progress > 0 ? '0 2px 10px rgba(59, 130, 246, 0.3)' : 'none',
+                color: 'var(--primary-foreground)',
+                boxShadow: progress > 0 ? '0 2px 10px rgba(0, 0, 0, 0.18)' : 'none',
                 transition: 'opacity 0.15s ease',
                 whiteSpace: 'nowrap',
               }}
@@ -1058,9 +1058,7 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, on
               style={{
                 height: '100%',
                 width: `${Math.min(100, progress)}%`,
-                background: isCompleted
-                  ? '#10b981'
-                  : 'linear-gradient(90deg, #3b82f6 0%, #10b981 100%)',
+                background: isCompleted ? '#10b981' : 'var(--primary)',
                 borderRadius: 99,
               }}
             />
@@ -1081,14 +1079,20 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, on
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: 'pointer',
-                border: '1px solid rgba(99,102,241,0.3)',
-                background: 'rgba(99,102,241,0.08)',
-                color: '#6366f1',
+                border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
+                background: 'color-mix(in srgb, var(--primary) 8%, transparent)',
+                color: 'var(--link)',
                 transition: 'all 0.15s ease',
                 whiteSpace: 'nowrap',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.18)')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(99,102,241,0.08)')}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.background =
+                  'color-mix(in srgb, var(--primary) 18%, transparent)')
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background =
+                  'color-mix(in srgb, var(--primary) 8%, transparent)')
+              }
             >
               <Video size={14} /> Live
             </button>
@@ -1108,11 +1112,11 @@ function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, on
               cursor: 'pointer',
               border: 'none',
               background: isCompleted
-                ? 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
+                ? 'var(--primary)'
                 : progress > 0
-                  ? 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)'
+                  ? 'var(--primary)'
                   : 'var(--text-primary)',
-              color: '#fff',
+              color: 'var(--primary-foreground)',
               transition: 'opacity 0.15s ease',
             }}
             onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
@@ -1181,9 +1185,15 @@ function CourseSidebar({ navigate }) {
   const weeklyHours = WEEK_DAYS.reduce((sum, day) => sum + (activityByDay.get(day.key) || 0), 0);
   const weeklyProgress = Math.min(100, Math.round((weeklyHours / WEEKLY_STUDY_TARGET_HOURS) * 100));
 
-  const handleFakeDownload = (name) => {
-    setDownloadSuccess(name);
-    setTimeout(() => setDownloadSuccess(''), 3000);
+  // Confirms only after the file has actually been handed to the browser.
+  const handleDownload = async (kit) => {
+    try {
+      await resourceService.downloadFile(kit);
+      setDownloadSuccess(kit.title);
+      setTimeout(() => setDownloadSuccess(''), 3000);
+    } catch {
+      setDownloadSuccess('');
+    }
   };
 
   return (
@@ -1486,10 +1496,7 @@ function CourseSidebar({ navigate }) {
                 return (
                   <div
                     key={kit.id}
-                    onClick={() => {
-                      resourceService.downloadFile(kit);
-                      handleFakeDownload(kit.title);
-                    }}
+                    onClick={() => handleDownload(kit)}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -1724,7 +1731,7 @@ export const MyCoursesPage = () => {
               style={{
                 fontSize: 12,
                 fontWeight: 700,
-                color: 'var(--color-primary, #16a34a)',
+                color: 'var(--color-primary, #121212)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.8px',
               }}
@@ -2051,7 +2058,7 @@ export const MyCoursesPage = () => {
                           background: cat === categoryFilter ? 'var(--background)' : 'transparent',
                           color:
                             cat === categoryFilter
-                              ? 'var(--color-primary, #16a34a)'
+                              ? 'var(--color-primary, #121212)'
                               : 'var(--text-primary)',
                           fontWeight: cat === categoryFilter ? 700 : 500,
                         }}

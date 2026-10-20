@@ -93,7 +93,9 @@ describe('useMessages channel transitions', () => {
     await waitFor(() => expect(finishOldPage).toBeTypeOf('function'));
 
     rerender({ channel: 'new' });
-    await waitFor(() => expect(result.current.messages.map((message) => message.id)).toEqual(['new-message']));
+    await waitFor(() =>
+      expect(result.current.messages.map((message) => message.id)).toEqual(['new-message']),
+    );
     await act(async () => {
       finishOldPage([{ id: 'older-old-message', channelId: 'old' }]);
     });

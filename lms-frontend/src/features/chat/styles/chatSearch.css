@@ -251,7 +251,7 @@
   align-items: center;
   gap: 5px;
   font-size: 0.75rem;
-  color: #818cf8;
+  color: var(--link);
   margin-top: 6px;
 }
 
@@ -379,21 +379,21 @@
 
 /* ─── Composer Drag & Drop and Thumbnails ──────────────────────────────── */
 .chat-composer--dragging {
-  border-color: var(--color-primary, #6366f1) !important;
-  background: rgba(99, 102, 241, 0.08) !important;
+  border-color: var(--color-primary, #121212) !important;
+  background: color-mix(in srgb, var(--primary) 8%, transparent) !important;
 }
 
 .chat-composer__drop-overlay {
   position: absolute;
   inset: 0;
   background: rgba(30, 41, 59, 0.92);
-  border: 2px dashed #6366f1;
+  border: 2px dashed var(--primary);
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  color: #818cf8;
+  color: var(--link);
   font-weight: 600;
   font-size: 0.95rem;
   z-index: 20;

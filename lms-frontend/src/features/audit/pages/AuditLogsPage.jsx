@@ -72,7 +72,10 @@ const ACTION_COLORS = {
   COURSE_PUBLISHED: { bg: 'rgba(0,207,232,0.12)', color: '#00cfe8' },
   PASSWORD_CHANGED: { bg: 'rgba(255,159,67,0.12)', color: '#ff9f43' },
   PASSWORD_RESET: { bg: 'rgba(255,159,67,0.12)', color: '#ff9f43' },
-  ROLE_ASSIGNED: { bg: 'rgba(115,103,240,0.12)', color: '#7367f0' },
+  ROLE_ASSIGNED: {
+    bg: 'color-mix(in srgb, var(--primary) 12%, transparent)',
+    color: 'var(--link)',
+  },
   ROLE_REMOVED: { bg: 'rgba(234,84,85,0.12)', color: '#ea5455' },
   USER_INVITED: { bg: 'rgba(0,207,232,0.12)', color: '#00cfe8' },
 };
