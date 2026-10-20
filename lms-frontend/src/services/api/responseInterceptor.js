@@ -37,7 +37,8 @@ export const createResponseErrorHandler = (client) => async (error) => {
         refreshPromise ??
         client
           .post(API_ENDPOINTS.auth.refresh, { refreshToken })
-          .then((res) => res.data)
+          // ApiResponse envelope: { success, data: { accessToken, refreshToken, ... } }
+          .then((res) => res.data?.data ?? res.data)
           .finally(() => {
             refreshPromise = null;
           });

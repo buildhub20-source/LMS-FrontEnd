@@ -39,7 +39,6 @@ import { ROUTES } from '../../../constants/routes';
 
 export const InstructorAnalyticsPage = () => {
   // ── States ──
-  const [timeHorizon, setTimeHorizon] = useState('7D');
   const [activeChartTab, setActiveChartTab] = useState('VELOCITY'); // 'VELOCITY' | 'COMPLETION' | 'GRADES'
   const [courseSearch, setCourseSearch] = useState('');
   const [expandedCourseId, setExpandedCourseId] = useState(null);
@@ -174,11 +173,11 @@ export const InstructorAnalyticsPage = () => {
                     animation: 'pulse 1.8s infinite',
                   }}
                 />
-                SYS-TELEMETRY // LIVE
+                Your teaching overview
               </div>
 
               <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                Academic Term Fall 2026 • Real-time cohort synchronization
+                Your courses, learners and grading in one place
               </span>
             </div>
 
@@ -194,29 +193,9 @@ export const InstructorAnalyticsPage = () => {
                 border: '1px solid rgba(255,255,255,0.06)',
               }}
             >
-              {['24H', '7D', '30D', 'SEMESTER'].map((h) => (
-                <button
-                  key={h}
-                  onClick={() => setTimeHorizon(h)}
-                  style={{
-                    padding: '4px 10px',
-                    borderRadius: 6,
-                    fontSize: 11,
-                    fontWeight: 700,
-                    border: 'none',
-                    background: timeHorizon === h ? 'var(--text-primary)' : 'transparent',
-                    color: timeHorizon === h ? 'var(--lms-background)' : 'var(--text-muted)',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  {h}
-                </button>
-              ))}
-
               <button
                 onClick={handleRefresh}
-                title="Refresh live telemetry"
+                title="Refresh"
                 style={{
                   background: 'transparent',
                   border: 'none',
@@ -255,11 +234,10 @@ export const InstructorAnalyticsPage = () => {
                   letterSpacing: '-0.02em',
                 }}
               >
-                Faculty Command Center
+                Instructor dashboard
               </h1>
               <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
-                Mission control for active curriculum, student velocity, real-time assessments &amp;
-                honours.
+                Courses you teach, how your learners are doing, and what needs grading.
               </p>
             </div>
 
@@ -386,7 +364,6 @@ export const InstructorAnalyticsPage = () => {
                 {courseCount}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
-                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>100% Operational</span>
                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
                   • {rawCourses.filter((c) => c.status === 'PUBLISHED').length || courseCount}{' '}
                   published
@@ -442,10 +419,9 @@ export const InstructorAnalyticsPage = () => {
                 {learnerCount}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#10b981' }}>
-                  +18.4% Velocity
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                  Learners enrolled in your courses
                 </span>
-                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>• Cohort active</span>
               </div>
             </div>
           </div>
@@ -497,8 +473,9 @@ export const InstructorAnalyticsPage = () => {
                 {avgCompletion}%
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
-                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Target Exceeded</span>
-                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>• Bench: 60%</span>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                  Average course completion
+                </span>
               </div>
             </div>
           </div>
@@ -550,8 +527,9 @@ export const InstructorAnalyticsPage = () => {
                 {avgScore}%
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
-                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>92% Pass Rate</span>
-                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>• Grade A- avg</span>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                  Average score on submitted attempts
+                </span>
               </div>
             </div>
           </div>
@@ -620,9 +598,8 @@ export const InstructorAnalyticsPage = () => {
                     color: pendingGrading > 0 ? '#f43f5e' : '#10b981',
                   }}
                 >
-                  {pendingGrading > 0 ? 'Action Required' : 'Queue Optimal'}
+                  {pendingGrading > 0 ? `${pendingGrading} waiting` : 'Nothing waiting'}
                 </span>
-                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>• Zero backlog</span>
               </div>
             </div>
           </div>
@@ -678,11 +655,11 @@ export const InstructorAnalyticsPage = () => {
                         color: 'var(--text-primary)',
                       }}
                     >
-                      Interactive Telemetry Center
+                      Learner activity
                     </h3>
                   </div>
                   <p style={{ margin: '3px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>
-                    Continuous flow analysis across candidate engagement and assessment benchmarks
+                    Engagement and assessment results across your courses
                   </p>
                 </div>
 
@@ -863,99 +840,6 @@ export const InstructorAnalyticsPage = () => {
                       </div>
                     );
                   })}
-                </div>
-              </div>
-
-              {/* Telemetry Micro Stats Bar */}
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-                  gap: 10,
-                  marginTop: 14,
-                }}
-              >
-                <div
-                  style={{
-                    background: 'var(--muted)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 8,
-                    padding: '8px 12px',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: 10,
-                      color: 'var(--text-muted)',
-                      textTransform: 'uppercase',
-                      fontWeight: 600,
-                    }}
-                  >
-                    Peak Velocity
-                  </div>
-                  <div
-                    style={{ fontSize: 14, fontWeight: 700, color: 'var(--primary)', marginTop: 2 }}
-                  >
-                    Thursday (+28 pts)
-                  </div>
-                </div>
-                <div
-                  style={{
-                    background: 'var(--muted)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 8,
-                    padding: '8px 12px',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: 10,
-                      color: 'var(--text-muted)',
-                      textTransform: 'uppercase',
-                      fontWeight: 600,
-                    }}
-                  >
-                    Retention Index
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 14,
-                      fontWeight: 700,
-                      color: 'var(--chart-emerald)',
-                      marginTop: 2,
-                    }}
-                  >
-                    96.8% Stable
-                  </div>
-                </div>
-                <div
-                  style={{
-                    background: 'var(--muted)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: 8,
-                    padding: '8px 12px',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: 10,
-                      color: 'var(--text-muted)',
-                      textTransform: 'uppercase',
-                      fontWeight: 600,
-                    }}
-                  >
-                    Sync Rate
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 14,
-                      fontWeight: 700,
-                      color: 'var(--chart-accent)',
-                      marginTop: 2,
-                    }}
-                  >
-                    0.2s Response
-                  </div>
                 </div>
               </div>
             </div>
@@ -1265,7 +1149,7 @@ export const InstructorAnalyticsPage = () => {
                 <h3
                   style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}
                 >
-                  Command Operations Deck
+                  Quick actions
                 </h3>
               </div>
 
@@ -1293,8 +1177,8 @@ export const InstructorAnalyticsPage = () => {
                     tone: '#a855f7',
                   },
                   {
-                    title: 'Honors & Solved',
-                    desc: 'LeetCode badges',
+                    title: 'Submissions',
+                    desc: 'History and badges',
                     to: ROUTES.INSTRUCTOR_SUBMISSIONS_HISTORY,
                     icon: Award,
                     tone: '#f59e0b',
@@ -1398,7 +1282,7 @@ export const InstructorAnalyticsPage = () => {
                       letterSpacing: '0.04em',
                     }}
                   >
-                    OPERATIONS TERMINAL // LOGS
+                    Recent activity
                   </span>
                 </div>
 
@@ -1481,21 +1365,6 @@ export const InstructorAnalyticsPage = () => {
                     <div style={{ color: 'var(--text-muted)', fontSize: 10 }}>{ev.details}</div>
                   </div>
                 ))}
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  fontSize: 10,
-                  color: 'var(--text-muted)',
-                  borderTop: '1px solid var(--border-color)',
-                  paddingTop: 8,
-                }}
-              >
-                <Shield size={11} color="#10b981" />
-                <span>SSL Encrypted • Audit Trail Hash Verified</span>
               </div>
             </div>
           </div>

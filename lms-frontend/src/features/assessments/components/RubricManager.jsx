@@ -38,7 +38,7 @@ export const RubricManager = () => {
       const res = await rubricService.list();
       setRubrics(res?.content ?? []);
     } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to load rubrics');
+      setError((err?.response?.data?.message ?? err?.message) || 'Failed to load rubrics');
     } finally {
       setLoading(false);
     }
@@ -79,7 +79,7 @@ export const RubricManager = () => {
       setShowCreate(false);
       fetchRubrics();
     } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to create rubric');
+      setError((err?.response?.data?.message ?? err?.message) || 'Failed to create rubric');
     } finally {
       setSaving(false);
     }
@@ -91,7 +91,7 @@ export const RubricManager = () => {
       await rubricService.remove(id);
       fetchRubrics();
     } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to delete rubric');
+      setError((err?.response?.data?.message ?? err?.message) || 'Failed to delete rubric');
     }
   };
 

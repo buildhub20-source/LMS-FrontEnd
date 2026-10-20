@@ -1443,7 +1443,9 @@ const CourseDetailsContent = () => {
               navigate(backRoute);
             } catch (err) {
               toast.error(
-                err?.response?.data?.message || err?.message || 'Failed to delete course.',
+                (err?.response?.data?.message ?? err?.message) ||
+                  err?.message ||
+                  'Failed to delete course.',
               );
             } finally {
               setIsDeleting(false);

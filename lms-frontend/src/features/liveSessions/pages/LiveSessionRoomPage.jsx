@@ -42,7 +42,8 @@ export const LiveSessionRoomPage = () => {
       } catch (err) {
         if (isMounted) {
           setJoinError(
-            err?.response?.data?.message || 'Failed to join the live classroom session.',
+            (err?.response?.data?.message ?? err?.message) ||
+              'Failed to join the live classroom session.',
           );
           setIsJoining(false);
         }

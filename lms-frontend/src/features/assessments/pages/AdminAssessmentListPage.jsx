@@ -1106,7 +1106,9 @@ export const AdminAssessmentListPage = () => {
         })
         .catch((err) => {
           toastError(
-            err?.response?.data?.message || err?.message || 'Failed to duplicate assessment.',
+            (err?.response?.data?.message ?? err?.message) ||
+              err?.message ||
+              'Failed to duplicate assessment.',
           );
         });
       return;

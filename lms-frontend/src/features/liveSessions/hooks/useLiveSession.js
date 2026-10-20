@@ -71,7 +71,9 @@ export const useCreateLiveSession = () => {
       queryClient.invalidateQueries({ queryKey: ['all-live-sessions'] });
     },
     onError: (err) => {
-      toast.error(err?.response?.data?.message || 'Failed to schedule live session');
+      toast.error(
+        (err?.response?.data?.message ?? err?.message) || 'Failed to schedule live session',
+      );
     },
   });
 };
@@ -92,7 +94,7 @@ export const useStartLiveSession = () => {
       queryClient.invalidateQueries({ queryKey: ['all-live-sessions'] });
     },
     onError: (err) => {
-      toast.error(err?.response?.data?.message || 'Failed to start live session');
+      toast.error((err?.response?.data?.message ?? err?.message) || 'Failed to start live session');
     },
   });
 };
@@ -106,7 +108,7 @@ export const useJoinLiveSession = () => {
       return res?.data ?? res;
     },
     onError: (err) => {
-      toast.error(err?.response?.data?.message || 'Failed to join live session');
+      toast.error((err?.response?.data?.message ?? err?.message) || 'Failed to join live session');
     },
   });
 };
@@ -124,7 +126,7 @@ export const useEndLiveSession = () => {
       queryClient.invalidateQueries({ queryKey: ['all-live-sessions'] });
     },
     onError: (err) => {
-      toast.error(err?.response?.data?.message || 'Failed to end live session');
+      toast.error((err?.response?.data?.message ?? err?.message) || 'Failed to end live session');
     },
   });
 };

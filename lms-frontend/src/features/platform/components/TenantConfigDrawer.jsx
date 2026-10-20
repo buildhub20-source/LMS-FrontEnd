@@ -125,7 +125,7 @@ export const TenantConfigDrawer = ({ tenant, isOpen, onClose }) => {
     },
     onError: (err) => {
       setFeedback({
-        error: err?.response?.data?.message || 'Failed to update configuration.',
+        error: (err?.response?.data?.message ?? err?.message) || 'Failed to update configuration.',
         success: '',
       });
     },

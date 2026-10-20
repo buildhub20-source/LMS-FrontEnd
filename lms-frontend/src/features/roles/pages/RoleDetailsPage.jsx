@@ -144,7 +144,7 @@ export const RoleDetailsPage = () => {
       toast.success('Role deleted successfully.');
       navigate(ROUTES.ROLES);
     } catch (err) {
-      toast.error(err?.response?.data?.message || 'Failed to delete role.');
+      toast.error((err?.response?.data?.message ?? err?.message) || 'Failed to delete role.');
     } finally {
       setIsDeleting(false);
       setIsDeleteModalOpen(false);
@@ -156,7 +156,7 @@ export const RoleDetailsPage = () => {
     return (
       <PageContainer title="Role Details">
         <Alert tone="error">
-          {error?.response?.data?.message || 'Failed to load role details.'}
+          {(error?.response?.data?.message ?? error?.message) || 'Failed to load role details.'}
         </Alert>
         <Button
           variant="secondary"

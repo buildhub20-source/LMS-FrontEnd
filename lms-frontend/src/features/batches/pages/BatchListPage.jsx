@@ -214,7 +214,9 @@ export const BatchListPage = () => {
       closeModal();
       refetch();
     } catch (err) {
-      toast.error(err?.response?.data?.message || err?.message || 'Failed to save batch');
+      toast.error(
+        (err?.response?.data?.message ?? err?.message) || err?.message || 'Failed to save batch',
+      );
     }
   };
 
@@ -225,7 +227,9 @@ export const BatchListPage = () => {
       setDeleting(null);
       refetch();
     } catch (err) {
-      toast.error(err?.response?.data?.message || err?.message || 'Failed to delete batch');
+      toast.error(
+        (err?.response?.data?.message ?? err?.message) || err?.message || 'Failed to delete batch',
+      );
     }
   };
 

@@ -51,9 +51,10 @@ export const AnnouncementComposer = () => {
     setError(null);
     try {
       const res = await announcementService.list();
-      setAnnouncements(res?.data?.data || res?.data || []);
+      // The http helper already unwraps the ApiResponse envelope.
+      setAnnouncements(Array.isArray(res) ? res : []);
     } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to load announcements');
+      setError(err?.message || 'Failed to load announcements');
     } finally {
       setLoading(false);
     }
@@ -79,7 +80,7 @@ export const AnnouncementComposer = () => {
       setShowCreate(false);
       fetchAnnouncements();
     } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to create announcement');
+      setError(err?.message || 'Failed to create announcement');
     } finally {
       setSaving(false);
     }
@@ -90,7 +91,7 @@ export const AnnouncementComposer = () => {
       await announcementService.toggle(id, !currentActive);
       fetchAnnouncements();
     } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to toggle announcement');
+      setError(err?.message || 'Failed to toggle announcement');
     }
   };
 
@@ -100,7 +101,7 @@ export const AnnouncementComposer = () => {
       await announcementService.remove(id);
       fetchAnnouncements();
     } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to delete announcement');
+      setError(err?.message || 'Failed to delete announcement');
     }
   };
 
