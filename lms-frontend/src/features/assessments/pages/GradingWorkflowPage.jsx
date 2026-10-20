@@ -94,7 +94,7 @@ export const GradingWorkflowPage = () => {
       setRubricScores({});
       setManualScore('');
     } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to load grading queue');
+      setError((err?.response?.data?.message ?? err?.message) || 'Failed to load grading queue');
     } finally {
       setLoading(false);
     }
@@ -126,7 +126,10 @@ export const GradingWorkflowPage = () => {
       setStatus(prefill.status);
     } catch (err) {
       if (aiForSubmissionRef.current === subId) {
-        setAiError(err?.response?.data?.message || 'AI grading failed. Please grade manually.');
+        setAiError(
+          (err?.response?.data?.message ?? err?.message) ||
+            'AI grading failed. Please grade manually.',
+        );
       }
     } finally {
       setAiLoading(false);
@@ -284,7 +287,7 @@ export const GradingWorkflowPage = () => {
       // Refresh list
       fetchData();
     } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to save grade');
+      setError((err?.response?.data?.message ?? err?.message) || 'Failed to save grade');
     } finally {
       setSubmitting(false);
     }

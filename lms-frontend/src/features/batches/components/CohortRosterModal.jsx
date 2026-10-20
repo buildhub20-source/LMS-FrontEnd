@@ -152,7 +152,11 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STUDENTS });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BATCHES });
     } catch (err) {
-      toast.error(err?.response?.data?.message || err?.message || 'Failed to enroll student');
+      toast.error(
+        (err?.response?.data?.message ?? err?.message) ||
+          err?.message ||
+          'Failed to enroll student',
+      );
     } finally {
       setIsSubmittingEnroll(false);
     }

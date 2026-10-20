@@ -134,7 +134,9 @@ export const AssessmentAnalyticsTab = ({ assessmentId }) => {
         `Retest granted to ${student.studentName || 'student'} — 1 extra attempt added.`,
       );
     } catch (e) {
-      toast.error(e?.response?.data?.message || e.message || 'Failed to grant retest');
+      toast.error(
+        (e?.response?.data?.message ?? e?.message) || e.message || 'Failed to grant retest',
+      );
     } finally {
       setRetestingId(null);
     }
@@ -258,7 +260,11 @@ export const AssessmentAnalyticsTab = ({ assessmentId }) => {
                   : 'Result analytics released to students!',
               );
             } catch (e) {
-              toast.error(e?.response?.data?.message || e.message || 'Failed to toggle analytics');
+              toast.error(
+                (e?.response?.data?.message ?? e?.message) ||
+                  e.message ||
+                  'Failed to toggle analytics',
+              );
             }
           }}
           style={{

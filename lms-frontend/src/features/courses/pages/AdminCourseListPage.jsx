@@ -1205,7 +1205,7 @@ export const AdminCourseListPage = () => {
       setRejectReason('');
       load();
     } catch (err) {
-      toastError(err?.response?.data?.message ?? 'Failed.');
+      toastError(err?.response?.data?.message ?? err?.message ?? 'Failed.');
       setRejectModal((m) => ({ ...m, loading: false }));
     }
   };

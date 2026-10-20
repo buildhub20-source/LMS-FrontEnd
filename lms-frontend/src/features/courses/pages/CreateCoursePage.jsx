@@ -34,7 +34,11 @@ export const CreateCoursePage = () => {
       navigate(`${editRoute(course.id)}?tab=curriculum`);
     } catch (err) {
       console.error('Course creation failed:', err);
-      toast.error(err?.response?.data?.message || err?.message || 'Failed to create course.');
+      toast.error(
+        (err?.response?.data?.message ?? err?.message) ||
+          err?.message ||
+          'Failed to create course.',
+      );
     }
   };
 

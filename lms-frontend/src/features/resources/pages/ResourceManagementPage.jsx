@@ -213,10 +213,14 @@ export const ResourceManagementPage = () => {
     }
   };
 
-  const handleDownload = (res) => {
-    resourceService.downloadFile(res);
-    toast.success(`Downloaded ${res.title}`);
-    refetch();
+  const handleDownload = async (res) => {
+    const ok = await resourceService.downloadFile(res);
+    if (ok) {
+      toast.success(`Downloaded ${res.title}`);
+      refetch();
+    } else {
+      toast.error(`Couldn't download ${res.title}. Try again in a moment.`);
+    }
   };
 
   return (

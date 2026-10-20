@@ -83,7 +83,9 @@ export const PlatformTenantPage = () => {
       refresh();
     },
     onError: (error) =>
-      setActionError(error?.response?.data?.message ?? 'Tenant registration failed.'),
+      setActionError(
+        error?.response?.data?.message ?? error?.message ?? 'Tenant registration failed.',
+      ),
   });
 
   const lifecycle = useMutation({
@@ -93,7 +95,9 @@ export const PlatformTenantPage = () => {
       refresh();
     },
     onError: (error) =>
-      setActionError(error?.response?.data?.message ?? 'Tenant lifecycle action failed.'),
+      setActionError(
+        error?.response?.data?.message ?? error?.message ?? 'Tenant lifecycle action failed.',
+      ),
   });
 
   const submit = (event) => {
@@ -139,7 +143,8 @@ export const PlatformTenantPage = () => {
       window.location.href = destination;
     } catch (err) {
       setActionError(
-        err?.response?.data?.message || 'Failed to initialize temporary debug access.',
+        (err?.response?.data?.message ?? err?.message) ||
+          'Failed to initialize temporary debug access.',
       );
       setImpersonatingTenantId(null);
       setDebugModalTenant(null);

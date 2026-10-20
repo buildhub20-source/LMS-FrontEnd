@@ -179,7 +179,7 @@ export const StudentAssessmentTakingPage = () => {
         console.error('Final submit failed:', err);
         setSubmissionStage('error');
         setSubmissionErrorMsg(
-          err?.response?.data?.message ||
+          (err?.response?.data?.message ?? err?.message) ||
             err?.message ||
             'Submission failed. Please check your network connection and retry.',
         );

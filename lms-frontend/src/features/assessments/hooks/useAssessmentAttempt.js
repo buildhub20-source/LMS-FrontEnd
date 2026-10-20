@@ -157,7 +157,9 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
       } catch (err) {
         if (!isAutoSubmit) {
           setSubmitError(
-            err?.message || err?.response?.data?.message || 'Submission failed. Please try again.',
+            err?.message ||
+              (err?.response?.data?.message ?? err?.message) ||
+              'Submission failed. Please try again.',
           );
         }
         throw err;
@@ -262,7 +264,9 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
         if (!cancelled) {
           // Prefer server-side message from normalizeError, then Axios response, then fallback
           const msg =
-            err?.response?.data?.message || err?.message || 'Failed to start or resume assessment.';
+            (err?.response?.data?.message ?? err?.message) ||
+            err?.message ||
+            'Failed to start or resume assessment.';
           setError(msg);
         }
       } finally {
