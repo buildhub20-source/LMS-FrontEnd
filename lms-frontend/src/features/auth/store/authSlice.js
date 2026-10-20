@@ -59,19 +59,37 @@ export const login = createAsyncThunk('auth/login', async (credentials, { reject
   }
 });
 
+// Each refresh replaces the token on the server, so two at once can leave the
+// browser holding the one that was just overwritten. Share a single exchange.
+let restoring = null;
+const restoreFromRefreshToken = () => {
+  if (!restoring) {
+    const refreshToken = tokenStorage.getRefreshToken();
+    restoring = (
+      refreshToken
+        ? authService.refresh({ refreshToken }).then((tokens) => {
+            tokenStorage.setTokens(tokens);
+            return true;
+          })
+        : Promise.resolve(false)
+    )
+      .catch(() => {
+        tokenStorage.clear();
+        return false;
+      })
+      .finally(() => {
+        restoring = null;
+      });
+  }
+  return restoring;
+};
+
 export const loadSession = createAsyncThunk('auth/loadSession', async (_, { rejectWithValue }) => {
   try {
     // After a reload only the refresh token survives: exchange it first rather
     // than letting /auth/me fail with a 401 and refresh on the retry.
     if (!tokenStorage.getAccessToken()) {
-      const refreshToken = tokenStorage.getRefreshToken();
-      if (!refreshToken) return null;
-      try {
-        tokenStorage.setTokens(await authService.refresh({ refreshToken }));
-      } catch {
-        tokenStorage.clear();
-        return null;
-      }
+      if (!(await restoreFromRefreshToken())) return null;
     }
 
     // Real backend — GET /auth/me → CurrentUserResponse { user, roles, permissions }
