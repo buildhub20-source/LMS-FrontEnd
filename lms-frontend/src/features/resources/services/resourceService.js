@@ -130,7 +130,7 @@ const SEED_RESOURCES = [
 
 ### 2. Submission Deadlines
 - Timed assessments will auto-submit when the countdown expires.
-- Contact course instructor immediately via LMS messages in case of power or connectivity disruptions.`,
+- Contact your course instructor immediately through GradusMind chat in case of power or connectivity disruptions.`,
   },
   {
     id: 'a0000001-0000-0000-0000-000000000005',

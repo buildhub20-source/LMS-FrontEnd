@@ -7,22 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import useAuth from '@/features/auth/hooks/useAuth';
 import { ROUTES } from '@/constants/routes';
-
-/* ─── Monochrome Logo ──────────────────────────────────────── */
-const Logo = ({ size = 24 }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M21.5034 4.14819L12.5034 9.14819C12.193 9.32074 11.807 9.32074 11.4966 9.14819L2.49658 4.14819C2.17937 3.97193 1.77665 4.16853 1.72758 4.53232L1.03784 9.64687C1.01258 9.83424 1.08272 10.0215 1.22271 10.1475L11.6669 19.5475C11.854 19.7159 12.146 19.7159 12.3331 19.5475L22.7773 10.1475C22.9173 10.0215 22.9874 9.83424 22.9622 9.64687L22.2724 4.53232C22.2234 4.16853 21.8206 3.97193 21.5034 4.14819Z"
-      fill="currentColor"
-    />
-  </svg>
-);
+import { GradusMindLogo as Logo } from '@/components/brand/GradusMindLogo';
 
 const getInitials = (name) => {
   if (!name) return '?';
@@ -108,19 +93,16 @@ export const IconSidebar = ({
         >
           <div
             className="flex items-center justify-center w-10 h-10 rounded-xl"
-            style={{
-              background: 'var(--sidebar-primary)',
-              color: 'var(--sidebar-primary-foreground)',
-            }}
+            style={{ background: '#f3f1ea', color: '#121212' }}
           >
-            <Logo size={22} />
+            <Logo size={26} />
           </div>
           {expanded && (
             <span
               className="text-lg font-bold tracking-tight whitespace-nowrap"
               style={{ color: 'var(--sidebar-foreground)' }}
             >
-              LMS
+              Gradus<span style={{ color: '#c9973b' }}>Mind</span>
             </span>
           )}
         </div>

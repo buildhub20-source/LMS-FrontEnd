@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { acceptInvitation } from '../store/authSlice';
 import { ROUTES } from '../../../constants/routes';
+import { GradusMindLogo } from '../../../components/brand/GradusMindLogo';
 
 const PASSWORD_RULES = [
   { label: 'At least 8 characters', test: (p) => p.length >= 8 },
@@ -118,14 +119,13 @@ export const AcceptInvitationPage = () => {
         <div style={styles.leftContent}>
           <div style={styles.logoArea}>
             <div style={styles.logoIcon}>
-              <ShieldCheck size={28} color="#fff" />
+              <GradusMindLogo size={30} style={{ color: '#121212' }} />
             </div>
-            <span style={styles.logoText}>LMS Platform</span>
+            <span style={styles.logoText}>GradusMind</span>
           </div>
           <h2 style={styles.brandHeading}>You&apos;ve been invited!</h2>
           <p style={styles.brandBody}>
-            Set up your password to activate your account and get full access to the Learning
-            Management System.
+            Set up your password to activate your account and get full access to GradusMind.
           </p>
           <div style={styles.featureList}>
             {[
@@ -152,7 +152,7 @@ export const AcceptInvitationPage = () => {
             </div>
             <h1 style={styles.title}>Create your password</h1>
             <p style={styles.body}>
-              Welcome! Choose a secure password to activate your LMS account.
+              Welcome! Choose a secure password to activate your GradusMind account.
             </p>
           </div>
 
@@ -302,7 +302,7 @@ const styles = {
     width: 44,
     height: 44,
     borderRadius: 12,
-    background: 'rgba(255,255,255,0.2)',
+    background: '#f3f1ea',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

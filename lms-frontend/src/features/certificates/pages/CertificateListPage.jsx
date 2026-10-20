@@ -287,7 +287,7 @@ export const CertificateListPage = () => {
           <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
             {[
               { id: 'ALL', label: `All Credentials (${totalCount})` },
-              { id: 'LMS', label: `LMS Certified (${lmsCerts.length})` },
+              { id: 'LMS', label: `Earned on GradusMind (${lmsCerts.length})` },
               { id: 'IMPORTED', label: `Imported / External (${importedCerts.length})` },
             ].map((tab) => (
               <button
@@ -679,7 +679,7 @@ export const CertificateListPage = () => {
                         opacity: 0.7,
                       }}
                     >
-                      LMS Certified
+                      Earned on GradusMind
                     </span>
                   </div>
 
@@ -962,7 +962,7 @@ export const CertificateListPage = () => {
               <h3
                 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: 'var(--text-primary)' }}
               >
-                About LMS Credentials
+                About your certificates
               </h3>
               <div
                 style={{

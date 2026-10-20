@@ -16,6 +16,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import appConfig from '../../config/appConfig';
+import { GradusMindLogo } from '../brand/GradusMindLogo';
 
 /* ── LMS / Vertex Geometric Emblem ────────────────────────────────── */
 export const VertexLogo = ({ size = 26, color = 'currentColor', className = '' }) => (
@@ -876,7 +877,7 @@ export const SignInPage = ({
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  const brandName = (appConfig.name || 'LMS').replace(/\s*\(dev\)/i, '').trim();
+  const brandName = (appConfig.name || 'GradusMind').replace(/\s*\(dev\)/i, '').trim();
 
   const errorDetails =
     error && typeof error === 'object'
@@ -1268,13 +1269,14 @@ export const SignInPage = ({
                   width: 32,
                   height: 32,
                   borderRadius: 8,
-                  background: 'rgba(74, 222, 128, 0.14)',
+                  background: '#f3f1ea',
+                  color: '#121212',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <GraduationCap size={18} color="#4ade80" />
+                <GradusMindLogo size={22} />
               </div>
               <span
                 style={{ fontSize: 13, fontWeight: 800, color: '#ffffff', letterSpacing: '0.04em' }}
@@ -1330,7 +1332,7 @@ export const SignInPage = ({
               letterSpacing: '0.02em',
             }}
           >
-            &copy; {brandName} Platform 2025. All Rights Reserved
+            &copy; {new Date().getFullYear()} {brandName}. All rights reserved.
           </div>
         </div>
 
@@ -1401,13 +1403,14 @@ export const SignInPage = ({
                   width: 40,
                   height: 40,
                   borderRadius: 10,
-                  background: 'rgba(74, 222, 128, 0.12)',
+                  background: '#f3f1ea',
+                  color: '#121212',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <GraduationCap size={22} color="#4ade80" />
+                <GradusMindLogo size={28} />
               </div>
             </div>
 
