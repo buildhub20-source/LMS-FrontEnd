@@ -376,7 +376,7 @@ export const CodingQuestionPanel = ({
   useEffect(() => {
     handleRunCodeRef.current = handleRunCode;
     handleSubmitQuestionRef.current = handleSubmitQuestion;
-  }, [handleRunCode, handleSubmitQuestion]);
+  });
 
   // Global window listener for shortcuts (works when clicking anywhere on page)
   useEffect(() => {

@@ -130,25 +130,32 @@ export default function ChatPage() {
     };
   }, [activeChannelId]);
 
-  // Load channel members when active channel changes
-  useEffect(() => {
+  const [previousActiveChannelId, setPreviousActiveChannelId] = useState(activeChannelId);
+  if (previousActiveChannelId !== activeChannelId) {
+    setPreviousActiveChannelId(activeChannelId);
     setActiveHeaderTab('chat');
     setMemberSearchQuery('');
-    if (!activeChannelId) {
-      setChannelMembers([]);
-      return;
-    }
+    setChannelMembers([]);
+  }
+
+  // Load channel members when active channel changes
+  useEffect(() => {
+    if (!activeChannelId) return;
+    let cancelled = false;
 
     chatService
       .getMembers(activeChannelId)
       .then((data) => {
         const list = Array.isArray(data) ? data : (data?.data ?? []);
-        setChannelMembers(list);
+        if (!cancelled) setChannelMembers(list);
       })
       .catch((err) => {
         console.warn('Could not load channel members:', err);
-        setChannelMembers([]);
+        if (!cancelled) setChannelMembers([]);
       });
+    return () => {
+      cancelled = true;
+    };
   }, [activeChannelId]);
 
   // Aggregate files shared in current channel's messages

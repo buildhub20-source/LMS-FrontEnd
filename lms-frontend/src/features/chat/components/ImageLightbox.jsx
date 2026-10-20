@@ -5,15 +5,10 @@ import { X, ZoomIn, ZoomOut, Download, RotateCcw, ExternalLink } from 'lucide-re
 /**
  * ImageLightbox — sleek full-screen image viewer with zoom, download, and keyboard navigation.
  */
-export default function ImageLightbox({ isOpen, src, alt, name, onClose }) {
+function ImageLightboxContent({ isOpen, src, alt, name, onClose }) {
   const [scale, setScale] = useState(1);
 
   useEffect(() => {
-    if (!isOpen) {
-      setScale(1);
-      return;
-    }
-
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
       if (e.key === '+' || e.key === '=') setScale((s) => Math.min(s + 0.25, 3));
@@ -101,4 +96,8 @@ export default function ImageLightbox({ isOpen, src, alt, name, onClose }) {
     </div>,
     document.body,
   );
+}
+
+export default function ImageLightbox(props) {
+  return props.isOpen ? <ImageLightboxContent key={props.src} {...props} /> : null;
 }

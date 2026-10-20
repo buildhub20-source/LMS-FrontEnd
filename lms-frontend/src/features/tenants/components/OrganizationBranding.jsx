@@ -1,18 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Card from '../../../components/common/Card';
 import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';
 
 /** Tenant colours are applied by overriding the CSS custom properties at runtime. */
-export const OrganizationBranding = ({ defaultValues = {}, onSubmit }) => {
+const BrandingForm = ({ defaultValues = {}, onSubmit }) => {
   const [primaryColor, setPrimaryColor] = useState(defaultValues.primaryColor ?? '#3b6fe0');
   const [logoUrl, setLogoUrl] = useState(defaultValues.logoUrl ?? '');
-
-  // Sync form fields when parent passes new defaultValues (e.g. after a fetch completes)
-  useEffect(() => {
-    setPrimaryColor(defaultValues.primaryColor ?? '#3b6fe0');
-    setLogoUrl(defaultValues.logoUrl ?? '');
-  }, [defaultValues.primaryColor, defaultValues.logoUrl]);
 
   const apply = () => {
     document.documentElement.style.setProperty('--color-primary-600', primaryColor);
@@ -37,6 +31,12 @@ export const OrganizationBranding = ({ defaultValues = {}, onSubmit }) => {
       </Button>
     </Card>
   );
+};
+
+export const OrganizationBranding = (props) => {
+  const values = props.defaultValues ?? {};
+  const key = JSON.stringify([values.primaryColor, values.logoUrl]);
+  return <BrandingForm key={key} {...props} />;
 };
 
 export default OrganizationBranding;

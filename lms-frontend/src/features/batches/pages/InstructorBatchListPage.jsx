@@ -184,7 +184,7 @@ export const InstructorBatchListPage = () => {
 
       return matchesSearch && matchesStatus && matchesOwner;
     });
-  }, [batches, search, statusFilter, myCohortsOnly, user?.id]);
+  }, [batches, search, statusFilter, myCohortsOnly, user]);
 
   return (
     <div className="space-y-6" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>

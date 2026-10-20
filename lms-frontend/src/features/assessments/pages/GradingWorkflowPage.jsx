@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Check,
   X,
@@ -79,7 +79,7 @@ export const GradingWorkflowPage = () => {
   const [aiError, setAiError] = useState(null);
   const aiForSubmissionRef = useRef(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -98,7 +98,7 @@ export const GradingWorkflowPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Switching submissions must not carry over the previous one's scores or suggestion.
   const selectSubmission = (sub) => {
@@ -137,40 +137,44 @@ export const GradingWorkflowPage = () => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    const timer = setTimeout(fetchData, 0);
+    return () => clearTimeout(timer);
+  }, [fetchData]);
 
   // Load annotations and any earlier AI suggestion when the active submission changes
   useEffect(() => {
-    setAiSuggestion(null);
-    setAiError(null);
-    aiForSubmissionRef.current = selectedSub?.id ?? null;
-    if (!selectedSub) {
-      setAnnotations([]);
-      return;
-    }
-    const subId = selectedSub.id;
-    gradingService
-      .getAiSuggestion(subId)
-      .then((s) => {
-        if (aiForSubmissionRef.current === subId) setAiSuggestion(s);
-      })
-      .catch(() => {
-        /* no suggestion requested yet */
-      });
-    const stored = localStorage.getItem(`lms_code_annotations_${selectedSub.id}`);
-    if (stored) {
-      try {
-        setAnnotations(JSON.parse(stored));
-      } catch {
+    const timer = setTimeout(() => {
+      setAiSuggestion(null);
+      setAiError(null);
+      aiForSubmissionRef.current = selectedSub?.id ?? null;
+      if (!selectedSub) {
+        setAnnotations([]);
+        return;
+      }
+      const subId = selectedSub.id;
+      gradingService
+        .getAiSuggestion(subId)
+        .then((s) => {
+          if (aiForSubmissionRef.current === subId) setAiSuggestion(s);
+        })
+        .catch(() => {
+          /* no suggestion requested yet */
+        });
+      const stored = localStorage.getItem(`lms_code_annotations_${selectedSub.id}`);
+      if (stored) {
+        try {
+          setAnnotations(JSON.parse(stored));
+        } catch {
+          setAnnotations([]);
+        }
+      } else {
         setAnnotations([]);
       }
-    } else {
-      setAnnotations([]);
-    }
-    setActiveLine(null);
-    setCommentText('');
-  }, [selectedSub?.id]);
+      setActiveLine(null);
+      setCommentText('');
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [selectedSub]);
 
   // Update Monaco decorations when annotations change
   const updateEditorDecorations = (currentAnnotations) => {

@@ -362,14 +362,17 @@ export const EnrollmentListPage = () => {
   };
 
   // ── Row Data ──
-  const searchFilter = (u) => {
-    if (!searchQuery) return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      (u.fullName || u.name || '').toLowerCase().includes(q) ||
-      (u.email || '').toLowerCase().includes(q)
-    );
-  };
+  const searchFilter = useCallback(
+    (u) => {
+      if (!searchQuery) return true;
+      const q = searchQuery.toLowerCase();
+      return (
+        (u.fullName || u.name || '').toLowerCase().includes(q) ||
+        (u.email || '').toLowerCase().includes(q)
+      );
+    },
+    [searchQuery],
+  );
 
   const courseStudentRows = useMemo(
     () =>
@@ -399,7 +402,7 @@ export const EnrollmentListPage = () => {
               ? !r.isEnrolled
               : true,
         ),
-    [students, rawEnrollments, selectedCourseId, courses, searchQuery, statusFilter],
+    [students, searchFilter, rawEnrollments, selectedCourseId, courses, statusFilter],
   );
 
   const courseInstructorRows = useMemo(
@@ -428,7 +431,7 @@ export const EnrollmentListPage = () => {
               ? !r.isAssigned
               : true,
         ),
-    [instructors, courses, selectedCourseId, searchQuery, statusFilter],
+    [instructors, searchFilter, courses, selectedCourseId, statusFilter],
   );
 
   const assessmentStudentRows = useMemo(
@@ -448,7 +451,7 @@ export const EnrollmentListPage = () => {
           };
         })
         .filter((r) => (statusFilter === 'UNENROLLED' ? !r.isAssigned : true)),
-    [students, assessments, selectedAssessmentId, searchQuery, statusFilter],
+    [students, searchFilter, assessments, selectedAssessmentId, statusFilter],
   );
 
   const assessmentInstructorRows = useMemo(
@@ -468,7 +471,7 @@ export const EnrollmentListPage = () => {
           };
         })
         .filter((r) => (statusFilter === 'UNENROLLED' ? !r.isAssigned : true)),
-    [instructors, assessments, selectedAssessmentId, searchQuery, statusFilter],
+    [instructors, searchFilter, assessments, selectedAssessmentId, statusFilter],
   );
 
   // ── Active data ──

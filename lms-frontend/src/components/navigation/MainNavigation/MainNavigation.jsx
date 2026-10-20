@@ -364,10 +364,6 @@ const QuickSearchModal = ({ isOpen, onClose, items, navigate }) => {
     : items;
 
   useEffect(() => {
-    setSelectedIndex(0);
-  }, [query]);
-
-  useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e) => {
       if (e.key === 'ArrowDown') {
@@ -441,7 +437,10 @@ const QuickSearchModal = ({ isOpen, onClose, items, navigate }) => {
             autoFocus
             placeholder="Search products, pages, and features..."
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setSelectedIndex(0);
+            }}
             style={{
               flex: 1,
               background: 'transparent',

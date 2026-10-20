@@ -20,7 +20,7 @@ import { MemberRosterSkeleton } from './ChatSkeletons';
  * ChannelDetailsModal — displays channel details, member roster with presence dots,
  * member management (add/remove), and archive toggle.
  */
-export default function ChannelDetailsModal({
+function ChannelDetailsModalContent({
   isOpen,
   onClose,
   channel,
@@ -29,10 +29,10 @@ export default function ChannelDetailsModal({
   onChannelUpdated,
 }) {
   const [members, setMembers] = useState([]);
-  const [isLoadingMembers, setIsLoadingMembers] = useState(false);
+  const [isLoadingMembers, setIsLoadingMembers] = useState(true);
   const [isEditingInfo, setIsEditingInfo] = useState(false);
-  const [editName, setEditName] = useState('');
-  const [editDesc, setEditDesc] = useState('');
+  const [editName, setEditName] = useState(channel?.name || '');
+  const [editDesc, setEditDesc] = useState(channel?.description || '');
   const [isSavingInfo, setIsSavingInfo] = useState(false);
 
   // Add member state
@@ -46,19 +46,6 @@ export default function ChannelDetailsModal({
 
   // Load members when modal opens
   useEffect(() => {
-    if (!isOpen || !channel?.id) {
-      setIsEditingInfo(false);
-      setIsAddingMember(false);
-      setUserSearch('');
-      setSearchUsers([]);
-      setError(null);
-      return;
-    }
-
-    setEditName(channel.name || '');
-    setEditDesc(channel.description || '');
-
-    setIsLoadingMembers(true);
     chatService
       .getMembers(channel.id)
       .then((data) => {
@@ -427,4 +414,10 @@ export default function ChannelDetailsModal({
   );
 
   return typeof document !== 'undefined' ? createPortal(modalContent, document.body) : null;
+}
+
+export default function ChannelDetailsModal(props) {
+  return props.isOpen && props.channel ? (
+    <ChannelDetailsModalContent key={props.channel.id} {...props} />
+  ) : null;
 }

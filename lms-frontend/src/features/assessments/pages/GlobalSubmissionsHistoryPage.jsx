@@ -38,27 +38,28 @@ import { ROUTES } from '../../../constants/routes';
 
 export const GlobalSubmissionsHistoryPage = () => {
   const location = useLocation();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const isInstructor = location.pathname.startsWith('/instructor');
 
-  const initialAssessmentId = searchParams.get('assessmentId') || 'ALL';
+  const selectedAssessmentId = searchParams.get('assessmentId') || 'ALL';
+  const setSelectedAssessmentId = (value) =>
+    setSearchParams(
+      (previous) => {
+        const next = new URLSearchParams(previous);
+        if (value === 'ALL') next.delete('assessmentId');
+        else next.set('assessmentId', value);
+        return next;
+      },
+      { replace: true },
+    );
 
   const [selectedBadge, setSelectedBadge] = useState(null);
-  const [selectedAssessmentId, setSelectedAssessmentId] = useState(initialAssessmentId);
   const [selectedMonth, setSelectedMonth] = useState('ALL');
   const [selectedDate, setSelectedDate] = useState(''); // Specific date YYYY-MM-DD
   const [selectedDatePreset, setSelectedDatePreset] = useState('ALL'); // ALL, TODAY, YESTERDAY, LAST_7_DAYS, LAST_30_DAYS
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedStatus, setSelectedStatus] = useState('ALL');
   const [searchTerm, setSearchTerm] = useState('');
-
-  // Sync if URL query param changes
-  useEffect(() => {
-    const aid = searchParams.get('assessmentId');
-    if (aid && aid !== selectedAssessmentId) {
-      setSelectedAssessmentId(aid);
-    }
-  }, [searchParams]);
 
   // 1. Fetch all assessments
   const { data: assessmentsData, isLoading: assessmentsLoading } = useAdminAssessments({
@@ -73,68 +74,68 @@ export const GlobalSubmissionsHistoryPage = () => {
   }, [assessmentsData]);
 
   // 2. Fetch all analytics / submissions across all assessments
-  const [allSubmissions, setAllSubmissions] = useState([]);
-  const [analyticsLoading, setAnalyticsLoading] = useState(true);
+  const [fetchedSubmissions, setAllSubmissions] = useState([]);
+  const [fetchingAnalytics, setAnalyticsLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
+  const allSubmissions = useMemo(
+    () => (assessments.length ? fetchedSubmissions : []),
+    [assessments.length, fetchedSubmissions],
+  );
+  const analyticsLoading = assessmentsLoading || (assessments.length > 0 && fetchingAnalytics);
 
   useEffect(() => {
     let isMounted = true;
-    if (!assessments.length && !assessmentsLoading) {
-      setAllSubmissions([]);
-      setAnalyticsLoading(false);
-      return;
-    }
-
     if (!assessments.length) return;
+    const timer = setTimeout(() => {
+      setAnalyticsLoading(true);
+      setLoadError(null);
 
-    setAnalyticsLoading(true);
-    setLoadError(null);
+      Promise.allSettled(
+        assessments.map((a) =>
+          adminAssessmentService
+            .getAnalytics(a.id)
+            .then((res) => {
+              const data = res?.data?.data || res?.data || res || {};
+              const stats = data.studentStats || [];
+              return stats.map((s) => ({
+                ...s,
+                assessmentId: a.id,
+                assessmentTitle: a.title,
+                assessmentTotalMarks: a.totalMarks || s.totalMarks || 100,
+                assessmentDuration: a.durationMinutes || 60,
+                assessmentStatus: a.status,
+              }));
+            })
+            .catch(() => []),
+        ),
+      )
+        .then((results) => {
+          if (!isMounted) return;
+          const combined = [];
+          results.forEach((r) => {
+            if (r.status === 'fulfilled' && Array.isArray(r.value)) {
+              combined.push(...r.value);
+            }
+          });
 
-    Promise.allSettled(
-      assessments.map((a) =>
-        adminAssessmentService
-          .getAnalytics(a.id)
-          .then((res) => {
-            const data = res?.data?.data || res?.data || res || {};
-            const stats = data.studentStats || [];
-            return stats.map((s) => ({
-              ...s,
-              assessmentId: a.id,
-              assessmentTitle: a.title,
-              assessmentTotalMarks: a.totalMarks || s.totalMarks || 100,
-              assessmentDuration: a.durationMinutes || 60,
-              assessmentStatus: a.status,
-            }));
-          })
-          .catch(() => []),
-      ),
-    )
-      .then((results) => {
-        if (!isMounted) return;
-        const combined = [];
-        results.forEach((r) => {
-          if (r.status === 'fulfilled' && Array.isArray(r.value)) {
-            combined.push(...r.value);
-          }
+          // Sort by submittedAt descending (most recent first)
+          combined.sort((a, b) => {
+            const timeA = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
+            const timeB = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
+            return timeB - timeA;
+          });
+
+          setAllSubmissions(combined);
+        })
+        .catch((err) => {
+          if (isMounted) setLoadError(err.message || 'Failed to aggregate submissions history');
+        })
+        .finally(() => {
+          if (isMounted) setAnalyticsLoading(false);
         });
-
-        // Sort by submittedAt descending (most recent first)
-        combined.sort((a, b) => {
-          const timeA = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
-          const timeB = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
-          return timeB - timeA;
-        });
-
-        setAllSubmissions(combined);
-      })
-      .catch((err) => {
-        if (isMounted) setLoadError(err.message || 'Failed to aggregate submissions history');
-      })
-      .finally(() => {
-        if (isMounted) setAnalyticsLoading(false);
-      });
-
+    }, 0);
     return () => {
+      clearTimeout(timer);
       isMounted = false;
     };
   }, [assessments, assessmentsLoading]);

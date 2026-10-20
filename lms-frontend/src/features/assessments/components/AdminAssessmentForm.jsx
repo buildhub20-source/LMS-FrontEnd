@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Clock, Calendar, AlignLeft, Info } from 'lucide-react';
 import Input from '../../../components/common/Input';
@@ -36,7 +36,7 @@ export const AdminAssessmentForm = ({
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(assessmentSchema),
@@ -53,7 +53,7 @@ export const AdminAssessmentForm = ({
     },
   });
 
-  const watched = watch(['title', 'durationMinutes', 'maxAttempts']);
+  const watched = useWatch({ control, name: ['title', 'durationMinutes', 'maxAttempts'] });
 
   const submit = (data) =>
     onSubmit({
@@ -65,7 +65,7 @@ export const AdminAssessmentForm = ({
   return (
     <form onSubmit={handleSubmit(submit)} noValidate>
       <div className={s.page}>
-        {/* ── LEFT: form sections ──────────────────────── */}
+        {/* â”€â”€ LEFT: form sections â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className={s.formCol}>
           {error && (
             <div style={{ marginBottom: 16 }}>
@@ -124,7 +124,7 @@ export const AdminAssessmentForm = ({
                   min={1}
                   max={1440}
                   required
-                  hint="1 – 1440 min (max 24 h)"
+                  hint="1–1440 min (max 24 h)"
                   error={errors.durationMinutes?.message}
                   {...register('durationMinutes')}
                 />
@@ -272,7 +272,7 @@ export const AdminAssessmentForm = ({
           </div>
         </div>
 
-        {/* ── RIGHT: sidebar ───────────────────────────── */}
+        {/* â”€â”€ RIGHT: sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className={s.sideCol}>
           {/* Live preview */}
           <div className={s.previewCard}>

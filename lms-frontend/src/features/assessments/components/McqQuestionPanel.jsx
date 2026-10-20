@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
   CheckCircle2,
   Circle,
@@ -24,7 +24,7 @@ export const McqQuestionPanel = ({
   onDraftChange,
 }) => {
   const selectedOptionId = draft?.sourceCode || '';
-  const options = question?.options || [];
+  const options = useMemo(() => question?.options ?? [], [question?.options]);
 
   const handleSelectOption = (optionId) => {
     if (selectedOptionId === optionId) {

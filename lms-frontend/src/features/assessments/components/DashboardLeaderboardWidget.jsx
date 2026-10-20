@@ -25,7 +25,10 @@ export const DashboardLeaderboardWidget = ({ isInstructor = false }) => {
   const assessmentId = firstAssessment?.id;
 
   const { data: analytics } = useAdminAssessmentAnalytics(assessmentId);
-  const studentStats = analytics?.studentStats || [];
+  const studentStats = React.useMemo(
+    () => analytics?.studentStats ?? [],
+    [analytics?.studentStats],
+  );
 
   const leaderboard = React.useMemo(() => {
     if (!studentStats.length) return [];

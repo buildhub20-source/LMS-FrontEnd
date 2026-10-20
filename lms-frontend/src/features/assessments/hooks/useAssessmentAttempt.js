@@ -18,7 +18,9 @@ const LOCAL_STORAGE_PREFIX = 'lms_assessment_draft_';
 export function useAssessmentAttempt(assessmentId, options = {}) {
   const { onTimeExpired } = options;
   const onTimeExpiredRef = useRef(onTimeExpired);
-  onTimeExpiredRef.current = onTimeExpired;
+  useEffect(() => {
+    onTimeExpiredRef.current = onTimeExpired;
+  }, [onTimeExpired]);
   const navigate = useNavigate();
 
   // ── Attempt state ────────────────────────────────────────────────────────
@@ -30,7 +32,9 @@ export function useAssessmentAttempt(assessmentId, options = {}) {
   // ── Per-question code: { [questionId]: { language, sourceCode } }
   const [drafts, setDrafts] = useState({});
   const draftsRef = useRef({});
-  draftsRef.current = drafts;
+  useEffect(() => {
+    draftsRef.current = drafts;
+  }, [drafts]);
 
   // ── Autosave state: { [questionId]: 'saving' | 'saved' | 'error' }
   const [saveStatus, setSaveStatus] = useState({});

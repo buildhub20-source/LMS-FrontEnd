@@ -28,10 +28,6 @@ export function usePresence() {
   const [lastSeenMap, setLastSeenMap] = useState(() => chatSocketService.getLastSeenMap());
 
   useEffect(() => {
-    // Initial sync with cached state
-    setOnlineUserIds(chatSocketService.getOnlineUserIds());
-    setLastSeenMap(chatSocketService.getLastSeenMap());
-
     const unsubs = [
       chatSocketService.on(
         SERVER_EVENTS.AUTHENTICATED,

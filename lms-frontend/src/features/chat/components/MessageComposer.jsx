@@ -185,11 +185,10 @@ export default function MessageComposer({
       .slice(0, 8);
   }, [mentionQuery, allCandidates]);
 
-  const insertMention = (candidate) => {
+  const handleInsertMention = (candidate, cursor) => {
     const cleanName = candidate.isEveryone
       ? 'everyone'
       : (candidate.name || candidate.display_name || 'user').replace(/\s+/g, '_');
-    const cursor = inputRef.current?.selectionStart ?? content.length;
     const textBefore = content.slice(0, cursor);
     const textAfter = content.slice(cursor);
     const newBefore = textBefore.replace(/@([a-zA-Z0-9._-]*)$/, `@${cleanName} `);
@@ -205,6 +204,13 @@ export default function MessageComposer({
   };
 
   const [isDragging, setIsDragging] = useState(false);
+
+  const handleMentionClick = (event) => {
+    const candidate = filteredMembers[Number(event.currentTarget.dataset.mentionIndex)];
+    if (candidate) {
+      handleInsertMention(candidate, inputRef.current?.selectionStart ?? content.length);
+    }
+  };
 
   const uploadAndAppendFiles = async (files) => {
     if (!files || files.length === 0) return;
@@ -328,7 +334,10 @@ export default function MessageComposer({
         }
         if (e.key === 'Enter' || e.key === 'Tab') {
           e.preventDefault();
-          insertMention(filteredMembers[mentionIndex]);
+          handleInsertMention(
+            filteredMembers[mentionIndex],
+            e.currentTarget.selectionStart ?? content.length,
+          );
           return;
         }
       }
@@ -409,7 +418,8 @@ export default function MessageComposer({
                 <div
                   key={member.id || idx}
                   className={`chat-mention-item ${idx === mentionIndex ? 'chat-mention-item--selected' : ''}`}
-                  onClick={() => insertMention(member)}
+                  data-mention-index={idx}
+                  onClick={handleMentionClick}
                 >
                   <div
                     className={`chat-mention-avatar ${member.isEveryone ? 'chat-mention-avatar--everyone' : ''}`}

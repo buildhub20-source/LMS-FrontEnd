@@ -326,7 +326,7 @@ export const AssessmentPage = () => {
         }
       : null;
     await handleSubmit(true, onBeforeSubmit);
-  }, [attempt?.attemptId, handleSubmit, stopAndGetRecordingBlob]);
+  }, [attempt, handleSubmit, stopAndGetRecordingBlob]);
 
   const handleAgree = useCallback(async () => {
     setIsRulesAgreed(true);

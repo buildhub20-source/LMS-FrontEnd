@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   X,
   Search,
@@ -39,7 +39,7 @@ export default function ImportQuestionBankModal({
   const [previewQuestion, setPreviewQuestion] = useState(null);
   const [importing, setImporting] = useState(false);
 
-  const loadQuestions = async () => {
+  const loadQuestions = useCallback(async () => {
     setLoading(true);
     try {
       const data = await questionBankService.getQuestions({
@@ -49,21 +49,19 @@ export default function ImportQuestionBankModal({
         search,
       });
       setQuestions(data);
-      if (data.length > 0 && !selectedQuestion) {
-        setSelectedQuestion(data[0]);
-      }
+      setSelectedQuestion((previous) => previous ?? data[0] ?? null);
     } catch (err) {
       console.error('Failed to load question bank:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [category, difficulty, type, search]);
 
   useEffect(() => {
     if (!isOpen) return;
-    loadQuestions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, category, difficulty, type, search]);
+    const timer = setTimeout(loadQuestions, 150);
+    return () => clearTimeout(timer);
+  }, [isOpen, loadQuestions]);
 
   const handleConfirmImport = async () => {
     if (!selectedQuestion || !onImport) return;

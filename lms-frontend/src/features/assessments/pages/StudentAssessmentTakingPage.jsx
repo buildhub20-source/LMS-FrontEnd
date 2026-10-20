@@ -185,7 +185,7 @@ export const StudentAssessmentTakingPage = () => {
         );
       }
     },
-    [attempt?.id, attempt?.attemptId, attempt?.questions, assessmentId, flushDrafts, navigate],
+    [attempt, assessmentId, flushDrafts, navigate],
   );
 
   useEffect(() => {

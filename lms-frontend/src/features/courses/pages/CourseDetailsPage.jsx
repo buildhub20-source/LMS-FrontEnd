@@ -44,7 +44,7 @@ import usePermission from '../../../hooks/usePermission';
 import useAuth from '../../auth/hooks/useAuth';
 import learningService from '../../learning/services/learningService';
 import useStudyTimer from '../../learning/hooks/useStudyTimer';
-import { formatSectionTitle } from '../components/CurriculumBuilder';
+import { formatSectionTitle } from '../utils/courseFormatting';
 import CourseAnalyticsTab from '../components/CourseAnalyticsTab';
 import courseService from '../services/courseService';
 import LessonNotesPanel from '../components/LessonNotesPanel';
@@ -95,14 +95,19 @@ const CourseDetailsContent = () => {
     return list;
   }, [course]);
 
-  const [activeLessonIndex, setActiveLessonIndex] = useState(0);
+  const [activeLessonIndex, setActiveLessonIndex] = useState(() =>
+    Math.max(
+      0,
+      allLessons.findIndex((lesson) => lesson.id === lessonId),
+    ),
+  );
 
-  useEffect(() => {
-    if (lessonId && allLessons.length > 0) {
-      const idx = allLessons.findIndex((l) => l.id === lessonId);
-      if (idx >= 0) setActiveLessonIndex(idx);
-    }
-  }, [lessonId, allLessons]);
+  const routeLessonIndex = allLessons.findIndex((lesson) => lesson.id === lessonId);
+  const [previousRouteIndex, setPreviousRouteIndex] = useState(routeLessonIndex);
+  if (previousRouteIndex !== routeLessonIndex) {
+    setPreviousRouteIndex(routeLessonIndex);
+    if (routeLessonIndex >= 0) setActiveLessonIndex(routeLessonIndex);
+  }
 
   const { user } = useAuth();
   const userId = user?.id || 'guest';
@@ -151,6 +156,14 @@ const CourseDetailsContent = () => {
 
   const [currentVideoTime, setCurrentVideoTime] = useState(0);
   const lastSavedPositionRef = useRef(0);
+  const [previousVideoLessonId, setPreviousVideoLessonId] = useState(currentLesson?.id);
+  if (previousVideoLessonId !== currentLesson?.id) {
+    setPreviousVideoLessonId(currentLesson?.id);
+    setVideoProgressPercent(0);
+    setVideoNotice(null);
+    setCurrentVideoTime(0);
+    setRecordingPlaybackUrl(null);
+  }
 
   // Key for persisting resume position per student, course, and lesson
   const resumePositionKey = currentLesson?.id
@@ -160,9 +173,6 @@ const CourseDetailsContent = () => {
   // Restore maxWatchedTime and resume position from localStorage when switching lessons
   useEffect(() => {
     maxWatchedTimeRef.current = 0;
-    setVideoProgressPercent(0);
-    setVideoNotice(null);
-    setCurrentVideoTime(0);
     lastSavedPositionRef.current = 0;
 
     if (resumePositionKey) {
@@ -308,7 +318,6 @@ const CourseDetailsContent = () => {
     let cancelled = false;
     const recordingId = currentLesson?.recordingId;
 
-    setRecordingPlaybackUrl(null);
     if (!recordingId) return undefined;
 
     courseService

@@ -376,5 +376,5 @@ const previewStyle = (rows) => ({
   color: 'var(--text-primary)',
 });
 
-export { RichTextEditor, markdownToHtml };
+export { RichTextEditor };
 export default RichTextEditor;

@@ -67,11 +67,16 @@ export const ExamLockdownOverlay = ({
     onCountdownCompleteRef.current = onCountdownComplete;
   }, [onCountdownComplete]);
 
+  const [previousStage, setPreviousStage] = useState(stage);
+  if (previousStage !== stage) {
+    setPreviousStage(stage);
+    if (stage === 'COUNTDOWN') setLaunchCountdown(15);
+  }
+
   // 15-Second Launch Countdown
   useEffect(() => {
     if (stage !== 'COUNTDOWN') return;
 
-    setLaunchCountdown(15);
     const timer = setInterval(() => {
       setLaunchCountdown((prev) => {
         if (prev <= 1) {

@@ -29,7 +29,7 @@ const parseTimestampToSeconds = (timestampStr) => {
   return 0;
 };
 
-export const LessonNotesPanel = ({
+const LessonNotesContent = ({
   courseId,
   courseTitle = '',
   currentLesson,
@@ -42,25 +42,17 @@ export const LessonNotesPanel = ({
   const lessonTitle = currentLesson?.title || 'General Notes';
   const storageKey = `lms_notes_${courseId}_${lessonId}`;
 
-  const [noteContent, setNoteContent] = useState('');
+  const [noteContent, setNoteContent] = useState(() => {
+    try {
+      return localStorage.getItem(storageKey) ?? '';
+    } catch {
+      return '';
+    }
+  });
   const [lastSaved, setLastSaved] = useState(null);
   const [copied, setCopied] = useState(false);
   const [activeSubTab, setActiveSubTab] = useState('current'); // 'current' | 'all'
   const textareaRef = useRef(null);
-
-  // Load note for current lesson
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved !== null) {
-        setNoteContent(saved);
-      } else {
-        setNoteContent('');
-      }
-    } catch {
-      setNoteContent('');
-    }
-  }, [storageKey]);
 
   // Autosave handler (debounced)
   useEffect(() => {
@@ -524,5 +516,12 @@ export const LessonNotesPanel = ({
     </div>
   );
 };
+
+export const LessonNotesPanel = (props) => (
+  <LessonNotesContent
+    key={`${props.courseId}:${props.currentLesson?.id ?? 'general'}`}
+    {...props}
+  />
+);
 
 export default LessonNotesPanel;

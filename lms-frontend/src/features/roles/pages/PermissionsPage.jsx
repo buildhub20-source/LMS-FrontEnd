@@ -101,7 +101,8 @@ export const PermissionsPage = () => {
   }, []);
 
   useEffect(() => {
-    loadData();
+    const timer = setTimeout(loadData, 0);
+    return () => clearTimeout(timer);
   }, [loadData]);
 
   const filtered = search

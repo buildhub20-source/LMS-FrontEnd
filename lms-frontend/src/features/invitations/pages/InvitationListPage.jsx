@@ -153,7 +153,8 @@ export const InvitationListPage = () => {
   }, [page, pageSize, search, statusFilter]);
 
   useEffect(() => {
-    loadInvitations();
+    const timer = setTimeout(loadInvitations, 0);
+    return () => clearTimeout(timer);
   }, [loadInvitations]);
 
   useEffect(() => {

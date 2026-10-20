@@ -45,7 +45,7 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
   const [filterBadgeId, setFilterBadgeId] = useState('ALL');
 
   // Compute fully ranked & badge-evaluated leaderboard
-  const studentStats = analytics?.studentStats || [];
+  const studentStats = useMemo(() => analytics?.studentStats ?? [], [analytics?.studentStats]);
   const fullLeaderboard = useMemo(() => {
     return generateLeaderboard(studentStats, activeCategory, questions);
   }, [studentStats, activeCategory, questions]);
