@@ -1006,7 +1006,7 @@ export const GlobalSubmissionsHistoryPage = () => {
                 borderRadius: 6,
               }}
             >
-              <span style={{ fontSize: 11, color: '#60a5fa' }}>
+              <span style={{ fontSize: 11, color: 'var(--badge-info-fg)' }}>
                 Filtered:{' '}
                 <strong>
                   {assessments.find((a) => a.id === selectedAssessmentId)?.title ||

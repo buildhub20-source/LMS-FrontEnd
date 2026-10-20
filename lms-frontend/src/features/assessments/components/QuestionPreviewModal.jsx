@@ -221,7 +221,14 @@ function QuestionPreviewContent({ onClose, questionData }) {
                   border: '1px solid rgba(59, 130, 246, 0.2)',
                 }}
               >
-                <h4 style={{ margin: '0 0 8px', fontSize: 13, fontWeight: 700, color: '#60a5fa' }}>
+                <h4
+                  style={{
+                    margin: '0 0 8px',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: 'var(--badge-info-fg)',
+                  }}
+                >
                   Instructor Answers & Explanations:
                 </h4>
                 {normalizedQuestion.options.map((opt, i) => (

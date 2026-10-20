@@ -671,7 +671,7 @@ export const CertificateListPage = () => {
                         justifyContent: 'center',
                       }}
                     >
-                      <Award size={24} style={{ color: '#fbbf24' }} />
+                      <Award size={24} style={{ color: 'var(--badge-warning-fg)' }} />
                     </div>
                     <span
                       style={{

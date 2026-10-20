@@ -706,7 +706,7 @@ export const NotesBookmarksPage = () => {
                   borderRadius: 10,
                   border: '1px solid rgba(245, 158, 11, 0.3)',
                   background: 'rgba(245, 158, 11, 0.1)',
-                  color: '#fbbf24',
+                  color: 'var(--badge-warning-fg)',
                   fontSize: 13,
                   fontWeight: 600,
                   cursor: 'pointer',

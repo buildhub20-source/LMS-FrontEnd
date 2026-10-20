@@ -307,7 +307,7 @@ export const InstructorCertificationHubPage = () => {
             borderRadius: 12,
             backgroundColor: 'rgba(16, 185, 129, 0.15)',
             border: '1px solid rgba(16, 185, 129, 0.3)',
-            color: '#34d399',
+            color: 'var(--badge-success-fg)',
             fontSize: 13,
             fontWeight: 600,
             display: 'flex',

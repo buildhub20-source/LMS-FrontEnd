@@ -71,25 +71,25 @@ const ENGAGEMENT_CONFIG = {
   FULL_TIME: {
     label: 'Full Time',
     bg: 'rgba(16, 185, 129, 0.18)',
-    color: '#34d399',
+    color: 'var(--badge-success-fg)',
     border: 'rgba(16, 185, 129, 0.35)',
   },
   PART_TIME: {
     label: 'Part Time',
     bg: 'rgba(59, 130, 246, 0.18)',
-    color: '#60a5fa',
+    color: 'var(--badge-info-fg)',
     border: 'rgba(59, 130, 246, 0.35)',
   },
   CONTRACT: {
     label: 'Contract',
     bg: 'rgba(245, 158, 11, 0.18)',
-    color: '#fbbf24',
+    color: 'var(--badge-warning-fg)',
     border: 'rgba(245, 158, 11, 0.35)',
   },
   VISITING: {
     label: 'Visiting',
     bg: 'rgba(168, 85, 247, 0.18)',
-    color: '#c084fc',
+    color: 'var(--badge-accent-fg)',
     border: 'rgba(168, 85, 247, 0.35)',
   },
 };
@@ -146,7 +146,7 @@ function AccountBadge({ row }) {
           padding: '2px 8px',
           borderRadius: 6,
           backgroundColor: 'rgba(245, 158, 11, 0.15)',
-          color: '#fbbf24',
+          color: 'var(--badge-warning-fg)',
           border: '1px solid rgba(245, 158, 11, 0.3)',
         }}
       >
@@ -162,7 +162,7 @@ function AccountBadge({ row }) {
         padding: '2px 8px',
         borderRadius: 6,
         backgroundColor: 'rgba(16, 185, 129, 0.15)',
-        color: '#34d399',
+        color: 'var(--badge-success-fg)',
         border: '1px solid rgba(16, 185, 129, 0.3)',
       }}
     >

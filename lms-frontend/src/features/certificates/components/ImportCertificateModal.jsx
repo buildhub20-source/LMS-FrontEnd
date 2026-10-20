@@ -709,7 +709,7 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
                 e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)';
               }}
             >
-              <Upload size={28} color="#34d399" />
+              <Upload size={28} style={{ color: 'var(--badge-success-fg)' }} />
               <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
                 Upload an Open Badges or credential JSON file
               </div>
@@ -772,7 +772,7 @@ export const ImportCertificateModal = ({ isOpen, onClose, onImportSuccess }) => 
                   display: 'flex',
                   alignItems: 'center',
                   gap: 10,
-                  color: '#34d399',
+                  color: 'var(--badge-success-fg)',
                   fontSize: 13,
                 }}
               >

@@ -329,7 +329,7 @@ export const ExamLockdownOverlay = ({
                       padding: 6,
                       borderRadius: 8,
                       background: 'rgba(245,158,11,0.15)',
-                      color: '#fbbf24',
+                      color: 'var(--badge-warning-fg)',
                       flexShrink: 0,
                     }}
                   >
@@ -354,7 +354,7 @@ export const ExamLockdownOverlay = ({
                       padding: 6,
                       borderRadius: 8,
                       background: 'rgba(16,185,129,0.15)',
-                      color: '#34d399',
+                      color: 'var(--badge-success-fg)',
                       flexShrink: 0,
                     }}
                   >
@@ -477,7 +477,7 @@ export const ExamLockdownOverlay = ({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: isScreenActive ? '#34d399' : 'var(--primary)',
+                        color: isScreenActive ? 'var(--badge-success-fg)' : 'var(--primary)',
                       }}
                     >
                       <Video size={18} />
@@ -486,7 +486,12 @@ export const ExamLockdownOverlay = ({
                       <strong style={{ fontSize: 13, color: '#f1f5f9', display: 'block' }}>
                         Screen Recording Access
                       </strong>
-                      <span style={{ fontSize: 12, color: isScreenActive ? '#34d399' : '#94a3b8' }}>
+                      <span
+                        style={{
+                          fontSize: 12,
+                          color: isScreenActive ? 'var(--badge-success-fg)' : '#94a3b8',
+                        }}
+                      >
                         {isScreenActive
                           ? '● Screen Stream Active & Verified (Monitor)'
                           : 'Select Entire Screen (Monitor) when prompted'}
@@ -523,7 +528,7 @@ export const ExamLockdownOverlay = ({
                         borderRadius: 6,
                         background: 'rgba(16, 185, 129, 0.15)',
                         border: '1px solid rgba(16, 185, 129, 0.3)',
-                        color: '#34d399',
+                        color: 'var(--badge-success-fg)',
                         fontSize: 12,
                         fontWeight: 700,
                         display: 'flex',
@@ -578,7 +583,7 @@ export const ExamLockdownOverlay = ({
                       borderRadius: 6,
                       background: 'rgba(16, 185, 129, 0.15)',
                       border: '1px solid rgba(16, 185, 129, 0.3)',
-                      color: '#34d399',
+                      color: 'var(--badge-success-fg)',
                       fontSize: 12,
                       fontWeight: 700,
                       display: 'flex',
@@ -680,7 +685,11 @@ export const ExamLockdownOverlay = ({
                             ? 'color-mix(in srgb, var(--primary) 15%, transparent)'
                             : 'rgba(16, 185, 129, 0.15)',
                         border: `1px solid ${error ? 'rgba(239, 68, 68, 0.3)' : loading ? 'color-mix(in srgb, var(--primary) 30%, transparent)' : 'rgba(16, 185, 129, 0.3)'}`,
-                        color: error ? '#f87171' : loading ? 'var(--primary)' : '#34d399',
+                        color: error
+                          ? '#f87171'
+                          : loading
+                            ? 'var(--primary)'
+                            : 'var(--badge-success-fg)',
                         fontSize: 12,
                         fontWeight: 700,
                       }}
@@ -712,7 +721,7 @@ export const ExamLockdownOverlay = ({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#34d399',
+                        color: 'var(--badge-success-fg)',
                       }}
                     >
                       <Shield size={18} />
@@ -721,7 +730,7 @@ export const ExamLockdownOverlay = ({
                       <strong style={{ fontSize: 13, color: '#f1f5f9', display: 'block' }}>
                         Cloudflare R2 Proctoring
                       </strong>
-                      <span style={{ fontSize: 12, color: '#34d399' }}>
+                      <span style={{ fontSize: 12, color: 'var(--badge-success-fg)' }}>
                         Encrypted Storage Channel Armed
                       </span>
                     </div>
@@ -732,7 +741,7 @@ export const ExamLockdownOverlay = ({
                       borderRadius: 6,
                       background: 'rgba(16, 185, 129, 0.15)',
                       border: '1px solid rgba(16, 185, 129, 0.3)',
-                      color: '#34d399',
+                      color: 'var(--badge-success-fg)',
                       fontSize: 12,
                       fontWeight: 700,
                     }}
@@ -1015,7 +1024,7 @@ export const ExamLockdownOverlay = ({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#60a5fa',
+                  color: 'var(--badge-info-fg)',
                   flexShrink: 0,
                 }}
               >
@@ -1061,7 +1070,7 @@ export const ExamLockdownOverlay = ({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#fbbf24',
+                  color: 'var(--badge-warning-fg)',
                   flexShrink: 0,
                 }}
               >
@@ -1107,7 +1116,7 @@ export const ExamLockdownOverlay = ({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#c084fc',
+                  color: 'var(--badge-accent-fg)',
                   flexShrink: 0,
                 }}
               >
@@ -1145,7 +1154,7 @@ export const ExamLockdownOverlay = ({
               gap: 16,
               fontSize: 11,
               fontWeight: 600,
-              color: '#34d399',
+              color: 'var(--badge-success-fg)',
             }}
           >
             <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -1271,7 +1280,14 @@ export const ExamLockdownOverlay = ({
               <AlertTriangle size={22} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: '#fbbf24' }}>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: 16,
+                  fontWeight: 800,
+                  color: 'var(--badge-warning-fg)',
+                }}
+              >
                 Security Strike {tabSwitchCount} of {maxStrikes}
               </h3>
               <p style={{ margin: 0, fontSize: 12, color: '#94a3b8' }}>

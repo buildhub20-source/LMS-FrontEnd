@@ -580,7 +580,7 @@ export const StudentAssessmentTakingPage = () => {
               borderRadius: 8,
               padding: '7px 10px',
               cursor: 'pointer',
-              color: isFullscreen ? '#34d399' : '#94a3b8',
+              color: isFullscreen ? 'var(--badge-success-fg)' : '#94a3b8',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -724,7 +724,7 @@ export const StudentAssessmentTakingPage = () => {
             <span
               style={{
                 fontSize: 11,
-                color: '#34d399',
+                color: 'var(--badge-success-fg)',
                 background: 'rgba(16, 185, 129, 0.12)',
                 padding: '2px 8px',
                 borderRadius: 4,
@@ -774,7 +774,7 @@ export const StudentAssessmentTakingPage = () => {
                     : hasAnswer
                       ? 'rgba(16, 185, 129, 0.15)'
                       : 'rgba(255, 255, 255, 0.03)',
-                  color: isCurrent ? '#ffffff' : hasAnswer ? '#34d399' : '#94a3b8',
+                  color: isCurrent ? '#ffffff' : hasAnswer ? 'var(--badge-success-fg)' : '#94a3b8',
                   fontSize: 12,
                   fontWeight: 700,
                   cursor: 'pointer',

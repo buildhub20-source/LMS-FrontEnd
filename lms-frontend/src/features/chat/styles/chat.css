@@ -389,23 +389,10 @@ html.light .chat-channel-item--active {
   font-size: 0.88rem;
   font-weight: 600;
   flex-shrink: 0;
-  background: var(--chat-accent);
-  color: #ffffff;
-  border: none;
+  background: var(--chat-surface-light);
+  color: var(--chat-text-primary);
+  border: 1px solid var(--chat-border);
   box-shadow: none;
-}
-
-.chat-channel-icon-badge--org {
-  background: #059669;
-}
-.chat-channel-icon-badge--course {
-  background: #0284c7;
-}
-.chat-channel-icon-badge--direct {
-  background: #7c3aed;
-}
-.chat-channel-icon-badge--group {
-  background: #d97706;
 }
 
 .chat-channel-icon-badge--header {
@@ -413,7 +400,8 @@ html.light .chat-channel-item--active {
   height: 40px;
   border-radius: 50%;
   font-size: 1.1rem;
-  background: var(--chat-accent);
+  background: var(--brand-tile-bg);
+  color: var(--brand-tile-fg);
   border: none;
   box-shadow: none;
 }
@@ -782,24 +770,15 @@ html.light .chat-channel-item--active {
   display: none;
 }
 
-/* User Avatar Standard Colors */
-.chat-avatar--gradient-0 {
-  background: var(--primary);
-}
-.chat-avatar--gradient-1 {
-  background: #0284c7;
-}
-.chat-avatar--gradient-2 {
-  background: #059669;
-}
-.chat-avatar--gradient-3 {
-  background: #d97706;
-}
-.chat-avatar--gradient-4 {
-  background: #e11d48;
-}
+/* User avatars: one neutral tile, same as the app-wide Avatar */
+.chat-avatar--gradient-0,
+.chat-avatar--gradient-1,
+.chat-avatar--gradient-2,
+.chat-avatar--gradient-3,
+.chat-avatar--gradient-4,
 .chat-avatar--gradient-5 {
-  background: #7c3aed;
+  background: var(--brand-tile-bg);
+  color: var(--brand-tile-fg);
 }
 
 .chat-message__body {
@@ -1392,6 +1371,46 @@ html.light .chat-channel-item--active {
 .chat-message__file-size {
   font-size: 0.7rem;
   color: var(--chat-text-muted);
+}
+
+.chat-message__file-card--expired {
+  border-style: dashed;
+  cursor: default;
+  background: transparent;
+}
+
+.chat-message__file-card--expired:hover {
+  background: transparent;
+  border-color: var(--chat-border);
+}
+
+.chat-message__file-card--expired .chat-message__file-name {
+  text-decoration: line-through;
+}
+
+.chat-message__file-expired-icon {
+  color: var(--chat-text-muted);
+  flex-shrink: 0;
+}
+
+/* Attachments inside your own bubble (black in light mode) */
+.chat-message--outgoing .chat-message__file-card {
+  background: color-mix(in srgb, var(--chat-out-text) 8%, transparent);
+  border-color: color-mix(in srgb, var(--chat-out-text) 28%, transparent);
+  color: var(--chat-out-text);
+}
+
+.chat-message--outgoing .chat-message__file-card--expired,
+.chat-message--outgoing .chat-message__file-card--expired:hover {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--chat-out-text) 28%, transparent);
+}
+
+.chat-message--outgoing .chat-message__file-size,
+.chat-message--outgoing .chat-message__file-download,
+.chat-message--outgoing .chat-message__file-expired-icon,
+.chat-message--outgoing .chat-message__file-icon {
+  color: color-mix(in srgb, var(--chat-out-text) 70%, transparent);
 }
 
 .chat-message__file-download {
