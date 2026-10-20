@@ -8,6 +8,7 @@ import {
   StickyNote,
   MessageSquare,
   Video,
+  UserCheck,
   Bell,
   Home,
   Settings,
@@ -35,6 +36,12 @@ const SIDEBAR_ITEMS = [
     to: ROUTES.STUDENT_LIVE_CLASSES,
     group: 'Learning',
     icon: <Video className="h-5 w-5" />,
+  },
+  {
+    label: 'My Attendance',
+    to: ROUTES.MY_ATTENDANCE,
+    group: 'Learning',
+    icon: <UserCheck className="h-5 w-5" />,
   },
   {
     label: 'Assessments',

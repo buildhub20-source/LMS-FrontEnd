@@ -53,6 +53,9 @@ export const liveSessionApi = {
   endSession: (sessionId) => http.post(API_ENDPOINTS.liveSessions.end(sessionId)),
 
   getSessionAttendance: (sessionId) => http.get(API_ENDPOINTS.liveSessions.attendance(sessionId)),
+  getCourseAttendance: (courseId) =>
+    http.get(API_ENDPOINTS.liveSessions.courseAttendance(courseId)),
+  getMyAttendance: () => http.get(API_ENDPOINTS.liveSessions.myAttendance),
 
   getTenantUsage: (tenantId) => http.get(API_ENDPOINTS.liveSessions.tenantUsage(tenantId)),
 
