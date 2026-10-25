@@ -128,7 +128,7 @@ export const SubscriptionPage = () => {
                   letterSpacing: '0.08em',
                   background: 'rgba(251, 191, 36, 0.2)',
                   border: '1px solid rgba(251, 191, 36, 0.4)',
-                  color: '#fbbf24',
+                  color: 'var(--badge-warning-fg)',
                   padding: '3px 10px',
                   borderRadius: 20,
                   display: 'inline-flex',
@@ -462,7 +462,7 @@ export const SubscriptionPage = () => {
                   gap: 8,
                 }}
               >
-                <Zap size={17} style={{ color: '#fbbf24' }} />
+                <Zap size={17} style={{ color: 'var(--badge-warning-fg)' }} />
                 Need more seats or storage?
               </h3>
               <p style={{ margin: 0, fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>

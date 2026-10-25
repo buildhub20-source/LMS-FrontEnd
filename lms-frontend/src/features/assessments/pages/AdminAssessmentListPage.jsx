@@ -378,7 +378,7 @@ const SC = {
   PUBLISHED: {
     label: 'Published',
     bg: 'rgba(16, 185, 129, 0.18)',
-    color: '#34d399',
+    color: 'var(--badge-success-fg)',
     border: 'rgba(16, 185, 129, 0.35)',
   },
   CLOSED: {

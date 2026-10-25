@@ -999,13 +999,13 @@ export const StudentDashboardPage = () => {
                       fileTypeUpper === 'DOCX' || fileTypeUpper === 'DOC'
                         ? {
                             bg: 'rgba(59, 130, 246, 0.15)',
-                            text: '#60a5fa',
+                            text: 'var(--badge-info-fg)',
                             border: 'rgba(59, 130, 246, 0.3)',
                           }
                         : fileTypeUpper === 'ZIP' || fileTypeUpper === 'RAR'
                           ? {
                               bg: 'rgba(16, 185, 129, 0.15)',
-                              text: '#34d399',
+                              text: 'var(--badge-success-fg)',
                               border: 'rgba(16, 185, 129, 0.3)',
                             }
                           : {
@@ -1133,7 +1133,7 @@ export const StudentDashboardPage = () => {
                         cursor: 'pointer',
                         background: 'rgba(59, 130, 246, 0.08)',
                         border: '1px solid rgba(59, 130, 246, 0.2)',
-                        color: '#60a5fa',
+                        color: 'var(--badge-info-fg)',
                         transition: 'all 0.15s ease',
                       }}
                     >
@@ -1197,7 +1197,7 @@ export const StudentDashboardPage = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#60a5fa',
+                        color: 'var(--badge-info-fg)',
                       }}
                     >
                       <Download size={18} />
@@ -1332,13 +1332,13 @@ export const StudentDashboardPage = () => {
                         fileTypeUpper === 'DOCX' || fileTypeUpper === 'DOC'
                           ? {
                               bg: 'rgba(59, 130, 246, 0.15)',
-                              text: '#60a5fa',
+                              text: 'var(--badge-info-fg)',
                               border: 'rgba(59, 130, 246, 0.3)',
                             }
                           : fileTypeUpper === 'ZIP' || fileTypeUpper === 'RAR'
                             ? {
                                 bg: 'rgba(16, 185, 129, 0.15)',
-                                text: '#34d399',
+                                text: 'var(--badge-success-fg)',
                                 border: 'rgba(16, 185, 129, 0.3)',
                               }
                             : {

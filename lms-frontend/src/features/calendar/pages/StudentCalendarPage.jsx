@@ -29,13 +29,13 @@ const EVENT_COLORS = {
     bg: 'rgba(59, 130, 246, 0.12)',
     border: 'rgba(59, 130, 246, 0.3)',
     dot: '#3b82f6',
-    text: '#60a5fa',
+    text: 'var(--badge-info-fg)',
   },
   green: {
     bg: 'rgba(16, 185, 129, 0.12)',
     border: 'rgba(16, 185, 129, 0.3)',
     dot: '#10b981',
-    text: '#34d399',
+    text: 'var(--badge-success-fg)',
   },
   emerald: {
     bg: 'rgba(16, 185, 129, 0.15)',
@@ -47,7 +47,7 @@ const EVENT_COLORS = {
     bg: 'rgba(245, 158, 11, 0.12)',
     border: 'rgba(245, 158, 11, 0.3)',
     dot: '#f59e0b',
-    text: '#fbbf24',
+    text: 'var(--badge-warning-fg)',
   },
   red: {
     bg: 'rgba(239, 68, 68, 0.12)',
@@ -71,8 +71,8 @@ const EVENT_ICONS = {
 };
 
 const STATUS_BADGES = {
-  upcoming: { label: 'Upcoming', bg: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa' },
-  active: { label: 'Active Now', bg: 'rgba(16, 185, 129, 0.15)', color: '#34d399' },
+  upcoming: { label: 'Upcoming', bg: 'rgba(59, 130, 246, 0.15)', color: 'var(--badge-info-fg)' },
+  active: { label: 'Active Now', bg: 'rgba(16, 185, 129, 0.15)', color: 'var(--badge-success-fg)' },
   overdue: { label: 'Overdue', bg: 'rgba(239, 68, 68, 0.15)', color: '#f87171' },
   completed: { label: 'Completed', bg: 'rgba(139, 92, 246, 0.15)', color: '#a78bfa' },
 };
@@ -488,7 +488,7 @@ export const StudentCalendarPage = () => {
                 justifyContent: 'center',
               }}
             >
-              <Award size={18} color="#34d399" />
+              <Award size={18} style={{ color: 'var(--badge-success-fg)' }} />
             </div>
             <div>
               <div
@@ -501,7 +501,7 @@ export const StudentCalendarPage = () => {
               >
                 Completed
               </div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: '#34d399' }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--badge-success-fg)' }}>
                 {completedCount}
               </div>
             </div>

@@ -258,19 +258,19 @@ function LevelBadge({ level }) {
     BEGINNER: {
       label: 'Beginner',
       bg: 'rgba(16, 185, 129, 0.18)',
-      color: '#34d399',
+      color: 'var(--badge-success-fg)',
       border: 'rgba(16, 185, 129, 0.35)',
     },
     INTERMEDIATE: {
       label: 'Intermediate',
       bg: 'rgba(59, 130, 246, 0.18)',
-      color: '#60a5fa',
+      color: 'var(--badge-info-fg)',
       border: 'rgba(59, 130, 246, 0.35)',
     },
     ADVANCED: {
       label: 'Advanced',
       bg: 'rgba(168, 85, 247, 0.18)',
-      color: '#c084fc',
+      color: 'var(--badge-accent-fg)',
       border: 'rgba(168, 85, 247, 0.35)',
     },
   };
@@ -317,13 +317,13 @@ const SC = {
   PENDING_REVIEW: {
     label: 'Pending',
     bg: 'rgba(245, 158, 11, 0.18)',
-    color: '#fbbf24',
+    color: 'var(--badge-warning-fg)',
     border: 'rgba(245, 158, 11, 0.35)',
   },
   PUBLISHED: {
     label: 'Ongoing',
     bg: 'rgba(16, 185, 129, 0.18)',
-    color: '#34d399',
+    color: 'var(--badge-success-fg)',
     border: 'rgba(16, 185, 129, 0.35)',
   },
   UNPUBLISHED: {

@@ -143,7 +143,7 @@ export const AccountDetailsTab = ({ user }) => {
                     background:
                       'linear-gradient(135deg, color-mix(in srgb, var(--primary) 20%, transparent), rgba(168, 85, 247, 0.2))',
                     border: '1px solid rgba(168, 85, 247, 0.4)',
-                    color: '#c084fc',
+                    color: 'var(--badge-accent-fg)',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: 6,

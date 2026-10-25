@@ -997,8 +997,8 @@ export const UserListPage = () => {
                           : item.action === 'DEACTIVATED'
                             ? 'var(--text-secondary)'
                             : item.action === 'UNLOCKED'
-                              ? '#34d399'
-                              : '#60a5fa',
+                              ? 'var(--badge-success-fg)'
+                              : 'var(--badge-info-fg)',
                     }}
                   >
                     {item.action === 'LOCKED' ? (

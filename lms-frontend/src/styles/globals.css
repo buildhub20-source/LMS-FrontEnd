@@ -218,7 +218,7 @@
   --accent-foreground: #121212;
   --destructive: #dc2626;
   --border: #e2ded2;
-  --input: #d6d1c3;
+  --input: #8a8578;
   --ring: #121212;
   --link: #7a5c00;
   --chart-1: #121212;
@@ -259,7 +259,7 @@
   --si-label: #3a3936;
   --si-faint: #6f6d67;
   --si-input-bg: #ffffff;
-  --si-input-border: #d6d1c3;
+  --si-input-border: #8a8578;
   --si-input-text: #121212;
   --si-focus: #121212;
   --si-focus-ring: rgba(18, 18, 18, 0.12);
@@ -293,7 +293,7 @@
   --accent-foreground: #eeede8;
   --destructive: #f87171;
   --border: #26292d;
-  --input: #33373c;
+  --input: #656a71;
   --ring: #dfc04a;
   --link: #dfc04a;
   --chart-1: #dfc04a;
@@ -332,7 +332,7 @@
   --si-label: #c4c5c7;
   --si-faint: #8d8f93;
   --si-input-bg: #0f1113;
-  --si-input-border: #33373c;
+  --si-input-border: #656a71;
   --si-input-text: #eeede8;
   --si-focus: #dfc04a;
   --si-focus-ring: rgba(223, 192, 74, 0.18);
@@ -511,7 +511,7 @@ img {
 .input-base {
   width: 100%;
   border-radius: var(--radius);
-  border: 1px solid var(--border);
+  border: 1px solid var(--input);
   background-color: var(--card);
   padding: 0.5rem 0.875rem;
   font-size: 0.875rem;

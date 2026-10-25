@@ -134,7 +134,7 @@ export const OrganizationPage = () => {
                 boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
               }}
             >
-              <Building2 size={34} style={{ color: '#fbbf24' }} />
+              <Building2 size={34} style={{ color: 'var(--badge-warning-fg)' }} />
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
@@ -186,7 +186,7 @@ export const OrganizationPage = () => {
                 transition: 'background 0.15s',
               }}
             >
-              <Sparkles size={15} style={{ color: '#fbbf24' }} />
+              <Sparkles size={15} style={{ color: 'var(--badge-warning-fg)' }} />
               View subscription
             </button>
           </div>
