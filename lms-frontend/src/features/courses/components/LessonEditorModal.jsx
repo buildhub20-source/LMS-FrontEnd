@@ -258,7 +258,7 @@ export default function LessonEditorModal({ courseId, moduleId, lesson, onClose,
               Configure content format, details, thumbnail representation, and attachments.
             </p>
           </div>
-          <button onClick={onClose} style={closeButtonStyle}>
+          <button aria-label="Close" onClick={onClose} style={closeButtonStyle}>
             <X size={18} />
           </button>
         </div>

@@ -1273,6 +1273,7 @@ export const AdminAssessmentListPage = () => {
             ].map(({ id, I }) => (
               <button
                 key={id}
+                aria-label={`${id} view`}
                 onClick={() => setView(id)}
                 style={{
                   padding: '7px 10px',

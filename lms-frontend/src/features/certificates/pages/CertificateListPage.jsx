@@ -15,6 +15,8 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { certificateListOptions } from '../services/certificateQueries';
+import useAuth from '../../auth/hooks/useAuth';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
 import ErrorState from '../../../components/common/ErrorState';
@@ -87,6 +89,7 @@ function CertificateSkeletonCard() {
  */
 export const CertificateListPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [filterTab, setFilterTab] = useState('ALL'); // 'ALL' | 'LMS' | 'IMPORTED'
 
@@ -105,13 +108,12 @@ export const CertificateListPage = () => {
     error,
     refetch,
   } = useQuery({
-    queryKey: ['certificates'],
-    queryFn: () => certificateService.list(),
+    ...certificateListOptions(user?.id),
   });
 
   if (error) return <ErrorState error={error} onRetry={refetch} />;
 
-  const lmsCerts = raw?.data?.data?.content ?? raw?.data?.content ?? raw?.data ?? [];
+  const lmsCerts = Array.isArray(raw) ? raw : (raw?.content ?? []);
   const totalCount = lmsCerts.length + importedCerts.length;
 
   const handleImportSuccess = (newCert) => {
@@ -753,6 +755,7 @@ export const CertificateListPage = () => {
                       <Download size={13} /> Download PDF
                     </button>
                     <button
+                      aria-label="Open link"
                       onClick={() => navigate(ROUTES.CERTIFICATE_DETAILS(cert.id))}
                       style={{
                         display: 'flex',

@@ -640,6 +640,7 @@ export const NotesBookmarksPage = () => {
             />
             {search && (
               <button
+                aria-label="Close"
                 onClick={() => setSearch('')}
                 style={{
                   background: 'transparent',
@@ -793,6 +794,7 @@ export const NotesBookmarksPage = () => {
                   {editingNote.id ? 'Edit Study Note' : 'Create New Study Note'}
                 </h3>
                 <button
+                  aria-label="Close"
                   onClick={() => setEditingNote(null)}
                   style={{
                     background: 'transparent',

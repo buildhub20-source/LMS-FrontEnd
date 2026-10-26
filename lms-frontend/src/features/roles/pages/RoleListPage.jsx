@@ -1829,6 +1829,7 @@ export const RoleListPage = () => {
             </span>
             {['‹', '›'].map((ch, i) => (
               <button
+                aria-label={i === 0 ? 'Previous page' : 'Next page'}
                 key={i}
                 disabled={i === 0 ? userPage === 0 : userPage >= totalPages - 1}
                 onClick={() =>

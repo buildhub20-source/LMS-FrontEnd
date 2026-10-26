@@ -1670,6 +1670,7 @@ export const LiveRoom = ({
                     className="flex-1 px-3 py-2 text-xs rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-brand-yellow"
                   />
                   <button
+                    aria-label="Send"
                     type="submit"
                     className="p-2 rounded-xl bg-brand-yellow hover:bg-brand-yellow-hover text-brand-ink transition-colors cursor-pointer"
                   >

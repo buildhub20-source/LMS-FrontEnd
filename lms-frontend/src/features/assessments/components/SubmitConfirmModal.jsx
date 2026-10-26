@@ -106,6 +106,7 @@ export const SubmitConfirmModal = ({
           </div>
 
           <button
+            aria-label="Close"
             type="button"
             onClick={onClose}
             style={{

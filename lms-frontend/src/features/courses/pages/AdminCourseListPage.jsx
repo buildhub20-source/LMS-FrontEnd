@@ -1237,7 +1237,7 @@ export const AdminCourseListPage = () => {
               letterSpacing: '-0.5px',
             }}
           >
-            My Courses
+            Courses
           </h1>
         </div>
         <PermissionGuard required={[PERMISSIONS.COURSE_CREATE]} fallback={null}>
@@ -1366,6 +1366,7 @@ export const AdminCourseListPage = () => {
             ].map(({ id, I }) => (
               <button
                 key={id}
+                aria-label={`${id} view`}
                 onClick={() => setView(id)}
                 style={{
                   padding: '7px 10px',

@@ -251,7 +251,7 @@ export const InstructorListPage = () => {
   const stats = useMemo(() => {
     const total = totalElements || instructors.length;
     const fullTime = instructors.filter((i) => i.employmentType === 'FULL_TIME').length;
-    const active = instructors.filter((i) => !i.locked).length;
+    const active = instructors.filter((i) => i.active && !i.locked).length;
     const totalExp = instructors.reduce((acc, i) => acc + (Number(i.yearsOfExperience) || 0), 0);
     const avgExp = instructors.length > 0 ? (totalExp / instructors.length).toFixed(1) : '0';
 
@@ -285,7 +285,7 @@ export const InstructorListPage = () => {
             icon={<RefreshCw className="h-4 w-4" />}
             onClick={() => refetch()}
           >
-            Sync Faculty
+            Refresh instructor list
           </AdminButton>
           <AdminButton
             variant="primary"
@@ -316,7 +316,7 @@ export const InstructorListPage = () => {
             border: 'var(--card-blue-border)',
           },
           {
-            label: 'Full-Time Staff',
+            label: 'Full-time on this page',
             val: stats.fullTime,
             sub: 'Core curriculum instructors',
             icon: Award,
@@ -325,7 +325,7 @@ export const InstructorListPage = () => {
             border: 'var(--card-green-border)',
           },
           {
-            label: 'Active Faculty',
+            label: 'Active on this page',
             val: stats.active,
             sub: 'Teaching & evaluating cohorts',
             icon: TrendingUp,
@@ -334,7 +334,7 @@ export const InstructorListPage = () => {
             border: 'var(--card-yellow-border)',
           },
           {
-            label: 'Avg Experience',
+            label: 'Page average experience',
             val: `${stats.avgExp} yrs`,
             sub: 'Cumulative technical depth',
             icon: Clock,

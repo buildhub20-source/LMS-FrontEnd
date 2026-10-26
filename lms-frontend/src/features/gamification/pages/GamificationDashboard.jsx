@@ -173,6 +173,7 @@ export const GamificationDashboard = () => {
                     </span>
                     <div className="flex items-center gap-2">
                       <button
+                        aria-label="Previous"
                         type="button"
                         disabled={pointsHistoryPage === 0}
                         onClick={() => setPointsHistoryPage((p) => Math.max(0, p - 1))}
@@ -181,6 +182,7 @@ export const GamificationDashboard = () => {
                         <ChevronLeft className="h-4 w-4" />
                       </button>
                       <button
+                        aria-label="Next"
                         type="button"
                         disabled={pointsHistoryPage >= historyTotalPages - 1}
                         onClick={() => setPointsHistoryPage((p) => p + 1)}

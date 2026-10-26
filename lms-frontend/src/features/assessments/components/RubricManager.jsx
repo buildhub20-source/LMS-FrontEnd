@@ -221,6 +221,7 @@ export const RubricManager = () => {
                   required
                 />
                 <button
+                  aria-label="Delete"
                   type="button"
                   onClick={() => handleRemoveCriterion(i)}
                   style={{
@@ -305,6 +306,7 @@ export const RubricManager = () => {
                 >
                   <h3 style={{ fontSize: '1rem', fontWeight: 600 }}>{r.title}</h3>
                   <button
+                    aria-label="Delete"
                     type="button"
                     onClick={() => handleDeleteRubric(r.id)}
                     style={{

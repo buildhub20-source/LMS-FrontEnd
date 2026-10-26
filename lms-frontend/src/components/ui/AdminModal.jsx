@@ -57,6 +57,7 @@ export const AdminModal = ({
             )}
           </div>
           <button
+            aria-label="Close"
             onClick={onClose}
             className="shrink-0 rounded-lg p-1.5 transition-colors hover:bg-[var(--muted)]"
             style={{

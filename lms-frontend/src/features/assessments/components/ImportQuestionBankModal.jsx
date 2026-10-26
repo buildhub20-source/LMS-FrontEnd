@@ -180,6 +180,7 @@ export default function ImportQuestionBankModal({
             </div>
 
             <button
+              aria-label="Close"
               onClick={onClose}
               style={{
                 background: 'transparent',

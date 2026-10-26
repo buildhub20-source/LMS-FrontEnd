@@ -25,6 +25,11 @@ import {
   ExternalLink,
   Video,
 } from 'lucide-react';
+import {
+  isCourseCompleted,
+  isCourseInProgress,
+  studyDurationLabel,
+} from '../../../utils/courseProgress';
 import { useMyCourses } from '../hooks/useCourses';
 import { ROUTES } from '../../../constants/routes';
 import Avatar from '../../../components/common/Avatar';
@@ -294,7 +299,7 @@ function HeroSpotlightCard({ course, onContinue }) {
   if (!course) return null;
   const preset = getTechPreset(course.title);
   const progress = course.progressPercent ?? 0;
-  const isCompleted = progress >= 100;
+  const isCompleted = isCourseCompleted(course);
 
   return (
     <div
@@ -541,7 +546,7 @@ function HeroSpotlightCard({ course, onContinue }) {
 
 function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark, onLive }) {
   const progress = course.progressPercent ?? 0;
-  const isCompleted = progress >= 100;
+  const isCompleted = isCourseCompleted(course);
   const preset = getTechPreset(course.title);
   const initials = getInitials(course.title);
 
@@ -878,7 +883,7 @@ function CourseGridCard({ course, onContinue, isBookmarked, onToggleBookmark, on
 /* ─── Modern List Card (Directly addresses the user's uploaded screenshot) ─── */
 function CourseListCard({ course, onContinue, isBookmarked, onToggleBookmark, onLive }) {
   const progress = course.progressPercent ?? 0;
-  const isCompleted = progress >= 100;
+  const isCompleted = isCourseCompleted(course);
   const preset = getTechPreset(course.title);
   const initials = getInitials(course.title);
 
@@ -1180,10 +1185,14 @@ function CourseSidebar({ navigate }) {
     ? progressAnalytics.enrollmentTrend
     : [];
   const activityByDay = new Map(
-    weeklyActivity.map((item) => [item.name, Math.max(0, Number(item.hours) || 0)]),
+    weeklyActivity.map((item) => [
+      item.name,
+      Math.max(0, item.seconds != null ? Number(item.seconds) / 3600 : Number(item.hours) || 0),
+    ]),
   );
   const weeklyHours = WEEK_DAYS.reduce((sum, day) => sum + (activityByDay.get(day.key) || 0), 0);
   const weeklyProgress = Math.min(100, Math.round((weeklyHours / WEEKLY_STUDY_TARGET_HOURS) * 100));
+  const weeklyHoursLabel = studyDurationLabel(weeklyHours * 3600);
 
   // Confirms only after the file has actually been handed to the browser.
   const handleDownload = async (kit) => {
@@ -1318,7 +1327,7 @@ function CourseSidebar({ navigate }) {
             }}
           >
             <span style={{ color: 'var(--text-secondary)' }}>
-              Weekly target: {weeklyHours.toFixed(1)}h / {WEEKLY_STUDY_TARGET_HOURS.toFixed(1)}h
+              Weekly target: {weeklyHoursLabel} / {WEEKLY_STUDY_TARGET_HOURS.toFixed(1)}h
             </span>
             <span style={{ color: '#3b82f6', fontWeight: 700 }}>{weeklyProgress}%</span>
           </div>
@@ -1380,8 +1389,8 @@ function CourseSidebar({ navigate }) {
             lineHeight: 1.5,
           }}
         >
-          Pass all module evaluations with &ge; 70% to automatically receive encrypted,
-          blockchain-backed certificates.
+          Pass all module evaluations with &ge; 70% to automatically receive verifiable course
+          certificates.
         </p>
 
         <button
@@ -1641,15 +1650,8 @@ export const MyCoursesPage = () => {
   }, [data]);
 
   // Derived metrics
-  const completedCount = useMemo(
-    () => courses.filter((c) => (c.progressPercent || 0) >= 100).length,
-    [courses],
-  );
-  const inProgressCount = useMemo(
-    () =>
-      courses.filter((c) => (c.progressPercent || 0) > 0 && (c.progressPercent || 0) < 100).length,
-    [courses],
-  );
+  const completedCount = useMemo(() => courses.filter(isCourseCompleted).length, [courses]);
+  const inProgressCount = useMemo(() => courses.filter(isCourseInProgress).length, [courses]);
   const savedCount = useMemo(
     () => courses.filter((c) => bookmarks.includes(c.id)).length,
     [courses, bookmarks],
@@ -1674,9 +1676,8 @@ export const MyCoursesPage = () => {
   const filtered = useMemo(() => {
     return courses.filter((c) => {
       // Tab filter
-      const p = c.progressPercent || 0;
-      if (activeTab === 'IN_PROGRESS' && (p === 0 || p >= 100)) return false;
-      if (activeTab === 'COMPLETED' && p < 100) return false;
+      if (activeTab === 'IN_PROGRESS' && !isCourseInProgress(c)) return false;
+      if (activeTab === 'COMPLETED' && !isCourseCompleted(c)) return false;
       if (activeTab === 'SAVED' && !bookmarks.includes(c.id)) return false;
 
       // Category filter
@@ -1986,6 +1987,7 @@ export const MyCoursesPage = () => {
                 />
                 {searchQuery && (
                   <button
+                    aria-label="Clear course search"
                     onClick={() => setSearchQuery('')}
                     style={{
                       position: 'absolute',

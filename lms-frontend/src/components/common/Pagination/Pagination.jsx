@@ -35,6 +35,7 @@ export const Pagination = ({
         <button
           type="button"
           className={styles.page}
+          aria-label="Previous page"
           onClick={() => onPageChange(page - 1)}
           disabled={page <= 1}
         >
@@ -60,6 +61,7 @@ export const Pagination = ({
         <button
           type="button"
           className={styles.page}
+          aria-label="Next page"
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages}
         >

@@ -303,6 +303,7 @@ function ExportToAssessmentContent({ isOpen, onClose, selectedQuestions = [], on
           </div>
 
           <button
+            aria-label="Close"
             type="button"
             onClick={onClose}
             disabled={isProcessing}

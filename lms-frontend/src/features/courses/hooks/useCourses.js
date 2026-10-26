@@ -13,7 +13,8 @@ export const useCourses = (params = {}) =>
 export const useMyCourses = (params = {}) =>
   useQuery({
     queryKey: [...QUERY_KEYS.COURSES, 'mine', params],
-    queryFn: () => courseService.listMine(params),
+    queryFn: () =>
+      Object.keys(params).length ? courseService.listMine(params) : courseService.listAllMine(),
   });
 
 export const useCreateCourse = () => {

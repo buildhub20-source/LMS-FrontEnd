@@ -178,7 +178,7 @@ function ChannelDetailsModalContent({
             <span className="chat-channel-header__type-badge">{channel.type}</span>
             {isArchived && <span className="chat-archived-badge">Archived</span>}
           </div>
-          <button className="chat-modal__close" onClick={onClose} type="button">
+          <button aria-label="Close" className="chat-modal__close" onClick={onClose} type="button">
             <X size={20} />
           </button>
         </div>
@@ -279,6 +279,7 @@ function ChannelDetailsModalContent({
                       autoFocus
                     />
                     <button
+                      aria-label="Close"
                       type="button"
                       className="chat-details-btn--cancel"
                       onClick={() => {

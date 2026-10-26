@@ -117,6 +117,7 @@ export const ChangePasswordForm = () => {
               {...register('currentPassword')}
             />
             <button
+              aria-label={showCurrent ? 'Hide password' : 'Show password'}
               type="button"
               onClick={() => setShowCurrent(!showCurrent)}
               style={{
@@ -159,6 +160,7 @@ export const ChangePasswordForm = () => {
               {...register('newPassword')}
             />
             <button
+              aria-label={showNew ? 'Hide password' : 'Show password'}
               type="button"
               onClick={() => setShowNew(!showNew)}
               style={{
@@ -201,6 +203,7 @@ export const ChangePasswordForm = () => {
               {...register('confirmPassword')}
             />
             <button
+              aria-label={showConfirm ? 'Hide password' : 'Show password'}
               type="button"
               onClick={() => setShowConfirm(!showConfirm)}
               style={{

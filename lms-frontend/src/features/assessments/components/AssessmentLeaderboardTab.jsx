@@ -155,7 +155,7 @@ export const AssessmentLeaderboardTab = ({ assessmentId }) => {
               </h2>
             </div>
             <p style={{ margin: '6px 0 0 46px', fontSize: 13, color: 'var(--text-muted)' }}>
-              LeetCode-style rankings, topic mastery badges, and real-time category standings.
+              Assessment rankings, topic mastery badges, and category standings.
             </p>
           </div>
 

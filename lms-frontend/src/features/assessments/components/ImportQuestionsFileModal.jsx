@@ -208,6 +208,7 @@ export default function ImportQuestionsFileModal({
           </div>
 
           <button
+            aria-label="Close"
             onClick={onClose}
             style={{
               background: 'transparent',

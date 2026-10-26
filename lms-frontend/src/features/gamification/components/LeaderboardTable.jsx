@@ -167,6 +167,7 @@ export const LeaderboardTable = ({
           </span>
           <div className="flex items-center gap-2">
             <button
+              aria-label="Previous"
               type="button"
               disabled={isFirstPage}
               onClick={() => onPageChange(page - 1)}
@@ -175,6 +176,7 @@ export const LeaderboardTable = ({
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button
+              aria-label="Next"
               type="button"
               disabled={isLastPage}
               onClick={() => onPageChange(page + 1)}

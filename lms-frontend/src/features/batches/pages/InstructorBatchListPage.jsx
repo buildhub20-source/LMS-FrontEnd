@@ -213,7 +213,7 @@ export const InstructorBatchListPage = () => {
             icon={<RefreshCw className="h-4 w-4" />}
             onClick={() => refetch()}
           >
-            Sync Telemetry
+            Refresh batch metrics
           </AdminButton>
         </div>
       </div>
@@ -451,6 +451,7 @@ export const InstructorBatchListPage = () => {
               ].map(({ id, I }) => (
                 <button
                   key={id}
+                  aria-label={`${id} view`}
                   onClick={() => setViewMode(id)}
                   style={{
                     padding: '8px 12px',

@@ -522,6 +522,7 @@ export const InvitationListPage = () => {
                           >
                             <div style={{ position: 'relative', display: 'inline-block' }}>
                               <button
+                                aria-label="More actions"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   if (openMenuId === inv.id) {

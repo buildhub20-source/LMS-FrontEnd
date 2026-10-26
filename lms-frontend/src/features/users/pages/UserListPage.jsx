@@ -571,6 +571,7 @@ export const UserListPage = () => {
                         <td style={{ padding: '14px 24px', textAlign: 'right' }}>
                           <div style={{ position: 'relative', display: 'inline-block' }}>
                             <button
+                              aria-label="More actions"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 if (openMenuId === u.id) {

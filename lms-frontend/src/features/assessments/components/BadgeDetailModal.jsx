@@ -49,6 +49,7 @@ export const BadgeDetailModal = ({ badge, onClose, studentsWithBadge = [] }) => 
         >
           {/* Close button */}
           <button
+            aria-label="Close"
             onClick={onClose}
             style={{
               position: 'absolute',

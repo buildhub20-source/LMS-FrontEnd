@@ -385,7 +385,7 @@ export const GradingWorkflowPage = () => {
                 }}
               >
                 <div style={{ fontSize: '0.875rem', fontWeight: 600 }}>
-                  Question: {sub.questionId.slice(0, 8)}...
+                  Question: {sub.questionTitle || `${sub.questionId.slice(0, 8)}…`}
                 </div>
                 <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: 4 }}>
                   Language: {sub.language} | Submitted:{' '}
