@@ -15,7 +15,8 @@ export const gradingService = {
       { rubricId: rubricId || null },
       { timeout: AI_GRADING_TIMEOUT_MS },
     ),
-  getAiSuggestion: (submissionId) => http.get(ep.aiSuggestion(submissionId)),
+  getAiSuggestion: (submissionId) =>
+    http.get(ep.aiSuggestion(submissionId)).then((value) => (value?.submissionId ? value : null)),
 };
 
 export default gradingService;

@@ -456,7 +456,12 @@ export default function MessageComposer({
             ↪ Replying to {replyTo.senderEmail?.split('@')[0] ?? 'message'}
           </span>
           <span className="chat-composer__reply-text">{replyTo.content?.slice(0, 80)}</span>
-          <button type="button" className="chat-composer__reply-cancel" onClick={onCancelReply}>
+          <button
+            type="button"
+            aria-label="Cancel reply"
+            className="chat-composer__reply-cancel"
+            onClick={onCancelReply}
+          >
             ✕
           </button>
         </div>

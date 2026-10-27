@@ -571,6 +571,7 @@ export const UserListPage = () => {
                         <td style={{ padding: '14px 24px', textAlign: 'right' }}>
                           <div style={{ position: 'relative', display: 'inline-block' }}>
                             <button
+                              aria-label="More actions"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 if (openMenuId === u.id) {
@@ -997,8 +998,8 @@ export const UserListPage = () => {
                           : item.action === 'DEACTIVATED'
                             ? 'var(--text-secondary)'
                             : item.action === 'UNLOCKED'
-                              ? '#34d399'
-                              : '#60a5fa',
+                              ? 'var(--badge-success-fg)'
+                              : 'var(--badge-info-fg)',
                     }}
                   >
                     {item.action === 'LOCKED' ? (

@@ -73,6 +73,7 @@ export const LiveSessionsPage = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-3">
             <button
+              aria-label="Go back"
               onClick={() => navigate(-1)}
               className="p-2 rounded-lg text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >

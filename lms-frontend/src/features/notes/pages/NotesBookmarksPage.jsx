@@ -640,6 +640,7 @@ export const NotesBookmarksPage = () => {
             />
             {search && (
               <button
+                aria-label="Close"
                 onClick={() => setSearch('')}
                 style={{
                   background: 'transparent',
@@ -706,7 +707,7 @@ export const NotesBookmarksPage = () => {
                   borderRadius: 10,
                   border: '1px solid rgba(245, 158, 11, 0.3)',
                   background: 'rgba(245, 158, 11, 0.1)',
-                  color: '#fbbf24',
+                  color: 'var(--badge-warning-fg)',
                   fontSize: 13,
                   fontWeight: 600,
                   cursor: 'pointer',
@@ -793,6 +794,7 @@ export const NotesBookmarksPage = () => {
                   {editingNote.id ? 'Edit Study Note' : 'Create New Study Note'}
                 </h3>
                 <button
+                  aria-label="Close"
                   onClick={() => setEditingNote(null)}
                   style={{
                     background: 'transparent',

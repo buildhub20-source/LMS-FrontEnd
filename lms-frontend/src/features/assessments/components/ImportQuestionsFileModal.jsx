@@ -208,6 +208,7 @@ export default function ImportQuestionsFileModal({
           </div>
 
           <button
+            aria-label="Close"
             onClick={onClose}
             style={{
               background: 'transparent',
@@ -255,7 +256,7 @@ export default function ImportQuestionsFileModal({
                 style={{
                   fontWeight: 600,
                   fontSize: 14,
-                  color: '#60a5fa',
+                  color: 'var(--badge-info-fg)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: 6,

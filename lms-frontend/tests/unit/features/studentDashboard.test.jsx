@@ -78,6 +78,14 @@ describe('StudentDashboardPage', () => {
     }
   });
 
+  it('shows unavailable and makes one request during a certificate outage', async () => {
+    analyticsService.studentProgress.mockResolvedValue({ streakDays: 0, enrollmentTrend: [] });
+    certificateService.list.mockRejectedValue(new Error('Certificate service unavailable'));
+    renderPage();
+    expect(await screen.findByText('Unavailable')).toBeInTheDocument();
+    expect(certificateService.list).toHaveBeenCalledTimes(1);
+  });
+
   it("lists the student's earned badges", async () => {
     analyticsService.studentProgress.mockResolvedValue({ streakDays: 3, enrollmentTrend: [] });
     badges.data = [

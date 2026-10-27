@@ -20,6 +20,8 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import ErrorState from '../../../components/common/ErrorState';
+import { eventRoute, eventsInMonth } from '../calendarUtils';
 import { useCalendarEvents, useUpcomingDeadlines } from '../hooks/useCalendar';
 import { ROUTES } from '../../../constants/routes';
 import Spinner from '../../../components/common/Spinner';
@@ -29,13 +31,13 @@ const EVENT_COLORS = {
     bg: 'rgba(59, 130, 246, 0.12)',
     border: 'rgba(59, 130, 246, 0.3)',
     dot: '#3b82f6',
-    text: '#60a5fa',
+    text: 'var(--badge-info-fg)',
   },
   green: {
     bg: 'rgba(16, 185, 129, 0.12)',
     border: 'rgba(16, 185, 129, 0.3)',
     dot: '#10b981',
-    text: '#34d399',
+    text: 'var(--badge-success-fg)',
   },
   emerald: {
     bg: 'rgba(16, 185, 129, 0.15)',
@@ -47,7 +49,7 @@ const EVENT_COLORS = {
     bg: 'rgba(245, 158, 11, 0.12)',
     border: 'rgba(245, 158, 11, 0.3)',
     dot: '#f59e0b',
-    text: '#fbbf24',
+    text: 'var(--badge-warning-fg)',
   },
   red: {
     bg: 'rgba(239, 68, 68, 0.12)',
@@ -71,8 +73,8 @@ const EVENT_ICONS = {
 };
 
 const STATUS_BADGES = {
-  upcoming: { label: 'Upcoming', bg: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa' },
-  active: { label: 'Active Now', bg: 'rgba(16, 185, 129, 0.15)', color: '#34d399' },
+  upcoming: { label: 'Upcoming', bg: 'rgba(59, 130, 246, 0.15)', color: 'var(--badge-info-fg)' },
+  active: { label: 'Active Now', bg: 'rgba(16, 185, 129, 0.15)', color: 'var(--badge-success-fg)' },
   overdue: { label: 'Overdue', bg: 'rgba(239, 68, 68, 0.15)', color: '#f87171' },
   completed: { label: 'Completed', bg: 'rgba(139, 92, 246, 0.15)', color: '#a78bfa' },
 };
@@ -109,7 +111,12 @@ export const StudentCalendarPage = () => {
     }
   });
 
-  const { data: rawEvents = [], isLoading: eventsLoading } = useCalendarEvents();
+  const {
+    data: rawEvents = [],
+    isLoading: eventsLoading,
+    error: eventsError,
+    refetch: retryEvents,
+  } = useCalendarEvents();
   const { data: deadlines = [], isLoading: deadlinesLoading } = useUpcomingDeadlines(30);
 
   const events = useMemo(() => [...rawEvents, ...importedEvents], [rawEvents, importedEvents]);
@@ -182,6 +189,10 @@ export const StudentCalendarPage = () => {
     return eventsByDate[selectedDate.toDateString()] || [];
   }, [selectedDate, eventsByDate]);
 
+  const monthEvents = useMemo(
+    () => eventsInMonth(filteredEvents, year, month),
+    [filteredEvents, year, month],
+  );
   const todayStr = new Date().toDateString();
 
   const navigateMonth = (offset) => {
@@ -195,17 +206,25 @@ export const StudentCalendarPage = () => {
   };
 
   const handleEventClick = (event) => {
-    if (event.type === 'ASSESSMENT_DEADLINE' || event.type === 'ASSESSMENT_START') {
-      navigate(ROUTES.STUDENT_ASSESSMENTS);
-    } else if (event.type === 'COURSE_ENROLLED' || event.type === 'COURSE_COMPLETED') {
-      navigate(ROUTES.LEARNING(event.referenceId));
+    const route = eventRoute(event);
+    if (route) navigate(route);
+    else if (event.startTime) {
+      setSelectedDate(new Date(event.startTime));
+      setCurrentDate(new Date(event.startTime));
+      setActiveTab('calendar');
     }
   };
 
-  // Export deadlines as .ics file
+  // Export calendar events as .ics file
   const handleExportICS = () => {
-    const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//LMS Student Academic Schedule//EN'];
-    deadlines.forEach((d) => {
+    const escapeText = (value) =>
+      String(value ?? '')
+        .replaceAll('\\', '\\\\')
+        .replaceAll('\n', '\\n')
+        .replaceAll(',', '\\,')
+        .replaceAll(';', '\\;');
+    const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//GradusMind//Calendar//EN'];
+    events.forEach((d) => {
       const start = d.startTime
         ? new Date(d.startTime).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
         : '';
@@ -213,8 +232,10 @@ export const StudentCalendarPage = () => {
         ? new Date(d.endTime).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
         : start;
       lines.push('BEGIN:VEVENT');
-      lines.push(`SUMMARY:${d.title || 'GradusMind deadline'}`);
-      lines.push(`DESCRIPTION:${d.description || ''}`);
+      lines.push(`UID:${d.id}@gradusmind`);
+      lines.push(`DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`);
+      lines.push(`SUMMARY:${escapeText(d.title || 'GradusMind event')}`);
+      lines.push(`DESCRIPTION:${escapeText(d.description)}`);
       if (start) lines.push(`DTSTART:${start}`);
       if (end) lines.push(`DTEND:${end}`);
       lines.push('END:VEVENT');
@@ -225,7 +246,7 @@ export const StudentCalendarPage = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', 'academic-deadlines.ics');
+    link.setAttribute('download', 'academic-calendar.ics');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -287,9 +308,12 @@ export const StudentCalendarPage = () => {
   // KPI Calculations
   const totalEventsCount = events.length;
   const activeDeadlinesCount = deadlines.length;
-  const completedCount = events.filter((e) => e.status === 'completed').length;
+  const completedCount = events.filter((e) =>
+    ['COURSE_ENROLLED', 'COURSE_COMPLETED'].includes(e.type),
+  ).length;
 
   if (eventsLoading) return <Spinner fullPage />;
+  if (eventsError) return <ErrorState error={eventsError} onRetry={retryEvents} />;
 
   return (
     <div
@@ -342,7 +366,7 @@ export const StudentCalendarPage = () => {
               }}
             >
               <Sparkles size={12} />
-              Fall Term 2026
+              Academic term
             </span>
           </div>
 
@@ -457,7 +481,7 @@ export const StudentCalendarPage = () => {
                   textTransform: 'uppercase',
                 }}
               >
-                Upcoming Deadlines
+                Deadlines in 30 days
               </div>
               <div style={{ fontSize: 18, fontWeight: 800, color: '#f87171' }}>
                 {activeDeadlinesCount}
@@ -488,7 +512,7 @@ export const StudentCalendarPage = () => {
                 justifyContent: 'center',
               }}
             >
-              <Award size={18} color="#34d399" />
+              <Award size={18} style={{ color: 'var(--badge-success-fg)' }} />
             </div>
             <div>
               <div
@@ -499,9 +523,9 @@ export const StudentCalendarPage = () => {
                   textTransform: 'uppercase',
                 }}
               >
-                Completed
+                Recorded milestones
               </div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: '#34d399' }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--badge-success-fg)' }}>
                 {completedCount}
               </div>
             </div>
@@ -664,7 +688,7 @@ export const StudentCalendarPage = () => {
             }}
           >
             <Download size={14} />
-            Sync .ics
+            Export .ics
           </button>
 
           <label
@@ -730,6 +754,7 @@ export const StudentCalendarPage = () => {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <button
+                  aria-label="Previous month"
                   onClick={() => navigateMonth(-1)}
                   style={{
                     background: 'rgba(255,255,255,0.08)',
@@ -767,6 +792,7 @@ export const StudentCalendarPage = () => {
                 </h2>
 
                 <button
+                  aria-label="Next month"
                   onClick={() => navigateMonth(1)}
                   style={{
                     background: 'rgba(255,255,255,0.08)',
@@ -1212,25 +1238,27 @@ export const StudentCalendarPage = () => {
                             </span>
                           )}
 
-                          <button
-                            onClick={() => handleEventClick(event)}
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 4,
-                              padding: '4px 10px',
-                              borderRadius: 6,
-                              border: 'none',
-                              background: 'rgba(255, 255, 255, 0.1)',
-                              color: '#fff',
-                              fontSize: 11,
-                              fontWeight: 700,
-                              cursor: 'pointer',
-                            }}
-                          >
-                            Open
-                            <ArrowRight size={12} />
-                          </button>
+                          {eventRoute(event) && (
+                            <button
+                              onClick={() => handleEventClick(event)}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4,
+                                padding: '4px 10px',
+                                borderRadius: 6,
+                                border: 'none',
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                color: '#fff',
+                                fontSize: 11,
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                              }}
+                            >
+                              Open
+                              <ArrowRight size={12} />
+                            </button>
+                          )}
                         </div>
                       </div>
                     );
@@ -1426,8 +1454,8 @@ export const StudentCalendarPage = () => {
                 </span>
               </div>
               <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>
-                Click <strong>Sync .ics</strong> above to import all deadlines and test windows
-                directly into Google Calendar, Outlook, or Apple Calendar.
+                Export an .ics file above, then import it into Google Calendar, Outlook, or Apple
+                Calendar.
               </p>
             </div>
           </div>
@@ -1790,12 +1818,12 @@ export const StudentCalendarPage = () => {
               }}
             />
 
-            {events.length === 0 ? (
+            {monthEvents.length === 0 ? (
               <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>
                 No milestones recorded for this month.
               </div>
             ) : (
-              events.map((ev, index) => {
+              monthEvents.map((ev, index) => {
                 const Icon = EVENT_ICONS[ev.type] || CalendarIcon;
                 const colors = EVENT_COLORS[ev.color] || EVENT_COLORS.blue;
                 const evDate = ev.startTime ? new Date(ev.startTime) : null;
@@ -1825,6 +1853,14 @@ export const StudentCalendarPage = () => {
                     />
 
                     <div
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleEventClick(ev);
+                        }
+                      }}
                       onClick={() => handleEventClick(ev)}
                       style={{
                         flex: 1,

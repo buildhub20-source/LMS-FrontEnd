@@ -71,25 +71,25 @@ const ENGAGEMENT_CONFIG = {
   FULL_TIME: {
     label: 'Full Time',
     bg: 'rgba(16, 185, 129, 0.18)',
-    color: '#34d399',
+    color: 'var(--badge-success-fg)',
     border: 'rgba(16, 185, 129, 0.35)',
   },
   PART_TIME: {
     label: 'Part Time',
     bg: 'rgba(59, 130, 246, 0.18)',
-    color: '#60a5fa',
+    color: 'var(--badge-info-fg)',
     border: 'rgba(59, 130, 246, 0.35)',
   },
   CONTRACT: {
     label: 'Contract',
     bg: 'rgba(245, 158, 11, 0.18)',
-    color: '#fbbf24',
+    color: 'var(--badge-warning-fg)',
     border: 'rgba(245, 158, 11, 0.35)',
   },
   VISITING: {
     label: 'Visiting',
     bg: 'rgba(168, 85, 247, 0.18)',
-    color: '#c084fc',
+    color: 'var(--badge-accent-fg)',
     border: 'rgba(168, 85, 247, 0.35)',
   },
 };
@@ -146,7 +146,7 @@ function AccountBadge({ row }) {
           padding: '2px 8px',
           borderRadius: 6,
           backgroundColor: 'rgba(245, 158, 11, 0.15)',
-          color: '#fbbf24',
+          color: 'var(--badge-warning-fg)',
           border: '1px solid rgba(245, 158, 11, 0.3)',
         }}
       >
@@ -162,7 +162,7 @@ function AccountBadge({ row }) {
         padding: '2px 8px',
         borderRadius: 6,
         backgroundColor: 'rgba(16, 185, 129, 0.15)',
-        color: '#34d399',
+        color: 'var(--badge-success-fg)',
         border: '1px solid rgba(16, 185, 129, 0.3)',
       }}
     >
@@ -251,7 +251,7 @@ export const InstructorListPage = () => {
   const stats = useMemo(() => {
     const total = totalElements || instructors.length;
     const fullTime = instructors.filter((i) => i.employmentType === 'FULL_TIME').length;
-    const active = instructors.filter((i) => !i.locked).length;
+    const active = instructors.filter((i) => i.active && !i.locked).length;
     const totalExp = instructors.reduce((acc, i) => acc + (Number(i.yearsOfExperience) || 0), 0);
     const avgExp = instructors.length > 0 ? (totalExp / instructors.length).toFixed(1) : '0';
 
@@ -285,7 +285,7 @@ export const InstructorListPage = () => {
             icon={<RefreshCw className="h-4 w-4" />}
             onClick={() => refetch()}
           >
-            Sync Faculty
+            Refresh instructor list
           </AdminButton>
           <AdminButton
             variant="primary"
@@ -316,7 +316,7 @@ export const InstructorListPage = () => {
             border: 'var(--card-blue-border)',
           },
           {
-            label: 'Full-Time Staff',
+            label: 'Full-time on this page',
             val: stats.fullTime,
             sub: 'Core curriculum instructors',
             icon: Award,
@@ -325,7 +325,7 @@ export const InstructorListPage = () => {
             border: 'var(--card-green-border)',
           },
           {
-            label: 'Active Faculty',
+            label: 'Active on this page',
             val: stats.active,
             sub: 'Teaching & evaluating cohorts',
             icon: TrendingUp,
@@ -334,7 +334,7 @@ export const InstructorListPage = () => {
             border: 'var(--card-yellow-border)',
           },
           {
-            label: 'Avg Experience',
+            label: 'Page average experience',
             val: `${stats.avgExp} yrs`,
             sub: 'Cumulative technical depth',
             icon: Clock,

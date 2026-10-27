@@ -1,11 +1,9 @@
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   AlertCircle,
   ArrowRight,
   BookOpen,
   CalendarClock,
-  CalendarDays,
   ClipboardCheck,
   ClipboardList,
   Clock3,
@@ -152,7 +150,6 @@ const DataPending = ({ icon: Icon, title, description, compact = false }) => (
 
 export const AdminAnalyticsPage = () => {
   const { user } = useAuth();
-  const [reportingRange, setReportingRange] = useState('30d');
   const analytics = useQuery({
     queryKey: [...QUERY_KEYS.ANALYTICS, 'admin'],
     queryFn: () => analyticsService.adminOverview(),
@@ -181,6 +178,43 @@ export const AdminAnalyticsPage = () => {
   const coursePage = courses.data?.data ?? courses.data ?? {};
   const courseItems = Array.isArray(coursePage.content) ? coursePage.content : [];
   const learnerName = user?.firstName || user?.name?.split(' ')[0] || 'Administrator';
+
+  const handleExportReport = () => {
+    const rows = [
+      ['Metric', 'Value'],
+      ['Active learners', activeLearners],
+      ['Total courses', totalCourses],
+      ['Published courses', publishedCourses],
+      ['Total enrollments', totalEnrollments],
+      ['Completion rate', `${completionRate}%`],
+      [],
+      ['Course', 'Enrollments', 'Completed', 'Completion rate'],
+      ...topCourses.map((course) => [
+        course.title,
+        course.enrollments,
+        course.completed,
+        `${course.completionRate}%`,
+      ]),
+    ];
+    const csv = rows
+      .map((row) =>
+        row
+          .map(
+            (cell) =>
+              `"${String(cell ?? '')
+                .replace(/^[=+@-]/, "'$&")
+                .replaceAll('"', '""')}"`,
+          )
+          .join(','),
+      )
+      .join('\r\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `academy-overview-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
   const incompleteRate = Math.max(0, 100 - completionRate);
   const actionRoute = {
     invitations: ROUTES.INVITATIONS,
@@ -231,29 +265,12 @@ export const AdminAnalyticsPage = () => {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <label className="relative">
-            <span className="sr-only">Reporting period</span>
-            <CalendarDays
-              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
-              style={{ color: 'var(--text-muted)' }}
-              aria-hidden="true"
-            />
-            <select
-              value={reportingRange}
-              onChange={(event) => setReportingRange(event.target.value)}
-              className="appearance-none rounded-lg border py-2.5 pl-9 pr-8 text-sm font-semibold outline-none transition focus:ring-2"
-              style={{
-                borderColor: 'var(--border-color)',
-                background: 'var(--surface-medium)',
-                color: 'var(--text-primary)',
-              }}
-            >
-              <option value="7d">Last 7 days</option>
-              <option value="30d">Last 30 days</option>
-              <option value="quarter">This quarter</option>
-              <option value="year">This year</option>
-            </select>
-          </label>
+          <span
+            className="rounded-lg border px-3 py-2.5 text-sm font-semibold"
+            style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}
+          >
+            All-time totals
+          </span>
           <Link
             to={ROUTES.ADMIN_COURSES}
             className="inline-flex w-fit items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold no-underline transition hover:brightness-110 active:translate-y-px"
@@ -563,26 +580,18 @@ export const AdminAnalyticsPage = () => {
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h2 className="text-base font-bold" style={{ color: 'var(--text-primary)' }}>
-                Learning trend
+                Learning overview
               </h2>
               <p className="mt-1 text-sm" style={{ color: 'var(--text-muted)' }}>
-                Completion and enrollment movement for{' '}
-                {reportingRange === '7d'
-                  ? 'the last 7 days'
-                  : reportingRange === '30d'
-                    ? 'the last 30 days'
-                    : reportingRange === 'quarter'
-                      ? 'this quarter'
-                      : 'this year'}
-                .
+                Current enrollment and completion totals across published courses.
               </p>
             </div>
             <button
               type="button"
-              disabled
-              className="inline-flex w-fit cursor-not-allowed items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold opacity-50"
-              style={{ borderColor: 'var(--border-color)', color: 'var(--text-muted)' }}
-              title="Exports will become available with trend reporting"
+              onClick={handleExportReport}
+              disabled={analytics.isLoading || analytics.isError}
+              className="inline-flex w-fit items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold transition hover:brightness-110"
+              style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}
             >
               <Download className="h-4 w-4" aria-hidden="true" /> Export report
             </button>
@@ -619,8 +628,7 @@ export const AdminAnalyticsPage = () => {
                   Trend data will appear here
                 </p>
                 <p className="mt-1 text-xs leading-5" style={{ color: 'var(--text-muted)' }}>
-                  The dashboard is ready for dated enrollment and completion events when the
-                  reporting API is introduced.
+                  Historical trends are not available yet. The totals above cover all time.
                 </p>
               </div>
             </div>
@@ -714,7 +722,7 @@ export const AdminAnalyticsPage = () => {
             <DataPending
               icon={Clock3}
               title="No activity feed yet"
-              description="The feed will populate when platform events are exposed through the analytics API."
+              description="No recent activity is available."
               compact
             />
           </div>
@@ -799,7 +807,7 @@ export const AdminAnalyticsPage = () => {
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
-                  At-risk courses
+                  Courses needing review
                 </p>
                 <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
                   needs review
@@ -919,7 +927,7 @@ export const AdminAnalyticsPage = () => {
               />
               <div className="border-t pt-4" style={{ borderColor: 'var(--border-color)' }}>
                 <p className="text-xs leading-5" style={{ color: 'var(--text-muted)' }}>
-                  The chart uses the current completion rate from the analytics API.
+                  Completion is measured across all course enrollments.
                 </p>
               </div>
             </div>

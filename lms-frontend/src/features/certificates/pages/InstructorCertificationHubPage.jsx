@@ -19,11 +19,12 @@ import {
   ArrowRight,
   Filter,
 } from 'lucide-react';
+import { certificateListOptions } from '../services/certificateQueries';
+import useAuth from '../../auth/hooks/useAuth';
 import AdminButton from '../../../components/ui/AdminButton';
 import { useCourses } from '../../courses/hooks/useCourses';
 import { useBatches } from '../../batches/hooks/useBatches';
 import { useStudents } from '../../students/hooks/useStudents';
-import certificateService from '../services/certificateService';
 import { ROUTES } from '../../../constants/routes';
 
 function getInitials(str = '') {
@@ -65,6 +66,7 @@ function CandidateAvatar({ name = '', size = 36 }) {
 
 export const InstructorCertificationHubPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialBatchId = searchParams.get('batchId') || '';
 
@@ -74,7 +76,7 @@ export const InstructorCertificationHubPage = () => {
   const [search, setSearch] = useState('');
   const [activeVerifyCert, setActiveVerifyCert] = useState(null);
   const [isIssuingBatch, setIsIssuingBatch] = useState(false);
-  const [issuedNotification, setIssuedNotification] = useState('');
+  const [issuedNotification] = useState('');
 
   // 1. Fetch Batches
   const { data: batchPageData } = useBatches({ size: 100 });
@@ -99,13 +101,16 @@ export const InstructorCertificationHubPage = () => {
   const rawStudents = useMemo(() => studentPageData?.content || [], [studentPageData]);
 
   // 4. Fetch Issued Certificates
-  const { data: certPageData, refetch: refetchCerts } = useQuery({
-    queryKey: ['certificates', 'instructor-view'],
-    queryFn: () => certificateService.list({ size: 200 }),
+  const {
+    data: certPageData,
+    isError: certificatesUnavailable,
+    isPending: certificatesLoading,
+    refetch: refetchCerts,
+  } = useQuery({
+    ...certificateListOptions(user?.id),
   });
   const certificates = useMemo(() => {
-    const list =
-      certPageData?.data?.data?.content ?? certPageData?.data?.content ?? certPageData?.data ?? [];
+    const list = certPageData?.content ?? (Array.isArray(certPageData) ? certPageData : []);
     return Array.isArray(list) ? list : [];
   }, [certPageData]);
 
@@ -145,7 +150,9 @@ export const InstructorCertificationHubPage = () => {
 
       const isCompleted = activeEnrolment?.status === 'COMPLETED' || student.status === 'COMPLETED';
       const progressPercent = activeEnrolment?.progressPercentage ?? (isCompleted ? 100 : 0);
-      const certificate = certMap.get(student.id) || null;
+      const certificate = certificatesUnavailable
+        ? null
+        : certMap.get(student.userId ?? student.user?.id ?? student.id) || null;
 
       const studentName =
         student.fullName ||
@@ -173,7 +180,7 @@ export const InstructorCertificationHubPage = () => {
         enrolledOn: activeEnrolment?.enrolledOn || student.createdAt?.slice(0, 10) || null,
       };
     });
-  }, [rawStudents, selectedBatchId, batches, certMap]);
+  }, [rawStudents, selectedBatchId, batches, certMap, certificatesUnavailable]);
 
   // Filtered candidates
   const filteredCandidates = useMemo(() => {
@@ -204,31 +211,26 @@ export const InstructorCertificationHubPage = () => {
     const total = candidates.length;
     const completed = candidates.filter((c) => c.isCompleted).length;
     const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
-    const certified = candidates.filter((c) => c.certificate).length;
-    const pending = completed - certified;
+    const certified =
+      certificatesUnavailable || certificatesLoading
+        ? null
+        : candidates.filter((c) => c.certificate).length;
+    const pending =
+      certificatesUnavailable || certificatesLoading ? null : Math.max(0, completed - certified);
 
-    return { total, completed, rate, certified, pending: Math.max(0, pending) };
-  }, [candidates]);
+    return { total, completed, rate, certified, pending };
+  }, [candidates, certificatesUnavailable, certificatesLoading]);
 
-  // Bulk Issue Certificates for the Batch
-  const handleBulkIssue = () => {
+  const handleBulkIssue = async () => {
     setIsIssuingBatch(true);
-    setTimeout(() => {
+    try {
+      await refetchCerts();
+      await refetchStudents();
+    } finally {
       setIsIssuingBatch(false);
-      setIssuedNotification(
-        `Successfully minted and recorded certificates for ${stats.completed} eligible candidates.`,
-      );
-      refetchCerts();
-      refetchStudents();
-      setTimeout(() => setIssuedNotification(''), 6000);
-    }, 1200);
+    }
   };
-
-  const handleSingleIssue = (candidate) => {
-    setIssuedNotification(`Issued certificate for ${candidate.fullName}.`);
-    refetchCerts();
-    setTimeout(() => setIssuedNotification(''), 4000);
-  };
+  const handleSingleIssue = () => refetchCerts();
 
   const exportGraduationCsv = () => {
     if (!filteredCandidates.length) return;
@@ -284,7 +286,7 @@ export const InstructorCertificationHubPage = () => {
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 14, color: 'var(--text-muted)' }}>
             Track student curriculum completions across cohorts, verify credential validity, and
-            mint certificates for graduating learners.
+            review certificates issued when learners complete their courses.
           </p>
         </div>
 
@@ -299,6 +301,19 @@ export const InstructorCertificationHubPage = () => {
         </div>
       </div>
 
+      {certificatesUnavailable && (
+        <div
+          role="alert"
+          className="rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800"
+        >
+          Certificate service is unavailable. Certificate totals are hidden until the service
+          responds.
+          <button type="button" className="ml-2 underline" onClick={() => refetchCerts()}>
+            Retry
+          </button>
+        </div>
+      )}
+
       {/* Toast Notification if triggered */}
       {issuedNotification && (
         <div
@@ -307,7 +322,7 @@ export const InstructorCertificationHubPage = () => {
             borderRadius: 12,
             backgroundColor: 'rgba(16, 185, 129, 0.15)',
             border: '1px solid rgba(16, 185, 129, 0.3)',
-            color: '#34d399',
+            color: 'var(--badge-success-fg)',
             fontSize: 13,
             fontWeight: 600,
             display: 'flex',
@@ -359,7 +374,7 @@ export const InstructorCertificationHubPage = () => {
           {
             label: 'Certificates Issued',
             val: stats.certified,
-            sub: 'Minted credentials',
+            sub: 'Issued credentials',
             icon: Award,
             tone: '#8b5cf6',
             bg: 'var(--card-purple)',
@@ -403,7 +418,7 @@ export const InstructorCertificationHubPage = () => {
                     letterSpacing: '-0.02em',
                   }}
                 >
-                  {m.val}
+                  {m.val ?? (certificatesUnavailable ? 'Unavailable' : '—')}
                 </div>
                 <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
                   {m.sub}
@@ -623,10 +638,10 @@ export const InstructorCertificationHubPage = () => {
                 variant="primary"
                 icon={<Award className="h-4 w-4" />}
                 onClick={handleBulkIssue}
-                disabled={isIssuingBatch || stats.completed === 0}
+                disabled={isIssuingBatch}
                 loading={isIssuingBatch}
               >
-                {isIssuingBatch ? 'Minting Credentials...' : 'Issue All Batch Certificates'}
+                {isIssuingBatch ? 'Refreshing...' : 'Refresh certificate status'}
               </AdminButton>
             </div>
           </div>
@@ -943,7 +958,7 @@ export const InstructorCertificationHubPage = () => {
                             border: '1px solid color-mix(in srgb, var(--primary) 25%, transparent)',
                           }}
                         >
-                          Eligible for Minting
+                          {certificatesUnavailable ? 'Unavailable' : 'Awaiting automatic issuance'}
                         </span>
                       ) : (
                         <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
@@ -1014,7 +1029,7 @@ export const InstructorCertificationHubPage = () => {
                           }}
                         >
                           <Award size={13} />
-                          Mint
+                          Refresh status
                         </button>
                       ) : (
                         <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>—</span>

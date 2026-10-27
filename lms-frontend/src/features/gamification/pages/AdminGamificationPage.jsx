@@ -353,6 +353,7 @@ export const AdminGamificationPage = () => {
                         {editingRule === rule.id ? (
                           <div className="flex items-center justify-end gap-1">
                             <button
+                              aria-label="Confirm"
                               type="button"
                               onClick={() => handleSaveRule(rule.id, rule.active)}
                               className="rounded-md bg-primary p-1 text-primary-foreground hover:bg-primary/90"
@@ -360,6 +361,7 @@ export const AdminGamificationPage = () => {
                               <Check className="h-4 w-4" />
                             </button>
                             <button
+                              aria-label="Close"
                               type="button"
                               onClick={() => setEditingRule(null)}
                               className="rounded-md bg-slate-200 p-1 text-slate-600 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-300"
@@ -369,6 +371,7 @@ export const AdminGamificationPage = () => {
                           </div>
                         ) : (
                           <button
+                            aria-label="Edit"
                             type="button"
                             onClick={() => {
                               setEditingRule(rule.id);
@@ -458,6 +461,7 @@ export const AdminGamificationPage = () => {
                       <td className="py-3 pr-3 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <button
+                            aria-label="Edit"
                             type="button"
                             onClick={() => openBadgeModal(b)}
                             className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800"
@@ -465,6 +469,7 @@ export const AdminGamificationPage = () => {
                             <Edit2 className="h-4 w-4" />
                           </button>
                           <button
+                            aria-label="Delete"
                             type="button"
                             onClick={() => deleteBadgeMutation.mutate(b.id)}
                             className="rounded-md p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30"
@@ -538,6 +543,7 @@ export const AdminGamificationPage = () => {
                       <td className="py-3 pr-3 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <button
+                            aria-label="Edit"
                             type="button"
                             onClick={() => openLevelModal(lvl)}
                             className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800"
@@ -545,6 +551,7 @@ export const AdminGamificationPage = () => {
                             <Edit2 className="h-4 w-4" />
                           </button>
                           <button
+                            aria-label="Delete"
                             type="button"
                             onClick={() => deleteLevelMutation.mutate(lvl.id)}
                             className="rounded-md p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30"
@@ -633,6 +640,7 @@ export const AdminGamificationPage = () => {
                       <td className="py-3 pr-3 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <button
+                            aria-label="Edit"
                             type="button"
                             onClick={() => openMilestoneModal(m)}
                             className="rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800"
@@ -640,6 +648,7 @@ export const AdminGamificationPage = () => {
                             <Edit2 className="h-4 w-4" />
                           </button>
                           <button
+                            aria-label="Delete"
                             type="button"
                             onClick={() => deleteMilestoneMutation.mutate(m.id)}
                             className="rounded-md p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30"

@@ -69,7 +69,7 @@ export const Header = ({ onToggleSidebar, tabNav }) => {
     <header
       className="flex items-center gap-3 h-14 px-4 flex-shrink-0 sticky top-0 z-20 border-b"
       style={{
-        background: 'var(--card)',
+        background: 'var(--background)',
         borderColor: 'var(--border)',
       }}
     >

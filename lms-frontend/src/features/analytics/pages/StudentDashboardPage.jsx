@@ -29,6 +29,8 @@ import {
   Search,
   X,
 } from 'lucide-react';
+import { isCourseCompleted, isCourseInProgress } from '../../../utils/courseProgress';
+import { certificateListOptions } from '../../certificates/services/certificateQueries';
 import useAuth from '../../auth/hooks/useAuth';
 import { useMyCourses } from '../../courses/hooks/useCourses';
 import analyticsService from '../services/analyticsService';
@@ -39,7 +41,6 @@ import Spinner from '../../../components/common/Spinner';
 import { useResources } from '../../resources/hooks/useResources';
 import resourceService from '../../resources/services/resourceService';
 import { useStudentBadges } from '../../gamification/hooks/useGamification';
-import certificateService from '../../certificates/services/certificateService';
 
 export const StudentDashboardPage = () => {
   const navigate = useNavigate();
@@ -129,11 +130,12 @@ export const StudentDashboardPage = () => {
   const badges = Array.isArray(badgeData) ? badgeData : (badgeData?.content ?? []);
   const earnedBadges = badges.filter((b) => Boolean(b.awardedAt));
 
-  const { data: certificatePage } = useQuery({
-    queryKey: ['certificates', 'mine', 'count'],
-    queryFn: () => certificateService.list({ page: 0, size: 1 }),
+  const { data: certificatePage, isError: certificateUnavailable } = useQuery({
+    ...certificateListOptions(user?.id),
   });
-  const certificateCount = certificatePage?.totalElements ?? certificatePage?.content?.length;
+  const certificateCount = certificateUnavailable
+    ? 'Unavailable'
+    : (certificatePage?.totalElements ?? certificatePage?.content?.length ?? '—');
 
   // Weekly Trend Chart Data
   const weeklyTrends = useMemo(() => analytics?.enrollmentTrend ?? [], [analytics]);
@@ -144,9 +146,7 @@ export const StudentDashboardPage = () => {
   const stats = [
     {
       label: 'Courses in Progress',
-      value:
-        analytics?.inProgressCount ??
-        (courses.filter((c) => (c.progressPercent || 0) < 100).length || courses.length),
+      value: analytics?.inProgressCount ?? courses.filter(isCourseInProgress).length,
       subtext: `${courses.length} total enrolled`,
       icon: <BookOpen size={20} className="text-brand-gold" />,
       color: 'var(--color-primary-500)',
@@ -154,9 +154,7 @@ export const StudentDashboardPage = () => {
     },
     {
       label: 'Completed Courses',
-      value:
-        analytics?.completedCount ??
-        (courses.filter((c) => (c.progressPercent || 0) >= 100).length || 0),
+      value: analytics?.completedCount ?? (courses.filter(isCourseCompleted).length || 0),
       subtext: 'Unlock completion certificates',
       icon: <CheckCircle2 size={20} className="text-emerald-400" />,
       color: '#10b981',
@@ -835,8 +833,7 @@ export const StudentDashboardPage = () => {
                       overflow: 'hidden',
                     }}
                   >
-                    {a.description ||
-                      'Test your knowledge on this module with automated test-case evaluation.'}
+                    {a.description || 'No description provided.'}
                   </p>
                 </div>
 
@@ -999,13 +996,13 @@ export const StudentDashboardPage = () => {
                       fileTypeUpper === 'DOCX' || fileTypeUpper === 'DOC'
                         ? {
                             bg: 'rgba(59, 130, 246, 0.15)',
-                            text: '#60a5fa',
+                            text: 'var(--badge-info-fg)',
                             border: 'rgba(59, 130, 246, 0.3)',
                           }
                         : fileTypeUpper === 'ZIP' || fileTypeUpper === 'RAR'
                           ? {
                               bg: 'rgba(16, 185, 129, 0.15)',
-                              text: '#34d399',
+                              text: 'var(--badge-success-fg)',
                               border: 'rgba(16, 185, 129, 0.3)',
                             }
                           : {
@@ -1133,7 +1130,7 @@ export const StudentDashboardPage = () => {
                         cursor: 'pointer',
                         background: 'rgba(59, 130, 246, 0.08)',
                         border: '1px solid rgba(59, 130, 246, 0.2)',
-                        color: '#60a5fa',
+                        color: 'var(--badge-info-fg)',
                         transition: 'all 0.15s ease',
                       }}
                     >
@@ -1197,7 +1194,7 @@ export const StudentDashboardPage = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#60a5fa',
+                        color: 'var(--badge-info-fg)',
                       }}
                     >
                       <Download size={18} />
@@ -1213,6 +1210,7 @@ export const StudentDashboardPage = () => {
                     </div>
                   </div>
                   <button
+                    aria-label="Close"
                     onClick={() => setShowAllGuidesModal(false)}
                     style={{
                       background: 'none',
@@ -1332,13 +1330,13 @@ export const StudentDashboardPage = () => {
                         fileTypeUpper === 'DOCX' || fileTypeUpper === 'DOC'
                           ? {
                               bg: 'rgba(59, 130, 246, 0.15)',
-                              text: '#60a5fa',
+                              text: 'var(--badge-info-fg)',
                               border: 'rgba(59, 130, 246, 0.3)',
                             }
                           : fileTypeUpper === 'ZIP' || fileTypeUpper === 'RAR'
                             ? {
                                 bg: 'rgba(16, 185, 129, 0.15)',
-                                text: '#34d399',
+                                text: 'var(--badge-success-fg)',
                                 border: 'rgba(16, 185, 129, 0.3)',
                               }
                             : {

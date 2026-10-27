@@ -26,6 +26,7 @@ export const adminAssessmentService = {
     http.delete(ep.questionById(assessmentId, questionId)),
   // Analytics
   getAnalytics: (id) => http.get(ep.analytics(id)),
+  getSubmissionHistory: () => http.get(`${ep.base}/submissions`),
 
   // Retest
   retestStudent: (assessmentId, studentId) => http.post(ep.retest(assessmentId, studentId)),

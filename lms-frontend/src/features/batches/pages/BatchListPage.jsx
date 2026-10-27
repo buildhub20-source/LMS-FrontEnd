@@ -41,25 +41,25 @@ const BATCH_STATUS_CONFIG = {
   PLANNED: {
     label: 'Planned',
     bg: 'rgba(59, 130, 246, 0.18)',
-    color: '#60a5fa',
+    color: 'var(--badge-info-fg)',
     border: 'rgba(59, 130, 246, 0.35)',
   },
   ONGOING: {
     label: 'Ongoing',
     bg: 'rgba(16, 185, 129, 0.18)',
-    color: '#34d399',
+    color: 'var(--badge-success-fg)',
     border: 'rgba(16, 185, 129, 0.35)',
   },
   IN_PROGRESS: {
     label: 'Ongoing',
     bg: 'rgba(16, 185, 129, 0.18)',
-    color: '#34d399',
+    color: 'var(--badge-success-fg)',
     border: 'rgba(16, 185, 129, 0.35)',
   },
   COMPLETED: {
     label: 'Completed',
     bg: 'rgba(168, 85, 247, 0.18)',
-    color: '#c084fc',
+    color: 'var(--badge-accent-fg)',
     border: 'rgba(168, 85, 247, 0.35)',
   },
   CANCELLED: {
@@ -260,7 +260,7 @@ export const BatchListPage = () => {
             icon={<RefreshCw className="h-4 w-4" />}
             onClick={() => refetch()}
           >
-            Sync Telemetry
+            Refresh batch metrics
           </AdminButton>
           <AdminButton
             variant="primary"
@@ -502,6 +502,7 @@ export const BatchListPage = () => {
               ].map(({ id, I }) => (
                 <button
                   key={id}
+                  aria-label={`${id} view`}
                   onClick={() => setViewMode(id)}
                   style={{
                     padding: '7px 10px',

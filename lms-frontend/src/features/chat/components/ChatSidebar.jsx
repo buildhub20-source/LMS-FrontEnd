@@ -1,8 +1,9 @@
 import { useState, useCallback } from 'react';
 import { Search, SquarePen, Pin } from 'lucide-react';
 import useAuth from '../../auth/hooks/useAuth';
-import { getChannelDisplayName, getChannelIcon } from '../utils/chatHelpers';
+import { getChannelDisplayName } from '../utils/chatHelpers';
 import { CHANNEL_TYPES } from '../constants/chatConstants';
+import ChannelTypeIcon from './ChannelTypeIcon';
 import NewChatModal from './NewChatModal';
 import { SidebarSkeleton } from './ChatSkeletons';
 
@@ -279,7 +280,7 @@ function ChannelGroup({
               <span
                 className={`chat-channel-icon-badge chat-channel-icon-badge--${ch.type?.toLowerCase()}`}
               >
-                {getChannelIcon(ch.type)}
+                <ChannelTypeIcon type={ch.type} />
               </span>
               {ch.type === CHANNEL_TYPES.DIRECT && otherUserId && (
                 <span

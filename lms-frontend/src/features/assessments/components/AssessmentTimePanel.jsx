@@ -39,7 +39,7 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
       sub: `Opens in ${countdown}`,
       tone: 'warning',
       badgeBg: 'rgba(245, 158, 11, 0.15)',
-      badgeColor: '#fbbf24',
+      badgeColor: 'var(--badge-warning-fg)',
       badgeBorder: 'rgba(245, 158, 11, 0.3)',
       icon: CalendarClock,
     },
@@ -48,7 +48,7 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
       sub: countdown ? `Closes in ${countdown}` : 'Open',
       tone: 'success',
       badgeBg: 'rgba(16, 185, 129, 0.15)',
-      badgeColor: '#34d399',
+      badgeColor: 'var(--badge-success-fg)',
       badgeBorder: 'rgba(16, 185, 129, 0.3)',
       icon: CheckCircle,
     },
@@ -75,7 +75,7 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
       sub: 'No schedule deadline set',
       tone: 'info',
       badgeBg: 'rgba(59, 130, 246, 0.15)',
-      badgeColor: '#60a5fa',
+      badgeColor: 'var(--badge-info-fg)',
       badgeBorder: 'rgba(59, 130, 246, 0.3)',
       icon: Clock,
     },
@@ -273,7 +273,7 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
                 color: 'var(--text-secondary)',
               }}
             >
-              <RefreshCw size={14} style={{ color: '#fbbf24' }} /> Max Attempts
+              <RefreshCw size={14} style={{ color: 'var(--badge-warning-fg)' }} /> Max Attempts
             </span>
             <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
               {assessment?.maxAttempts || 1}
@@ -296,7 +296,7 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
                 color: 'var(--text-secondary)',
               }}
             >
-              <HelpCircle size={14} style={{ color: '#34d399' }} /> Questions
+              <HelpCircle size={14} style={{ color: 'var(--badge-success-fg)' }} /> Questions
             </span>
             <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
               {assessment?.questionCount ?? '—'}
@@ -320,7 +320,7 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
                   color: 'var(--text-secondary)',
                 }}
               >
-                <CheckCircle size={14} style={{ color: '#34d399' }} /> Window Opens
+                <CheckCircle size={14} style={{ color: 'var(--badge-success-fg)' }} /> Window Opens
               </span>
               <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>
                 {formatDate(startTime)}
@@ -370,7 +370,7 @@ export const AssessmentTimePanel = ({ assessment, onExtend, onClose, isUpdating 
                 letterSpacing: '0.05em',
               }}
             >
-              <Zap size={13} style={{ color: '#fbbf24' }} /> Time Triggers
+              <Zap size={13} style={{ color: 'var(--badge-warning-fg)' }} /> Time Triggers
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {onExtend && (

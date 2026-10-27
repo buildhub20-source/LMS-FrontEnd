@@ -528,6 +528,7 @@ export const ResourceManagementPage = () => {
           />
           {search && (
             <button
+              aria-label="Close"
               onClick={() => setSearch('')}
               style={{
                 position: 'absolute',
@@ -960,6 +961,7 @@ export const ResourceManagementPage = () => {
                 </p>
               </div>
               <button
+                aria-label="Close"
                 onClick={() => setIsModalOpen(false)}
                 style={{
                   background: 'none',

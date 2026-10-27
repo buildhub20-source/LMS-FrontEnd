@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import {
   Trophy,
   Award,
@@ -22,7 +23,6 @@ import {
   ArrowLeft,
   X,
 } from 'lucide-react';
-import { useAdminAssessments } from '../hooks/useAdminAssessments';
 import adminAssessmentService from '../services/adminAssessmentService';
 import {
   evaluateStudentBadges,
@@ -61,84 +61,30 @@ export const GlobalSubmissionsHistoryPage = () => {
   const [selectedStatus, setSelectedStatus] = useState('ALL');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // 1. Fetch all assessments
-  const { data: assessmentsData, isLoading: assessmentsLoading } = useAdminAssessments({
-    size: 100,
+  const {
+    data: allSubmissions = [],
+    isLoading: analyticsLoading,
+    error: historyError,
+  } = useQuery({
+    queryKey: ['admin-assessments', 'submission-history'],
+    queryFn: () => adminAssessmentService.getSubmissionHistory(),
+    staleTime: 30_000,
   });
-  const assessments = useMemo(() => {
-    const raw =
-      assessmentsData?.content ||
-      assessmentsData?.data?.content ||
-      (Array.isArray(assessmentsData) ? assessmentsData : []);
-    return Array.isArray(raw) ? raw : [];
-  }, [assessmentsData]);
-
-  // 2. Fetch all analytics / submissions across all assessments
-  const [fetchedSubmissions, setAllSubmissions] = useState([]);
-  const [fetchingAnalytics, setAnalyticsLoading] = useState(true);
-  const [loadError, setLoadError] = useState(null);
-  const allSubmissions = useMemo(
-    () => (assessments.length ? fetchedSubmissions : []),
-    [assessments.length, fetchedSubmissions],
+  const loadError = historyError?.message;
+  const assessments = useMemo(
+    () => [
+      ...new Map(
+        allSubmissions.map((row) => [
+          row.assessmentId,
+          {
+            id: row.assessmentId,
+            title: row.assessmentTitle,
+          },
+        ]),
+      ).values(),
+    ],
+    [allSubmissions],
   );
-  const analyticsLoading = assessmentsLoading || (assessments.length > 0 && fetchingAnalytics);
-
-  useEffect(() => {
-    let isMounted = true;
-    if (!assessments.length) return;
-    const timer = setTimeout(() => {
-      setAnalyticsLoading(true);
-      setLoadError(null);
-
-      Promise.allSettled(
-        assessments.map((a) =>
-          adminAssessmentService
-            .getAnalytics(a.id)
-            .then((res) => {
-              const data = res?.data?.data || res?.data || res || {};
-              const stats = data.studentStats || [];
-              return stats.map((s) => ({
-                ...s,
-                assessmentId: a.id,
-                assessmentTitle: a.title,
-                assessmentTotalMarks: a.totalMarks || s.totalMarks || 100,
-                assessmentDuration: a.durationMinutes || 60,
-                assessmentStatus: a.status,
-              }));
-            })
-            .catch(() => []),
-        ),
-      )
-        .then((results) => {
-          if (!isMounted) return;
-          const combined = [];
-          results.forEach((r) => {
-            if (r.status === 'fulfilled' && Array.isArray(r.value)) {
-              combined.push(...r.value);
-            }
-          });
-
-          // Sort by submittedAt descending (most recent first)
-          combined.sort((a, b) => {
-            const timeA = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
-            const timeB = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
-            return timeB - timeA;
-          });
-
-          setAllSubmissions(combined);
-        })
-        .catch((err) => {
-          if (isMounted) setLoadError(err.message || 'Failed to aggregate submissions history');
-        })
-        .finally(() => {
-          if (isMounted) setAnalyticsLoading(false);
-        });
-    }, 0);
-    return () => {
-      clearTimeout(timer);
-      isMounted = false;
-    };
-  }, [assessments, assessmentsLoading]);
 
   // Extract distinct available months from submissions for the month filter
   const availableMonths = useMemo(() => {
@@ -391,7 +337,7 @@ export const GlobalSubmissionsHistoryPage = () => {
   const getAssessmentDetailsRoute = (id) =>
     isInstructor ? ROUTES.INSTRUCTOR_ASSESSMENT_DETAILS(id) : ROUTES.ADMIN_ASSESSMENT_DETAILS(id);
 
-  if (assessmentsLoading || analyticsLoading) {
+  if (analyticsLoading) {
     return <Spinner fullPage={false} />;
   }
 
@@ -454,8 +400,7 @@ export const GlobalSubmissionsHistoryPage = () => {
                   Global Assessment Submissions &amp; History
                 </h1>
                 <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--text-muted)' }}>
-                  Complete record of all assessments solved, candidate scores, dates, and LeetCode
-                  honors.
+                  Complete record of assessments, candidate scores, dates, and coding achievements.
                 </p>
               </div>
             </div>
@@ -637,7 +582,9 @@ export const GlobalSubmissionsHistoryPage = () => {
             <div style={{ fontSize: 22, fontWeight: 800, color: '#f59e0b' }}>
               {metrics.badgesCount}
             </div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>LeetCode honors unlocked</div>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+              Coding achievements unlocked
+            </div>
           </div>
         </div>
 
@@ -1006,7 +953,7 @@ export const GlobalSubmissionsHistoryPage = () => {
                 borderRadius: 6,
               }}
             >
-              <span style={{ fontSize: 11, color: '#60a5fa' }}>
+              <span style={{ fontSize: 11, color: 'var(--badge-info-fg)' }}>
                 Filtered:{' '}
                 <strong>
                   {assessments.find((a) => a.id === selectedAssessmentId)?.title ||

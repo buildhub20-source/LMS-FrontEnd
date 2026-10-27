@@ -363,6 +363,7 @@ export const CohortRosterModal = ({ batch, isOpen, onClose }) => {
               )}
             </div>
             <button
+              aria-label="Close"
               onClick={onClose}
               style={{
                 background: 'var(--background)',

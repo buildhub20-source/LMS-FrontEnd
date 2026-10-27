@@ -4,6 +4,15 @@ import { API_ENDPOINTS } from '../../../constants/apiEndpoints';
 export const courseService = {
   list: (params) => http.get(API_ENDPOINTS.courses.base, { params }),
   listMine: (params) => http.get(API_ENDPOINTS.courses.mine, { params }),
+  listAllMine: async () => {
+    const first = await http.get(API_ENDPOINTS.courses.mine, { params: { page: 0, size: 100 } });
+    const content = [...(first.content ?? [])];
+    for (let page = 1; page < (first.totalPages ?? 1); page += 1) {
+      const next = await http.get(API_ENDPOINTS.courses.mine, { params: { page, size: 100 } });
+      content.push(...(next.content ?? []));
+    }
+    return { ...first, content };
+  },
   getById: (id) => http.get(API_ENDPOINTS.courses.byId(id)),
   create: (payload) => http.post(API_ENDPOINTS.courses.base, payload),
   update: (id, payload) => http.patch(API_ENDPOINTS.courses.byId(id), payload),

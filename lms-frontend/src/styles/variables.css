@@ -49,10 +49,11 @@
   --color-info-light: #dbeafe;
 
   /* Badge text that stays readable on its own 14% tint */
-  --badge-success-fg: #15803d;
-  --badge-warning-fg: #b45309;
+  --badge-success-fg: #166534;
+  --badge-warning-fg: #92400e;
   --badge-danger-fg: #b91c1c;
   --badge-info-fg: #1d4ed8;
+  --badge-accent-fg: #7e22ce;
 
   /* ── Surface / Background ─────────────────────────── */
   --color-bg: #f3f1ea;
@@ -203,6 +204,7 @@ html.dark {
   --badge-warning-fg: #fbbf24;
   --badge-danger-fg: #f87171;
   --badge-info-fg: #93c5fd;
+  --badge-accent-fg: #c084fc;
 
   --color-primary-50: #2a2508;
   --color-primary-100: #3a3310;

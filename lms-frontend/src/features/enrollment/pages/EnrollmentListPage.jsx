@@ -718,6 +718,8 @@ export const EnrollmentListPage = () => {
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
               >
                 <span
+                  title={`${stat.count} of ${stat.total} enrollments`}
+                  aria-label={`${stat.count} of ${stat.total} enrollments (${stat.count} of {stat.total} ({pct}%))`}
                   style={{
                     fontSize: 10,
                     fontWeight: 700,
@@ -738,7 +740,7 @@ export const EnrollmentListPage = () => {
                     color: st.badge.color,
                   }}
                 >
-                  {pct}%
+                  {stat.count} of {stat.total} ({pct}%)
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
@@ -757,7 +759,7 @@ export const EnrollmentListPage = () => {
                     height: '100%',
                     borderRadius: 999,
                     background: st.bar,
-                    width: `${pct}%`,
+                    width: `${stat.count} of {stat.total} ({pct}%)`,
                     transition: 'width 0.6s ease',
                   }}
                 />
@@ -1608,6 +1610,7 @@ export const EnrollmentListPage = () => {
             Page {page + 1}
             {['‹', '›'].map((ch, i) => (
               <button
+                aria-label={i === 0 ? 'Previous page' : 'Next page'}
                 key={i}
                 disabled={i === 0 ? page === 0 : activeRows.length < size}
                 onClick={() => setPage((p) => (i === 0 ? Math.max(0, p - 1) : p + 1))}
@@ -1730,6 +1733,7 @@ export const EnrollmentListPage = () => {
               />
               {targetSearchQuery && (
                 <button
+                  aria-label="Close"
                   type="button"
                   onClick={() => setTargetSearchQuery('')}
                   style={{

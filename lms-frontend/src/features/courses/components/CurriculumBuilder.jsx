@@ -192,7 +192,12 @@ const SortableModule = ({
           >
             <GripVertical size={18} />
           </div>
-          <button onClick={() => setExpanded(!expanded)} style={iconBtnStyle}>
+          <button
+            aria-label={expanded ? 'Collapse section' : 'Expand section'}
+            aria-expanded={expanded}
+            onClick={() => setExpanded(!expanded)}
+            style={iconBtnStyle}
+          >
             {expanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
           </button>
 
@@ -206,10 +211,15 @@ const SortableModule = ({
                   onChange={(e) => setEditedTitle(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSaveTitle()}
                 />
-                <Button size="xs" variant="primary" onClick={handleSaveTitle}>
+                <Button aria-label="Confirm" size="xs" variant="primary" onClick={handleSaveTitle}>
                   <Check size={12} />
                 </Button>
-                <Button size="xs" variant="ghost" onClick={() => setIsEditingTitle(false)}>
+                <Button
+                  aria-label="Close"
+                  size="xs"
+                  variant="ghost"
+                  onClick={() => setIsEditingTitle(false)}
+                >
                   <X size={12} />
                 </Button>
               </div>

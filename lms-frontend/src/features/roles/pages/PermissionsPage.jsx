@@ -220,6 +220,7 @@ export const PermissionsPage = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <h1 style={{ margin: 0, color: M.textMain, fontSize: 24, fontWeight: 700 }}>Permissions</h1>
       {/* Card wrapper */}
       <div
         style={{
@@ -491,6 +492,7 @@ export const PermissionsPage = () => {
                             </button>
                           </PermissionGuard>
                           <button
+                            aria-label="More actions"
                             style={{
                               background: 'none',
                               border: 'none',
@@ -555,6 +557,7 @@ export const PermissionsPage = () => {
             </span>
             {['‹', '›'].map((ch, i) => (
               <button
+                aria-label={i === 0 ? 'Previous page' : 'Next page'}
                 key={i}
                 disabled={i === 0 ? page === 0 : page >= totalPages - 1}
                 onClick={() =>

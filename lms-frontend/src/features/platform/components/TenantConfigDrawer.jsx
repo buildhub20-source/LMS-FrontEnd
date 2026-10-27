@@ -234,6 +234,7 @@ export const TenantConfigDrawer = ({ tenant, isOpen, onClose }) => {
             </div>
           </div>
           <button
+            aria-label="Close"
             onClick={onClose}
             style={{
               background: 'transparent',
