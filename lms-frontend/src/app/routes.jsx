@@ -65,6 +65,9 @@ const AdminAnalyticsPage = lazy(() => import('../features/analytics/pages/AdminA
 const ResourceManagementPage = lazy(
   () => import('../features/resources/pages/ResourceManagementPage'),
 );
+const CertificateTemplatePage = lazy(
+  () => import('../features/certificates/pages/CertificateTemplatePage'),
+);
 const AdminCourseListPage = lazy(() => import('../features/courses/pages/AdminCourseListPage'));
 const InstructorAnalyticsPage = lazy(
   () => import('../features/analytics/pages/InstructorAnalyticsPage'),
@@ -172,6 +175,7 @@ const suspend = (element) => (
 );
 
 export const router = createBrowserRouter([
+  { path: '/login', element: <Navigate to={ROUTES.LOGIN} replace /> },
   // Platform routes
   {
     path: ROUTES.PLATFORM_LOGIN,
@@ -267,6 +271,10 @@ export const router = createBrowserRouter([
               { path: ROUTES.ADMIN_COURSE_DETAILS(), element: suspend(<CourseDetailsPage />) },
               { path: ROUTES.ADMIN_COURSE_EDIT(), element: suspend(<EditCoursePage />) },
               { path: ROUTES.CAMPUS_RESOURCES, element: suspend(<ResourceManagementPage />) },
+              {
+                path: ROUTES.CERTIFICATE_TEMPLATES,
+                element: suspend(<CertificateTemplatePage />),
+              },
               { path: ROUTES.ADMIN_GAMIFICATION, element: suspend(<AdminGamificationPage />) },
               {
                 element: <PermissionGuard required={[PERMISSIONS.ASSESSMENT_VIEW]} />,

@@ -135,6 +135,14 @@ export const API_ENDPOINTS = Object.freeze({
     download: (id) => `/certificates/${id}/download`,
     verify: (serialNumber) => `/certificates/verify/${encodeURIComponent(serialNumber)}`,
   },
+  certificateTemplates: {
+    base: '/admin/certificate-templates',
+    byId: (id) => `/admin/certificate-templates/${id}`,
+    institutionPdf: '/admin/certificate-templates/institution-pdf',
+    preview: (id) => `/admin/certificate-templates/${id}/preview`,
+    publish: (id) => `/admin/certificate-templates/${id}/publish`,
+    unpublish: (id) => `/admin/certificate-templates/${id}/unpublish`,
+  },
   notifications: {
     base: '/notifications',
     read: (id) => `/notifications/${id}/read`,

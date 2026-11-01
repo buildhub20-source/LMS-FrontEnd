@@ -62,6 +62,7 @@ export const ROUTES = Object.freeze({
   ADMIN_RUBRICS: '/admin/assessments/rubrics',
   ADMIN_GAMIFICATION: '/admin/gamification',
   CAMPUS_RESOURCES: '/admin/resources',
+  CERTIFICATE_TEMPLATES: '/admin/certificate-templates',
 
   // Instructor
   INSTRUCTOR_ANALYTICS: '/instructor/analytics',

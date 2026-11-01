@@ -714,7 +714,10 @@ export const RoleListPage = () => {
     setEditRole(role);
     setRoleName(role.name ?? '');
     setRoleDescription(role.description ?? '');
-    setSelectedPermissions((role.permissions ?? []).map((p) => p.id));
+    setSelectedPermissions((role.permissions ?? []).map((permission) => {
+      const name = typeof permission === 'string' ? permission : permission.name;
+      return allPermissions.find((item) => item.name === name)?.id;
+    }).filter(Boolean));
     setPermSearch('');
     setModalError('');
     setModalOpen(true);
@@ -735,7 +738,7 @@ export const RoleListPage = () => {
       const payload = {
         name: roleName.trim(),
         description: roleDescription.trim(),
-        permissionIds: selectedPermissions,
+        permissions: allPermissions.filter((permission) => selectedPermissions.includes(permission.id)).map((permission) => permission.name),
       };
       if (editRole) {
         await roleService.update(editRole.id, payload);
@@ -797,7 +800,7 @@ export const RoleListPage = () => {
     if (!rolesUserTarget) return;
     setSavingUserRoles(true);
     try {
-      await userService.updateRoles(rolesUserTarget.id, selectedUserRoleIds);
+      await userService.updateRoles(rolesUserTarget.id, roles.filter((role) => selectedUserRoleIds.includes(role.id)).map((role) => role.name));
       toastSuccess(
         `Roles updated for ${rolesUserTarget.fullName || rolesUserTarget.name || 'user'}.`,
       );

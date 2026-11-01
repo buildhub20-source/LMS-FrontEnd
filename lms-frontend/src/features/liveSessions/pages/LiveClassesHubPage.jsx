@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
   Video,
@@ -17,25 +18,29 @@ import {
   useCreateLiveSession,
   useStartLiveSession,
   useEndLiveSession,
+  useJoinLiveSession,
 } from '../hooks/useLiveSession';
 import { useCourses } from '../../courses/hooks/useCourses';
 import LiveSessionCard from '../components/LiveSessionCard';
 import ScheduleLiveSessionModal from '../components/ScheduleLiveSessionModal';
 import useAuth from '../../auth/hooks/useAuth';
 import { ROUTES } from '../../../constants/routes';
+import liveSessionApi from '../api/liveSessionApi';
+import usePermission from '../../../hooks/usePermission';
+import { PERMISSIONS } from '../../../constants/permissions';
 
 export const LiveClassesHubPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { hasPermission } = usePermission();
 
-  const userRole = user?.role || user?.roles?.[0] || 'STUDENT';
-  const roleName = (typeof userRole === 'string' ? userRole : userRole?.name || '').toUpperCase();
+  const roleNames = [user?.role, ...(user?.roles || [])].map((role) =>
+    (typeof role === 'string' ? role : role?.name || '').toUpperCase(),
+  );
+  const isAdmin = roleNames.some((role) => role === 'ADMIN' || role === 'SUPER_ADMIN') || Boolean(user?.isAdmin);
   const isInstructorOrAdmin =
-    roleName === 'INSTRUCTOR' ||
-    roleName === 'ADMIN' ||
-    roleName === 'SUPER_ADMIN' ||
-    Boolean(user?.isInstructor) ||
-    Boolean(user?.isAdmin);
+    roleNames.includes('INSTRUCTOR') || isAdmin || Boolean(user?.isInstructor);
+  const canSchedule = isAdmin || hasPermission(PERMISSIONS.LIVE_SESSION_CREATE);
 
   const [activeTab, setActiveTab] = useState('ALL'); // ALL, LIVE, SCHEDULED, ENDED
   const [selectedCourseId, setSelectedCourseId] = useState('');
@@ -60,6 +65,14 @@ export const LiveClassesHubPage = () => {
   const createMutation = useCreateLiveSession();
   const startMutation = useStartLiveSession();
   const endMutation = useEndLiveSession();
+  const joinMutation = useJoinLiveSession();
+  const googleCalendar = useQuery({
+    queryKey: ['google-calendar-status'],
+    queryFn: async () => {
+      const res = await liveSessionApi.getGoogleCalendarStatus();
+      return res?.data ?? res;
+    },
+  });
 
   // Metrics computation
   const metrics = useMemo(() => {
@@ -83,10 +96,23 @@ export const LiveClassesHubPage = () => {
 
   const handleStartSession = async (sessionId) => {
     try {
-      await startMutation.mutateAsync(sessionId);
-      navigate(ROUTES.LIVE_SESSION_ROOM(sessionId));
+      const result = await startMutation.mutateAsync(sessionId);
+      const meetingUrl = result?.meetingUrl || sessions.find((session) => session.id === sessionId)?.meetingUrl;
+      if (meetingUrl) window.open(meetingUrl, '_blank', 'noopener,noreferrer');
+      else navigate(ROUTES.LIVE_SESSION_ROOM(sessionId));
     } catch (err) {
       console.error('Failed to start session', err);
+    }
+  };
+
+  const connectGoogleCalendar = async () => {
+    try {
+      const res = await liveSessionApi.getGoogleCalendarConnectUrl();
+      const data = res?.data ?? res;
+      if (data?.authorizationUrl) window.location.assign(data.authorizationUrl);
+    } catch (err) {
+      console.error('Failed to start Google Calendar connection', err);
+      alert(err?.response?.data?.message || 'Could not connect Google Calendar. An organization admin must configure it.');
     }
   };
 
@@ -101,7 +127,16 @@ export const LiveClassesHubPage = () => {
     }
   };
 
-  const handleSchedule = async ({ courseId, title, description, scheduledStart, scheduledEnd }) => {
+  const handleJoinMeet = async (sessionId) => {
+    try {
+      const result = await joinMutation.mutateAsync(sessionId);
+      if (result?.meetingUrl) window.open(result.meetingUrl, '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      console.error('Failed to join Google Meet', err);
+    }
+  };
+
+  const handleSchedule = async ({ courseId, title, description, scheduledStart, scheduledEnd, sessionMode }) => {
     const targetCourseId = courseId || selectedCourseId || courses[0]?.id;
     if (!targetCourseId) {
       alert('Please select a course to schedule this live class for.');
@@ -111,7 +146,7 @@ export const LiveClassesHubPage = () => {
     try {
       await createMutation.mutateAsync({
         courseId: targetCourseId,
-        payload: { title, description, scheduledStart, scheduledEnd },
+        payload: { title, description, scheduledStart, scheduledEnd, sessionMode },
       });
       setIsScheduleModalOpen(false);
       refetch();
@@ -211,7 +246,7 @@ export const LiveClassesHubPage = () => {
             </div>
           </div>
 
-          {isInstructorOrAdmin && (
+          {canSchedule && (
             <button
               onClick={() => setIsScheduleModalOpen(true)}
               style={{
@@ -540,7 +575,7 @@ export const LiveClassesHubPage = () => {
                   : 'Your instructors have not scheduled any upcoming live classes yet. Check back soon!'}
             </p>
           </div>
-          {isInstructorOrAdmin && !searchQuery && activeTab === 'ALL' && (
+          {canSchedule && !searchQuery && activeTab === 'ALL' && (
             <button
               onClick={() => setIsScheduleModalOpen(true)}
               style={{
@@ -600,6 +635,7 @@ export const LiveClassesHubPage = () => {
                 isInstructor={isInstructorOrAdmin}
                 onStart={handleStartSession}
                 onEnd={handleEndSession}
+                onJoinMeet={handleJoinMeet}
                 isStarting={startMutation.isPending}
                 isEnding={endMutation.isPending}
                 className="flex-1"
@@ -610,13 +646,18 @@ export const LiveClassesHubPage = () => {
       )}
 
       {/* Global Schedule Modal */}
-      {isInstructorOrAdmin && (
+      {canSchedule && (
         <ScheduleLiveSessionModal
           isOpen={isScheduleModalOpen}
           onClose={() => setIsScheduleModalOpen(false)}
           onSchedule={handleSchedule}
           courses={courses}
           initialCourseId={selectedCourseId}
+        liveSessionProvider={googleCalendar.data?.provider || 'LIVEKIT'}
+        googleCalendarConnected={Boolean(googleCalendar.data?.googleCalendarConnected)}
+        googleCalendarEmail={googleCalendar.data?.googleCalendarEmail || ''}
+        onConnectGoogleCalendar={connectGoogleCalendar}
+        canManageGoogleCalendar={isAdmin}
           isSubmitting={createMutation.isPending}
         />
       )}

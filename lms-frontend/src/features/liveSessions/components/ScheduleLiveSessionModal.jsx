@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { X, Calendar, Clock, Video } from 'lucide-react';
 import Button from '../../../components/common/Button';
 
@@ -9,6 +9,11 @@ export const ScheduleLiveSessionModal = ({
   isSubmitting,
   courses = [],
   initialCourseId = '',
+  liveSessionProvider = 'LIVEKIT',
+  googleCalendarConnected = false,
+  googleCalendarEmail = '',
+  onConnectGoogleCalendar,
+  canManageGoogleCalendar = false,
 }) => {
   const getDefaultStartTime = () => {
     const d = new Date();
@@ -22,12 +27,14 @@ export const ScheduleLiveSessionModal = ({
   const [description, setDescription] = useState('');
   const [startDateTime, setStartDateTime] = useState(getDefaultStartTime);
   const [durationMinutes, setDurationMinutes] = useState(60);
+  const [sessionMode, setSessionMode] = useState('');
+  useEffect(() => { if (!isOpen) setSessionMode(''); }, [isOpen]);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title.trim() || !startDateTime) return;
+    if (!title.trim() || !startDateTime || !sessionMode) return;
     if (courses.length > 0 && !courseId) return;
 
     const startDate = new Date(startDateTime);
@@ -39,6 +46,7 @@ export const ScheduleLiveSessionModal = ({
       description: description.trim() || null,
       scheduledStart: startDate.toISOString(),
       scheduledEnd: endDate.toISOString(),
+      sessionMode,
     });
   };
 
@@ -106,6 +114,34 @@ export const ScheduleLiveSessionModal = ({
             />
           </div>
 
+          <fieldset>
+            <legend className="text-xs font-semibold text-slate-700 dark:text-slate-300">Session mode *</legend>
+            <label className="mr-4"><input required disabled={liveSessionProvider === 'GOOGLE_MEET'} type="radio" name="sessionMode" value="live" checked={sessionMode === 'live'} onChange={(e) => setSessionMode(e.target.value)} /> Live session</label>
+            <label><input required disabled={liveSessionProvider !== 'GOOGLE_MEET'} type="radio" name="sessionMode" value="google_meet" checked={sessionMode === 'google_meet'} onChange={(e) => setSessionMode(e.target.value)} /> Google Meet</label>
+          </fieldset>
+          {sessionMode === 'google_meet' && (
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 p-3">
+              <p className="text-sm font-medium text-slate-800 dark:text-slate-100">Google Meet</p>
+              {googleCalendarConnected ? (
+                <>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    Calendar connected{googleCalendarEmail ? `: ${googleCalendarEmail}` : ''}. A Meet link will be created automatically.
+                  </p>
+                  {canManageGoogleCalendar && <Button type="button" variant="outline" onClick={onConnectGoogleCalendar} className="mt-2">
+                    Change connected Google account
+                  </Button>}
+                </>
+              ) : (
+                <>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">An organization administrator must connect this organization's Google Calendar to create Meet links. Each organization uses its own connection.</p>
+                  {canManageGoogleCalendar ? <Button type="button" variant="outline" onClick={onConnectGoogleCalendar} className="mt-2">
+                    Connect Google Calendar
+                  </Button> : <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Ask an organization administrator to connect Google Calendar.</p>}
+                </>
+              )}
+            </div>
+          )}
+
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
               Description / Agenda
@@ -158,7 +194,7 @@ export const ScheduleLiveSessionModal = ({
             <Button
               type="submit"
               variant="primary"
-              disabled={isSubmitting || !title.trim()}
+              disabled={isSubmitting || !title.trim() || !sessionMode}
               className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm"
             >
               {isSubmitting ? 'Scheduling...' : 'Schedule Class'}

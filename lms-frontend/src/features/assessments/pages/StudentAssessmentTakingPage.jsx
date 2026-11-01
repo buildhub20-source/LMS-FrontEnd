@@ -60,6 +60,7 @@ export const StudentAssessmentTakingPage = () => {
   const stopRecordingRef = useRef(null);
   // Synchronous guard — set true BEFORE exitFullscreen fires so no false proctoring strike
   const isSubmittingRef = useRef(false);
+  const isFinalizingRef = useRef(false);
   const handleFinalSubmitRef = useRef(null);
 
   const handleAutoSubmitOnExpiry = useCallback(() => {
@@ -92,7 +93,8 @@ export const StudentAssessmentTakingPage = () => {
   // Finalize exam, flush active draft, and upload recording with real-time synchronized stages
   const handleFinalSubmit = useCallback(
     async (_isAuto = false, shouldNavigate = true) => {
-      if (isSubmittingRef.current) return;
+      if (isFinalizingRef.current) return;
+      isFinalizingRef.current = true;
       // Mark as submitting FIRST — suppresses proctoring events synchronously
       isSubmittingRef.current = true;
       setShowSubmitModal(false);
@@ -175,6 +177,7 @@ export const StudentAssessmentTakingPage = () => {
           }, 400);
         }
       } catch (err) {
+        isFinalizingRef.current = false;
         isSubmittingRef.current = false;
         console.error('Final submit failed:', err);
         setSubmissionStage('error');
@@ -668,7 +671,15 @@ export const StudentAssessmentTakingPage = () => {
               <CodingQuestionPanel
                 key={currentQuestion.id}
                 question={currentQuestion}
-                draft={drafts[currentQuestion.id] ?? { language: 'java', sourceCode: '' }}
+                draft={
+                  drafts[currentQuestion.id] ?? {
+                    language:
+                      currentQuestion.compiler && currentQuestion.compiler !== 'ALL'
+                        ? currentQuestion.compiler.toLowerCase()
+                        : 'java',
+                    sourceCode: '',
+                  }
+                }
                 saveStatus={saveStatus[currentQuestion.id]}
                 onDraftChange={(patch) => updateDraft(currentQuestion.id, patch)}
                 attemptId={attempt?.id || attempt?.attemptId}

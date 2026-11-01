@@ -80,10 +80,10 @@ export const userService = {
 
   /**
    * PUT /users/{id}/roles
-   * Backend UpdateUserRolesRequest: { roleIds: [UUID] }
+   * Backend UpdateUserRolesRequest: { roles: [role name] }
    */
-  updateRoles: async (id, roleIds) =>
-    normalizeUser(await http.put(API_ENDPOINTS.users.roles(id), { roleIds })),
+  updateRoles: async (id, roles) =>
+    normalizeUser(await http.put(API_ENDPOINTS.users.roles(id), { roles })),
 
   /**
    * POST /users/me/password

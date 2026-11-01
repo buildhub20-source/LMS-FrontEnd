@@ -98,4 +98,27 @@ describe('CodingQuestionPanel runner', () => {
     expect(await screen.findByText('Write some code before running it.')).toBeInTheDocument();
     expect(calls).toHaveLength(0);
   });
+
+  it('restricts language dropdown when question specifies a specific compiler', () => {
+    const pythonQuestion = {
+      ...question,
+      compiler: 'PYTHON',
+    };
+    render(<CodingQuestionPanel question={pythonQuestion} onDraftChange={() => {}} />);
+    const options = screen.getAllByRole('option');
+    expect(options).toHaveLength(1);
+    expect(options[0]).toHaveTextContent('Python 3.11');
+  });
+
+  it('marks compile error status correctly in test results', async () => {
+    runOnServer.mockResolvedValue([
+      { status: 'COMPILE_ERROR', compileOutput: "syntax error on line 1" },
+    ]);
+
+    await runWith({ language: 'java', sourceCode: 'invalid code' });
+
+    expect(await screen.findByText(/Compilation failed/)).toBeInTheDocument();
+    expect(screen.getByText('COMPILE_ERROR')).toBeInTheDocument();
+  });
 });
+
