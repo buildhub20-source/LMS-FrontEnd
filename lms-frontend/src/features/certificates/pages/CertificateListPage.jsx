@@ -22,20 +22,18 @@ import Spinner from '../../../components/common/Spinner';
 import ErrorState from '../../../components/common/ErrorState';
 import Button from '../../../components/common/Button';
 import certificateService from '../services/certificateService';
+import { useToast } from '../../../components/feedback/Toast';
 import { ROUTES } from '../../../constants/routes';
 import ImportCertificateModal from '../components/ImportCertificateModal';
 
-const handleDownload = async (id, courseName) => {
+const handleDownload = async (id, courseName, toast) => {
   try {
-    const res = await certificateService.download(id);
-    const url = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `certificate-${courseName?.replace(/\s+/g, '-') ?? id}.pdf`;
-    a.click();
-    URL.revokeObjectURL(url);
-  } catch {
-    // silently ignore — user can retry
+    await certificateService.downloadFile(
+      id,
+      `certificate-${courseName?.replace(/\s+/g, '-') ?? id}.pdf`,
+    );
+  } catch (err) {
+    toast.error(err.message);
   }
 };
 
@@ -88,6 +86,7 @@ function CertificateSkeletonCard() {
  * Displays both LMS-earned certificates and imported external credentials.
  */
 export const CertificateListPage = () => {
+  const toast = useToast();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -728,7 +727,7 @@ export const CertificateListPage = () => {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <button
-                      onClick={() => handleDownload(cert.id, cert.courseName)}
+                      onClick={() => handleDownload(cert.id, cert.courseName, toast)}
                       style={{
                         flex: 1,
                         display: 'flex',

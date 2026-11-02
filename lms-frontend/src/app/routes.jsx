@@ -196,6 +196,8 @@ export const router = createBrowserRouter([
   // Public Certificate Verification
   { path: ROUTES.PUBLIC_CERTIFICATE_VERIFY, element: suspend(<PublicCertificateVerifyPage />) },
   { path: '/verify/:serialNumber', element: suspend(<PublicCertificateVerifyPage />) },
+  // Linked from the QR code printed on each certificate.
+  { path: '/verify/t/:token', element: suspend(<PublicCertificateVerifyPage />) },
 
   // Auth / Guest routes
   {

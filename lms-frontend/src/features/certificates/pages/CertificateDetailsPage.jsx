@@ -6,19 +6,17 @@ import Spinner from '../../../components/common/Spinner';
 import ErrorState from '../../../components/common/ErrorState';
 import Button from '../../../components/common/Button';
 import certificateService from '../services/certificateService';
+import { useToast } from '../../../components/feedback/Toast';
 import { ROUTES } from '../../../constants/routes';
 
-const handleDownload = async (id, courseName) => {
+const handleDownload = async (id, courseName, toast) => {
   try {
-    const res = await certificateService.download(id);
-    const url = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `certificate-${courseName?.replace(/\s+/g, '-') ?? id}.pdf`;
-    a.click();
-    URL.revokeObjectURL(url);
-  } catch {
-    // silently ignore
+    await certificateService.downloadFile(
+      id,
+      `certificate-${courseName?.replace(/\s+/g, '-') ?? id}.pdf`,
+    );
+  } catch (err) {
+    toast.error(err.message);
   }
 };
 
@@ -27,6 +25,7 @@ const handleDownload = async (id, courseName) => {
  * Shows the certificate visual preview and download action.
  */
 export const CertificateDetailsPage = () => {
+  const toast = useToast();
   const { certificateId } = useParams();
   const navigate = useNavigate();
 
@@ -348,7 +347,7 @@ export const CertificateDetailsPage = () => {
             >
               <Button
                 variant="primary"
-                onClick={() => handleDownload(certificateId, cert?.courseName)}
+                onClick={() => handleDownload(certificateId, cert?.courseName, toast)}
                 iconLeft={<Download size={16} />}
                 style={{ width: '100%', justifyContent: 'center' }}
               >

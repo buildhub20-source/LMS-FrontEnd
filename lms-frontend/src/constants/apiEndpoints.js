@@ -134,6 +134,7 @@ export const API_ENDPOINTS = Object.freeze({
     byId: (id) => `/certificates/${id}`,
     download: (id) => `/certificates/${id}/download`,
     verify: (serialNumber) => `/certificates/verify/${encodeURIComponent(serialNumber)}`,
+    verifyToken: (token) => `/certificates/verify/token/${encodeURIComponent(token)}`,
   },
   certificateTemplates: {
     base: '/admin/certificate-templates',

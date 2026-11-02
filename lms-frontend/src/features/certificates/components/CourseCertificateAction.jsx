@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Award, Clock } from 'lucide-react';
 
 import { certificateService } from '../services/certificateService';
+import { useToast } from '../../../components/feedback/Toast';
 
 /**
  * The certificate action shown on a completed course.
@@ -38,6 +39,7 @@ const loadCertificates = () => {
 export default function CourseCertificateAction({ courseId }) {
   const [certificate, setCertificate] = useState(null);
   const [downloading, setDownloading] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     let cancelled = false;
@@ -74,15 +76,12 @@ export default function CourseCertificateAction({ courseId }) {
   const download = async () => {
     setDownloading(true);
     try {
-      const response = await certificateService.download(certificate.id);
-      const url = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.download = `certificate-${certificate.serialNumber}.pdf`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      URL.revokeObjectURL(url);
+      await certificateService.downloadFile(
+        certificate.id,
+        `certificate-${certificate.serialNumber}.pdf`,
+      );
+    } catch (err) {
+      toast.error(err.message);
     } finally {
       setDownloading(false);
     }

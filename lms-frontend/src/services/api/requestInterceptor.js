@@ -9,8 +9,9 @@ export const onRequest = (config) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
+  // A request may name its tenant itself, as public certificate verification does.
   const tenant = storage.get(STORAGE_KEYS.TENANT);
-  if (tenant?.slug) {
+  if (tenant?.slug && !config.headers['X-Tenant-Slug']) {
     config.headers['X-Tenant-Slug'] = tenant.slug;
   }
 

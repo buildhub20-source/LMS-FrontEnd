@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import {
   ShieldCheck,
   Award,
@@ -22,7 +22,9 @@ import {
 import certificateService from '../services/certificateService';
 
 const PublicCertificateVerifyContent = () => {
-  const { serialNumber: urlSerial } = useParams();
+  const { serialNumber: urlSerial, token: urlToken } = useParams();
+  const [searchParams] = useSearchParams();
+  const org = searchParams.get('org');
   const navigate = useNavigate();
 
   const [serialInput, setSerialInput] = useState(urlSerial || '');
@@ -31,37 +33,54 @@ const PublicCertificateVerifyContent = () => {
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
 
-  const verifyCertificate = useCallback(async (serial) => {
-    const query = (serial || '').trim();
-    if (!query) return;
+  const verifyCertificate = useCallback(
+    async (serial, token) => {
+      const query = (serial || '').trim();
+      if (!query && !token) return;
 
-    setLoading(true);
-    setError(null);
-    setVerifiedData(null);
+      setLoading(true);
+      setError(null);
+      setVerifiedData(null);
 
-    try {
-      const response = await certificateService.verify(query);
-      const data = response?.data || response;
-      setVerifiedData(data);
-    } catch (err) {
-      console.error('Verification error:', err);
-      setError(
-        err.response?.status === 404
-          ? 'Certificate not found. Please double-check the serial number.'
-          : err.response?.data?.message ||
-              'Unable to verify credential at this time. Please try again.',
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      try {
+        const response = token
+          ? await certificateService.verifyByToken(token, org)
+          : await certificateService.verify(query);
+        const data = response?.data || response;
+        setVerifiedData(data);
+        if (token && data?.serialNumber) setSerialInput(data.serialNumber);
+      } catch (err) {
+        console.error('Verification error:', err);
+        // The API layer normalises errors to { status, message }.
+        const status = err.status ?? err.response?.status;
+        setError(
+          status === 404
+            ? token
+              ? 'This certificate could not be found. It may not have been issued by this organisation.'
+              : 'Certificate not found. Please double-check the serial number.'
+            : status === 429
+              ? 'Too many verification attempts. Please wait a minute and try again.'
+              : err.message || 'Unable to verify credential at this time. Please try again.',
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [org],
+  );
 
   useEffect(() => {
-    if (urlSerial) {
-      const timer = setTimeout(() => verifyCertificate(urlSerial), 0);
+    if (urlSerial || urlToken) {
+      const timer = setTimeout(() => verifyCertificate(urlSerial, urlToken), 0);
       return () => clearTimeout(timer);
     }
-  }, [urlSerial, verifyCertificate]);
+  }, [urlSerial, urlToken, verifyCertificate]);
+
+  // Older responses carry only the lifecycle status; newer ones also say whether it has expired.
+  const verificationState = verifiedData
+    ? verifiedData.verificationState || (verifiedData.status === 'ACTIVE' ? 'VALID' : 'REVOKED')
+    : null;
+  const isValid = verificationState === 'VALID';
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -300,11 +319,11 @@ const PublicCertificateVerifyContent = () => {
               style={{
                 padding: '16px 24px',
                 backgroundColor:
-                  verifiedData.status === 'ACTIVE'
+                  isValid
                     ? 'rgba(16, 185, 129, 0.12)'
                     : 'rgba(239, 68, 68, 0.12)',
                 borderBottom: `1px solid ${
-                  verifiedData.status === 'ACTIVE'
+                  isValid
                     ? 'rgba(16, 185, 129, 0.25)'
                     : 'rgba(239, 68, 68, 0.25)'
                 }`,
@@ -316,7 +335,7 @@ const PublicCertificateVerifyContent = () => {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                {verifiedData.status === 'ACTIVE' ? (
+                {isValid ? (
                   <div
                     style={{
                       width: 28,
@@ -351,17 +370,23 @@ const PublicCertificateVerifyContent = () => {
                       fontSize: '13px',
                       fontWeight: 800,
                       color:
-                        verifiedData.status === 'ACTIVE' ? 'var(--badge-success-fg)' : '#F87171',
+                        isValid ? 'var(--badge-success-fg)' : '#F87171',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
                     }}
                   >
-                    {verifiedData.status === 'ACTIVE'
+                    {isValid
                       ? 'Official Verified Credential'
-                      : 'Credential Revoked'}
+                      : verificationState === 'EXPIRED'
+                        ? 'Credential Expired'
+                        : 'Credential Revoked'}
                   </div>
                   <div style={{ fontSize: '11px', color: '#94A3B8' }}>
-                    Authenticity verified against central registry
+                    {verificationState === 'REVOKED' && verifiedData.revokedAt
+                      ? `Revoked on ${verifiedData.revokedAt.slice(0, 10)}`
+                      : verificationState === 'EXPIRED' && verifiedData.expiresAt
+                        ? `Expired on ${verifiedData.expiresAt.slice(0, 10)}`
+                        : 'Authenticity verified against central registry'}
                   </div>
                 </div>
               </div>
