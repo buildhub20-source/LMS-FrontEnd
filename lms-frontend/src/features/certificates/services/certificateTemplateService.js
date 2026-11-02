@@ -16,10 +16,7 @@ export const certificateTemplateService = {
   uploadInstitutionPdf: (template, file) => {
     const form = new FormData();
     // The upstream expects the metadata as a JSON part, not form fields.
-    form.append(
-      'template',
-      new Blob([JSON.stringify(template)], { type: 'application/json' }),
-    );
+    form.append('template', new Blob([JSON.stringify(template)], { type: 'application/json' }));
     form.append('file', file);
     return http.post(API_ENDPOINTS.certificateTemplates.institutionPdf, form, {
       headers: { 'Content-Type': 'multipart/form-data' },

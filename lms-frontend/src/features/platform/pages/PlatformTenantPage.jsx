@@ -34,7 +34,14 @@ import {
   workspaceBaseDomain,
 } from '../../../utils/tenantHostname';
 
-const emptyTenant = { name: '', slug: '', ownerName: '', ownerEmail: '', initialAdminPassword: '', liveSessionProvider: '' };
+const emptyTenant = {
+  name: '',
+  slug: '',
+  ownerName: '',
+  ownerEmail: '',
+  initialAdminPassword: '',
+  liveSessionProvider: '',
+};
 
 const statusBadgeVariant = {
   ACTIVE: 'success',
@@ -349,15 +356,38 @@ export const PlatformTenantPage = () => {
               />
             </div>
 
-            <label style={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: 480, fontSize: 13, color: 'var(--text-primary)' }}>
+            <label
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 6,
+                maxWidth: 480,
+                fontSize: 13,
+                color: 'var(--text-primary)',
+              }}
+            >
               Live class platform *
-              <select required value={values.liveSessionProvider} onChange={(e) => setValues({ ...values, liveSessionProvider: e.target.value })}
-                style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', background: 'var(--surface-dark)', color: 'var(--text-primary)' }}>
-                <option value="" disabled>Select a live class platform</option>
+              <select
+                required
+                value={values.liveSessionProvider}
+                onChange={(e) => setValues({ ...values, liveSessionProvider: e.target.value })}
+                style={{
+                  padding: '10px 12px',
+                  borderRadius: 8,
+                  border: '1px solid var(--border-color)',
+                  background: 'var(--surface-dark)',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                <option value="" disabled>
+                  Select a live class platform
+                </option>
                 <option value="LIVEKIT">Built-in live class</option>
                 <option value="GOOGLE_MEET">Google Meet</option>
               </select>
-              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Google Meet requires the organization admin to connect Google Calendar.</span>
+              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                Google Meet requires the organization admin to connect Google Calendar.
+              </span>
             </label>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8 }}>
               <AdminButton variant="outline" size="sm" onClick={() => setFormOpen(false)}>

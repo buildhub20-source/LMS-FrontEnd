@@ -37,7 +37,8 @@ export const LiveClassesHubPage = () => {
   const roleNames = [user?.role, ...(user?.roles || [])].map((role) =>
     (typeof role === 'string' ? role : role?.name || '').toUpperCase(),
   );
-  const isAdmin = roleNames.some((role) => role === 'ADMIN' || role === 'SUPER_ADMIN') || Boolean(user?.isAdmin);
+  const isAdmin =
+    roleNames.some((role) => role === 'ADMIN' || role === 'SUPER_ADMIN') || Boolean(user?.isAdmin);
   const isInstructorOrAdmin =
     roleNames.includes('INSTRUCTOR') || isAdmin || Boolean(user?.isInstructor);
   const canSchedule = isAdmin || hasPermission(PERMISSIONS.LIVE_SESSION_CREATE);
@@ -97,7 +98,8 @@ export const LiveClassesHubPage = () => {
   const handleStartSession = async (sessionId) => {
     try {
       const result = await startMutation.mutateAsync(sessionId);
-      const meetingUrl = result?.meetingUrl || sessions.find((session) => session.id === sessionId)?.meetingUrl;
+      const meetingUrl =
+        result?.meetingUrl || sessions.find((session) => session.id === sessionId)?.meetingUrl;
       if (meetingUrl) window.open(meetingUrl, '_blank', 'noopener,noreferrer');
       else navigate(ROUTES.LIVE_SESSION_ROOM(sessionId));
     } catch (err) {
@@ -112,7 +114,10 @@ export const LiveClassesHubPage = () => {
       if (data?.authorizationUrl) window.location.assign(data.authorizationUrl);
     } catch (err) {
       console.error('Failed to start Google Calendar connection', err);
-      alert(err?.response?.data?.message || 'Could not connect Google Calendar. An organization admin must configure it.');
+      alert(
+        err?.response?.data?.message ||
+          'Could not connect Google Calendar. An organization admin must configure it.',
+      );
     }
   };
 
@@ -136,7 +141,14 @@ export const LiveClassesHubPage = () => {
     }
   };
 
-  const handleSchedule = async ({ courseId, title, description, scheduledStart, scheduledEnd, sessionMode }) => {
+  const handleSchedule = async ({
+    courseId,
+    title,
+    description,
+    scheduledStart,
+    scheduledEnd,
+    sessionMode,
+  }) => {
     const targetCourseId = courseId || selectedCourseId || courses[0]?.id;
     if (!targetCourseId) {
       alert('Please select a course to schedule this live class for.');
@@ -653,11 +665,11 @@ export const LiveClassesHubPage = () => {
           onSchedule={handleSchedule}
           courses={courses}
           initialCourseId={selectedCourseId}
-        liveSessionProvider={googleCalendar.data?.provider || 'LIVEKIT'}
-        googleCalendarConnected={Boolean(googleCalendar.data?.googleCalendarConnected)}
-        googleCalendarEmail={googleCalendar.data?.googleCalendarEmail || ''}
-        onConnectGoogleCalendar={connectGoogleCalendar}
-        canManageGoogleCalendar={isAdmin}
+          liveSessionProvider={googleCalendar.data?.provider || 'LIVEKIT'}
+          googleCalendarConnected={Boolean(googleCalendar.data?.googleCalendarConnected)}
+          googleCalendarEmail={googleCalendar.data?.googleCalendarEmail || ''}
+          onConnectGoogleCalendar={connectGoogleCalendar}
+          canManageGoogleCalendar={isAdmin}
           isSubmitting={createMutation.isPending}
         />
       )}

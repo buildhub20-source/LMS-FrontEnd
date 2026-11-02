@@ -11,7 +11,6 @@ export const ThemeProvider = ({ children }) => {
     document.documentElement.classList.add(newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('lms-theme', newTheme);
-    localStorage.setItem('lms.theme', newTheme);
   }, []);
 
   useEffect(() => {

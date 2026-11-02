@@ -718,8 +718,8 @@ export const EnrollmentListPage = () => {
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
               >
                 <span
-                  title={`${stat.count} of ${stat.total} enrollments`}
-                  aria-label={`${stat.count} of ${stat.total} enrollments (${stat.count} of {stat.total} ({pct}%))`}
+                  title={`${stat.label}: ${stat.count} of ${stat.total} (${pct}%)`}
+                  aria-label={`${stat.label}: ${stat.count} of ${stat.total} (${pct}%)`}
                   style={{
                     fontSize: 10,
                     fontWeight: 700,
@@ -759,7 +759,7 @@ export const EnrollmentListPage = () => {
                     height: '100%',
                     borderRadius: 999,
                     background: st.bar,
-                    width: `${stat.count} of {stat.total} ({pct}%)`,
+                    width: `${pct}%`,
                     transition: 'width 0.6s ease',
                   }}
                 />

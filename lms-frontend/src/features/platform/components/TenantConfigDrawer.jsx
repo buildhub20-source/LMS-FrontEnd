@@ -271,7 +271,8 @@ export const TenantConfigDrawer = ({ tenant, isOpen, onClose }) => {
           </div>
         ) : configQuery.isError ? (
           <div role="alert" style={{ color: '#f87171', fontSize: 13 }}>
-            Could not load this workspace configuration. Please close and reopen the panel to try again.
+            Could not load this workspace configuration. Please close and reopen the panel to try
+            again.
           </div>
         ) : (
           <form
@@ -447,46 +448,70 @@ export const TenantConfigDrawer = ({ tenant, isOpen, onClose }) => {
                       border: '1px solid color-mix(in srgb, var(--primary) 18%, transparent)',
                     }}
                   >
-                    <label style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13, color: 'var(--text-primary)' }}>
+                    <label
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 6,
+                        fontSize: 13,
+                        color: 'var(--text-primary)',
+                      }}
+                    >
                       Live class platform
-                      <select value={formData.liveSessionProvider} onChange={(e) => set('liveSessionProvider', e.target.value)}
-                        style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', background: 'var(--surface-dark)', color: 'var(--text-primary)' }}>
+                      <select
+                        value={formData.liveSessionProvider}
+                        onChange={(e) => set('liveSessionProvider', e.target.value)}
+                        style={{
+                          padding: '10px 12px',
+                          borderRadius: 8,
+                          border: '1px solid var(--border-color)',
+                          background: 'var(--surface-dark)',
+                          color: 'var(--text-primary)',
+                        }}
+                      >
                         <option value="LIVEKIT">Built-in live class</option>
                         <option value="GOOGLE_MEET">Google Meet</option>
                       </select>
-                      <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Google Meet requires an administrator to connect Google Calendar.</span>
+                      <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                        Google Meet requires an administrator to connect Google Calendar.
+                      </span>
                     </label>
                     {formData.liveSessionProvider === 'GOOGLE_MEET' && (
                       <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.5 }}>
-                        Google Meet manages participant limits, chat, and screen sharing. The LMS records joins made through the LMS; it cannot automatically track when participants leave Meet. The session duration limit below applies when scheduling in the LMS.
+                        Google Meet manages participant limits, chat, and screen sharing. The LMS
+                        records joins made through the LMS; it cannot automatically track when
+                        participants leave Meet. The session duration limit below applies when
+                        scheduling in the LMS.
                       </div>
                     )}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                      {formData.liveSessionProvider !== 'GOOGLE_MEET' && (<>
-                      <AdminInput
-                        label="Max Participants"
-                        type="number"
-                        min="1"
-                        max="500"
-                        value={formData.maxLiveParticipants}
-                        onChange={(e) => set('maxLiveParticipants', e.target.value)}
-                      />
-                      <AdminInput
-                        label="Concurrent Sessions"
-                        type="number"
-                        min="1"
-                        max="20"
-                        value={formData.maxConcurrentLiveSessions}
-                        onChange={(e) => set('maxConcurrentLiveSessions', e.target.value)}
-                      />
-                      <AdminInput
-                        label="Monthly Participant Minutes"
-                        type="number"
-                        min="1"
-                        value={formData.monthlyLiveParticipantMinutes}
-                        onChange={(e) => set('monthlyLiveParticipantMinutes', e.target.value)}
-                      />
-                      </>)}
+                      {formData.liveSessionProvider !== 'GOOGLE_MEET' && (
+                        <>
+                          <AdminInput
+                            label="Max Participants"
+                            type="number"
+                            min="1"
+                            max="500"
+                            value={formData.maxLiveParticipants}
+                            onChange={(e) => set('maxLiveParticipants', e.target.value)}
+                          />
+                          <AdminInput
+                            label="Concurrent Sessions"
+                            type="number"
+                            min="1"
+                            max="20"
+                            value={formData.maxConcurrentLiveSessions}
+                            onChange={(e) => set('maxConcurrentLiveSessions', e.target.value)}
+                          />
+                          <AdminInput
+                            label="Monthly Participant Minutes"
+                            type="number"
+                            min="1"
+                            value={formData.monthlyLiveParticipantMinutes}
+                            onChange={(e) => set('monthlyLiveParticipantMinutes', e.target.value)}
+                          />
+                        </>
+                      )}
                       <AdminInput
                         label="Max Session Duration (min)"
                         type="number"
@@ -496,38 +521,40 @@ export const TenantConfigDrawer = ({ tenant, isOpen, onClose }) => {
                         onChange={(e) => set('maxLiveSessionDurationMinutes', e.target.value)}
                       />
                     </div>
-                    {formData.liveSessionProvider !== 'GOOGLE_MEET' && <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      <ToggleRow
-                        checked={formData.attendanceEnabled}
-                        label="Track Attendance"
-                        description="Automatically log participant join/leave events"
-                        onChange={(checked) => set('attendanceEnabled', checked)}
-                      />
-                      <ToggleRow
-                        checked={formData.liveChatEnabled}
-                        label="Enable In-Class Chat"
-                        description="Real-time chat messages during live sessions"
-                        onChange={(checked) => set('liveChatEnabled', checked)}
-                      />
-                      <ToggleRow
-                        checked={formData.screenShareEnabled}
-                        label="Enable Screen Sharing"
-                        description="Allow instructors (and optionally students) to share screens"
-                        onChange={(checked) => set('screenShareEnabled', checked)}
-                      />
-                      <ToggleRow
-                        checked={formData.aiTranscriptEnabled}
-                        label="AI Transcription (Phase 4)"
-                        description="Auto-generate text transcript from session audio"
-                        onChange={(checked) => set('aiTranscriptEnabled', checked)}
-                      />
-                      <ToggleRow
-                        checked={formData.aiSummaryEnabled}
-                        label="AI Session Summary (Phase 4)"
-                        description="Generate AI-powered notes and summary after session"
-                        onChange={(checked) => set('aiSummaryEnabled', checked)}
-                      />
-                    </div>}
+                    {formData.liveSessionProvider !== 'GOOGLE_MEET' && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        <ToggleRow
+                          checked={formData.attendanceEnabled}
+                          label="Track Attendance"
+                          description="Automatically log participant join/leave events"
+                          onChange={(checked) => set('attendanceEnabled', checked)}
+                        />
+                        <ToggleRow
+                          checked={formData.liveChatEnabled}
+                          label="Enable In-Class Chat"
+                          description="Real-time chat messages during live sessions"
+                          onChange={(checked) => set('liveChatEnabled', checked)}
+                        />
+                        <ToggleRow
+                          checked={formData.screenShareEnabled}
+                          label="Enable Screen Sharing"
+                          description="Allow instructors (and optionally students) to share screens"
+                          onChange={(checked) => set('screenShareEnabled', checked)}
+                        />
+                        <ToggleRow
+                          checked={formData.aiTranscriptEnabled}
+                          label="AI Transcription (Phase 4)"
+                          description="Auto-generate text transcript from session audio"
+                          onChange={(checked) => set('aiTranscriptEnabled', checked)}
+                        />
+                        <ToggleRow
+                          checked={formData.aiSummaryEnabled}
+                          label="AI Session Summary (Phase 4)"
+                          description="Generate AI-powered notes and summary after session"
+                          onChange={(checked) => set('aiSummaryEnabled', checked)}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -536,7 +563,17 @@ export const TenantConfigDrawer = ({ tenant, isOpen, onClose }) => {
         )}
 
         {(feedback.error || feedback.success) && (
-          <div role={feedback.error ? 'alert' : 'status'} style={{ marginTop: 16, padding: '10px 14px', borderRadius: 8, background: feedback.error ? 'rgba(239,68,68,0.12)' : 'rgba(34,197,94,0.12)', color: feedback.error ? '#f87171' : '#4ade80', fontSize: 13 }}>
+          <div
+            role={feedback.error ? 'alert' : 'status'}
+            style={{
+              marginTop: 16,
+              padding: '10px 14px',
+              borderRadius: 8,
+              background: feedback.error ? 'rgba(239,68,68,0.12)' : 'rgba(34,197,94,0.12)',
+              color: feedback.error ? '#f87171' : '#4ade80',
+              fontSize: 13,
+            }}
+          >
             {feedback.error || feedback.success}
           </div>
         )}

@@ -1,8 +1,7 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import storage from '../../services/storage/localStorage';
 import { STORAGE_KEYS, THEMES } from '../../constants/appConstants';
-
-const ThemeContext = createContext(null);
+import { ThemeContext } from '../../context/theme';
 
 const resolveTheme = (theme) => {
   if (theme !== THEMES.SYSTEM) return theme;
@@ -10,11 +9,18 @@ const resolveTheme = (theme) => {
 };
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(() => storage.get(STORAGE_KEYS.THEME, THEMES.SYSTEM));
+  const [theme, setTheme] = useState(() => {
+    const saved = storage.get(STORAGE_KEYS.THEME, null);
+    return saved || localStorage.getItem('lms-theme') || THEMES.SYSTEM;
+  });
 
   useEffect(() => {
     const apply = () => {
-      document.documentElement.dataset.theme = resolveTheme(theme);
+      const resolved = resolveTheme(theme);
+      document.documentElement.dataset.theme = resolved;
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(resolved);
+      localStorage.setItem('lms-theme', resolved);
     };
     apply();
     storage.set(STORAGE_KEYS.THEME, theme);

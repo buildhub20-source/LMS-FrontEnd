@@ -896,6 +896,7 @@ export const SignInPage = ({
 
   return (
     <div
+      className="sign-in-page"
       style={{
         minHeight: '100vh',
         width: '100%',
@@ -911,6 +912,31 @@ export const SignInPage = ({
     >
       {/* ── Keyframe Animations Style Block ── */}
       <style>{`
+        [data-theme='light'] .sign-in-page .vertex-deco-circle,
+        [data-theme='light'] .sign-in-page .vertex-bg-glow-1,
+        [data-theme='light'] .sign-in-page .vertex-bg-glow-2 {
+          display: none;
+        }
+        [data-theme='light'] .sign-in-form-card {
+          box-shadow: none !important;
+        }
+        [data-theme='light'] .sign-in-hero-glow {
+          opacity: 0.2;
+        }
+        .sign-in-page input:-webkit-autofill,
+        .sign-in-page input:-webkit-autofill:hover,
+        .sign-in-page input:-webkit-autofill:focus {
+          -webkit-text-fill-color: var(--si-input-text);
+          -webkit-box-shadow: 0 0 0 1000px var(--si-input-bg) inset;
+          caret-color: var(--si-input-text);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .sign-in-page *, .sign-in-page *::before, .sign-in-page *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+          }
+        }
         /* ── Central Card Subtle Levitation ── */
         @keyframes campaignLevitate {
           0%, 100% {
@@ -1208,7 +1234,7 @@ export const SignInPage = ({
           width: '100%',
           maxWidth: 1060,
           minHeight: 640,
-          background: '#111315',
+          background: 'var(--si-right)',
           borderRadius: 20,
           boxShadow:
             '0 30px 80px -15px var(--si-shadow), 0 12px 28px -8px var(--si-shadow-soft), 0 0 0 1px var(--si-shell-border)',
@@ -1224,21 +1250,21 @@ export const SignInPage = ({
           style={{
             flex: '1.05 1 450px',
             minWidth: 320,
-            background: '#111315',
+            background: 'var(--si-hero-start)',
             backgroundImage: `
               radial-gradient(ellipse at 20% 15%, rgba(223, 192, 74, 0.16) 0%, transparent 55%),
               radial-gradient(ellipse at 85% 85%, rgba(96, 165, 250, 0.12) 0%, transparent 55%),
               radial-gradient(circle at 50% 50%, rgba(223, 192, 74, 0.05) 0%, transparent 65%),
               repeating-linear-gradient(
                 -45deg,
-                rgba(255, 255, 255, 0.02),
-                rgba(255, 255, 255, 0.02) 1px,
+                var(--si-hero-stripe),
+                var(--si-hero-stripe) 1px,
                 transparent 1px,
                 transparent 13px
               ),
-              linear-gradient(180deg, #16181b 0%, #0a0b0c 100%)
+              linear-gradient(150deg, var(--si-hero-start) 0%, var(--si-hero-end) 100%)
             `,
-            borderRight: '1px solid #26292d',
+            borderRight: '1px solid var(--si-hero-border)',
             padding: '38px 36px 24px',
             display: 'flex',
             flexDirection: 'column',
@@ -1249,6 +1275,7 @@ export const SignInPage = ({
         >
           {/* Subtle Ambient Radial Highlight on Left Corner */}
           <div
+            className="sign-in-hero-glow"
             style={{
               position: 'absolute',
               top: '-15%',
@@ -1279,7 +1306,12 @@ export const SignInPage = ({
                 <GradusMindLogo size={22} />
               </div>
               <span
-                style={{ fontSize: 13, fontWeight: 800, color: '#ffffff', letterSpacing: '0.04em' }}
+                style={{
+                  fontSize: 13,
+                  fontWeight: 800,
+                  color: 'var(--si-hero-title)',
+                  letterSpacing: '0.04em',
+                }}
               >
                 {brandName}
               </span>
@@ -1291,7 +1323,7 @@ export const SignInPage = ({
                 margin: '20px 0 0',
                 fontSize: 27,
                 fontWeight: 700,
-                color: '#ffffff',
+                color: 'var(--si-hero-title)',
                 lineHeight: 1.22,
                 letterSpacing: '-0.02em',
               }}
@@ -1307,7 +1339,7 @@ export const SignInPage = ({
                 margin: '10px 0 0',
                 fontSize: 12.5,
                 lineHeight: 1.55,
-                color: 'rgba(255, 255, 255, 0.8)',
+                color: 'var(--si-hero-copy)',
                 maxWidth: 360,
               }}
             >
@@ -1328,7 +1360,7 @@ export const SignInPage = ({
               zIndex: 10,
               textAlign: 'center',
               fontSize: 11,
-              color: '#8d8f93',
+              color: 'var(--si-hero-faint)',
               letterSpacing: '0.02em',
             }}
           >
@@ -1384,6 +1416,7 @@ export const SignInPage = ({
 
           {/* Elevated Centered Form Card (STRICTLY LMS SIGN IN) */}
           <div
+            className="sign-in-form-card"
             style={{
               width: '100%',
               maxWidth: 380,

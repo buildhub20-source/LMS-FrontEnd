@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Video, Plus, Calendar, Filter } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import PageContainer from '../../../components/layout/PageContainer';
 import Spinner from '../../../components/common/Spinner';
 import Button from '../../../components/common/Button';
@@ -17,7 +18,6 @@ import { PERMISSIONS } from '../../../constants/permissions';
 import { ROLES } from '../../../constants/roles';
 import useCourse from '../../courses/hooks/useCourse';
 import { ROUTES } from '../../../constants/routes';
-import { useQuery } from '@tanstack/react-query';
 import liveSessionApi from '../api/liveSessionApi';
 
 export const LiveSessionsPage = () => {
@@ -30,9 +30,13 @@ export const LiveSessionsPage = () => {
   const createMutation = useCreateLiveSession();
   const startMutation = useStartLiveSession();
   const endMutation = useEndLiveSession();
-  const googleCalendar = useQuery({ queryKey: ['google-calendar-status'], queryFn: async () => {
-    const res = await liveSessionApi.getGoogleCalendarStatus(); return res?.data ?? res;
-  } });
+  const googleCalendar = useQuery({
+    queryKey: ['google-calendar-status'],
+    queryFn: async () => {
+      const res = await liveSessionApi.getGoogleCalendarStatus();
+      return res?.data ?? res;
+    },
+  });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filter, setFilter] = useState('ALL'); // 'ALL' | 'LIVE' | 'SCHEDULED' | 'ENDED'
@@ -42,7 +46,8 @@ export const LiveSessionsPage = () => {
     hasPermission(PERMISSIONS.LIVE_SESSION_MANAGE) ||
     hasPermission(PERMISSIONS.COURSE_UPDATE) ||
     hasAnyRole([ROLES.INSTRUCTOR, ROLES.ADMIN, ROLES.SUPER_ADMIN]);
-  const canSchedule = hasPermission(PERMISSIONS.LIVE_SESSION_CREATE) || hasAnyRole([ROLES.ADMIN, ROLES.SUPER_ADMIN]);
+  const canSchedule =
+    hasPermission(PERMISSIONS.LIVE_SESSION_CREATE) || hasAnyRole([ROLES.ADMIN, ROLES.SUPER_ADMIN]);
 
   const handleSchedule = (payload) => {
     createMutation.mutate(
@@ -67,7 +72,9 @@ export const LiveSessionsPage = () => {
       const res = await liveSessionApi.joinSession(sessionId);
       const result = res?.data ?? res;
       if (result?.meetingUrl) window.open(result.meetingUrl, '_blank', 'noopener,noreferrer');
-    } catch (err) { alert(err?.response?.data?.message || 'Could not join Google Meet.'); }
+    } catch (err) {
+      alert(err?.response?.data?.message || 'Could not join Google Meet.');
+    }
   };
 
   const connectGoogleCalendar = async () => {
@@ -75,7 +82,12 @@ export const LiveSessionsPage = () => {
       const res = await liveSessionApi.getGoogleCalendarConnectUrl();
       const result = res?.data ?? res;
       if (result?.authorizationUrl) window.location.assign(result.authorizationUrl);
-    } catch (err) { alert(err?.response?.data?.message || 'Could not connect Google Calendar. An organization admin must configure it.'); }
+    } catch (err) {
+      alert(
+        err?.response?.data?.message ||
+          'Could not connect Google Calendar. An organization admin must configure it.',
+      );
+    }
   };
 
   const handleEnd = (sessionId) => {

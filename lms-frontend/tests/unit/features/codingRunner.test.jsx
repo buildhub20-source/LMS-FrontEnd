@@ -112,7 +112,7 @@ describe('CodingQuestionPanel runner', () => {
 
   it('marks compile error status correctly in test results', async () => {
     runOnServer.mockResolvedValue([
-      { status: 'COMPILE_ERROR', compileOutput: "syntax error on line 1" },
+      { status: 'COMPILE_ERROR', compileOutput: 'syntax error on line 1' },
     ]);
 
     await runWith({ language: 'java', sourceCode: 'invalid code' });
@@ -121,4 +121,3 @@ describe('CodingQuestionPanel runner', () => {
     expect(screen.getByText('COMPILE_ERROR')).toBeInTheDocument();
   });
 });
-

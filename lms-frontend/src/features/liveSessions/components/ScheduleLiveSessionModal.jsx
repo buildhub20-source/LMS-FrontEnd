@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { X, Calendar, Clock, Video } from 'lucide-react';
 import Button from '../../../components/common/Button';
 
@@ -28,7 +28,11 @@ export const ScheduleLiveSessionModal = ({
   const [startDateTime, setStartDateTime] = useState(getDefaultStartTime);
   const [durationMinutes, setDurationMinutes] = useState(60);
   const [sessionMode, setSessionMode] = useState('');
-  useEffect(() => { if (!isOpen) setSessionMode(''); }, [isOpen]);
+  const [wasOpen, setWasOpen] = useState(isOpen);
+  if (isOpen !== wasOpen) {
+    setWasOpen(isOpen);
+    if (!isOpen) setSessionMode('');
+  }
 
   if (!isOpen) return null;
 
@@ -115,9 +119,33 @@ export const ScheduleLiveSessionModal = ({
           </div>
 
           <fieldset>
-            <legend className="text-xs font-semibold text-slate-700 dark:text-slate-300">Session mode *</legend>
-            <label className="mr-4"><input required disabled={liveSessionProvider === 'GOOGLE_MEET'} type="radio" name="sessionMode" value="live" checked={sessionMode === 'live'} onChange={(e) => setSessionMode(e.target.value)} /> Live session</label>
-            <label><input required disabled={liveSessionProvider !== 'GOOGLE_MEET'} type="radio" name="sessionMode" value="google_meet" checked={sessionMode === 'google_meet'} onChange={(e) => setSessionMode(e.target.value)} /> Google Meet</label>
+            <legend className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              Session mode *
+            </legend>
+            <label className="mr-4">
+              <input
+                required
+                disabled={liveSessionProvider === 'GOOGLE_MEET'}
+                type="radio"
+                name="sessionMode"
+                value="live"
+                checked={sessionMode === 'live'}
+                onChange={(e) => setSessionMode(e.target.value)}
+              />{' '}
+              Live session
+            </label>
+            <label>
+              <input
+                required
+                disabled={liveSessionProvider !== 'GOOGLE_MEET'}
+                type="radio"
+                name="sessionMode"
+                value="google_meet"
+                checked={sessionMode === 'google_meet'}
+                onChange={(e) => setSessionMode(e.target.value)}
+              />{' '}
+              Google Meet
+            </label>
           </fieldset>
           {sessionMode === 'google_meet' && (
             <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 p-3">
@@ -125,18 +153,40 @@ export const ScheduleLiveSessionModal = ({
               {googleCalendarConnected ? (
                 <>
                   <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                    Calendar connected{googleCalendarEmail ? `: ${googleCalendarEmail}` : ''}. A Meet link will be created automatically.
+                    Calendar connected{googleCalendarEmail ? `: ${googleCalendarEmail}` : ''}. A
+                    Meet link will be created automatically.
                   </p>
-                  {canManageGoogleCalendar && <Button type="button" variant="outline" onClick={onConnectGoogleCalendar} className="mt-2">
-                    Change connected Google account
-                  </Button>}
+                  {canManageGoogleCalendar && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={onConnectGoogleCalendar}
+                      className="mt-2"
+                    >
+                      Change connected Google account
+                    </Button>
+                  )}
                 </>
               ) : (
                 <>
-                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">An organization administrator must connect this organization's Google Calendar to create Meet links. Each organization uses its own connection.</p>
-                  {canManageGoogleCalendar ? <Button type="button" variant="outline" onClick={onConnectGoogleCalendar} className="mt-2">
-                    Connect Google Calendar
-                  </Button> : <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Ask an organization administrator to connect Google Calendar.</p>}
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    An organization administrator must connect this organization&apos;s Google
+                    Calendar to create Meet links. Each organization uses its own connection.
+                  </p>
+                  {canManageGoogleCalendar ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={onConnectGoogleCalendar}
+                      className="mt-2"
+                    >
+                      Connect Google Calendar
+                    </Button>
+                  ) : (
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      Ask an organization administrator to connect Google Calendar.
+                    </p>
+                  )}
                 </>
               )}
             </div>

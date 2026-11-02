@@ -332,7 +332,8 @@ const Banner = ({ tone, children }) => (
       borderRadius: 10,
       padding: '10px 12px',
       fontSize: 13,
-      background: tone === 'error' ? 'var(--color-red-50, #fef2f2)' : 'var(--color-green-50, #f0fdf4)',
+      background:
+        tone === 'error' ? 'var(--color-red-50, #fef2f2)' : 'var(--color-green-50, #f0fdf4)',
       color: tone === 'error' ? 'var(--color-red-700, #b91c1c)' : '#166534',
     }}
   >
@@ -350,5 +351,4 @@ const isValidLayout = (text) => {
   }
 };
 
-const readError = (err, fallback) =>
-  err?.response?.data?.message ?? err?.message ?? fallback;
+const readError = (err, fallback) => err?.response?.data?.message ?? err?.message ?? fallback;

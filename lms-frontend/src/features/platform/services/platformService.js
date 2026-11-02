@@ -1,8 +1,8 @@
 import axios from 'axios';
 import environment from '../../../config/environment';
 import appConfig from '../../../config/appConfig';
-import platformAuthStorage from './platformAuthStorage';
 import { ROUTES } from '../../../constants/routes';
+import platformAuthStorage from './platformAuthStorage';
 
 const client = axios.create({
   baseURL: environment.apiBaseUrl,
