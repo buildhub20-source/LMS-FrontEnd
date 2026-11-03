@@ -35,7 +35,7 @@ export const ThemeSlider = ({ size = 'md', className = '', style = {}, showToolt
   };
 
   const [standaloneTheme, setCurrentTheme] = useState(getInitialTheme);
-  const currentTheme = context?.theme ?? standaloneTheme;
+  const currentTheme = context?.resolvedTheme ?? context?.theme ?? standaloneTheme;
   const isDark = currentTheme === 'dark';
 
   // Listen to external theme changes across tabs/windows/DOM
@@ -86,7 +86,6 @@ export const ThemeSlider = ({ size = 'md', className = '', style = {}, showToolt
 
       // 2. Persist in storage
       localStorage.setItem('lms-theme', nextTheme);
-      localStorage.setItem('lms.theme', nextTheme);
 
       // 3. Update React context if available
       if (context?.setTheme) {
@@ -104,13 +103,6 @@ export const ThemeSlider = ({ size = 'md', className = '', style = {}, showToolt
   const handleToggle = () => {
     const nextTheme = isDark ? 'light' : 'dark';
     applyTheme(nextTheme);
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === ' ' || e.key === 'Enter') {
-      e.preventDefault();
-      handleToggle();
-    }
   };
 
   // Dimension presets
@@ -155,7 +147,6 @@ export const ThemeSlider = ({ size = 'md', className = '', style = {}, showToolt
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       title={showTooltip ? (isDark ? 'Switch to light mode' : 'Switch to dark mode') : undefined}
       onClick={handleToggle}
-      onKeyDown={handleKeyDown}
       className={className}
       style={{
         position: 'relative',

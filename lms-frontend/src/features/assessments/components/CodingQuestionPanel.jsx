@@ -104,7 +104,7 @@ async function runCasesOnServer(language, sourceCode, cases) {
     const run = runs[i] ?? runs[runs.length - 1];
     if (!run) return { success: false, error: 'The code runner returned no result.' };
     if (run.status === 'ACCEPTED') {
-      return { success: true, output: run.stdout ?? '', timeMs: run.timeMs };
+      return { success: true, output: run.stdout ?? '', timeMs: run.timeMs, status: 'ACCEPTED' };
     }
     const detail = run.compileOutput || run.stderr || '';
     const label = SERVER_STATUS_ERRORS[run.status] ?? 'Run failed';
@@ -112,6 +112,7 @@ async function runCasesOnServer(language, sourceCode, cases) {
       success: false,
       error: detail ? `${label}: ${detail.trim()}` : label,
       timeMs: run.timeMs,
+      status: run.status,
     };
   });
 }
@@ -173,7 +174,8 @@ async function executeCodeSandbox(language, sourceCode, testCases, customInput =
     const errorMsg = run.success ? null : (run.error ?? 'The sandboxed JavaScript runner failed.');
 
     let status;
-    if (errorMsg) status = 'RUNTIME_ERROR';
+    if (run?.status === 'COMPILE_ERROR') status = 'COMPILE_ERROR';
+    else if (errorMsg) status = 'RUNTIME_ERROR';
     else if (tc.isCustom) status = 'RAN';
     else {
       const actualNorm = actualOutput.replace(/\r\n/g, '\n');
@@ -186,7 +188,7 @@ async function executeCodeSandbox(language, sourceCode, testCases, customInput =
       label: tc.label || `Case ${i + 1}`,
       input: tc.input ?? '',
       expectedOutput: tc.isCustom ? null : (tc.expectedOutput ?? ''),
-      actualOutput: errorMsg ? `Runtime Error: ${errorMsg}` : actualOutput || '(no output)',
+      actualOutput: errorMsg ? errorMsg : actualOutput || '(no output)',
       status,
       errorMessage: errorMsg,
       executionTimeMs: run.timeMs ?? Math.round(performance.now() - caseStart),
@@ -196,11 +198,11 @@ async function executeCodeSandbox(language, sourceCode, testCases, customInput =
 
   const checked = results.filter((r) => !r.isCustom);
   let status = 'RAN';
-  if (results.some((r) => r.status === 'RUNTIME_ERROR')) status = 'RUNTIME_ERROR';
+  if (results.some((r) => r.status === 'COMPILE_ERROR')) status = 'COMPILE_ERROR';
+  else if (results.some((r) => r.status === 'RUNTIME_ERROR')) status = 'RUNTIME_ERROR';
   else if (checked.length > 0) {
     status = checked.every((r) => r.status === 'PASSED') ? 'ACCEPTED' : 'WRONG_ANSWER';
   }
-
   return { status, results, executionTimeMs: Math.round(performance.now() - startTime) };
 }
 
@@ -229,8 +231,24 @@ export const CodingQuestionPanel = ({
   const [copiedKey, setCopiedKey] = useState(null);
 
   const sampleCases = question?.sampleTestCases ?? question?.testCases ?? [];
+  const compilerSetting = (question?.compiler || 'ALL').toUpperCase();
+  const availableLanguages =
+    compilerSetting === 'ALL'
+      ? LANGUAGES
+      : LANGUAGES.filter(
+          (l) =>
+            l.value.toUpperCase() === compilerSetting ||
+            (compilerSetting === 'CPP' && l.value === 'cpp'),
+        );
+  const preferredLangValue =
+    draft?.language ||
+    (compilerSetting !== 'ALL' &&
+      LANGUAGES.find((l) => l.value.toUpperCase() === compilerSetting)?.value) ||
+    'java';
   const currentLang =
-    LANGUAGES.find((l) => l.value === (draft?.language || 'java')) ?? LANGUAGES[0];
+    availableLanguages.find((l) => l.value === preferredLangValue) ??
+    availableLanguages[0] ??
+    LANGUAGES[0];
   const activeLanguage = currentLang.value;
 
   // Retrieve per-language code cache from draft or initialize
@@ -945,7 +963,7 @@ export const CodingQuestionPanel = ({
                   boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
                 }}
               >
-                {LANGUAGES.map((l) => (
+                {availableLanguages.map((l) => (
                   <option key={l.value} value={l.value}>
                     {l.label}
                   </option>

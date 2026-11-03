@@ -61,6 +61,9 @@ export const liveSessionApi = {
 
   updateTenantLiveConfig: (tenantId, payload) =>
     http.put(API_ENDPOINTS.liveSessions.tenantConfig(tenantId), payload),
+
+  getGoogleCalendarStatus: () => http.get('/live-sessions/google/status'),
+  getGoogleCalendarConnectUrl: () => http.get('/live-sessions/google/connect'),
 };
 
 export default liveSessionApi;

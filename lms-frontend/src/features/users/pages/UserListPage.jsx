@@ -321,7 +321,10 @@ export const UserListPage = () => {
     if (!rolesUser) return;
     setRolesSaving(true);
     try {
-      await userService.updateRoles(rolesUser.id, selectedRoleIds);
+      await userService.updateRoles(
+        rolesUser.id,
+        allRoles.filter((role) => selectedRoleIds.includes(role.id)).map((role) => role.name),
+      );
       toastSuccess(`Roles updated for ${rolesUser.fullName}.`);
       setRolesUser(null);
       loadUsers();

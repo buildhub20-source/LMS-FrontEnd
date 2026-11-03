@@ -127,6 +127,12 @@ const ITEMS = [
     icon: <FolderDown className="h-5 w-5" />,
   },
   {
+    label: 'Certificate Templates',
+    to: ROUTES.CERTIFICATE_TEMPLATES,
+    group: 'Learning',
+    icon: <FolderDown className="h-5 w-5" />,
+  },
+  {
     label: 'Audit Logs',
     to: ROUTES.AUDIT_LOGS,
     group: 'Settings',

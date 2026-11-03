@@ -38,6 +38,7 @@ import resourceService from '../../resources/services/resourceService';
 import analyticsService from '../../analytics/services/analyticsService';
 import { useStudentStreak } from '../../gamification/hooks/useGamification';
 import { QUERY_KEYS } from '../../../constants/appConstants';
+import CourseCertificateAction from '../../certificates/components/CourseCertificateAction';
 
 const WEEKLY_STUDY_TARGET_HOURS = 6;
 const WEEK_DAYS = [
@@ -539,6 +540,11 @@ function HeroSpotlightCard({ course, onContinue }) {
             </>
           )}
         </button>
+        {isCompleted ? (
+          <div style={{ marginTop: 10, display: 'flex', justifyContent: 'center' }}>
+            <CourseCertificateAction courseId={course.id} />
+          </div>
+        ) : null}
       </div>
     </div>
   );

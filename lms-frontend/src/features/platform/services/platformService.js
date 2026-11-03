@@ -1,6 +1,7 @@
 import axios from 'axios';
 import environment from '../../../config/environment';
 import appConfig from '../../../config/appConfig';
+import { ROUTES } from '../../../constants/routes';
 import platformAuthStorage from './platformAuthStorage';
 
 const client = axios.create({
@@ -23,8 +24,8 @@ client.interceptors.response.use(
       const isLoginRequest = error.config?.url?.includes('/auth/login');
       if (!isLoginRequest) {
         platformAuthStorage.clear();
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login';
+        if (window.location.pathname !== ROUTES.LOGIN) {
+          window.location.href = ROUTES.LOGIN;
         }
       }
     }

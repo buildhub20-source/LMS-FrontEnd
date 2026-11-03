@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
 import { cn } from '@/utils';
@@ -32,9 +31,10 @@ export const IconSidebar = ({
   footer = null,
   onLogout = null,
   user = null,
+  expanded = false,
+  onExpandedChange = () => {},
   className,
 }) => {
-  const [expanded, setExpanded] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const auth = useAuth();
@@ -66,7 +66,7 @@ export const IconSidebar = ({
       {expanded && (
         <div
           className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm lg:hidden"
-          onClick={() => setExpanded(false)}
+          onClick={() => onExpandedChange(false)}
         />
       )}
 
@@ -109,7 +109,7 @@ export const IconSidebar = ({
 
         {/* Expand/Collapse Toggle — dedicated row right below logo */}
         <button
-          onClick={() => setExpanded(!expanded)}
+          onClick={() => onExpandedChange(!expanded)}
           className={cn(
             'flex items-center flex-shrink-0 border-b h-9',
             'transition-colors duration-200 hover:opacity-80 cursor-pointer',
@@ -160,6 +160,10 @@ export const IconSidebar = ({
                   const linkContent = (
                     <NavLink
                       to={item.to || '#'}
+                      onClick={() => {
+                        if (window.matchMedia('(max-width: 1023px)').matches)
+                          onExpandedChange(false);
+                      }}
                       className={cn(
                         'flex items-center gap-3 rounded-xl transition-all duration-200',
                         expanded ? 'mx-2 px-3 py-2.5' : 'mx-auto w-10 h-10 justify-center',

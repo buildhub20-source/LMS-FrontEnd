@@ -11,6 +11,7 @@ import { eventsInMonth, eventRoute } from '../../src/features/calendar/calendarU
 import { certificateListOptions } from '../../src/features/certificates/services/certificateQueries';
 import certificateService from '../../src/features/certificates/services/certificateService';
 import CertificateListPage from '../../src/features/certificates/pages/CertificateListPage';
+import { ToastProvider } from '../../src/components/feedback/Toast';
 import StudentCalendarPage from '../../src/features/calendar/pages/StudentCalendarPage';
 
 vi.mock('../../src/features/certificates/services/certificateService', () => ({
@@ -119,9 +120,11 @@ describe('production checklist regressions', () => {
     const client = new QueryClient();
     render(
       <QueryClientProvider client={client}>
-        <MemoryRouter>
-          <CertificateListPage />
-        </MemoryRouter>
+        <ToastProvider>
+          <MemoryRouter>
+            <CertificateListPage />
+          </MemoryRouter>
+        </ToastProvider>
       </QueryClientProvider>,
     );
     expect(await screen.findByText(/All Credentials \(1\)/)).toBeInTheDocument();

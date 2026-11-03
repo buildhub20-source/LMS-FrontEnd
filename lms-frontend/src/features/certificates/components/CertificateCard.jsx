@@ -3,13 +3,20 @@ import Card from '../../../components/common/Card';
 import Button from '../../../components/common/Button';
 import { ROUTES } from '../../../constants/routes';
 import { formatDate } from '../../../utils/dateUtils';
-import { downloadBlob } from '../../../utils/fileUtils';
+import { useToast } from '../../../components/feedback/Toast';
 import certificateService from '../services/certificateService';
 
 export const CertificateCard = ({ certificate }) => {
+  const toast = useToast();
   const handleDownload = async () => {
-    const blob = await certificateService.download(certificate.id);
-    downloadBlob(blob, `${certificate.courseTitle}-certificate.pdf`);
+    try {
+      await certificateService.downloadFile(
+        certificate.id,
+        `certificate-${certificate.serialNumber}.pdf`,
+      );
+    } catch (err) {
+      toast.error(err.message);
+    }
   };
 
   return (

@@ -18,6 +18,7 @@ export const LiveSessionCard = ({
   isInstructor,
   onStart,
   onEnd,
+  onJoinMeet,
   isStarting,
   isEnding,
   className = '',
@@ -128,17 +129,6 @@ export const LiveSessionCard = ({
               View Attendance
             </Button>
           )}
-          {session.recordingUrl && (
-            <a
-              href={session.recordingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--link)] hover:underline"
-            >
-              <Film className="w-3.5 h-3.5" />
-              Watch Recording
-            </a>
-          )}
         </div>
 
         <div className="flex items-center gap-2 ml-auto">
@@ -156,18 +146,36 @@ export const LiveSessionCard = ({
                   End Class
                 </Button>
               )}
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={handleJoinOrEnter}
-                className="bg-rose-600 hover:bg-rose-700 text-white shadow-sm shadow-rose-600/30 text-xs font-medium"
-              >
-                <Video className="w-3.5 h-3.5 mr-1.5 animate-pulse" />
-                {isInstructor ? 'Enter Classroom' : 'Join Classroom'}
-              </Button>
+              {session.meetingUrl ? (
+                <button
+                  type="button"
+                  onClick={() => onJoinMeet?.(session.id)}
+                  className="inline-flex items-center rounded-lg px-3 py-2 bg-rose-600 text-white text-xs font-medium"
+                >
+                  <Video className="w-3.5 h-3.5 mr-1.5" /> Join Google Meet
+                </button>
+              ) : (
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={handleJoinOrEnter}
+                  className="bg-rose-600 hover:bg-rose-700 text-white shadow-sm shadow-rose-600/30 text-xs font-medium"
+                >
+                  <Video className="w-3.5 h-3.5 mr-1.5 animate-pulse" />
+                  {isInstructor ? 'Enter Classroom' : 'Join Classroom'}
+                </Button>
+              )}
             </>
           ) : isScheduled ? (
-            isInstructor ? (
+            session.meetingUrl && !isInstructor ? (
+              <button
+                type="button"
+                onClick={() => onJoinMeet?.(session.id)}
+                className="inline-flex items-center rounded-lg px-3 py-2 bg-primary text-primary-foreground text-xs font-medium"
+              >
+                Join Google Meet
+              </button>
+            ) : isInstructor ? (
               <Button
                 variant="primary"
                 size="sm"

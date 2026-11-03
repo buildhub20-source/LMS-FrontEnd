@@ -28,8 +28,20 @@ import AdminBadge from '../../../components/ui/AdminBadge';
 import AdminInput from '../../../components/ui/AdminInput';
 import AdminModal from '../../../components/ui/AdminModal';
 import { AdminTableSkeleton } from '../../../components/ui/AdminSkeleton';
+import {
+  slugifyWorkspaceName,
+  tenantSlugError,
+  workspaceBaseDomain,
+} from '../../../utils/tenantHostname';
 
-const emptyTenant = { name: '', slug: '', ownerName: '', ownerEmail: '', initialAdminPassword: '' };
+const emptyTenant = {
+  name: '',
+  slug: '',
+  ownerName: '',
+  ownerEmail: '',
+  initialAdminPassword: '',
+  liveSessionProvider: '',
+};
 
 const statusBadgeVariant = {
   ACTIVE: 'success',
@@ -49,6 +61,8 @@ export const PlatformTenantPage = () => {
   const queryClient = useQueryClient();
   const [formOpen, setFormOpen] = useState(false);
   const [values, setValues] = useState(emptyTenant);
+  // Tracks whether the admin has taken over the slug from the suggestion.
+  const [slugEdited, setSlugEdited] = useState(false);
   const [actionError, setActionError] = useState('');
   const [impersonatingTenantId, setImpersonatingTenantId] = useState(null);
   const [configTenant, setConfigTenant] = useState(null);
@@ -78,6 +92,7 @@ export const PlatformTenantPage = () => {
     mutationFn: platformService.createTenant,
     onSuccess: () => {
       setValues(emptyTenant);
+      setSlugEdited(false);
       setFormOpen(false);
       setActionError('');
       refresh();
@@ -100,9 +115,35 @@ export const PlatformTenantPage = () => {
       ),
   });
 
+  // The slug is suggested from the name, but only until the admin types one
+  // themselves: after that, editing the name must not overwrite their choice.
+  const handleNameChange = (name) => {
+    setValues((current) => ({
+      ...current,
+      name,
+      slug: slugEdited ? current.slug : slugifyWorkspaceName(name),
+    }));
+  };
+
+  const handleSlugChange = (slug) => {
+    setSlugEdited(true);
+    setValues((current) => ({ ...current, slug }));
+  };
+
+  // Only complain once there is something to complain about, so the field does
+  // not show an error before it has been filled in.
+  const baseDomain = workspaceBaseDomain();
+  const slugError = values.slug ? tenantSlugError(values.slug) : null;
+  const slugHint = values.slug
+    ? `Workspace will live at ${values.slug}.${baseDomain}`
+    : 'Suggested from the workspace name; edit it to choose your own.';
+
   const submit = (event) => {
     event.preventDefault();
-    create.mutate({ ...values, slug: values.slug.trim().toLowerCase() });
+    const slug = values.slug.trim().toLowerCase();
+    // The server validates this too; stopping here just saves a round trip.
+    if (tenantSlugError(slug)) return;
+    create.mutate({ ...values, slug });
   };
 
   const runAction = (action, id) => lifecycle.mutate({ action, id });
@@ -278,14 +319,16 @@ export const PlatformTenantPage = () => {
                 placeholder="e.g. Acme Academy"
                 required
                 value={values.name}
-                onChange={(e) => setValues({ ...values, name: e.target.value })}
+                onChange={(e) => handleNameChange(e.target.value)}
               />
               <AdminInput
                 label="Tenant Slug (subdomain)"
                 placeholder="e.g. acme"
                 required
                 value={values.slug}
-                onChange={(e) => setValues({ ...values, slug: e.target.value })}
+                onChange={(e) => handleSlugChange(e.target.value)}
+                error={slugError}
+                hint={slugError ? undefined : slugHint}
               />
               <AdminInput
                 label="Initial Admin Full Name"
@@ -313,6 +356,39 @@ export const PlatformTenantPage = () => {
               />
             </div>
 
+            <label
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 6,
+                maxWidth: 480,
+                fontSize: 13,
+                color: 'var(--text-primary)',
+              }}
+            >
+              Live class platform *
+              <select
+                required
+                value={values.liveSessionProvider}
+                onChange={(e) => setValues({ ...values, liveSessionProvider: e.target.value })}
+                style={{
+                  padding: '10px 12px',
+                  borderRadius: 8,
+                  border: '1px solid var(--border-color)',
+                  background: 'var(--surface-dark)',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                <option value="" disabled>
+                  Select a live class platform
+                </option>
+                <option value="LIVEKIT">Built-in live class</option>
+                <option value="GOOGLE_MEET">Google Meet</option>
+              </select>
+              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                Google Meet requires the organization admin to connect Google Calendar.
+              </span>
+            </label>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8 }}>
               <AdminButton variant="outline" size="sm" onClick={() => setFormOpen(false)}>
                 Cancel

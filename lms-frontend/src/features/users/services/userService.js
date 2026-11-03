@@ -24,9 +24,7 @@ function normalizeList(res) {
 
 export const userService = {
   /**
-   * GET /users?search=&active=&page=&size=
-   * Backend accepts: search (String), active (Boolean).
-   * Locked filter is NOT a backend param — we handle it client-side.
+   * GET /users?search=&active=&locked=&page=&size=
    */
   list: async ({ search, status, page = 0, size = 10 } = {}) => {
     const params = { page, size, sort: 'createdAt,desc' };
@@ -34,16 +32,10 @@ export const userService = {
     // Map UI status filter to backend active param
     if (status === 'ACTIVE') params.active = true;
     if (status === 'INACTIVE') params.active = false;
-    // LOCKED has no backend param — fetch all then filter client-side
+    if (status === 'LOCKED') params.locked = true;
 
     const res = await http.get(API_ENDPOINTS.users.base, { params });
-    const normalized = normalizeList(res);
-
-    // Client-side locked filter
-    if (status === 'LOCKED') {
-      normalized.content = normalized.content.filter((u) => u.locked);
-    }
-    return normalized;
+    return normalizeList(res);
   },
 
   /** GET /users/{id} */
@@ -80,10 +72,10 @@ export const userService = {
 
   /**
    * PUT /users/{id}/roles
-   * Backend UpdateUserRolesRequest: { roleIds: [UUID] }
+   * Backend UpdateUserRolesRequest: { roles: [role name] }
    */
-  updateRoles: async (id, roleIds) =>
-    normalizeUser(await http.put(API_ENDPOINTS.users.roles(id), { roleIds })),
+  updateRoles: async (id, roles) =>
+    normalizeUser(await http.put(API_ENDPOINTS.users.roles(id), { roles })),
 
   /**
    * POST /users/me/password
