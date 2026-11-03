@@ -318,14 +318,9 @@ const PublicCertificateVerifyContent = () => {
             <div
               style={{
                 padding: '16px 24px',
-                backgroundColor:
-                  isValid
-                    ? 'rgba(16, 185, 129, 0.12)'
-                    : 'rgba(239, 68, 68, 0.12)',
+                backgroundColor: isValid ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
                 borderBottom: `1px solid ${
-                  isValid
-                    ? 'rgba(16, 185, 129, 0.25)'
-                    : 'rgba(239, 68, 68, 0.25)'
+                  isValid ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)'
                 }`,
                 display: 'flex',
                 alignItems: 'center',
@@ -369,8 +364,7 @@ const PublicCertificateVerifyContent = () => {
                     style={{
                       fontSize: '13px',
                       fontWeight: 800,
-                      color:
-                        isValid ? 'var(--badge-success-fg)' : '#F87171',
+                      color: isValid ? 'var(--badge-success-fg)' : '#F87171',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
                     }}
