@@ -415,21 +415,22 @@ function AssessmentCard({ item, info, onStart, onResume, onResult, onRetake }) {
         >
           {item.title}
         </h3>
-        <p
-          style={{
-            margin: 0,
-            fontSize: 12,
-            color: 'var(--text-secondary)',
-            lineHeight: 1.55,
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-          }}
-        >
-          {item.description ||
-            'Timed evaluation covering algorithm design and problem-solving skills.'}
-        </p>
+        {item.description && (
+          <p
+            style={{
+              margin: 0,
+              fontSize: 12,
+              color: 'var(--text-secondary)',
+              lineHeight: 1.55,
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+            }}
+          >
+            {item.description}
+          </p>
+        )}
       </div>
 
       {/* Metrics */}

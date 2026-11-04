@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
   Video,
@@ -74,6 +74,47 @@ export const LiveClassesHubPage = () => {
       return res?.data ?? res;
     },
   });
+
+  // Google redirects back here with the authorization in the URL fragment. The
+  // connection is finished by this signed-in request, so it only succeeds for the
+  // admin who started it.
+  const queryClient = useQueryClient();
+  // Read the fragment once, on first render.
+  const [googleReturn] = useState(() => {
+    const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    const code = params.get('googleCode');
+    const state = params.get('googleState');
+    const failed = params.get('googleMeet') === 'error';
+    if (!code && !failed) return null;
+    // Remove the one-time code from the address bar and history.
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    return failed || !code || !state ? { failed: true } : { code, state };
+  });
+  const [googleMessage, setGoogleMessage] = useState(() =>
+    googleReturn?.failed
+      ? { tone: 'error', text: 'Google Calendar was not connected. Please try again.' }
+      : null,
+  );
+  const googleHandled = useRef(false);
+  useEffect(() => {
+    if (googleHandled.current || !googleReturn || googleReturn.failed) return;
+    googleHandled.current = true;
+    const { code, state } = googleReturn;
+    liveSessionApi
+      .completeGoogleCalendarConnection(code, state)
+      .then(() => {
+        setGoogleMessage({ tone: 'success', text: 'Google Calendar connected.' });
+        queryClient.invalidateQueries({ queryKey: ['google-calendar-status'] });
+      })
+      .catch((err) =>
+        setGoogleMessage({
+          tone: 'error',
+          text:
+            err?.response?.data?.message ||
+            'Google Calendar could not be connected. Please try again.',
+        }),
+      );
+  }, [googleReturn, queryClient]);
 
   // Metrics computation
   const metrics = useMemo(() => {
@@ -178,6 +219,43 @@ export const LiveClassesHubPage = () => {
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
       }}
     >
+      {googleMessage && (
+        <div
+          role={googleMessage.tone === 'error' ? 'alert' : 'status'}
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 12,
+            padding: '10px 14px',
+            borderRadius: 10,
+            fontSize: 13,
+            border: `1px solid ${googleMessage.tone === 'error' ? 'var(--destructive, #dc2626)' : 'var(--border)'}`,
+            background:
+              googleMessage.tone === 'error'
+                ? 'color-mix(in srgb, var(--destructive, #dc2626) 10%, transparent)'
+                : 'var(--card)',
+            color: 'var(--text-primary)',
+          }}
+        >
+          <span>{googleMessage.text}</span>
+          <button
+            type="button"
+            onClick={() => setGoogleMessage(null)}
+            aria-label="Dismiss message"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: 'inherit',
+              cursor: 'pointer',
+              fontSize: 16,
+            }}
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       {/* Top Banner & Header */}
       <div
         style={{

@@ -64,6 +64,8 @@ export const liveSessionApi = {
 
   getGoogleCalendarStatus: () => http.get('/live-sessions/google/status'),
   getGoogleCalendarConnectUrl: () => http.get('/live-sessions/google/connect'),
+  completeGoogleCalendarConnection: (code, state) =>
+    http.post('/live-sessions/google/complete', { code, state }),
 };
 
 export default liveSessionApi;
