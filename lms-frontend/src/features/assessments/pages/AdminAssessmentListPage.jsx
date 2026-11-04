@@ -604,21 +604,22 @@ function AssessmentCard({ assessment, onAction, onClick }) {
           >
             {assessment.title}
           </h3>
-          <p
-            style={{
-              margin: 0,
-              fontSize: 13,
-              color: 'var(--text-muted, #64748b)',
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-              lineHeight: 1.5,
-            }}
-          >
-            {assessment.description ||
-              'Comprehensive evaluation covering algorithmic reasoning, implementation correctness, and automated grading.'}
-          </p>
+          {assessment.description && (
+            <p
+              style={{
+                margin: 0,
+                fontSize: 13,
+                color: 'var(--text-muted, #64748b)',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                lineHeight: 1.5,
+              }}
+            >
+              {assessment.description}
+            </p>
+          )}
         </div>
 
         {/* Stats strip matching Courses */}

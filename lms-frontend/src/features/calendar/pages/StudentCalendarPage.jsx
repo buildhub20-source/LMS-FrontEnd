@@ -110,6 +110,18 @@ export const StudentCalendarPage = () => {
       return [];
     }
   });
+  // On-page result of the last .ics import: { tone: 'success' | 'error', text }
+  const [importMessage, setImportMessage] = useState(null);
+
+  const clearImportedEvents = () => {
+    setImportedEvents([]);
+    try {
+      localStorage.removeItem('lms_calendar_imported_events');
+    } catch {
+      /* storage unavailable; state is already cleared */
+    }
+    setImportMessage({ tone: 'success', text: 'Imported events removed from this browser.' });
+  };
 
   const {
     data: rawEvents = [],
@@ -293,16 +305,27 @@ export const StudentCalendarPage = () => {
         if (parsed.length > 0) {
           const updated = [...importedEvents, ...parsed];
           setImportedEvents(updated);
-          localStorage.setItem('lms_calendar_imported_events', JSON.stringify(updated));
-          alert(`Successfully imported ${parsed.length} event(s) to your calendar!`);
+          try {
+            localStorage.setItem('lms_calendar_imported_events', JSON.stringify(updated));
+          } catch {
+            /* storage full or blocked; events still show until the page is reloaded */
+          }
+          setImportMessage({
+            tone: 'success',
+            text: `Imported ${parsed.length} event(s). They are saved only in this browser and are not shared with your institute or other devices.`,
+          });
         } else {
-          alert('No valid events found in this .ics file.');
+          setImportMessage({ tone: 'error', text: 'No valid events found in this .ics file.' });
         }
       } catch {
-        alert('Could not parse the selected .ics file.');
+        setImportMessage({ tone: 'error', text: 'Could not read the selected .ics file.' });
       }
     };
+    reader.onerror = () =>
+      setImportMessage({ tone: 'error', text: 'Could not read the selected .ics file.' });
     reader.readAsText(file);
+    // Allow importing the same file again
+    e.target.value = '';
   };
 
   // KPI Calculations
@@ -692,7 +715,7 @@ export const StudentCalendarPage = () => {
           </button>
 
           <label
-            title="Import calendar events from an external .ics file (Google Calendar, Outlook, Apple Calendar)"
+            title="Import events from an .ics file (Google Calendar, Outlook, Apple Calendar). Imported events are saved only in this browser."
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -717,8 +740,70 @@ export const StudentCalendarPage = () => {
               style={{ display: 'none' }}
             />
           </label>
+
+          {importedEvents.length > 0 && (
+            <button
+              type="button"
+              onClick={clearImportedEvents}
+              title="Remove events imported into this browser"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '8px 14px',
+                borderRadius: 10,
+                border: '1px solid var(--border-color)',
+                background: 'var(--surface-medium)',
+                color: 'var(--text-primary)',
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              Clear imported ({importedEvents.length})
+            </button>
+          )}
         </div>
       </div>
+
+      {importMessage && (
+        <div
+          role={importMessage.tone === 'error' ? 'alert' : 'status'}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            margin: '0 0 16px',
+            padding: '10px 14px',
+            borderRadius: 10,
+            fontSize: 13,
+            border: `1px solid ${importMessage.tone === 'error' ? 'var(--destructive, #dc2626)' : 'var(--border-color)'}`,
+            background:
+              importMessage.tone === 'error'
+                ? 'color-mix(in srgb, var(--destructive, #dc2626) 10%, transparent)'
+                : 'var(--surface-medium)',
+            color: 'var(--text-primary)',
+          }}
+        >
+          <span>{importMessage.text}</span>
+          <button
+            type="button"
+            onClick={() => setImportMessage(null)}
+            aria-label="Dismiss message"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: 'inherit',
+              cursor: 'pointer',
+              fontSize: 16,
+              lineHeight: 1,
+            }}
+          >
+            Ã—
+          </button>
+        </div>
+      )}
 
       {/* ── Main View Area (fills 100% full screen) ── */}
       {activeTab === 'calendar' ? (

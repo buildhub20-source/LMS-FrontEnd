@@ -160,6 +160,7 @@ export const IconSidebar = ({
                   const linkContent = (
                     <NavLink
                       to={item.to || '#'}
+                      aria-label={expanded ? undefined : item.label}
                       onClick={() => {
                         if (window.matchMedia('(max-width: 1023px)').matches)
                           onExpandedChange(false);
@@ -176,7 +177,10 @@ export const IconSidebar = ({
                           : 'var(--sidebar-foreground)',
                       }}
                     >
-                      <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
+                      <span
+                        className="flex-shrink-0 w-5 h-5 flex items-center justify-center"
+                        aria-hidden="true"
+                      >
                         {item.icon}
                       </span>
                       {expanded && (

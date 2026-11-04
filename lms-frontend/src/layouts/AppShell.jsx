@@ -27,11 +27,49 @@ import appConfig from '../config/appConfig';
  * │                 │  [Footer]                      │
  * └──────────────────────────────────────────────────┘
  */
+
+// Chat and the role pages are mounted under different layouts, so moving between
+// them remounts AppShell. Keep the sidebar's open/closed choice outside the
+// component (and in localStorage across reloads) so it survives that remount.
+const SIDEBAR_KEY = 'lms_sidebar_expanded';
+let sidebarExpandedMemory = null;
+
+const isMobileViewport = () =>
+  typeof window !== 'undefined' && window.matchMedia?.('(max-width: 1023px)').matches;
+
+function readSidebarExpanded() {
+  // On small screens the expanded sidebar is an overlay; always start closed there.
+  if (isMobileViewport()) return false;
+  if (sidebarExpandedMemory !== null) return sidebarExpandedMemory;
+  try {
+    return localStorage.getItem(SIDEBAR_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+function rememberSidebarExpanded(expanded) {
+  if (isMobileViewport()) return;
+  sidebarExpandedMemory = expanded;
+  try {
+    localStorage.setItem(SIDEBAR_KEY, String(expanded));
+  } catch {
+    /* storage unavailable; the in-memory value still covers this session */
+  }
+}
+
 export const AppShell = ({ navigation, tabNav }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [sidebarExpanded, setSidebarExpanded] = useState(false);
+  const [sidebarExpanded, setSidebarExpandedState] = useState(readSidebarExpanded);
+  const setSidebarExpanded = (next) => {
+    setSidebarExpandedState((current) => {
+      const value = typeof next === 'function' ? next(current) : next;
+      rememberSidebarExpanded(value);
+      return value;
+    });
+  };
 
   // Maintain active chat socket connection globally
   useEffect(() => {
