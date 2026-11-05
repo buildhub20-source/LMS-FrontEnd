@@ -24,11 +24,12 @@ function normalizeList(res) {
 
 export const userService = {
   /**
-   * GET /users?search=&active=&locked=&page=&size=
+   * GET /users?search=&active=&locked=&role=&page=&size=
    */
-  list: async ({ search, status, page = 0, size = 10 } = {}) => {
+  list: async ({ search, status, role, page = 0, size = 10 } = {}) => {
     const params = { page, size, sort: 'createdAt,desc' };
     if (search) params.search = search;
+    if (role) params.role = role;
     // Map UI status filter to backend active param
     if (status === 'ACTIVE') params.active = true;
     if (status === 'INACTIVE') params.active = false;

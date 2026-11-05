@@ -203,9 +203,9 @@ function getAvatarImg(str = '') {
 }
 
 /* ─── Avatar stack component ───────────────────────────────────────── */
-function AvatarStack({ users = [], max = 3 }) {
+function AvatarStack({ users = [], max = 3, total = users.length }) {
   const visible = users.slice(0, max);
-  const extra = users.length - max;
+  const extra = total - visible.length;
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       {visible.map((u, i) => {
@@ -338,10 +338,17 @@ function StatusBadge({ user }) {
 }
 
 /* ─── Role card ────────────────────────────────────────────────────── */
-function RoleCard({ role, usersWithRole, onEdit, onDelete, isFilterActive, onToggleFilter }) {
+function RoleCard({
+  role,
+  userCount,
+  sampleUsers,
+  onEdit,
+  onDelete,
+  isFilterActive,
+  onToggleFilter,
+}) {
   const theme = getRoleTheme(role.name);
   const Icon = theme.icon;
-  const userCount = usersWithRole.length;
   const permCount = role.permissions?.length ?? 0;
 
   return (
@@ -430,7 +437,7 @@ function RoleCard({ role, usersWithRole, onEdit, onDelete, isFilterActive, onTog
           </div>
         </div>
 
-        <AvatarStack users={usersWithRole} max={3} />
+        <AvatarStack users={sampleUsers} max={3} total={userCount} />
       </div>
 
       {/* Middle row: Role title, capability description, permissions badge */}
@@ -609,6 +616,8 @@ export const RoleListPage = () => {
   const [roleFilter, setRoleFilter] = useState('');
   const [userPage, setUserPage] = useState(0);
   const [userTotal, setUserTotal] = useState(0);
+  // Totals across every user, not just the page on screen: { total, byRole: { NAME: { count, users } } }.
+  const [roleSummary, setRoleSummary] = useState({ total: 0, byRole: {} });
   const PAGE_SIZE = 10;
 
   // User table action states
@@ -668,21 +677,14 @@ export const RoleListPage = () => {
   const loadUsers = useCallback(async () => {
     setUsersLoading(true);
     try {
+      // The role filter runs on the server so it covers every user, not only this page.
       const res = await userService.list({
         search: userSearch || undefined,
+        role: roleFilter || undefined,
         page: userPage,
         size: PAGE_SIZE,
       });
-      let content = res?.content ?? [];
-      if (roleFilter) {
-        content = content.filter((u) =>
-          (u.roles ?? []).some(
-            (r) =>
-              (typeof r === 'string' ? r : (r.name ?? '')).toLowerCase() ===
-              roleFilter.toLowerCase(),
-          ),
-        );
-      }
+      const content = res?.content ?? [];
       setUsers(content);
       setUserTotal(res?.totalElements ?? content.length);
     } catch {
@@ -692,6 +694,32 @@ export const RoleListPage = () => {
     }
   }, [userSearch, userPage, roleFilter]);
 
+  // One small request per role: the server's total for that role plus a few users for the avatars.
+  const loadRoleSummary = useCallback(async () => {
+    if (!roles.length) return;
+    try {
+      const [all, ...perRole] = await Promise.all([
+        userService.list({ page: 0, size: 1 }),
+        ...roles.map((role) => userService.list({ role: role.name, page: 0, size: 3 })),
+      ]);
+      const byRole = {};
+      roles.forEach((role, i) => {
+        byRole[(role.name ?? '').toUpperCase()] = {
+          count: perRole[i]?.totalElements ?? 0,
+          users: perRole[i]?.content ?? [],
+        };
+      });
+      setRoleSummary({ total: all?.totalElements ?? 0, byRole });
+    } catch {
+      setRoleSummary({ total: 0, byRole: {} });
+    }
+  }, [roles]);
+
+  const reloadUsersAndTotals = () => {
+    loadUsers();
+    loadRoleSummary();
+  };
+
   useEffect(() => {
     const timer = setTimeout(loadRoles, 0);
     return () => clearTimeout(timer);
@@ -700,6 +728,10 @@ export const RoleListPage = () => {
     const timer = setTimeout(loadUsers, 0);
     return () => clearTimeout(timer);
   }, [loadUsers]);
+  useEffect(() => {
+    const timer = setTimeout(loadRoleSummary, 0);
+    return () => clearTimeout(timer);
+  }, [loadRoleSummary]);
 
   const openCreate = () => {
     setEditRole(null);
@@ -785,7 +817,7 @@ export const RoleListPage = () => {
         `${deleteUserTarget.fullName || deleteUserTarget.name || 'User'} has been removed.`,
       );
       setDeleteUserTarget(null);
-      loadUsers();
+      reloadUsersAndTotals();
     } catch (err) {
       toastError(err?.message ?? 'Failed to remove user.');
     } finally {
@@ -814,7 +846,7 @@ export const RoleListPage = () => {
         `Roles updated for ${rolesUserTarget.fullName || rolesUserTarget.name || 'user'}.`,
       );
       setRolesUserTarget(null);
-      loadUsers();
+      reloadUsersAndTotals();
     } catch (err) {
       toastError(err?.message ?? 'Failed to update roles.');
     } finally {
@@ -839,7 +871,7 @@ export const RoleListPage = () => {
             : `${u.fullName || u.name} has been ${type}d.`,
       );
       setConfirmUserAction(null);
-      loadUsers();
+      reloadUsersAndTotals();
     } catch (err) {
       toastError(err?.message ?? `Failed to ${type} user.`);
       setConfirmUserAction((prev) => ({ ...prev, loading: false }));
@@ -995,7 +1027,7 @@ export const RoleListPage = () => {
                 Total Users
               </div>
               <div style={{ fontSize: 17, fontWeight: 800, color: M.textMain }}>
-                {userTotal || users.length}
+                {roleSummary.total || userTotal}
               </div>
             </div>
           </div>
@@ -1068,19 +1100,14 @@ export const RoleListPage = () => {
           }}
         >
           {roles.map((role) => {
-            const usersWithRole = users.filter((u) =>
-              (u.roles ?? []).some(
-                (r) =>
-                  (typeof r === 'string' ? r : (r.name ?? '')).toLowerCase() ===
-                  (role.name ?? '').toLowerCase(),
-              ),
-            );
+            const summary = roleSummary.byRole[(role.name ?? '').toUpperCase()];
             const isFilterActive = roleFilter.toLowerCase() === (role.name ?? '').toLowerCase();
             return (
               <RoleCard
                 key={role.id}
                 role={role}
-                usersWithRole={usersWithRole}
+                userCount={summary?.count ?? 0}
+                sampleUsers={summary?.users ?? []}
                 onEdit={openEdit}
                 onDelete={() => setDeleteTarget(role)}
                 isFilterActive={isFilterActive}
@@ -1214,18 +1241,12 @@ export const RoleListPage = () => {
                   transition: 'all 0.15s',
                 }}
               >
-                All Users ({userTotal || users.length})
+                All Users ({roleSummary.total || userTotal})
               </button>
               {roles.map((r) => {
                 const isSelected = roleFilter.toLowerCase() === (r.name ?? '').toLowerCase();
                 const theme = getRoleTheme(r.name);
-                const count = users.filter((u) =>
-                  (u.roles ?? []).some(
-                    (userR) =>
-                      (typeof userR === 'string' ? userR : (userR.name ?? '')).toLowerCase() ===
-                      (r.name ?? '').toLowerCase(),
-                  ),
-                ).length;
+                const count = roleSummary.byRole[(r.name ?? '').toUpperCase()]?.count ?? 0;
                 return (
                   <button
                     key={r.id}
