@@ -60,6 +60,22 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # Replace with your platform's deploy step (kubectl / helm / az / aws).
-      - name: Deploy
-        run: echo "Deploying ${{ env.REGISTRY_IMAGE }}/lms-frontend:dev-${{ github.sha }}"
+      # Testing VM (LMS-BackEnd/deploy/vm). Until the DEPLOY_* secrets exist
+      # the image is still published and this step only says so.
+      - name: Deploy to the testing VM
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          if [ -z "$DEPLOY_HOST" ]; then
+            echo "DEPLOY_HOST is not set: image published, nothing deployed."
+            exit 0
+          fi
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy_key "$DEPLOY_USER@$DEPLOY_HOST" \
+            'cd ~/LMS-BackEnd/deploy/vm && ./deploy.sh frontend'
