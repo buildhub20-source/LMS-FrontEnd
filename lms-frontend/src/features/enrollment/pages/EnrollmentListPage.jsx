@@ -190,19 +190,17 @@ export const EnrollmentListPage = () => {
     ).length;
   }, [rawEnrollments, selectedCourseId]);
 
-  const students = useMemo(
-    () =>
-      rawUsers.filter(
-        (u) =>
-          u.roles?.includes('STUDENT') ||
-          (!u.roles?.includes('INSTRUCTOR') && !u.roles?.includes('ADMIN')),
-      ),
-    [rawUsers],
-  );
+  const students = useMemo(() => rawUsers.filter((u) => u.roles?.includes('STUDENT')), [rawUsers]);
 
+  // Admins can also be assigned to courses and assessments, so they stay in this list,
+  // but the instructor totals below count only people with the INSTRUCTOR role.
   const instructors = useMemo(
     () => rawUsers.filter((u) => u.roles?.includes('INSTRUCTOR') || u.roles?.includes('ADMIN')),
     [rawUsers],
+  );
+  const instructorRoleUsers = useMemo(
+    () => instructors.filter((u) => u.roles?.includes('INSTRUCTOR')),
+    [instructors],
   );
 
   const targetInstructor = useMemo(() => {
@@ -495,9 +493,9 @@ export const EnrollmentListPage = () => {
   const isLoadingData =
     loadingUsers || loadingCourses || loadingAssessments || loadingEnrollments || isAssigning;
   const totalStudents = students.length;
-  const totalInstructors = instructors.length;
+  const totalInstructors = instructorRoleUsers.length;
   const enrolledCount = students.filter((s) => enrolledStudentIds.has(s.id)).length;
-  const assignedCount = instructors.filter((i) => assignedInstructorIds.has(i.id)).length;
+  const assignedCount = instructorRoleUsers.filter((i) => assignedInstructorIds.has(i.id)).length;
 
   const actionLabel = useMemo(() => {
     if (topTab === 'COURSES' && subTab === 'STUDENTS') return 'Enroll Students';
@@ -839,7 +837,7 @@ export const EnrollmentListPage = () => {
               {
                 key: 'INSTRUCTORS',
                 icon: <UserCheck size={14} />,
-                label: `Instructors (${instructors.length})`,
+                label: `Instructors & admins (${instructors.length})`,
               },
             ].map((t) => (
               <button
