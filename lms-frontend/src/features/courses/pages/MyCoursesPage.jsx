@@ -38,6 +38,8 @@ import resourceService from '../../resources/services/resourceService';
 import analyticsService from '../../analytics/services/analyticsService';
 import { useStudentStreak } from '../../gamification/hooks/useGamification';
 import { QUERY_KEYS } from '../../../constants/appConstants';
+import { useToast } from '../../../components/feedback/Toast';
+import { bookmarkItems, useBookmarks, useBookmarkToggle } from '../../notes/hooks/useNotes';
 import CourseCertificateAction from '../../certificates/components/CourseCertificateAction';
 
 const WEEKLY_STUDY_TARGET_HOURS = 6;
@@ -1627,22 +1629,14 @@ export const MyCoursesPage = () => {
   const [categoryFilter, setCategoryFilter] = useState('All Categories');
   const [categoryOpen, setCategoryOpen] = useState(false);
 
-  // Bookmarks in localStorage
-  const [bookmarks, setBookmarks] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('lms_bookmarked_courses') || '[]');
-    } catch {
-      return [];
-    }
+  // Course bookmarks are saved on the server, so they show on the Notes &
+  // Bookmarks page and on every device.
+  const toast = useToast();
+  const { data: bookmarkData } = useBookmarks({ page: 0, size: 200 });
+  const savedBookmarks = useMemo(() => bookmarkItems(bookmarkData), [bookmarkData]);
+  const { isBookmarked, toggle } = useBookmarkToggle(savedBookmarks, {
+    onError: () => toast.error('Could not save the bookmark. Please try again.'),
   });
-
-  const toggleBookmark = (id) => {
-    setBookmarks((prev) => {
-      const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
-      localStorage.setItem('lms_bookmarked_courses', JSON.stringify(next));
-      return next;
-    });
-  };
 
   const handleSetView = (v) => {
     setView(v);
@@ -1655,12 +1649,17 @@ export const MyCoursesPage = () => {
     return Array.isArray(raw) ? raw : [];
   }, [data]);
 
+  const toggleBookmark = (courseId) => {
+    const course = courses.find((c) => c.id === courseId);
+    toggle({ courseId, label: course?.title });
+  };
+
   // Derived metrics
   const completedCount = useMemo(() => courses.filter(isCourseCompleted).length, [courses]);
   const inProgressCount = useMemo(() => courses.filter(isCourseInProgress).length, [courses]);
   const savedCount = useMemo(
-    () => courses.filter((c) => bookmarks.includes(c.id)).length,
-    [courses, bookmarks],
+    () => courses.filter((c) => isBookmarked(c.id)).length,
+    [courses, isBookmarked],
   );
 
   // Pick top course for Hero Spotlight
@@ -1684,7 +1683,7 @@ export const MyCoursesPage = () => {
       // Tab filter
       if (activeTab === 'IN_PROGRESS' && !isCourseInProgress(c)) return false;
       if (activeTab === 'COMPLETED' && !isCourseCompleted(c)) return false;
-      if (activeTab === 'SAVED' && !bookmarks.includes(c.id)) return false;
+      if (activeTab === 'SAVED' && !isBookmarked(c.id)) return false;
 
       // Category filter
       if (
@@ -1705,7 +1704,7 @@ export const MyCoursesPage = () => {
 
       return true;
     });
-  }, [courses, activeTab, categoryFilter, searchQuery, bookmarks]);
+  }, [courses, activeTab, categoryFilter, searchQuery, isBookmarked]);
 
   const handleContinue = (course) => {
     navigate(ROUTES.LEARNING(course.id));
@@ -2235,7 +2234,7 @@ export const MyCoursesPage = () => {
                   key={course.id}
                   course={course}
                   onContinue={handleContinue}
-                  isBookmarked={bookmarks.includes(course.id)}
+                  isBookmarked={isBookmarked(course.id)}
                   onToggleBookmark={toggleBookmark}
                   onLive={(c) => navigate(`/learn/courses/${c.id}/live`)}
                 />
@@ -2248,7 +2247,7 @@ export const MyCoursesPage = () => {
                   key={course.id}
                   course={course}
                   onContinue={handleContinue}
-                  isBookmarked={bookmarks.includes(course.id)}
+                  isBookmarked={isBookmarked(course.id)}
                   onToggleBookmark={toggleBookmark}
                   onLive={(c) => navigate(`/learn/courses/${c.id}/live`)}
                 />

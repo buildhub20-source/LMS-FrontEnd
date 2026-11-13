@@ -1215,8 +1215,8 @@ export const NotesBookmarksPage = () => {
                 No bookmarks yet
               </h3>
               <p style={{ fontSize: 13, maxWidth: 420, margin: '0 auto 20px', lineHeight: 1.5 }}>
-                While studying courses, click the bookmark icon on any lesson to save it for quick
-                revision here.
+                Click the bookmark icon on a lesson, or the star on a course in My Courses, to save
+                it here for quick revision.
               </p>
               <button
                 onClick={() => navigate(ROUTES.MY_COURSES)}
@@ -1267,7 +1267,7 @@ export const NotesBookmarksPage = () => {
                     e.currentTarget.style.transform = 'translateY(-2px)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                    e.currentTarget.style.borderColor = 'var(--border)';
                     e.currentTarget.style.transform = 'translateY(0)';
                   }}
                 >
@@ -1297,14 +1297,19 @@ export const NotesBookmarksPage = () => {
                           letterSpacing: '0.5px',
                         }}
                       >
-                        {courseMap[bm.courseId] || 'Course Lesson'}
+                        {courseMap[bm.courseId] || 'Course'}
                       </span>
                       <h4
-                        style={{ margin: '3px 0 0', fontSize: 15, fontWeight: 700, color: '#fff' }}
+                        style={{
+                          margin: '3px 0 0',
+                          fontSize: 15,
+                          fontWeight: 700,
+                          color: 'var(--text-primary)',
+                        }}
                       >
-                        {bm.label || 'Bookmarked Lesson'}
+                        {bm.label || (bm.lessonId ? 'Bookmarked lesson' : 'Bookmarked course')}
                       </h4>
-                      <p style={{ margin: '4px 0 0', fontSize: 11, color: '#64748b' }}>
+                      <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--text-muted)' }}>
                         Saved {formatDate(bm.createdAt)}
                       </p>
                     </div>
@@ -1316,11 +1321,17 @@ export const NotesBookmarksPage = () => {
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       paddingTop: 12,
-                      borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                      borderTop: '1px solid var(--border)',
                     }}
                   >
                     <button
-                      onClick={() => navigate(ROUTES.LEARNING(bm.courseId))}
+                      onClick={() =>
+                        navigate(
+                          bm.lessonId
+                            ? ROUTES.LESSON(bm.courseId, bm.lessonId)
+                            : ROUTES.LEARNING(bm.courseId),
+                        )
+                      }
                       style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -1335,7 +1346,7 @@ export const NotesBookmarksPage = () => {
                         cursor: 'pointer',
                       }}
                     >
-                      Open Lesson
+                      {bm.lessonId ? 'Open Lesson' : 'Open Course'}
                       <ExternalLink size={12} />
                     </button>
 
