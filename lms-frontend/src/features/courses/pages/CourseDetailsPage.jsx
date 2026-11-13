@@ -49,6 +49,7 @@ import CourseAnalyticsTab from '../components/CourseAnalyticsTab';
 import courseService from '../services/courseService';
 import LessonNotesPanel from '../components/LessonNotesPanel';
 import LessonResourcesPanel from '../components/LessonResourcesPanel';
+import { bookmarkItems, useBookmarksByCourse, useBookmarkToggle } from '../../notes/hooks/useNotes';
 
 export const CourseDetailsPage = () => {
   const { courseId } = useParams();
@@ -70,7 +71,6 @@ const CourseDetailsContent = () => {
   const [activeTab, setActiveTab] = useState('player'); // 'player' | 'analytics'
   const [leftPanelTab, setLeftPanelTab] = useState('overview'); // 'overview' | 'notes' | 'resources'
   const [showFullDesc, setShowFullDesc] = useState(false);
-  const [bookmarked, setBookmarked] = useState(false);
   const [collapsedModules, setCollapsedModules] = useState({});
 
   const isAdminOrInstructor =
@@ -150,6 +150,15 @@ const CourseDetailsContent = () => {
   const videoNoticeTimeoutRef = useRef(null);
 
   const currentLesson = allLessons[activeLessonIndex] || allLessons[0] || null;
+
+  // The bookmark button saves the open lesson (or the course, if it has no
+  // lessons) to the student's Notes & Bookmarks.
+  const { data: courseBookmarkData } = useBookmarksByCourse(courseId);
+  const courseBookmarks = useMemo(() => bookmarkItems(courseBookmarkData), [courseBookmarkData]);
+  const { isBookmarked, toggle: toggleBookmark } = useBookmarkToggle(courseBookmarks, {
+    onError: () => toast.error('Could not save the bookmark. Please try again.'),
+  });
+  const bookmarked = isBookmarked(courseId, currentLesson?.id);
 
   const isStudent = !isAdminOrInstructor || location.pathname.startsWith('/learn');
   const isAdmin = location.pathname.startsWith('/admin');
@@ -931,12 +940,25 @@ const CourseDetailsContent = () => {
                     <Share2 size={18} />
                   </button>
                   <button
-                    onClick={() => setBookmarked(!bookmarked)}
+                    onClick={() =>
+                      toggleBookmark({
+                        courseId,
+                        lessonId: currentLesson?.id,
+                        label: currentLesson?.title || course.title,
+                      })
+                    }
+                    aria-pressed={bookmarked}
                     style={{
                       ...actionIconBtnStyle,
                       color: bookmarked ? '#3b82f6' : 'var(--text-muted)',
                     }}
-                    title="Save Course"
+                    title={
+                      bookmarked
+                        ? 'Remove bookmark'
+                        : currentLesson
+                          ? 'Bookmark this lesson'
+                          : 'Bookmark this course'
+                    }
                   >
                     <Bookmark size={18} fill={bookmarked ? '#3b82f6' : 'none'} />
                   </button>
